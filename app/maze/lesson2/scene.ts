@@ -108,7 +108,7 @@ export class MazeScene extends Phaser.Scene {
       .setVisible(false);
 
     // Move handling: read initial maxMoves and callbacks from registry
-    this.maxMoves = this.registry.get('maxMoves') || 5;
+    this.maxMoves = this.registry.get('maxMoves') ?? 5;
     this.movesRemaining = this.maxMoves;
     this.onNoMoves = this.registry.get('onNoMoves') || (() => { });
     this.onWin = this.registry.get('onWin') || (() => { });

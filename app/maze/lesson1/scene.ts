@@ -67,7 +67,7 @@ export class MazeScene extends Phaser.Scene {
     this.walkSpeed = 70;
 
     // Get maxMoves from registry (set by React component)
-    this.maxMoves = this.registry.get('maxMoves') || 5;
+    this.maxMoves = this.registry.get('maxMoves') ?? 5;
     this.movesRemaining = this.maxMoves;
     this.onNoMoves = this.registry.get('onNoMoves') || (() => { });
     this.onWin = this.registry.get('onWin') || (() => { });

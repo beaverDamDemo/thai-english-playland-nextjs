@@ -51,7 +51,7 @@ export class MazeScene extends Phaser.Scene {
     this.walkSpeed = 70;
     this.cameras.main.setBackgroundColor('#4CAF50');
     // Move handling: read initial maxMoves and callbacks from registry
-    this.maxMoves = this.registry.get('maxMoves') || 5;
+    this.maxMoves = this.registry.get('maxMoves') ?? 5;
     this.movesRemaining = this.maxMoves;
     this.onNoMoves = this.registry.get('onNoMoves') || (() => { });
     this.onWin = this.registry.get('onWin') || (() => { });
