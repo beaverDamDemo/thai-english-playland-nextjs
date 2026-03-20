@@ -1,3 +1,26 @@
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #222;
+  color: #fff;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.appTitle {
+  font-weight: bold;
+  letter-spacing: 0.01em;
+}
+
+.appVersion {
+  font-size: 13px;
+  color: #bdbdbd;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .mapContainer {
   position: relative;
   width: 100%;
@@ -7,22 +30,44 @@
   overflow: hidden;
 }
 
-.mapContainer a {
+/* shared base for all location pins (enabled and locked) */
+.locationPin {
   position: absolute;
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: rgb(255, 217, 2); /* semi-transparent red circle */
+  background-color: rgb(255, 217, 2);
   border: 4px solid var(--location-border, #fff);
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-  /* background-image: url('/assets/house-icon.png');
-  background-size: cover;
-  background-repeat: no-repeat; */
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: #333;
+  text-decoration: none;
+  user-select: none;
 }
-.mapContainer a:hover {
+
+.locationPin:hover {
   transform: scale(1.2);
   background-color: rgb(255, 208, 0);
+}
+
+.locationLocked {
+  background-color: #c8c8c8;
+  border-color: #9e9e9e !important;
+  cursor: not-allowed;
+  color: #666;
+  filter: grayscale(0.4);
+}
+
+.locationLocked:hover {
+  transform: none;
+  background-color: #c8c8c8;
 }
 
 .location1 {
