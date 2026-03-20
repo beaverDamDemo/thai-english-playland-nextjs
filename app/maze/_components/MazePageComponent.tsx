@@ -237,7 +237,7 @@ const MazePageComponent: FC<MazePageProps> = ({
                 excellent progress in mastering English!
               </p>
               <a
-                href="/maze"
+                href="/"
                 style={{
                   display: 'inline-block',
                   padding: '15px 40px',
