@@ -243,8 +243,13 @@ export class MazeScene extends Phaser.Scene {
   }
 
   fireWeapon() {
+    const bulletOffset = this.tileSize / 4;
     const bullet = this.bullets
-      .create(this.player.x, this.player.y, 'bullet')
+      .create(
+        this.player.x + this.tileSize / 2 - bulletOffset,
+        this.player.y + this.tileSize / 2 - bulletOffset,
+        'bullet',
+      )
       .setOrigin(0)
       .setDisplaySize(this.tileSize / 2, this.tileSize / 2);
     this.physics.velocityFromRotation(
