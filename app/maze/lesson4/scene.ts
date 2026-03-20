@@ -206,9 +206,13 @@ export class MazeScene extends Phaser.Scene {
         this.movesRemaining--;
         if (this.movesText) this.movesText.setText(`Moves: ${this.movesRemaining}/${this.maxMoves}`);
 
-        if (this.gridX === this.goalX && this.gridY === this.goalY) {
+        const reachedGoal = this.gridX === this.goalX && this.gridY === this.goalY;
+        if (reachedGoal) {
           this.winText.setVisible(true);
           this.onWin();
+        }
+        if (!reachedGoal && this.movesRemaining <= 0) {
+          this.onNoMoves();
         }
       },
     });
