@@ -197,19 +197,31 @@ export class MazeScene extends Phaser.Scene {
     this.fireBtn.on('pointerdown', () => this.fireWeapon());
 
     this.upBtn = this.add
-      .text(centerX, baseY - 70, '⬆️', { fontSize: '64px' })
+      .text(centerX, baseY - 70, '⬆️', {
+        fontSize: '64px',
+        padding: { top: 20, bottom: 20 }
+      })
       .setOrigin(0.5)
       .setInteractive();
     this.downBtn = this.add
-      .text(centerX, baseY + 70, '⬇️', { fontSize: '64px' })
+      .text(centerX, baseY + 70, '⬇️', {
+        fontSize: '64px',
+        padding: { top: 20, bottom: 20 }
+      })
       .setOrigin(0.5)
       .setInteractive();
     this.leftBtn = this.add
-      .text(centerX - 70, baseY, '⬅️', { fontSize: '64px' })
+      .text(centerX - 70, baseY, '⬅️', {
+        fontSize: '64px',
+        padding: { top: 20, bottom: 20 }
+      })
       .setOrigin(0.5)
       .setInteractive();
     this.rightBtn = this.add
-      .text(centerX + 70, baseY, '➡️', { fontSize: '64px' })
+      .text(centerX + 70, baseY, '➡️', {
+        fontSize: '64px',
+        padding: { top: 20, bottom: 20 }
+      })
       .setOrigin(0.5)
       .setInteractive();
 
