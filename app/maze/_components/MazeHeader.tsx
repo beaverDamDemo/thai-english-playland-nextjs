@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import styles from './MazeHeader.module.css';
 
-const APP_VERSION = '0.0.8';
+const APP_VERSION = '0.0.9';
 
 export default function MazeHeader({ score }: { score: number }) {
   return (

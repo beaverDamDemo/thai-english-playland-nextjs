@@ -33,7 +33,13 @@ const MazePageComponent: FC<MazePageProps> = ({
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [scale, setScale] = useState(1);
+  const [isMobilePortrait, setIsMobilePortrait] = useState(false);
   const gameRef = useRef<Phaser.Game | null>(null);
+
+  const desktopWidth = 1200;
+  const desktopHeight = 800;
+  const mobileWidth = 504;
+  const mobileHeight = 800;
 
   const handleQuizComplete = (finalScore: number) => {
     setMaxMoves(finalScore);
@@ -68,16 +74,22 @@ const MazePageComponent: FC<MazePageProps> = ({
   // Calculate scale to fit content to screen
   useEffect(() => {
     const calculateScale = () => {
-      const baseWidth = 1200; // Reference width
-      const baseHeight = 800; // Reference height
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
+      const isPortraitPhone = windowWidth <= 768 && windowHeight > windowWidth;
+
+      setIsMobilePortrait(isPortraitPhone);
+
+      const baseWidth = isPortraitPhone ? mobileWidth : desktopWidth;
+      const baseHeight = isPortraitPhone ? mobileHeight : desktopHeight;
 
       const scaleByWidth = windowWidth / baseWidth;
       const scaleByHeight = windowHeight / baseHeight;
 
-      const newScale = Math.min(scaleByWidth, scaleByHeight);
-      setScale(Math.max(newScale, 0.5)); // Minimum 50% scale
+      const newScale = isPortraitPhone
+        ? scaleByWidth
+        : Math.min(scaleByWidth, scaleByHeight);
+      setScale(Math.max(newScale, 0.5));
     };
 
     calculateScale();
@@ -175,8 +187,8 @@ const MazePageComponent: FC<MazePageProps> = ({
             transformOrigin: 'center center',
             display: 'flex',
             flexDirection: 'column',
-            width: '1200px',
-            height: '800px',
+            width: `${isMobilePortrait ? mobileWidth : desktopWidth}px`,
+            height: `${isMobilePortrait ? mobileHeight : desktopHeight}px`,
           }}
         >
           <MazeHeader score={score} />
@@ -267,7 +279,7 @@ const MazePageComponent: FC<MazePageProps> = ({
       style={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: isMobilePortrait ? 'flex-start' : 'center',
         width: '100vw',
         height: '100vh',
         overflow: 'auto',
@@ -280,8 +292,8 @@ const MazePageComponent: FC<MazePageProps> = ({
           transformOrigin: 'center center',
           display: 'flex',
           flexDirection: 'column',
-          width: '1200px',
-          height: '800px',
+          width: `${isMobilePortrait ? mobileWidth : desktopWidth}px`,
+          height: `${isMobilePortrait ? mobileHeight : desktopHeight}px`,
           position: 'relative',
         }}
       >
