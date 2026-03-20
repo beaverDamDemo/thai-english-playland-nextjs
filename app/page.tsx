@@ -6,7 +6,7 @@ import Link from 'next/link';
 import styles from '../styles/map.module.css';
 import { useState, useEffect } from 'react';
 
-const APP_VERSION = '0.0.9';
+const APP_VERSION = '0.0.10';
 const HEADER_HEIGHT = 44;
 
 const lessons = [
