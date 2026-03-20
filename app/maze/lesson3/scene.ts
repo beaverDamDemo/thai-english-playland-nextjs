@@ -160,13 +160,30 @@ export class MazeScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.bullets,
       this.enemies,
-      (bullet: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile, enemy: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile) => {
-        if ('gameObject' in bullet) {
-          (bullet.gameObject as Phaser.GameObjects.GameObject).destroy();
-        }
-        if ('gameObject' in enemy) {
-          (enemy.gameObject as Phaser.GameObjects.GameObject).destroy();
-        }
+      (bulletObj, enemyObj) => {
+        const bulletGO = bulletObj as Phaser.GameObjects.Sprite;
+        const enemyGO = enemyObj as Phaser.GameObjects.Sprite;
+        if (!bulletGO.active || !enemyGO.active) return;
+
+        bulletGO.destroy();
+        const hitFx = this.add
+          .text(
+            enemyGO.x + enemyGO.displayWidth / 2,
+            enemyGO.y + enemyGO.displayHeight / 2,
+            '💥',
+            { fontSize: '26px' },
+          )
+          .setOrigin(0.5)
+          .setDepth(1000);
+        this.tweens.add({
+          targets: hitFx,
+          scale: { from: 0.45, to: 1.05 },
+          alpha: { from: 1, to: 0 },
+          duration: 220,
+          ease: 'Cubic.Out',
+          onComplete: () => hitFx.destroy(),
+        });
+        enemyGO.destroy();
       },
     );
 
@@ -252,6 +269,12 @@ export class MazeScene extends Phaser.Scene {
       )
       .setOrigin(0)
       .setDisplaySize(this.tileSize / 2, this.tileSize / 2);
+    (bullet.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+    (bullet.body as Phaser.Physics.Arcade.Body).setSize(
+      this.tileSize / 2,
+      this.tileSize / 2,
+      true,
+    );
     this.physics.velocityFromRotation(
       Phaser.Math.Angle.Between(0, 0, this.lastDir.dx, this.lastDir.dy),
       200,
