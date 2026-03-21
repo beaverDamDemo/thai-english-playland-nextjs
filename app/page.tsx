@@ -82,9 +82,13 @@ export default function MapPage() {
     loadProgress();
     window.addEventListener('focus', loadProgress);
     window.addEventListener('storage', loadProgress);
+    window.addEventListener('pageshow', loadProgress);
+    document.addEventListener('visibilitychange', loadProgress);
     return () => {
       window.removeEventListener('focus', loadProgress);
       window.removeEventListener('storage', loadProgress);
+      window.removeEventListener('pageshow', loadProgress);
+      document.removeEventListener('visibilitychange', loadProgress);
     };
   }, []);
 

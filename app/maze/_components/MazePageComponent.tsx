@@ -117,9 +117,16 @@ const MazePageComponent: FC<MazePageProps> = ({
   };
 
   const handleWin = () => {
+    const persistedUnlocked =
+      typeof window !== 'undefined'
+        ? Number.parseInt(window.localStorage.getItem(UNLOCKED_KEY) ?? '1', 10)
+        : 1;
+    const safePersistedUnlocked = Number.isFinite(persistedUnlocked)
+      ? Math.min(TOTAL_LESSONS, Math.max(1, persistedUnlocked))
+      : 1;
     const nextUnlockedLessons = Math.min(
       TOTAL_LESSONS,
-      Math.max(unlockedLessons, lessonNumber + 1),
+      Math.max(safePersistedUnlocked, lessonNumber + 1),
     );
     setUnlockedLessons(nextUnlockedLessons);
     if (typeof window !== 'undefined') {
