@@ -132,10 +132,14 @@ const MazePageComponent: FC<MazePageProps> = ({
     setUnlockedLessons(nextUnlockedLessons);
     if (typeof window !== 'undefined') {
       window.localStorage.setItem(UNLOCKED_KEY, String(nextUnlockedLessons));
-      window.localStorage.setItem(
-        PENDING_UNLOCK_KEY,
-        String(nextUnlockedLessons),
-      );
+      if (nextUnlockedLessons > safePersistedUnlocked) {
+        window.localStorage.setItem(
+          PENDING_UNLOCK_KEY,
+          String(nextUnlockedLessons),
+        );
+      } else {
+        window.localStorage.removeItem(PENDING_UNLOCK_KEY);
+      }
     }
     setGameWon(true);
   };
