@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import * as Phaser from 'phaser';
 import MazeHeader from './MazeHeader';
@@ -29,10 +30,7 @@ const MazePageComponent: FC<MazePageProps> = ({
   themeColorDark,
   backgroundGradient,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [score, setScore] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [quizComplete, setQuizComplete] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState(0);
   const [quizAttempts, setQuizAttempts] = useState(0);
@@ -75,7 +73,6 @@ const MazePageComponent: FC<MazePageProps> = ({
   const handleQuizComplete = (finalScore: number) => {
     setMaxMoves(finalScore);
     setScore(finalScore);
-    setQuizComplete(true);
     const wasCorrect = finalScore > 0;
     const nextCorrect = correctAnswers + (wasCorrect ? 1 : 0);
     const nextWrong = wrongAnswers + (wasCorrect ? 0 : 1);
@@ -340,7 +337,7 @@ const MazePageComponent: FC<MazePageProps> = ({
                 Great job navigating through the challenges. You&apos;re making
                 excellent progress in mastering English!
               </p>
-              <a
+              <Link
                 href="/"
                 style={{
                   display: 'inline-block',
@@ -370,7 +367,7 @@ const MazePageComponent: FC<MazePageProps> = ({
                 }}
               >
                 Return to Map
-              </a>
+              </Link>
             </div>
           </div>
           <footer
