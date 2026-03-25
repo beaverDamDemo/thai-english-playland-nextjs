@@ -20,6 +20,7 @@ interface MazePageProps {
   themeColor: string;
   themeColorDark: string;
   backgroundGradient: string;
+  showWinScreen?: boolean;
 }
 
 const MazePageComponent: FC<MazePageProps> = ({
@@ -29,6 +30,7 @@ const MazePageComponent: FC<MazePageProps> = ({
   themeColor,
   themeColorDark,
   backgroundGradient,
+  showWinScreen = true,
 }) => {
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -269,7 +271,7 @@ const MazePageComponent: FC<MazePageProps> = ({
     }
   }, [maxMoves]);
 
-  if (gameWon) {
+  if (gameWon && showWinScreen) {
     return (
       <div
         style={{
@@ -433,6 +435,48 @@ const MazePageComponent: FC<MazePageProps> = ({
           >
             <div id="game"></div>
           </div>
+
+          {gameWon && !showWinScreen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '18px',
+                right: '18px',
+                zIndex: 1100,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                gap: '10px',
+              }}
+            >
+              <span
+                style={{
+                  color: '#fff',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  textShadow: '0 2px 6px rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                Lesson complete!
+              </span>
+              <Link
+                href="/"
+                style={{
+                  display: 'inline-block',
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                  backgroundColor: themeColor,
+                  color: '#fff',
+                  textDecoration: 'none',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                Return to Map
+              </Link>
+            </div>
+          )}
 
           {/* Quiz Overlay */}
           {showQuizOverlay && (
