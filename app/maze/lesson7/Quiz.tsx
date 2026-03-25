@@ -6,103 +6,133 @@ import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'What is an adverb?',
-    options: ['a person', 'describes an action', 'a noun', 'a place'],
-    answer: 1,
-  },
-  {
-    q: 'Which word is an adverb?',
-    options: ['happy', 'quickly', 'run', 'cat'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the adverb: "She sings _____".',
-    options: ['beautiful', 'beautifully', 'beauty', 'beautify'],
-    answer: 1,
-  },
-  {
-    q: 'How do you form an adverb from "quick"?',
-    options: ['quickily', 'quickly', 'quicky', 'quicklly'],
-    answer: 1,
-  },
-  {
-    q: 'Which adverb modifies a verb?',
-    options: ['very', 'yesterday', 'slowly', 'carefully'],
-    answer: 2,
-  },
-  {
-    q: 'Complete: "He speaks English _____".',
-    options: ['fluent', 'fluently', 'fluence', 'fluencies'],
-    answer: 1,
-  },
-  {
-    q: 'What type of adverb is "never"?',
-    options: ['manner', 'frequency', 'place', 'time'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the adverb of manner:',
-    options: ['tomorrow', 'here', 'carefully', 'always'],
-    answer: 2,
-  },
-  {
-    q: 'Which adverb answers "how"?',
-    options: ['yesterday', 'there', 'quickly', 'soon'],
-    answer: 2,
-  },
-  {
-    q: 'Complete: "I _____ see such beauty".',
-    options: ['rarely', 'rare', 'rarity', 'rarefied'],
+    q: 'Choose the correct form for today: "I ___ to school now."',
+    options: ['go', 'went', 'will go', 'gone'],
     answer: 0,
   },
   {
-    q: 'What adverb means "not ever"?',
-    options: ['often', 'seldom', 'never', 'always'],
+    q: 'Choose the correct form for yesterday: "I ___ to school yesterday."',
+    options: ['go', 'goes', 'went', 'will go'],
     answer: 2,
   },
   {
-    q: 'Choose: "She dances _____".',
-    options: ['graceful', 'gracefully', 'grace', 'gracious'],
-    answer: 1,
-  },
-  {
-    q: 'Which is an adverb of time?',
-    options: ['carefully', 'today', 'slowly', 'softly'],
-    answer: 1,
-  },
-  {
-    q: 'Complete: "He arrived _____ at the party".',
-    options: ['late', 'lately', 'later', 'last'],
-    answer: 0,
-  },
-  {
-    q: 'What adverb means "in most cases"?',
-    options: ['rarely', 'usually', 'seldom', 'hardly'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the adverb: "The car is moving _____".',
-    options: ['fast', 'fastly', 'faster', 'fastest'],
-    answer: 0,
-  },
-  {
-    q: 'Which adverb answers "where"?',
-    options: ['slowly', 'yesterday', 'there', 'sometimes'],
+    q: 'Choose the correct form for tomorrow: "I ___ to school tomorrow."',
+    options: ['go', 'went', 'will go', 'going'],
     answer: 2,
   },
   {
-    q: 'Complete: "They work together _____".',
-    options: ['harmonious', 'harmoniously', 'harmony', 'harmonies'],
+    q: 'Match the time word: "went" goes with...',
+    options: ['today', 'yesterday', 'tomorrow', 'now'],
     answer: 1,
   },
   {
-    q: 'What adverb is the opposite of "always"?',
-    options: ['often', 'never', 'seldom', 'sometimes'],
+    q: 'Match the time word: "will go" goes with...',
+    options: ['yesterday', 'last week', 'tomorrow', 'before'],
+    answer: 2,
+  },
+  {
+    q: 'Match the time word: "go" in this lesson often means...',
+    options: ['today/now', 'yesterday', 'tomorrow only', 'never'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "She ___ to work yesterday."',
+    options: ['go', 'went', 'will go', 'goes'],
     answer: 1,
   },
   {
-    q: 'Choose: "She _____ laughs at jokes".',
-    options: ['loud', 'loudly', 'louder', 'loudest'],
+    q: 'Complete: "He ___ to the bank tomorrow."',
+    options: ['go', 'went', 'will go', 'goes'],
+    answer: 2,
+  },
+  {
+    q: 'Complete: "They ___ home now."',
+    options: ['go', 'went', 'will go', 'goes'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'I went now.',
+      'I will go yesterday.',
+      'I go now.',
+      'I go tomorrow yesterday.',
+    ],
+    answer: 2,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'I went yesterday.',
+      'I will go yesterday.',
+      'I go tomorrow.',
+      'I went tomorrow.',
+    ],
+    answer: 1,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'I will go tomorrow.',
+      'I went tomorrow.',
+      'I go yesterday.',
+      'I will went tomorrow.',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Fill in the blank: "We ___ to class yesterday."',
+    options: ['go', 'goes', 'went', 'will go'],
+    answer: 2,
+  },
+  {
+    q: 'Fill in the blank: "We ___ to class tomorrow."',
+    options: ['go', 'went', 'will go', 'goes'],
+    answer: 2,
+  },
+  {
+    q: 'Fill in the blank: "We ___ to class now."',
+    options: ['go', 'went', 'will go', 'gone'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the tense for "I went yesterday."',
+    options: ['present', 'past', 'future', 'question'],
+    answer: 1,
+  },
+  {
+    q: 'Choose the tense for "I will go tomorrow."',
+    options: ['present', 'past', 'future', 'negative'],
+    answer: 2,
+  },
+  {
+    q: 'Choose the tense for "I go now."',
+    options: ['past', 'future', 'present', 'past perfect'],
+    answer: 2,
+  },
+  {
+    q: 'Select the best timeline order.',
+    options: [
+      'went, go, will go',
+      'go, went, will go',
+      'will go, go, went',
+      'go, will go, went',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "Yesterday she ___ to the store, but tomorrow she ___ again."',
+    options: ['go / go', 'went / will go', 'will go / went', 'goes / go'],
+    answer: 1,
+  },
+  {
+    q: 'Pick the wrong sentence for this lesson.',
+    options: [
+      'I go now.',
+      'I went yesterday.',
+      'I will go tomorrow.',
+      'I went tomorrow.',
+    ],
     answer: 1,
   },
 ];
@@ -181,7 +211,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p

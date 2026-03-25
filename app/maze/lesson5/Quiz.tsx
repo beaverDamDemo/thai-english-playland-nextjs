@@ -6,104 +6,134 @@ import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'Which is a preposition?',
-    options: ['happy', 'run', 'in', 'quickly'],
+    q: 'Choose the correct sentence.',
+    options: ['I am Anna.', 'I is Anna.', 'I are Anna.', 'I be Anna.'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'You am my friend.',
+      'You are my friend.',
+      'You is my friend.',
+      'You be my friend.',
+    ],
+    answer: 1,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'He are from Japan.',
+      'He am from Japan.',
+      'He is from Japan.',
+      'He be from Japan.',
+    ],
     answer: 2,
   },
   {
-    q: 'Complete: "The book is _____ the table".',
-    options: ['at', 'on', 'in', 'with'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the correct preposition: "I am interested _____ music".',
-    options: ['in', 'on', 'at', 'with'],
+    q: 'Choose the correct sentence.',
+    options: [
+      'She is happy.',
+      'She are happy.',
+      'She am happy.',
+      'She be happy.',
+    ],
     answer: 0,
   },
   {
-    q: 'Which preposition shows time?',
-    options: ['under', 'at', 'near', 'before'],
-    answer: 1,
+    q: 'Fill in: "I ___ a student."',
+    options: ['am', 'is', 'are', 'be'],
+    answer: 0,
   },
   {
-    q: 'Fill in: "She came _____ the room".',
-    options: ['to', 'in', 'into', 'inside'],
+    q: 'Fill in: "You ___ my friend."',
+    options: ['am', 'is', 'are', 'be'],
     answer: 2,
   },
   {
-    q: 'What preposition means "no more than"?',
-    options: ['within', 'under', 'about', 'during'],
-    answer: 1,
+    q: 'Fill in: "He ___ tired."',
+    options: ['am', 'are', 'is', 'be'],
+    answer: 2,
   },
   {
-    q: 'Complete: "I will meet you _____ noon".',
-    options: ['at', 'in', 'on', 'by'],
+    q: 'Fill in: "She ___ from Korea."',
+    options: ['is', 'are', 'am', 'be'],
     answer: 0,
   },
   {
-    q: 'Choose: "They walked _____ the park".',
-    options: ['through', 'along', 'across', 'over'],
+    q: 'Reorder the words: "am / I / happy"',
+    options: ['I am happy.', 'I happy am.', 'Am I happy.', 'Happy am I.'],
     answer: 0,
   },
   {
-    q: 'Which preposition shows direction?',
-    options: ['during', 'toward', 'since', 'before'],
-    answer: 1,
-  },
-  {
-    q: 'Fill in: "The cat is hiding _____ the bed".',
-    options: ['under', 'above', 'on', 'at'],
+    q: 'Reorder the words: "friend / are / my / You"',
+    options: [
+      'You are my friend.',
+      'You my are friend.',
+      'Are you my friend.',
+      'You are friend my.',
+    ],
     answer: 0,
   },
   {
-    q: 'Complete: "I have been here _____ Monday".',
-    options: ['since', 'for', 'until', 'during'],
+    q: 'Reorder the words: "is / He / tall"',
+    options: ['He is tall.', 'He tall is.', 'Is he tall.', 'Tall he is.'],
     answer: 0,
   },
   {
-    q: 'Choose the right preposition: "She is afraid _____ dogs".',
-    options: ['from', 'of', 'by', 'with'],
-    answer: 1,
+    q: 'Reorder the words: "is / She / my / teacher"',
+    options: [
+      'She my is teacher.',
+      'She is teacher my.',
+      'She is my teacher.',
+      'Is she my teacher.',
+    ],
+    answer: 2,
   },
   {
-    q: 'What comes after "according _____ "?',
-    options: ['of', 'to', 'in', 'at'],
-    answer: 1,
+    q: 'Choose the incorrect sentence.',
+    options: ['I am ready.', 'You are kind.', 'He are strong.', 'She is nice.'],
+    answer: 2,
   },
   {
-    q: 'Fill: "He is waiting _____ his friend".',
-    options: ['for', 'to', 'at', 'of'],
+    q: 'Choose the correct sentence.',
+    options: [
+      'I am from Brazil.',
+      'I is from Brazil.',
+      'I are from Brazil.',
+      'I be from Brazil.',
+    ],
     answer: 0,
   },
   {
-    q: 'Which preposition means "during"?',
-    options: ['at', 'during', 'for', 'until'],
-    answer: 1,
-  },
-  {
-    q: 'Complete: "I am tired _____ waiting".',
-    options: ['at', 'of', 'from', 'with'],
-    answer: 1,
-  },
-  {
-    q: 'Choose: "She is similar _____ her mother".',
-    options: ['to', 'with', 'like', 'as'],
+    q: 'Choose the correct sentence.',
+    options: [
+      'You are hungry.',
+      'You is hungry.',
+      'You am hungry.',
+      'You be hungry.',
+    ],
     answer: 0,
   },
   {
-    q: 'What preposition follows "be aware"?',
-    options: ['of', 'to', 'from', 'in'],
+    q: 'Choose the correct sentence.',
+    options: [
+      'He is my brother.',
+      'He are my brother.',
+      'He am my brother.',
+      'He be my brother.',
+    ],
     answer: 0,
   },
   {
-    q: 'Fill: "The keys are _____ the drawer".',
-    options: ['in', 'on', 'at', 'by'],
+    q: 'Choose the correct sentence.',
+    options: [
+      'She is in class.',
+      'She are in class.',
+      'She am in class.',
+      'She be in class.',
+    ],
     answer: 0,
-  },
-  {
-    q: 'Choose: "I will see you _____ Friday".',
-    options: ['at', 'on', 'in', 'by'],
-    answer: 1,
   },
 ];
 
@@ -181,7 +211,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p

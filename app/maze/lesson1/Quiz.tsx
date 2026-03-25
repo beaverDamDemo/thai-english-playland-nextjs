@@ -128,7 +128,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p

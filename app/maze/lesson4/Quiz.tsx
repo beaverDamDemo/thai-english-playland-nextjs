@@ -6,103 +6,118 @@ import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'Which is a noun?',
-    options: ['run', 'beautiful', 'cat', 'quickly'],
-    answer: 2,
+    q: 'Choose the correct pronoun for a boy: Tom is a student. ___ is kind.',
+    options: ['He', 'She', 'It', 'They'],
+    answer: 0,
   },
   {
-    q: 'What is a common noun?',
-    options: ['John', 'London', 'teacher', 'Paris'],
-    answer: 2,
-  },
-  {
-    q: 'Choose the proper noun:',
-    options: ['day', 'Monday', 'week', 'month'],
+    q: 'Choose the correct pronoun for a girl: Anna is happy. ___ is smiling.',
+    options: ['He', 'She', 'You', 'We'],
     answer: 1,
   },
   {
-    q: 'Which is a plural noun?',
-    options: ['cat', 'dog', 'children', 'flower'],
-    answer: 2,
+    q: 'Complete: "___ is Tom."',
+    options: ['He', 'She', 'They', 'It'],
+    answer: 0,
   },
   {
-    q: 'What is the plural of "box"?',
-    options: ['boxe', 'boxs', 'boxes', 'box'],
-    answer: 2,
-  },
-  {
-    q: 'Identify the noun: "The teacher taught the class".',
-    options: ['taught', 'class', 'the', 'teacher'],
-    answer: 3,
-  },
-  {
-    q: 'Which word is a countable noun?',
-    options: ['water', 'sand', 'book', 'air'],
-    answer: 2,
-  },
-  {
-    q: 'Choose an uncountable noun:',
-    options: ['apple', 'milk', 'chair', 'car'],
+    q: 'Complete: "___ is Anna."',
+    options: ['He', 'She', 'It', 'We'],
     answer: 1,
   },
   {
-    q: 'What is the singular of "children"?',
-    options: ['children', 'child', 'childs', 'childes'],
+    q: 'Identify the correct sentence.',
+    options: ['He is a girl.', 'She is a woman.', 'He is Anna.', 'She is Tom.'],
     answer: 1,
   },
   {
-    q: 'Which is a concrete noun?',
-    options: ['happiness', 'love', 'table', 'truth'],
+    q: 'Who is a man? Choose the right pronoun.',
+    options: ['He', 'She', 'It', 'They'],
+    answer: 0,
+  },
+  {
+    q: 'Who is a woman? Choose the right pronoun.',
+    options: ['He', 'She', 'It', 'You'],
+    answer: 1,
+  },
+  {
+    q: 'Read and choose: "This is Jack. ___ is my friend."',
+    options: ['He', 'She', 'We', 'It'],
+    answer: 0,
+  },
+  {
+    q: 'Read and choose: "This is Lina. ___ is my friend."',
+    options: ['He', 'She', 'It', 'They'],
+    answer: 1,
+  },
+  {
+    q: 'Choose the best question answer pair.',
+    options: [
+      'Who is Anna? He is Anna.',
+      'Who is Tom? She is Tom.',
+      'Who is Tom? He is Tom.',
+      'Who is Mia? He is Mia.',
+    ],
     answer: 2,
   },
   {
-    q: 'Identify the abstract noun:',
-    options: ['book', 'freedom', 'car', 'house'],
+    q: 'Which sentence uses he correctly?',
+    options: [
+      'He is my mother.',
+      'He is my brother.',
+      'He is my sister.',
+      'He is Anna.',
+    ],
     answer: 1,
   },
   {
-    q: 'What is the plural of "person"?',
-    options: ['persons', 'peoples', 'people', 'personnes'],
+    q: 'Which sentence uses she correctly?',
+    options: [
+      'She is my father.',
+      'She is my uncle.',
+      'She is my sister.',
+      'She is Tom.',
+    ],
     answer: 2,
   },
   {
-    q: 'Choose the collective noun:',
-    options: ['dog', 'group', 'happy', 'run'],
+    q: 'Choose the correct reading: "Mila is a girl."',
+    options: ['He is Mila.', 'She is Mila.', 'It is Mila.', 'They is Mila.'],
     answer: 1,
   },
   {
-    q: 'Which is a possessive noun form?',
-    options: ['Johns', "John's", "Johns'", "john's"],
-    answer: 1,
+    q: 'Choose the correct reading: "Ben is a boy."',
+    options: ['He is Ben.', 'She is Ben.', 'They are Ben.', 'It are Ben.'],
+    answer: 0,
   },
   {
-    q: 'Identify the noun in this sentence: "She enjoys reading books".',
-    options: ['enjoys', 'reading', 'books', 'she'],
+    q: 'Complete: "___ is a man. ___ is strong."',
+    options: ['He / He', 'She / She', 'He / She', 'She / He'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "___ is a woman. ___ is kind."',
+    options: ['He / He', 'He / She', 'She / She', 'She / He'],
     answer: 2,
   },
   {
-    q: 'What is the plural of "tooth"?',
-    options: ['tooths', 'teeth', 'tooth', 'teeths'],
-    answer: 1,
-  },
-  {
-    q: 'Which is a mass noun?',
-    options: ['cat', 'flour', 'book', 'tree'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the noun: "Run quickly to the store".',
-    options: ['run', 'quickly', 'store', 'to'],
+    q: 'Pick the incorrect sentence.',
+    options: [
+      'He is a boy.',
+      'She is a girl.',
+      'He is a woman.',
+      'She is Anna.',
+    ],
     answer: 2,
   },
   {
-    q: 'What does a noun represent?',
-    options: ['action', 'description', 'person, place or thing', 'quality'],
-    answer: 2,
-  },
-  {
-    q: 'Identify the compound noun:',
-    options: ['beautiful', 'sunshine', 'quickly', 'slowly'],
+    q: 'Choose the correct pair.',
+    options: [
+      'Tom = she, Anna = he',
+      'Tom = he, Anna = she',
+      'Tom = it, Anna = they',
+      'Tom = we, Anna = you',
+    ],
     answer: 1,
   },
 ];
@@ -181,7 +196,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p

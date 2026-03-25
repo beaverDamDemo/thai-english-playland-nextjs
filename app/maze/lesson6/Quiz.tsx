@@ -6,104 +6,129 @@ import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'Which is a conjunction?',
-    options: ['happy', 'and', 'run', 'quickly'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the correct conjunction: "I like apples _____ oranges".',
-    options: ['and', 'but', 'or', 'because'],
+    q: 'Choose the correct verb: "I ___ to school every day."',
+    options: ['go', 'goes', 'went', 'going'],
     answer: 0,
   },
   {
-    q: 'What conjunction shows contrast?',
-    options: ['and', 'or', 'but', 'so'],
-    answer: 2,
-  },
-  {
-    q: 'Complete: "He wanted to go, _____ he was tired".',
-    options: ['and', 'because', 'but', 'or'],
-    answer: 2,
-  },
-  {
-    q: 'Which conjunction introduces a reason?',
-    options: ['and', 'because', 'but', 'or'],
+    q: 'Choose the correct verb: "She ___ a book at night."',
+    options: ['read', 'reads', 'reading', 'readed'],
     answer: 1,
   },
   {
-    q: 'Fill: "You can have tea _____ coffee".',
-    options: ['and', 'or', 'but', 'because'],
-    answer: 1,
-  },
-  {
-    q: 'What conjunction connects similar ideas?',
-    options: ['but', 'because', 'and', 'although'],
-    answer: 2,
-  },
-  {
-    q: 'Choose: "She studied hard, _____ she passed the exam".',
-    options: ['so', 'because', 'but', 'or'],
+    q: 'Choose the correct verb: "They ___ rice for lunch."',
+    options: ['eat', 'eats', 'ate', 'eating'],
     answer: 0,
   },
   {
-    q: 'Complete: "Although it was raining, _____ we went outside".',
-    options: ['and', 'so', 'yet', 'because'],
+    q: 'Choose the correct verb: "My father ___ at a bank."',
+    options: ['work', 'worked', 'works', 'working'],
     answer: 2,
   },
   {
-    q: 'Which is a coordinating conjunction?',
-    options: ['because', 'although', 'and', 'since'],
+    q: 'Choose the correct verb: "We ___ at 10 p.m."',
+    options: ['sleep', 'sleeps', 'slept', 'sleeping'],
+    answer: 1,
+  },
+  {
+    q: 'Complete: "I ___ breakfast at 7."',
+    options: ['eat', 'eats', 'ate', 'eaten'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "He ___ to work by bus."',
+    options: ['go', 'goes', 'going', 'gone'],
+    answer: 1,
+  },
+  {
+    q: 'Complete: "She ___ every evening."',
+    options: ['read', 'reads', 'reading', 'to read'],
+    answer: 1,
+  },
+  {
+    q: 'Choose the best sentence.',
+    options: [
+      'I goes to school.',
+      'I go to school.',
+      'I going to school.',
+      'I gone to school.',
+    ],
+    answer: 1,
+  },
+  {
+    q: 'Choose the best sentence.',
+    options: [
+      'She read a book every day.',
+      'She reads a book every day.',
+      'She reading a book every day.',
+      'She to read a book every day.',
+    ],
+    answer: 1,
+  },
+  {
+    q: 'Choose the best sentence.',
+    options: [
+      'They eats dinner at home.',
+      'They eating dinner at home.',
+      'They eat dinner at home.',
+      'They eaten dinner at home.',
+    ],
     answer: 2,
   },
   {
-    q: 'Fill: "I wanted to come, _____ I was sick".',
-    options: ['and', 'but', 'because', 'so'],
+    q: 'Choose the best sentence.',
+    options: [
+      'He works in a store.',
+      'He work in a store.',
+      'He worked in a store every day now.',
+      'He working in a store.',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "At night, the baby ___."',
+    options: ['sleep', 'sleeps', 'slept', 'sleeping'],
+    answer: 1,
+  },
+  {
+    q: 'Fill in the blank: "I ___ English at home."',
+    options: ['read', 'reads', 'reading', 'reads to'],
+    answer: 0,
+  },
+  {
+    q: 'Fill in the blank: "My mom ___ breakfast early."',
+    options: ['eat', 'eats', 'eating', 'ate'],
+    answer: 1,
+  },
+  {
+    q: 'Which sentence is in present simple?',
+    options: [
+      'I went to school.',
+      'I will go to school.',
+      'I go to school.',
+      'I am go to school.',
+    ],
     answer: 2,
   },
   {
-    q: 'What conjunction shows consequence?',
-    options: ['because', 'therefore', 'although', 'when'],
-    answer: 1,
+    q: 'Choose the wrong sentence.',
+    options: [
+      'I work at home.',
+      'She works at home.',
+      'He work at home.',
+      'They work at home.',
+    ],
+    answer: 2,
   },
   {
-    q: 'Choose: "He is intelligent _____ hardworking".',
-    options: ['and', 'or', 'but', 'because'],
+    q: 'Choose the correct sentence with sleep.',
+    options: [
+      'She sleep early.',
+      'She sleeps early.',
+      'She sleeping early.',
+      'She slept early every day now.',
+    ],
     answer: 0,
-  },
-  {
-    q: 'Complete: "We need money, _____ we are saving".',
-    options: ['so', 'because', 'but', 'and'],
-    answer: 0,
-  },
-  {
-    q: 'Which conjunction shows time?',
-    options: ['because', 'when', 'and', 'or'],
-    answer: 1,
-  },
-  {
-    q: 'Fill: "Do you prefer cats _____ dogs?"',
-    options: ['and', 'or', 'but', 'because'],
-    answer: 1,
-  },
-  {
-    q: 'What conjunction means "in addition"?',
-    options: ['moreover', 'but', 'or', 'although'],
-    answer: 0,
-  },
-  {
-    q: 'Choose: "I like reading, _____ I do not like writing".',
-    options: ['and', 'but', 'or', 'because'],
-    answer: 1,
-  },
-  {
-    q: 'Complete: "_____ the door was locked, we could not enter".',
-    options: ['Because', 'Although', 'And', 'Or'],
-    answer: 0,
-  },
-  {
-    q: 'Which conjunction introduces a condition?',
-    options: ['because', 'if', 'and', 'but'],
-    answer: 1,
   },
 ];
 
@@ -181,7 +206,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p

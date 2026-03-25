@@ -6,123 +6,133 @@ import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'What is a clause?',
-    options: [
-      'a word',
-      'a group of words with subject and verb',
-      'a letter',
-      'a sound',
-    ],
-    answer: 1,
-  },
-  {
-    q: 'Which is an independent clause?',
-    options: [
-      'Although it rained',
-      'The sun is bright',
-      'While I sleep',
-      'Because she left',
-    ],
-    answer: 1,
-  },
-  {
-    q: 'What is a dependent clause?',
-    options: ['a complete sentence', 'a word', 'cannot stand alone', 'a noun'],
-    answer: 2,
-  },
-  {
-    q: 'Choose the dependent clause:',
-    options: [
-      'I like cookies',
-      'When I wake up',
-      'The sky is blue',
-      'He runs fast',
-    ],
-    answer: 1,
-  },
-  {
-    q: 'What does a relative clause modify?',
-    options: ['verb', 'noun', 'adjective', 'adverb'],
-    answer: 1,
-  },
-  {
-    q: 'Identify the relative clause: "The book that I read was good".',
-    options: ['The book', 'that I read', 'was good', 'I read'],
-    answer: 1,
-  },
-  {
-    q: 'Which pronoun introduces a relative clause?',
-    options: ['and', 'but', 'who', 'or'],
-    answer: 2,
-  },
-  {
-    q: 'What type of clause does "because" introduce?',
-    options: ['relative', 'adverbial', 'noun', 'adjective'],
-    answer: 1,
-  },
-  {
-    q: 'Choose: "I went home _____ I was tired".',
-    options: ['although', 'because', 'which', 'that'],
-    answer: 1,
-  },
-  {
-    q: 'What is a conditional clause?',
-    options: ['shows time', 'shows condition', 'shows reason', 'shows result'],
-    answer: 1,
-  },
-  {
-    q: 'Identify the conditional: "If it rains, we stay inside".',
-    options: ['we stay inside', 'If it rains', 'it rains', 'rains'],
-    answer: 1,
-  },
-  {
-    q: 'What introduces a noun clause?',
-    options: ['that', 'which', 'where', 'when'],
+    q: 'Choose the place word: "I study at ___."',
+    options: ['school', 'under', 'next to', 'happy'],
     answer: 0,
   },
   {
-    q: 'Choose the noun clause: "What you said was wrong".',
-    options: ['What you said', 'was wrong', 'you', 'said'],
+    q: 'Choose the place word: "I save money at the ___."',
+    options: ['bank', 'store', 'home', 'table'],
     answer: 0,
   },
   {
-    q: 'Which clause can replace a noun?',
-    options: ['relative', 'noun', 'adverbial', 'temporal'],
+    q: 'Choose the place word: "I buy food at the ___."',
+    options: ['store', 'school', 'bank', 'under'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the place word: "I sleep at ___."',
+    options: ['home', 'bank', 'store', 'next to'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "The book is ___ the table."',
+    options: ['on', 'under', 'in', 'next to'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "The cat is ___ the table."',
+    options: ['on', 'under', 'at', 'from'],
     answer: 1,
   },
   {
-    q: 'What adverbial clause shows time?',
+    q: 'Complete: "The pen is ___ the bag."',
+    options: ['in', 'on', 'under', 'next to'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "The chair is ___ the desk."',
+    options: ['next to', 'under', 'in', 'on'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct sentence.',
     options: [
-      'If he comes',
-      'When the sun rises',
-      'So that we know',
-      'Although it is late',
+      'The bag is on the table.',
+      'The bag is in the table.',
+      'The bag is under to table.',
+      'The bag on is table.',
     ],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'The cat is under the chair.',
+      'The cat is on under chair.',
+      'The cat under is chair.',
+      'The cat is in chair under.',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'The phone is next to the book.',
+      'The phone is next the book.',
+      'The phone next to is book.',
+      'The phone in next to book.',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Pick the preposition that means inside.',
+    options: ['in', 'on', 'under', 'next to'],
+    answer: 0,
+  },
+  {
+    q: 'Pick the preposition that means above and touching.',
+    options: ['on', 'in', 'under', 'next to'],
+    answer: 0,
+  },
+  {
+    q: 'Pick the preposition that means below.',
+    options: ['on', 'under', 'in', 'next to'],
     answer: 1,
   },
   {
-    q: 'Identify the type: "Although she was tired".',
-    options: ['relative', 'concessive', 'conditional', 'causal'],
-    answer: 1,
+    q: 'Pick the preposition that means beside.',
+    options: ['in', 'on', 'next to', 'under'],
+    answer: 2,
   },
   {
-    q: 'What is a causal clause?',
-    options: ['shows time', 'shows reason', 'shows contrast', 'shows result'],
-    answer: 1,
+    q: 'Fill in the blank: "She is ___ home."',
+    options: ['at', 'on', 'under', 'next to'],
+    answer: 0,
   },
   {
-    q: 'Choose: "He studied hard _____ he passed".',
-    options: ['although', 'so that', 'while', 'if'],
-    answer: 1,
+    q: 'Fill in the blank: "He is ___ school now."',
+    options: ['at', 'under', 'on', 'next to'],
+    answer: 0,
   },
   {
-    q: 'Which word introduces a purpose clause?',
-    options: ['because', 'so that', 'unless', 'if'],
-    answer: 1,
+    q: 'Choose the best mini-reading answer: "The bag is under the chair." Where is the bag?',
+    options: [
+      'under the chair',
+      'on the chair',
+      'in the chair',
+      'next to the chair',
+    ],
+    answer: 0,
   },
   {
-    q: 'What connects two independent clauses properly?',
-    options: ['comma', 'semicolon or conjunction', 'period', 'nothing'],
+    q: 'Choose the best mini-reading answer: "The bank is next to the store." Where is the bank?',
+    options: [
+      'under the store',
+      'in the store',
+      'next to the store',
+      'on the store',
+    ],
+    answer: 2,
+  },
+  {
+    q: 'Choose the incorrect sentence.',
+    options: [
+      'The book is on the desk.',
+      'The key is in the bag.',
+      'The cat is next to the sofa.',
+      'The phone is under to table.',
+    ],
     answer: 1,
   },
 ];
@@ -201,7 +211,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p

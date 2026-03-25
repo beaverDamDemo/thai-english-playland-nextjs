@@ -6,103 +6,133 @@ import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'What is the opposite of "big"?',
-    options: ['huge', 'small', 'large', 'tiny'],
-    answer: 1,
-  },
-  {
-    q: 'Which adjective describes a cold day?',
-    options: ['warm', 'hot', 'cold', 'freezing'],
-    answer: 2,
-  },
-  {
-    q: 'Choose the correct adjective: "That is a _____ idea".',
-    options: ['terrible', 'badly', 'terribly', 'worse'],
+    q: 'Choose the correct phrase for something I own.',
+    options: ['my phone', 'your phone', 'he phone', 'she phone'],
     answer: 0,
   },
   {
-    q: 'What adjective means "very happy"?',
-    options: ['sad', 'delighted', 'angry', 'upset'],
+    q: 'Choose the correct phrase for something you own.',
+    options: ['my bag', 'your bag', 'our bags', 'it bag'],
     answer: 1,
   },
   {
-    q: 'Complete: "The water is too _____".',
-    options: ['warm', 'dirty', 'slow', 'quick'],
+    q: 'Complete: "This is ___ name." (I am speaking about myself)',
+    options: ['my', 'your', 'she', 'their'],
     answer: 0,
   },
   {
-    q: 'Which is an adjective describing speed?',
-    options: ['run', 'fast', 'running', 'runs'],
-    answer: 1,
+    q: 'Complete: "What is ___ name?" (I am asking you)',
+    options: ['my', 'his', 'your', 'our'],
+    answer: 2,
   },
   {
-    q: 'What word means "not dark"?',
-    options: ['dim', 'bright', 'light', 'shadow'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the correct adjective: "She wore a _____ dress".',
-    options: ['beauty', 'beautiful', 'beauty', 'beautify'],
-    answer: 1,
-  },
-  {
-    q: 'Which adjective is opposite to "expensive"?',
-    options: ['cheap', 'costly', 'valuable', 'rare'],
+    q: 'Choose the correct sentence.',
+    options: [
+      'This is my book.',
+      'This is your I book.',
+      'This my is book.',
+      'This is book my.',
+    ],
     answer: 0,
   },
   {
-    q: 'What describes something made of iron?',
-    options: ['wooden', 'metallic', 'iron', 'strong'],
+    q: 'Choose the correct sentence when talking to a friend.',
+    options: [
+      'Is this my bag?',
+      'Is this your bag?',
+      'Is this she bag?',
+      'Is this he bag?',
+    ],
     answer: 1,
   },
   {
-    q: 'Choose the adjective: "The _____ building is very old".',
-    options: ['build', 'building', 'built', 'builds'],
+    q: 'Fill in the blank: "This is ___ phone." (I own it)',
+    options: ['my', 'your', 'her', 'their'],
+    answer: 0,
+  },
+  {
+    q: 'Fill in the blank: "This is ___ chair." (You own it)',
+    options: ['my', 'your', 'its', 'our'],
     answer: 1,
   },
   {
-    q: 'Which adjective means "without noise"?',
-    options: ['loud', 'quiet', 'noisy', 'silent'],
-    answer: 2,
-  },
-  {
-    q: 'Complete: "The puzzle is too _____".',
-    options: ['easy', 'difficulty', 'difficult', 'difficulties'],
-    answer: 2,
-  },
-  {
-    q: 'What adjective describes a soft texture?',
-    options: ['hard', 'rough', 'smooth', 'bumpy'],
-    answer: 2,
-  },
-  {
-    q: 'Choose correctly: "This is a _____ movie".',
-    options: ['bored', 'boring', 'bore', 'bores'],
+    q: 'Choose the best answer: "Is this my book or your book?"',
+    options: [
+      'book and book',
+      'my book or your book',
+      'yes book',
+      'book is blue',
+    ],
     answer: 1,
   },
   {
-    q: 'Which adjective means "not new"?',
-    options: ['ancient', 'young', 'old', 'fresh'],
-    answer: 2,
+    q: 'Complete: "___ name is Ali." (I am Ali)',
+    options: ['My', 'Your', 'His', 'Her'],
+    answer: 0,
   },
   {
-    q: 'What describes something very important?',
-    options: ['minor', 'significant', 'small', 'tiny'],
+    q: 'Complete: "___ name is Ken." (I am talking to Ken)',
+    options: ['My', 'Your', 'Our', 'Its'],
     answer: 1,
   },
   {
-    q: 'Complete: "The sky is _____".',
-    options: ['dark', 'blue', 'bright', 'clear'],
+    q: 'Pick the short sentence with my/your used correctly.',
+    options: [
+      'Your are my friend.',
+      'You are my friend.',
+      'You my are friend.',
+      'My are you friend.',
+    ],
     answer: 1,
   },
   {
-    q: 'Which adjective describes sweetness?',
-    options: ['bitter', 'salty', 'sweet', 'sour'],
+    q: 'Choose the phrase for "the bag belongs to you".',
+    options: ['my bag', 'your bag', 'his bag', 'our bag'],
+    answer: 1,
+  },
+  {
+    q: 'Choose the phrase for "the pen belongs to me".',
+    options: ['my pen', 'your pen', 'their pen', 'its pen'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "Is this ___ phone?" (I am asking you)',
+    options: ['my', 'your', 'our', 'its'],
+    answer: 1,
+  },
+  {
+    q: 'Complete: "No, it is ___ phone." (I answer: it belongs to me)',
+    options: ['your', 'my', 'their', 'his'],
+    answer: 1,
+  },
+  {
+    q: 'Choose the best mini-dialogue ending: "What is your name?"',
+    options: [
+      'My name is Lina.',
+      'Your name is Lina.',
+      'Name book chair.',
+      'I yes no.',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct sentence order.',
+    options: [
+      'my this is bag',
+      'this is bag my',
+      'this is my bag',
+      'is this my bag',
+    ],
     answer: 2,
   },
   {
-    q: 'What does "elegant" mean?',
-    options: ['simple', 'graceful', 'common', 'basic'],
+    q: 'Choose the correct question.',
+    options: [
+      'This your book is?',
+      'Is this your book?',
+      'Your is this book?',
+      'Is your this book?',
+    ],
     answer: 1,
   },
 ];
@@ -181,7 +211,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p

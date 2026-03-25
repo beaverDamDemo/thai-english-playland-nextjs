@@ -6,104 +6,119 @@ import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'Which verb form is correct: "She _____ to the store every day"?',
-    options: ['go', 'goes', 'going', 'gone'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the correct option: "They _____ been here for 3 hours".',
-    options: ['has', 'have', 'had', 'having'],
-    answer: 1,
-  },
-  {
-    q: 'What is the past tense of "eat"?',
-    options: ['eats', 'eating', 'ate', 'eaten'],
-    answer: 2,
-  },
-  {
-    q: 'Complete: "I _____ my homework yesterday".',
-    options: ['do', 'does', 'did', 'done'],
-    answer: 2,
-  },
-  {
-    q: 'Which is correct: "He _____ to work every morning"?',
-    options: ['walk', 'walks', 'walking', 'walked'],
-    answer: 1,
-  },
-  {
-    q: 'Select the right form: "We _____ never seen that movie".',
-    options: ['has', 'have', 'had', 'do'],
-    answer: 1,
-  },
-  {
-    q: 'What is the present continuous form of "read"?',
-    options: ['read', 'reads', 'reading', 'readed'],
-    answer: 2,
-  },
-  {
-    q: 'Choose correctly: "She _____ studying for the exam".',
-    options: ['are', 'is', 'am', 'be'],
-    answer: 1,
-  },
-  {
-    q: 'Which verb tense is used: "I _____ worked here for 5 years"?',
-    options: ['have', 'has', 'am', 'is'],
+    q: 'Choose the noun for a male adult.',
+    options: ['man', 'run', 'happy', 'read'],
     answer: 0,
   },
   {
-    q: 'Complete: "They _____ arrive tomorrow afternoon".',
-    options: ['will', 'would', 'are', 'have'],
+    q: 'Choose the noun for a female adult.',
+    options: ['woman', 'walk', 'blue', 'sleep'],
     answer: 0,
   },
   {
-    q: 'What is the past participle of "break"?',
-    options: ['broke', 'breaking', 'broken', 'breaks'],
+    q: 'Which word is a child male?',
+    options: ['girl', 'boy', 'friend', 'chair'],
+    answer: 1,
+  },
+  {
+    q: 'Which word is a child female?',
+    options: ['book', 'boy', 'girl', 'phone'],
     answer: 2,
   },
   {
-    q: 'Select the correct form: "He _____ been absent all week".',
-    options: ['has', 'have', 'is', 'are'],
+    q: 'Choose a word for someone you like and trust.',
+    options: ['friend', 'bag', 'table', 'store'],
     answer: 0,
   },
   {
-    q: 'Which is grammatically correct: "The children _____ playing"?',
-    options: ['is', 'are', 'am', 'be'],
+    q: 'Which word names this object: You call people with it.',
+    options: ['book', 'phone', 'chair', 'boy'],
     answer: 1,
   },
   {
-    q: 'Complete: "I _____ my keys this morning".',
-    options: ['lose', 'lost', 'losing', 'loses'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the right form: "She _____ write three letters today".',
-    options: ['will', 'would', 'is', 'shall'],
+    q: 'Which item do you carry on your shoulder?',
+    options: ['bag', 'book', 'man', 'girl'],
     answer: 0,
   },
   {
-    q: 'What does "He has gone to the store" indicate?',
-    options: ['Present', 'Past', 'Present Perfect', 'Future'],
+    q: 'Which object is for reading?',
+    options: ['chair', 'book', 'phone', 'friend'],
+    answer: 1,
+  },
+  {
+    q: 'Choose the object you sit on.',
+    options: ['woman', 'bag', 'chair', 'boy'],
     answer: 2,
   },
   {
-    q: 'Select correctly: "They _____ been working since morning".',
-    options: ['has', 'have', 'is', 'are'],
-    answer: 1,
-  },
-  {
-    q: 'Which form is correct: "You _____ understand this lesson"?',
-    options: ['will', 'would', 'shall', 'should'],
-    answer: 3,
-  },
-  {
-    q: 'Complete: "We _____ seen that movie twice".',
-    options: ['have', 'has', 'had', 'do'],
+    q: 'Complete the sentence: "This is a ___."',
+    options: ['book', 'run', 'quickly', 'happy'],
     answer: 0,
   },
   {
-    q: 'What is the gerund form of "teach"?',
-    options: ['taught', 'teaching', 'teaches', 'teach'],
+    q: 'Complete: "This is a woman. ___ is my teacher."',
+    options: ['She', 'Book', 'Bag', 'Chair'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct noun: "Tom is my ___."',
+    options: ['friend', 'sleep', 'under', 'blue'],
+    answer: 0,
+  },
+  {
+    q: 'Which sentence is correct?',
+    options: [
+      'This is a book.',
+      'This are a book.',
+      'This is books.',
+      'This is to book.',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Choose the best completion: "This is my ___."',
+    options: ['phone', 'run', 'go', 'eat'],
+    answer: 0,
+  },
+  {
+    q: 'Pick the people word.',
+    options: ['chair', 'friend', 'book', 'bag'],
     answer: 1,
+  },
+  {
+    q: 'Pick the objects pair.',
+    options: [
+      'man and woman',
+      'boy and girl',
+      'phone and bag',
+      'friend and teacher',
+    ],
+    answer: 2,
+  },
+  {
+    q: 'Complete: "This is a ___. I read it every day."',
+    options: ['book', 'chair', 'phone', 'girl'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the noun in this sentence: "The boy has a bag."',
+    options: ['boy', 'has', 'a', 'The'],
+    answer: 0,
+  },
+  {
+    q: 'Complete: "This is my friend. ___ is kind."',
+    options: ['He', 'Book', 'Chair', 'Bag'],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct simple sentence.',
+    options: [
+      'This is a chair.',
+      'This chair are.',
+      'Is this chair a.',
+      'This is chairs.',
+    ],
+    answer: 0,
   },
 ];
 
@@ -182,7 +197,7 @@ export default function Quiz({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '10px',
+            marginBottom: '25px',
           }}
         >
           <p
