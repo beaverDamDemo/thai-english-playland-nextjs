@@ -1,7 +1,8 @@
-// app/maze/lesson6/Quiz.tsx
+﻿// app/maze/lesson6/Quiz.tsx
 'use client';
 
 import { useState } from 'react';
+import { useThaiQuestion } from '../_components/useThaiQuestion';
 import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
@@ -148,6 +149,7 @@ export default function Quiz({
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
+  const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
   function handleAnswer(index: number) {
     let newScore = score;
@@ -275,6 +277,16 @@ export default function Quiz({
         >
           {selectedQuestions[current].q}
         </p>
+        <p
+          style={{
+            margin: '0',
+            fontSize: '14px',
+            color: '#666',
+            lineHeight: 1.45,
+          }}
+        >
+          {thaiQuestion}
+        </p>
       </div>
       <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         {selectedQuestions[current].options.map((opt, i) => (
@@ -291,3 +303,6 @@ export default function Quiz({
     </div>
   );
 }
+
+
+
