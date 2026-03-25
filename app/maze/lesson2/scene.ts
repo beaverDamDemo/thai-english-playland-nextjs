@@ -72,8 +72,6 @@ export class MazeScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor('#1E4D3A');
-
     this.maxCredits = this.registry.get('maxMoves') ?? 0;
     this.credits = this.maxCredits;
     this.deck = this.buildDeck();
@@ -82,6 +80,8 @@ export class MazeScene extends Phaser.Scene {
 
     const width = Number(this.sys.game.config.width);
     const height = Number(this.sys.game.config.height);
+
+    this.drawBackgroundPattern(width, height);
 
     this.titleText = this.add.text(16, 14, 'POKER CARD COLLECTION', {
       fontSize: '26px',
@@ -226,6 +226,49 @@ export class MazeScene extends Phaser.Scene {
       }
     }
     return cards;
+  }
+
+  private drawBackgroundPattern(width: number, height: number) {
+    const graphics = this.add.graphics();
+
+    graphics.fillStyle(0x16382c, 1);
+    graphics.fillRect(0, 0, width, height);
+
+    graphics.lineStyle(1, 0x2f6a57, 0.42);
+    for (let x = -24; x < width + 24; x += 32) {
+      for (let y = 110; y < height; y += 32) {
+        graphics.strokePoints(
+          [
+            new Phaser.Geom.Point(x + 16, y),
+            new Phaser.Geom.Point(x + 32, y + 16),
+            new Phaser.Geom.Point(x + 16, y + 32),
+            new Phaser.Geom.Point(x, y + 16),
+          ],
+          true,
+        );
+      }
+    }
+
+    graphics.fillStyle(0x214d3c, 0.35);
+    for (let x = -16; x < width + 16; x += 64) {
+      for (let y = 126; y < height; y += 64) {
+        graphics.fillPoints(
+          [
+            new Phaser.Geom.Point(x + 16, y),
+            new Phaser.Geom.Point(x + 32, y + 16),
+            new Phaser.Geom.Point(x + 16, y + 32),
+            new Phaser.Geom.Point(x, y + 16),
+          ],
+          true,
+        );
+      }
+    }
+
+    graphics.lineStyle(8, 0x0f271f, 0.95);
+    graphics.strokeRoundedRect(8, 8, width - 16, height - 16, 18);
+
+    graphics.lineStyle(2, 0x4d8b74, 0.45);
+    graphics.strokeRoundedRect(18, 18, width - 36, height - 36, 14);
   }
 
   private generateCard(): Card | null {
