@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from '../HomeView.module.css';
 
@@ -8,10 +9,15 @@ export default function CasinoScreenPage() {
       <div className={styles.screenShapeTwo} aria-hidden="true" />
 
       <header className={styles.screenHeader}>
-        <span className={styles.screenBadge}>Coming Soon</span>
         <h1 className={styles.screenTitle}>Casino Screen</h1>
         <Link href="/" className={styles.headerHomeLink}>
-          Home
+          <Image
+            src="/assets/home-icon.png"
+            alt="Home"
+            width={28}
+            height={28}
+            className={styles.homeLinkImg}
+          />
         </Link>
       </header>
 

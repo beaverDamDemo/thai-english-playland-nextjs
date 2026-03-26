@@ -221,15 +221,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 30px;
-  padding: 6px 12px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
   text-decoration: none;
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(126, 144, 198, 0.32);
-  color: #29457d;
-  font-size: 0.82rem;
-  font-weight: 800;
   box-shadow: 0 6px 14px rgba(52, 71, 123, 0.08);
   transition:
     transform 0.15s ease,
@@ -241,6 +238,13 @@
   background: #ffffff;
   transform: translateY(-1px);
   box-shadow: 0 8px 18px rgba(52, 71, 123, 0.14);
+}
+
+.homeLinkImg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .screenBadge {

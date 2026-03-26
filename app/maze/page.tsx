@@ -115,10 +115,15 @@ export default function MazeScreenPage() {
   return (
     <div className={styles.mazePage}>
       <header className={styles.pageHeader}>
-        <div className={styles.headerBadge}>Maze Mode</div>
-        <span className={styles.appTitle}>Maze Lessons</span>
+        <span className={styles.appTitle}>Maze Game Lessons</span>
         <Link href="/" className={styles.headerHomeLink}>
-          Home
+          <Image
+            src="/assets/home-icon.png"
+            alt="Home"
+            width={28}
+            height={28}
+            className={styles.homeLinkImg}
+          />
         </Link>
       </header>
 

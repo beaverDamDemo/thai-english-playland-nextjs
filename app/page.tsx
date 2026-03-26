@@ -14,7 +14,7 @@ export default function HomePage() {
 
       <section className={styles.hubGrid} aria-label="Game mode links">
         <Link href="/maze" className={`${styles.hubCard} ${styles.mazeCard}`}>
-          <span className={styles.hubTitle}>Maze Lessons</span>
+          <span className={styles.hubTitle}>Maze Game Lessons</span>
           <span className={styles.hubText}>
             Classic lesson path with unlocks.
           </span>
