@@ -14,13 +14,11 @@ const UNLOCKED_KEY = 'englishCasinoUnlockedLessons';
 const PENDING_UNLOCK_KEY = 'englishCasinoPendingUnlockLesson';
 
 const lessons = [
-  { num: 1, color: '#F44336', cls: 'location1' },
-  { num: 2, color: '#FF9800', cls: 'location2' },
-  { num: 3, color: '#FFC107', cls: 'location3' },
-  { num: 4, color: '#4CAF50', cls: 'location4' },
-  { num: 5, color: '#00BCD4', cls: 'location5' },
-  { num: 6, color: '#3F51B5', cls: 'location6' },
-  { num: 7, color: '#9C27B0', cls: 'location7' },
+  { num: 1, color: '#264653', left: 0, top: 0, cls: 'location1' },
+  { num: 2, color: '#E63946', left: 9, top: 80, cls: 'location2' },
+  { num: 3, color: '#1D3557', left: 35.4, top: 58.6, cls: 'location3' },
+  { num: 4, color: '#2A9D8F', left: 47.7, top: 46.7, cls: 'location4' },
+  { num: 5, color: '#F4A261', left: 37.5, top: 22.9, cls: 'location5' },
 ];
 
 export default function CasinoScreenPage() {
