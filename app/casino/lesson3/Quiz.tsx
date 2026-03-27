@@ -6,125 +6,140 @@ import styles from '../../maze/_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: 'Choose the noun for a male adult.',
-    options: ['man', 'run', 'happy', 'read'],
+    q: 'What do we call the rotating columns in a slot machine?',
+    options: ['reels', 'cards', 'tracks', 'doors'],
     answer: 0,
   },
   {
-    q: 'Choose the noun for a female adult.',
-    options: ['woman', 'walk', 'blue', 'sleep'],
+    q: 'What do you press to start the machine?',
+    options: ['spin button', 'home key', 'map button', 'speaker'],
     answer: 0,
   },
   {
-    q: 'Which word is a child male?',
-    options: ['girl', 'boy', 'friend', 'chair'],
+    q: 'A row of symbols across the machine is called a...',
+    options: ['payline', 'lesson', 'ticket', 'wallet'],
+    answer: 0,
+  },
+  {
+    q: 'If three matching symbols land, you usually...',
+    options: ['lose', 'win', 'pause', 'fold'],
     answer: 1,
   },
   {
-    q: 'Which word is a child female?',
-    options: ['book', 'boy', 'girl', 'phone'],
-    answer: 2,
-  },
-  {
-    q: 'Choose a word for someone you like and trust.',
-    options: ['friend', 'bag', 'table', 'store'],
+    q: 'What are the pictures on the reels called?',
+    options: ['symbols', 'letters', 'coins only', 'bets only'],
     answer: 0,
   },
   {
-    q: 'Which word names this object: You call people with it.',
-    options: ['book', 'phone', 'chair', 'boy'],
-    answer: 1,
+    q: 'Choose the best sentence: "I ___ the slot machine."',
+    options: ['spin', 'spun', 'press', 'pressed'],
+    answer: 3,
   },
   {
-    q: 'Which item do you carry on your shoulder?',
-    options: ['bag', 'book', 'man', 'girl'],
+    q: 'What is the money you can still use in the game?',
+    options: ['credits', 'weather', 'sound', 'speed'],
     answer: 0,
   },
   {
-    q: 'Which object is for reading?',
-    options: ['chair', 'book', 'phone', 'friend'],
-    answer: 1,
-  },
-  {
-    q: 'Choose the object you sit on.',
-    options: ['woman', 'bag', 'chair', 'boy'],
-    answer: 2,
-  },
-  {
-    q: 'Complete the sentence: "This is a ___."',
-    options: ['book', 'run', 'quickly', 'happy'],
+    q: 'The amount you risk each round is your...',
+    options: ['bet', 'teacher', 'window', 'music'],
     answer: 0,
   },
   {
-    q: 'Complete: "This is a woman. ___ is my teacher."',
-    options: ['She', 'Book', 'Bag', 'Chair'],
+    q: 'What does "jackpot" mean?',
+    options: ['a very big win', 'a broken machine', 'one coin', 'a table game'],
     answer: 0,
   },
   {
-    q: 'Choose the correct noun: "Tom is my ___."',
-    options: ['friend', 'sleep', 'under', 'blue'],
-    answer: 0,
-  },
-  {
-    q: 'Which sentence is correct?',
+    q: 'Choose the natural sentence.',
     options: [
-      'This is a book.',
-      'This are a book.',
-      'This is books.',
-      'This is to book.',
+      'The reels are spinning.',
+      'The reels is spinning.',
+      'The reels spinning is.',
+      'The reels are spin.',
     ],
     answer: 0,
   },
   {
-    q: 'Choose the best completion: "This is my ___."',
-    options: ['phone', 'run', 'go', 'eat'],
+    q: 'If the symbols do not match, the spin is usually a...',
+    options: ['loss', 'lesson', 'bonus key', 'bank'],
     answer: 0,
   },
   {
-    q: 'Pick the people word.',
-    options: ['chair', 'friend', 'book', 'bag'],
-    answer: 1,
+    q: 'A slot machine bonus round is an extra...',
+    options: ['feature', 'shoe', 'table', 'door'],
+    answer: 0,
   },
   {
-    q: 'Pick the objects pair.',
+    q: 'What does "cash out" mean?',
     options: [
-      'man and woman',
-      'boy and girl',
-      'phone and bag',
-      'friend and teacher',
+      'take your winnings/credits',
+      'spin again',
+      'change the wheel',
+      'hide the machine',
     ],
-    answer: 2,
-  },
-  {
-    q: 'Complete: "This is a ___. I read it every day."',
-    options: ['book', 'chair', 'phone', 'girl'],
     answer: 0,
   },
   {
-    q: 'Choose the noun in this sentence: "The boy has a bag."',
-    options: ['boy', 'has', 'a', 'The'],
-    answer: 0,
-  },
-  {
-    q: 'Complete: "This is my friend. ___ is kind."',
-    options: ['He', 'Book', 'Chair', 'Bag'],
-    answer: 0,
-  },
-  {
-    q: 'Choose the correct simple sentence.',
+    q: 'Choose the best phrase: "Line up three bells" means...',
     options: [
-      'This is a chair.',
-      'This chair are.',
-      'Is this chair a.',
-      'This is chairs.',
+      'match three bell symbols',
+      'ring a real bell',
+      'leave the game',
+      'buy three bells',
     ],
+    answer: 0,
+  },
+  {
+    q: 'Which word belongs to slot machines?',
+    options: ['reel', 'dealer button', 'goalkeeper', 'suitcase'],
+    answer: 0,
+  },
+  {
+    q: 'What does "payout" mean in slots?',
+    options: [
+      'money or credits you win',
+      'the machine sound',
+      'the game screen',
+      'the chair',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Choose the best completion: "She won because the symbols ___."',
+    options: ['matched', 'opened', 'walked', 'talked'],
+    answer: 0,
+  },
+  {
+    q: 'What is a "wild" symbol used for?',
+    options: [
+      'to help complete combinations',
+      'to stop the game',
+      'to lower your credits',
+      'to change language',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'Choose the correct sentence.',
+    options: [
+      'I have one credit left.',
+      'I has one credit left.',
+      'I having one credit left.',
+      'I am one credit leave.',
+    ],
+    answer: 0,
+  },
+  {
+    q: 'After the reels stop, you check the...',
+    options: ['result', 'teacher', 'window curtain', 'street'],
     answer: 0,
   },
 ];
 
 export default function Quiz({
   onComplete,
-  primaryColor = '#4CAF50',
+  primaryColor = '#1D3557',
 }: {
   onComplete: (score: number) => void;
   primaryColor?: string;
@@ -147,6 +162,7 @@ export default function Quiz({
       newScore = score + 1;
       setScore(newScore);
     }
+
     setFeedbackIcon(isCorrect ? '✓' : '✗');
     const nextQuestion = current + 1;
 
@@ -171,7 +187,7 @@ export default function Quiz({
             margin: '0 0 15px 0',
           }}
         >
-          Quiz Complete!
+          Slot Quiz Complete!
         </h2>
         <p style={{ fontSize: '16px', color: '#333', margin: '10px 0' }}>
           You got {score} out of {selectedQuestions.length} correct answers.
@@ -184,8 +200,7 @@ export default function Quiz({
             fontWeight: 'bold',
           }}
         >
-          You will have {score} move{score !== 1 ? 's' : ''} to continue the
-          maze!
+          You earned {score} spin credit{score !== 1 ? 's' : ''}!
         </p>
       </div>
     );

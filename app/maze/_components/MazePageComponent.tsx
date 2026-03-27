@@ -526,16 +526,6 @@ const MazePageComponent: FC<MazePageProps> = ({
                   border: `3px solid ${themeColor}`,
                 }}
               >
-                <p
-                  style={{
-                    margin: '0 0 8px 0',
-                    fontSize: '15px',
-                    color: '#333',
-                    textAlign: 'center',
-                  }}
-                >
-                  Answer 1 question to earn more moves in the maze.
-                </p>
                 <Quiz
                   onComplete={handleQuizComplete}
                   primaryColor={themeColor}

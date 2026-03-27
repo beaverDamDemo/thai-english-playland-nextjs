@@ -283,13 +283,13 @@ export default function Quiz({
         <p className={styles.thaiPrompt}>{thaiQuestion || '\u00a0'}</p>
       </div>
 
-      <div className={styles.answerGrid}>
+      <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         {selectedQuestions[current].options.map((option, idx) => (
           <button
             key={idx}
             onClick={() => handleAnswer(idx)}
-            className={styles.answerButton}
-            style={{ ['--accent-color' as string]: primaryColor }}
+            className={styles.quizOptionButton}
+            style={{ backgroundColor: primaryColor }}
           >
             {option}
           </button>
