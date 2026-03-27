@@ -93,25 +93,6 @@ export default function MazeScreenPage() {
     return () => window.clearTimeout(timeoutId);
   }, [highlightedLesson]);
 
-  const handleResetProgress = () => {
-    if (
-      typeof window !== 'undefined' &&
-      window.confirm(
-        'Are you sure you want to reset all progress? This cannot be undone.',
-      )
-    ) {
-      window.localStorage.removeItem(STATS_KEY);
-      window.localStorage.removeItem(UNLOCKED_KEY);
-      window.localStorage.removeItem(PENDING_UNLOCK_KEY);
-      setCorrectAnswers(0);
-      setWrongAnswers(0);
-      setQuizAttempts(0);
-      setTotalMovesEarned(0);
-      setUnlockedLessons(1);
-      window.location.reload();
-    }
-  };
-
   return (
     <div className={styles.mazePage}>
       <header className={styles.pageHeader}>
@@ -191,9 +172,6 @@ export default function MazeScreenPage() {
         </div>
         <div className={styles.footerActions}>
           <span className={styles.footerVersion}>{APP_VERSION}</span>
-          <button className={styles.resetButton} onClick={handleResetProgress}>
-            Reset
-          </button>
         </div>
       </footer>
     </div>
