@@ -88,7 +88,7 @@ export default function CasinoScreenPage() {
         <span className={styles.appTitle}>Casino Game Lessons</span>
         <Link href="/" className={styles.headerHomeLink}>
           <Image
-            src="/assets/home-icon.png"
+            src="/assets/back.png"
             alt="Home"
             width={28}
             height={28}

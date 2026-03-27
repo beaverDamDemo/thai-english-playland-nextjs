@@ -12,7 +12,7 @@ export default function PattayaGamesScreenPage() {
         <h1 className={styles.screenTitle}>Pattaya Games</h1>
         <Link href="/" className={styles.headerHomeLink}>
           <Image
-            src="/assets/home-icon.png"
+            src="/assets/back.png"
             alt="Home"
             width={28}
             height={28}
