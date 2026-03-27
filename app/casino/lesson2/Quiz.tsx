@@ -158,9 +158,11 @@ export default function Quiz({
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
   function handleAnswer(index: number) {
+    if (selectedIndex !== null) return;
     let newScore = score;
     const isCorrect = index === selectedQuestions[current].answer;
     if (isCorrect) {
@@ -169,17 +171,22 @@ export default function Quiz({
     }
 
     setFeedbackIcon(isCorrect ? '✓' : '✗');
+    setSelectedIndex(index);
     const nextQuestion = current + 1;
 
-    setTimeout(() => {
-      setFeedbackIcon(null);
-      if (nextQuestion >= selectedQuestions.length) {
-        setFinished(true);
-        onComplete(newScore);
-      } else {
-        setCurrent(nextQuestion);
-      }
-    }, 300);
+    setTimeout(
+      () => {
+        setFeedbackIcon(null);
+        setSelectedIndex(null);
+        if (nextQuestion >= selectedQuestions.length) {
+          setFinished(true);
+          onComplete(newScore);
+        } else {
+          setCurrent(nextQuestion);
+        }
+      },
+      isCorrect ? 300 : 800,
+    );
   }
 
   if (finished) {
@@ -288,8 +295,20 @@ export default function Quiz({
           <button
             key={idx}
             onClick={() => handleAnswer(idx)}
-            className={styles.quizOptionButton}
-            style={{ backgroundColor: primaryColor }}
+            className={`${styles.quizOptionButton} ${
+              selectedIndex !== null &&
+              idx === selectedQuestions[current].answer
+                ? styles.quizOptionCorrectFlash
+                : ''
+            }`}
+            style={{
+              backgroundColor:
+                selectedIndex === null
+                  ? primaryColor
+                  : idx === selectedQuestions[current].answer
+                    ? '#4CAF50'
+                    : primaryColor,
+            }}
           >
             {option}
           </button>

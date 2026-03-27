@@ -4,10 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './MazeHeader.module.css';
 
-const APP_VERSION = '0.0.14';
-
 export default function MazeHeader({
-  score,
+  score: _score,
   backHref = '/maze',
 }: {
   score: number;
@@ -24,10 +22,6 @@ export default function MazeHeader({
           className={styles.homeLinkImg}
         />
       </Link>
-      <div className={styles.metaGroup}>
-        <div className={styles.version}>Version {APP_VERSION}</div>
-        <div className={styles.score}>Score: {score}</div>
-      </div>
     </header>
   );
 }

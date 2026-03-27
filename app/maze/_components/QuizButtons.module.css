@@ -27,6 +27,26 @@
   outline-offset: 2px;
 }
 
+.quizOptionCorrectFlash {
+  background: repeating-linear-gradient(
+    135deg,
+    #46c96d 0 8px,
+    #2f9b50 8px 16px
+  ) !important;
+  background-size: 200% 100%;
+  animation: answerStripeShift 0.45s linear infinite;
+}
+
+.quizOptionWrongFlash {
+  background: repeating-linear-gradient(
+    135deg,
+    #ff6666 0 8px,
+    #c62828 8px 16px
+  ) !important;
+  background-size: 200% 100%;
+  animation: answerStripeShift 0.45s linear infinite;
+}
+
 .englishPrompt {
   font-size: 18px;
   font-weight: 700;
@@ -73,6 +93,15 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes answerStripeShift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 32px 0;
   }
 }
 

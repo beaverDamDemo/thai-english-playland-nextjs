@@ -28,21 +28,3 @@
   transform: scale(1.1);
   color: #ffcc00;
 }
-
-.metaGroup {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
-}
-
-.version {
-  font-size: 13px;
-  color: #bdbdbd;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.score {
-  font-weight: 700;
-}
