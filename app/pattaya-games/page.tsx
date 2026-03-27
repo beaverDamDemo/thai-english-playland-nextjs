@@ -122,8 +122,38 @@ export default function PattayaGamesScreenPage() {
               onLoad={() => setIsMapLoaded(true)}
             />
 
-            {lessonMapButtons.map(({ num, color, left, top, available }) =>
-              available && num <= unlockedLessons ? (
+            {lessonMapButtons.map(({ num, color, left, top, available }) => {
+              if (num > unlockedLessons) {
+                return (
+                  <div
+                    key={num}
+                    className={`${styles.locationPin} ${styles.locationLocked}`}
+                    style={{ left: `${left}%`, top: `${top}%` }}
+                  >
+                    🔒
+                  </div>
+                );
+              }
+
+              if (!available) {
+                return (
+                  <div
+                    key={num}
+                    className={styles.locationPin}
+                    style={{
+                      borderColor: color,
+                      left: `${left}%`,
+                      top: `${top}%`,
+                      opacity: 0.78,
+                    }}
+                    title="Coming soon"
+                  >
+                    {num}
+                  </div>
+                );
+              }
+
+              return (
                 <Link
                   key={num}
                   href={`/pattaya-games/lesson${num}`}
@@ -141,16 +171,8 @@ export default function PattayaGamesScreenPage() {
                     <span className={styles.unlockBadge}>New!</span>
                   )}
                 </Link>
-              ) : (
-                <div
-                  key={num}
-                  className={`${styles.locationPin} ${styles.locationLocked}`}
-                  style={{ left: `${left}%`, top: `${top}%` }}
-                >
-                  🔒
-                </div>
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
       </div>

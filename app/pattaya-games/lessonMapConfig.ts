@@ -12,7 +12,6 @@ export const lessonMapButtons: LessonMapButton[] = [
   { num: 3, color: '#6BCB77', left: 22, top: 56, available: false },
   { num: 4, color: '#FFD166', left: 23, top: 50, available: false },
   { num: 5, color: '#5E60CE', left: 64, top: 48, available: false },
-
   { num: 6, color: '#F06595', left: 22, top: 37, available: false },
   { num: 7, color: '#2EC4B6', left: 66, top: 32, available: false },
   { num: 8, color: '#F77F00', left: 22, top: 18, available: false },
