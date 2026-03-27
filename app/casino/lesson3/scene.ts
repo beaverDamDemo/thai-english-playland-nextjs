@@ -8,12 +8,12 @@ type ReelVisual = {
   x: number;
 };
 
-const SYMBOLS: Array<{ key: ReelSymbol; label: string; color: string; }> = [
-  { key: 'CHERRY', label: 'CHERRY', color: '#ff6b81' },
-  { key: 'BELL', label: 'BELL', color: '#ffd166' },
-  { key: 'STAR', label: 'STAR', color: '#7bdff2' },
-  { key: 'BAR', label: 'BAR', color: '#f7f7ff' },
-  { key: 'SEVEN', label: '7', color: '#ff595e' },
+const SYMBOLS: Array<{ key: ReelSymbol; icon: string; name: string; }> = [
+  { key: 'CHERRY', icon: '🍒', name: 'Cherry' },
+  { key: 'BELL', icon: '🔔', name: 'Bell' },
+  { key: 'STAR', icon: '⭐', name: 'Star' },
+  { key: 'BAR', icon: '🟦', name: 'Bar' },
+  { key: 'SEVEN', icon: '7️⃣', name: 'Seven' },
 ];
 
 export class MazeScene extends Phaser.Scene {
@@ -200,9 +200,9 @@ export class MazeScene extends Phaser.Scene {
       frame.add(frameBg);
 
       const symbols = [-44, 0, 44].map((yOffset) => {
-        const text = this.add.text(0, yOffset, this.getRandomSymbol().label, {
-          fontSize: '18px',
-          color: '#27143e',
+        const text = this.add.text(0, yOffset, this.getRandomSymbol().icon, {
+          fontSize: '31px',
+          color: '#ffffff',
           fontStyle: 'bold',
           align: 'center',
         }).setOrigin(0.5);
@@ -298,20 +298,20 @@ export class MazeScene extends Phaser.Scene {
   private shuffleReelSymbols(reel: ReelVisual) {
     reel.symbols.forEach((symbolText) => {
       const next = this.getRandomSymbol();
-      symbolText.setText(next.label);
-      symbolText.setColor(next.color);
+      symbolText.setText(next.icon);
+      symbolText.setColor('#ffffff');
     });
   }
 
   private stopReelAtSymbol(
     reel: ReelVisual,
-    target: { key: ReelSymbol; label: string; color: string; },
+    target: { key: ReelSymbol; icon: string; name: string; },
   ) {
     const top = this.getRandomSymbol();
     const bottom = this.getRandomSymbol();
-    reel.symbols[0].setText(top.label).setColor(top.color);
-    reel.symbols[1].setText(target.label).setColor(target.color);
-    reel.symbols[2].setText(bottom.label).setColor(bottom.color);
+    reel.symbols[0].setText(top.icon).setColor('#ffffff');
+    reel.symbols[1].setText(target.icon).setColor('#ffffff');
+    reel.symbols[2].setText(bottom.icon).setColor('#ffffff');
 
     this.tweens.add({
       targets: reel.frame,
@@ -326,6 +326,7 @@ export class MazeScene extends Phaser.Scene {
     const [left, middle, right] = centerLine;
     const isJackpot = left === middle && middle === right;
     const isNearWin = left === middle || middle === right || left === right;
+    const lineIcons = `${this.getSymbolByKey(left).icon} | ${this.getSymbolByKey(middle).icon} | ${this.getSymbolByKey(right).icon}`;
 
     this.isSpinning = false;
 
@@ -333,22 +334,22 @@ export class MazeScene extends Phaser.Scene {
       this.wins += 1;
       const jackpotBonus = left === 'SEVEN' ? 3 : 2;
       this.credits += jackpotBonus;
-      this.resultText.setText(`PAYLINE: ${left} | ${middle} | ${right}`);
+      this.resultText.setText(`PAYLINE: ${lineIcons}`);
       this.rewardText.setText(
-        `Line win! Three matching ${middle} symbols. Bonus +${jackpotBonus} credits.\nWins: ${this.wins}/${this.targetWins}`,
+        `Line win! Three matching ${this.getSymbolByKey(middle).name} symbols. Bonus +${jackpotBonus} credits.\nWins: ${this.wins}/${this.targetWins}`,
       );
       this.playWinSound(left === 'SEVEN');
       this.flashPayline(0x9cffd0);
     } else if (isNearWin) {
       this.credits += 1;
-      this.resultText.setText(`PAYLINE: ${left} | ${middle} | ${right}`);
+      this.resultText.setText(`PAYLINE: ${lineIcons}`);
       this.rewardText.setText(
         `Two symbols matched. Small bonus +1 credit.\nWins: ${this.wins}/${this.targetWins}`,
       );
       this.playNearWinSound();
       this.flashPayline(0xffe59a);
     } else {
-      this.resultText.setText(`PAYLINE: ${left} | ${middle} | ${right}`);
+      this.resultText.setText(`PAYLINE: ${lineIcons}`);
       this.rewardText.setText(
         `No line win this time. Try another spin.\nWins: ${this.wins}/${this.targetWins}`,
       );
@@ -389,6 +390,10 @@ export class MazeScene extends Phaser.Scene {
 
   private getRandomSymbol() {
     return Phaser.Utils.Array.GetRandom(SYMBOLS);
+  }
+
+  private getSymbolByKey(key: ReelSymbol) {
+    return SYMBOLS.find((symbol) => symbol.key === key) ?? SYMBOLS[0];
   }
 
   private getAudioContext() {
