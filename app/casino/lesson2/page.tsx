@@ -11,7 +11,7 @@ const MazePageComponent = dynamic(
   { ssr: false, loading: () => <div>Loading...</div> },
 );
 
-const CasinoLessonPage: FC = () => {
+const CasinoLesson2Page: FC = () => {
   const [Scene, setScene] = useState<unknown>(null);
 
   useEffect(() => {
@@ -24,10 +24,10 @@ const CasinoLessonPage: FC = () => {
     };
   }, []);
 
-  const themeColor = '#F44336';
-  const themeColorDark = '#D32F2F';
+  const themeColor = '#E63946';
+  const themeColorDark = '#B71C1C';
   const backgroundGradient =
-    'linear-gradient(135deg, #F44336 0%, #C62828 100%)';
+    'linear-gradient(135deg, #E63946 0%, #8E1A2D 100%)';
 
   if (!Scene) return <div>Loading...</div>;
 
@@ -39,8 +39,8 @@ const CasinoLessonPage: FC = () => {
     <MazePageComponent
       MazeScene={Scene}
       Quiz={QuizWrapper}
-      lessonNumber={1}
-      lessonTitle="Casino Lesson 1"
+      lessonNumber={2}
+      lessonTitle="Casino Lesson 2: Roulette English"
       themeColor={themeColor}
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}
@@ -55,11 +55,11 @@ const CasinoLessonPage: FC = () => {
   );
 };
 
-const DynamicCasinoLessonPage = dynamic(
-  () => Promise.resolve(CasinoLessonPage),
+const DynamicCasinoLesson2Page = dynamic(
+  () => Promise.resolve(CasinoLesson2Page),
   {
     ssr: false,
   },
 );
 
-export default DynamicCasinoLessonPage;
+export default DynamicCasinoLesson2Page;
