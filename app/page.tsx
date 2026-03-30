@@ -16,7 +16,9 @@ const MAZE_STATS_KEY = 'englishMazeStats';
 const MAZE_UNLOCKED_KEY = 'englishMazeUnlockedLessons';
 const CASINO_STATS_KEY = 'englishCasinoStats';
 const CASINO_UNLOCKED_KEY = 'englishCasinoUnlockedLessons';
+const PATTAYA_STATS_KEY = 'englishPattayaStats';
 const PATTAYA_UNLOCKED_KEY = 'englishPattayaUnlockedLessons';
+const PATTAYA_STATS_UPDATED_EVENT = 'pattaya-stats-updated';
 
 type ProgressStats = {
   correctAnswers: number;
@@ -53,6 +55,7 @@ export default function HomePage() {
   const [pattayaUnlocked, setPattayaUnlocked] = useState(1);
   const [mazeStats, setMazeStats] = useState<ProgressStats>(EMPTY_STATS);
   const [casinoStats, setCasinoStats] = useState<ProgressStats>(EMPTY_STATS);
+  const [pattayaStats, setPattayaStats] = useState<ProgressStats>(EMPTY_STATS);
   const hasTrackedHomeViewRef = useRef(false);
 
   useEffect(() => {
@@ -91,34 +94,67 @@ export default function HomePage() {
 
       setMazeStats(parseStats(window.localStorage.getItem(MAZE_STATS_KEY)));
       setCasinoStats(parseStats(window.localStorage.getItem(CASINO_STATS_KEY)));
+      setPattayaStats(
+        parseStats(window.localStorage.getItem(PATTAYA_STATS_KEY)),
+      );
     };
 
     loadProgress();
     window.addEventListener('focus', loadProgress);
     window.addEventListener('storage', loadProgress);
     window.addEventListener('pageshow', loadProgress);
+    window.addEventListener(PATTAYA_STATS_UPDATED_EVENT, loadProgress);
     return () => {
       window.removeEventListener('focus', loadProgress);
       window.removeEventListener('storage', loadProgress);
       window.removeEventListener('pageshow', loadProgress);
+      window.removeEventListener(PATTAYA_STATS_UPDATED_EVENT, loadProgress);
     };
   }, []);
 
   const totalCorrect = useMemo(
-    () => mazeStats.correctAnswers + casinoStats.correctAnswers,
-    [mazeStats.correctAnswers, casinoStats.correctAnswers],
+    () =>
+      mazeStats.correctAnswers +
+      casinoStats.correctAnswers +
+      pattayaStats.correctAnswers,
+    [
+      mazeStats.correctAnswers,
+      casinoStats.correctAnswers,
+      pattayaStats.correctAnswers,
+    ],
   );
   const totalWrong = useMemo(
-    () => mazeStats.wrongAnswers + casinoStats.wrongAnswers,
-    [mazeStats.wrongAnswers, casinoStats.wrongAnswers],
+    () =>
+      mazeStats.wrongAnswers +
+      casinoStats.wrongAnswers +
+      pattayaStats.wrongAnswers,
+    [
+      mazeStats.wrongAnswers,
+      casinoStats.wrongAnswers,
+      pattayaStats.wrongAnswers,
+    ],
   );
   const totalAttempts = useMemo(
-    () => mazeStats.quizAttempts + casinoStats.quizAttempts,
-    [mazeStats.quizAttempts, casinoStats.quizAttempts],
+    () =>
+      mazeStats.quizAttempts +
+      casinoStats.quizAttempts +
+      pattayaStats.quizAttempts,
+    [
+      mazeStats.quizAttempts,
+      casinoStats.quizAttempts,
+      pattayaStats.quizAttempts,
+    ],
   );
   const totalMoves = useMemo(
-    () => mazeStats.totalMovesEarned + casinoStats.totalMovesEarned,
-    [mazeStats.totalMovesEarned, casinoStats.totalMovesEarned],
+    () =>
+      mazeStats.totalMovesEarned +
+      casinoStats.totalMovesEarned +
+      pattayaStats.totalMovesEarned,
+    [
+      mazeStats.totalMovesEarned,
+      casinoStats.totalMovesEarned,
+      pattayaStats.totalMovesEarned,
+    ],
   );
 
   useEffect(() => {
@@ -156,6 +192,7 @@ export default function HomePage() {
       window.localStorage.removeItem(CASINO_STATS_KEY);
       window.localStorage.removeItem(CASINO_UNLOCKED_KEY);
       window.localStorage.removeItem('englishCasinoPendingUnlockLesson');
+      window.localStorage.removeItem(PATTAYA_STATS_KEY);
       window.localStorage.removeItem(PATTAYA_UNLOCKED_KEY);
       window.localStorage.removeItem('englishPattayaPendingUnlockLesson');
       window.location.reload();

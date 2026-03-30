@@ -1,6 +1,6 @@
 {
   "name": "english-lessons-maze",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "private": true,
   "scripts": {
     "check:quotes": "node scripts/check-unescaped-apostrophes.mjs",
