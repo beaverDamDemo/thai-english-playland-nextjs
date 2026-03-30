@@ -34,16 +34,10 @@ export function useThaiQuestion(question: string): string {
   useEffect(() => {
     let cancelled = false;
 
-    if (!question) {
-      setThaiQuestion('');
-      return;
-    }
+    if (!question) return;
 
     const cached = translationCache.get(question);
-    if (cached) {
-      setThaiQuestion(cached);
-      return;
-    }
+    if (cached) return;
 
     const fetchTranslation = async () => {
       try {
@@ -80,5 +74,6 @@ export function useThaiQuestion(question: string): string {
     };
   }, [question]);
 
-  return thaiQuestion;
+  if (!question) return '';
+  return translationCache.get(question) ?? thaiQuestion;
 }

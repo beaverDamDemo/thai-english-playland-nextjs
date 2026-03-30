@@ -133,7 +133,7 @@ function detectMatches(board: string[][]): Set<string> {
 }
 
 function clearAutoMatches(input: string[][]) {
-  let board = cloneBoard(input);
+  const board = cloneBoard(input);
   let totalCleared = 0;
 
   while (true) {

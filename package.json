@@ -3,6 +3,10 @@
   "version": "0.0.15",
   "private": true,
   "scripts": {
+    "check:quotes": "node scripts/check-unescaped-apostrophes.mjs",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run check:quotes && npm run lint && npm run typecheck",
+    "prebuild": "npm run verify",
     "build": "next build",
     "start:dev": "next dev",
     "dev": "next dev",
