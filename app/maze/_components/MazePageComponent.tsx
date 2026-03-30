@@ -6,6 +6,7 @@ import * as Phaser from 'phaser';
 import MazeHeader from './MazeHeader';
 import dynamic from 'next/dynamic';
 import type { FC, MouseEvent } from 'react';
+import { trackEvent } from '../../_lib/analytics';
 
 const TOTAL_LESSONS = 9;
 const STATS_KEY = 'englishMazeStats';
@@ -107,6 +108,17 @@ const MazePageComponent: FC<MazePageProps> = ({
       totalMovesEarned: nextMovesEarned,
     });
 
+    void trackEvent('maze_quiz_completed', {
+      lessonNumber,
+      finalScore,
+      wasCorrect,
+      correctAnswers: nextCorrect,
+      wrongAnswers: nextWrong,
+      quizAttempts: nextAttempts,
+      totalMovesEarned: nextMovesEarned,
+      statsKey,
+    });
+
     // fade out the overlay, then unmount it
     setOverlayVisible(false);
     setTimeout(() => setShowQuizOverlay(false), 300);
@@ -154,8 +166,28 @@ const MazePageComponent: FC<MazePageProps> = ({
         window.localStorage.removeItem(pendingUnlockKey);
       }
     }
+
+    void trackEvent('maze_lesson_completed', {
+      lessonNumber,
+      unlockedLessons: nextUnlockedLessons,
+      score,
+      maxMoves,
+      statsKey,
+      unlockedKey,
+    });
+
     setGameWon(true);
   };
+
+  useEffect(() => {
+    void trackEvent('maze_lesson_opened', {
+      lessonNumber,
+      statsKey,
+      unlockedKey,
+      backHref,
+      returnHref,
+    });
+  }, [lessonNumber, statsKey, unlockedKey, backHref, returnHref]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

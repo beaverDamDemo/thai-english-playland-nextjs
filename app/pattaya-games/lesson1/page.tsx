@@ -2,10 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './Lesson1.module.css';
 import quizStyles from '../../maze/_components/QuizButtons.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
+import { trackEvent } from '../../_lib/analytics';
 
 type Phase = 'practice' | 'play' | 'apply' | 'done';
 
@@ -240,6 +241,13 @@ export default function PattayaLesson1Page() {
     return Math.min(100, Math.round((learningUnits / totalUnits) * 100));
   }, [practiceStep, applyStep, phase, totalLearningTasks]);
 
+  useEffect(() => {
+    void trackEvent('pattaya_lesson_opened', {
+      lessonNumber: 1,
+      topic: 'using_ing',
+    });
+  }, []);
+
   function readStats(): PattayaStats {
     const payload = window.localStorage.getItem(STATS_KEY);
     const fallback: PattayaStats = {
@@ -316,6 +324,18 @@ export default function PattayaLesson1Page() {
       ],
     };
     writeStats(nextStats);
+
+    void trackEvent('pattaya_lesson_completed', {
+      lessonNumber: 1,
+      learningCorrect,
+      learningWrong,
+      playPoints,
+      earnedMoves,
+      totalMovesEarned: nextStats.totalMovesEarned,
+      totalCorrectAnswers: nextStats.correctAnswers,
+      totalWrongAnswers: nextStats.wrongAnswers,
+      totalQuizAttempts: nextStats.quizAttempts,
+    });
 
     const rawUnlocked = window.localStorage.getItem(UNLOCKED_KEY);
     const unlocked = Number.parseInt(rawUnlocked ?? '1', 10);
