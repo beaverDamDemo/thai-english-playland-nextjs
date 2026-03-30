@@ -1,6 +1,6 @@
 import { cookies, headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { sql } from '@vercel/postgres';
+import postgres from 'postgres';
 
 const ANON_COOKIE_NAME = 'playland_anon_id';
 
@@ -12,11 +12,21 @@ type TrackBody = {
 };
 
 let tablesInitialized = false;
+type DbClient = ReturnType<typeof postgres>;
 
-async function ensureTables() {
+const db: DbClient | null = process.env.POSTGRES_URL
+  ? postgres(process.env.POSTGRES_URL, {
+    ssl: 'require',
+    max: 1,
+    prepare: false,
+    connect_timeout: 15,
+  })
+  : null;
+
+async function ensureTables(client: DbClient) {
   if (tablesInitialized) return;
 
-  await sql`
+  await client`
     CREATE TABLE IF NOT EXISTS public.analytics_users (
       anonymous_id TEXT PRIMARY KEY,
       first_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -29,7 +39,7 @@ async function ensureTables() {
     );
   `;
 
-  await sql`
+  await client`
     CREATE TABLE IF NOT EXISTS public.analytics_events (
       id BIGSERIAL PRIMARY KEY,
       anonymous_id TEXT NOT NULL,
@@ -45,12 +55,12 @@ async function ensureTables() {
     );
   `;
 
-  await sql`
+  await client`
     CREATE INDEX IF NOT EXISTS idx_analytics_events_anonymous_id
     ON public.analytics_events (anonymous_id);
   `;
 
-  await sql`
+  await client`
     CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at
     ON public.analytics_events (created_at DESC);
   `;
@@ -90,11 +100,11 @@ export async function POST(request: Request) {
   let dbWrite = false;
   let dbError: string | null = null;
 
-  if (dbConfigured) {
+  if (dbConfigured && db) {
     try {
-      await ensureTables();
+      await ensureTables(db);
 
-      await sql`
+      await db`
         INSERT INTO public.analytics_users (
           anonymous_id,
           first_seen_at,
@@ -125,7 +135,7 @@ export async function POST(request: Request) {
           city = EXCLUDED.city;
       `;
 
-      await sql`
+      await db`
         INSERT INTO public.analytics_events (
           anonymous_id,
           event_name,
