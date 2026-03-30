@@ -179,7 +179,7 @@ export default function HomePage() {
         >
           <span className={styles.hubTitle}>Casino Game Lessons</span>
           <span className={styles.hubText}>
-            Lesson map with 7 casino lesson slots.
+            Lesson map with 5 casino lesson slots.
           </span>
         </Link>
 
@@ -189,7 +189,7 @@ export default function HomePage() {
         >
           <span className={styles.hubTitle}>Pattaya Games Screen</span>
           <span className={styles.hubText}>
-            Blank screen ready for Pattaya games.
+            Various games and activities from Pattaya.
           </span>
         </Link>
       </section>

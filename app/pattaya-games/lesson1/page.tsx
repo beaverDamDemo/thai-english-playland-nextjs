@@ -83,11 +83,46 @@ function randomCandy() {
   return CANDIES[Math.floor(Math.random() * CANDIES.length)];
 }
 
+function hasAvailableMove(board: string[][]) {
+  for (let r = 0; r < BOARD_SIZE; r += 1) {
+    for (let c = 0; c < BOARD_SIZE; c += 1) {
+      const candidates: Array<[number, number]> = [];
+      if (r + 1 < BOARD_SIZE) candidates.push([r + 1, c]);
+      if (c + 1 < BOARD_SIZE) candidates.push([r, c + 1]);
+
+      for (const [nr, nc] of candidates) {
+        const draft = cloneBoard(board);
+        const temp = draft[r][c];
+        draft[r][c] = draft[nr][nc];
+        draft[nr][nc] = temp;
+        if (detectMatches(draft).size > 0) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 function makeBoard() {
-  const board: string[][] = Array.from({ length: BOARD_SIZE }, () =>
-    Array.from({ length: BOARD_SIZE }, () => randomCandy()),
-  );
-  return clearAutoMatches(board).board;
+  // Keep trying until we get a clean board with at least one valid move.
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const board: string[][] = Array.from({ length: BOARD_SIZE }, () =>
+      Array.from({ length: BOARD_SIZE }, () => randomCandy()),
+    );
+    const cleaned = clearAutoMatches(board).board;
+    if (hasAvailableMove(cleaned)) {
+      return cleaned;
+    }
+  }
+
+  // Fallback safety path.
+  return clearAutoMatches(
+    Array.from({ length: BOARD_SIZE }, () =>
+      Array.from({ length: BOARD_SIZE }, () => randomCandy()),
+    ),
+  ).board;
 }
 
 function cloneBoard(board: string[][]) {
@@ -375,6 +410,8 @@ export default function PattayaLesson1Page() {
       setSwappingTiles(new Set());
 
       const resolved = clearAutoMatches(draft);
+      const needsReshuffle = !hasAvailableMove(resolved.board);
+      const boardAfterResolve = needsReshuffle ? makeBoard() : resolved.board;
       const gained = resolved.cleared * 10;
       const nextMoves = movesLeft - 1;
 
@@ -383,11 +420,11 @@ export default function PattayaLesson1Page() {
 
       // Animate matched tiles then cascade
       window.setTimeout(() => {
-        setBoard(resolved.board);
+        setBoard(boardAfterResolve);
         const cascading = new Set<string>();
         for (let c = 0; c < BOARD_SIZE; c += 1) {
           for (let r = BOARD_SIZE - 1; r >= 0; r -= 1) {
-            if (resolved.board[r][c]) {
+            if (boardAfterResolve[r][c]) {
               cascading.add(`${r}-${c}`);
             }
           }
@@ -399,7 +436,11 @@ export default function PattayaLesson1Page() {
       window.setTimeout(() => {
         setMovesLeft(nextMoves);
         setPlayPoints((v) => v + gained);
-        setPlayActionText(`Great! +${gained} points. ${nextMoves} moves left.`);
+        setPlayActionText(
+          needsReshuffle
+            ? `Great! +${gained} points. ${nextMoves} moves left. Board reshuffled.`
+            : `Great! +${gained} points. ${nextMoves} moves left.`,
+        );
         setCascadingTiles(new Set());
         setSelectedTile(null);
 
