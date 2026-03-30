@@ -4,14 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import styles from './Lesson1.module.css';
+import quizStyles from '../../maze/_components/QuizButtons.module.css';
 
-type Phase = 'learn' | 'practice' | 'play' | 'apply' | 'done';
-
-type Card = {
-  phrase: string;
-  meaning: string;
-  usage: string;
-};
+type Phase = 'practice' | 'play' | 'apply' | 'done';
 
 type Challenge = {
   prompt: string;
@@ -26,81 +21,58 @@ const STATS_KEY = 'englishPattayaStats';
 const UNLOCKED_KEY = 'englishPattayaUnlockedLessons';
 const PENDING_UNLOCK_KEY = 'englishPattayaPendingUnlockLesson';
 
-const learnCards: Card[] = [
-  {
-    phrase: 'How much is this?',
-    meaning: 'How much does this cost?',
-    usage: 'Use when asking price politely.',
-  },
-  {
-    phrase: 'Can I get a discount?',
-    meaning: 'Can you reduce the price?',
-    usage: 'Useful in markets and small shops.',
-  },
-  {
-    phrase: 'I would like this one.',
-    meaning: 'I choose this item.',
-    usage: 'Use while pointing to an item.',
-  },
-  {
-    phrase: 'Do you have another size?',
-    meaning: 'Is a different size available?',
-    usage: 'Useful for clothes and shoes.',
-  },
-];
-
 const practiceChallenges: Challenge[] = [
   {
-    prompt: 'You want to ask the price. What should you say?',
-    options: [
-      'How much is this?',
-      'Where is my hotel?',
-      'I am very hungry.',
-      'Can I take a taxi?',
-    ],
-    answer: 0,
+    prompt: 'She is _______ to music right now.',
+    options: ['listen', 'listens', 'listening', 'listened'],
+    answer: 2,
   },
   {
-    prompt: 'You want to ask for cheaper price. Choose the best phrase.',
-    options: [
-      'I need Wi-Fi.',
-      'Can I get a discount?',
-      'What time is it?',
-      'Where is the beach?',
-    ],
+    prompt: 'I want _______ a movie tonight.',
+    options: ['watching', 'watch', 'watches', 'to watching'],
     answer: 1,
   },
   {
-    prompt: 'You picked the item and want to buy it. Choose the phrase.',
-    options: [
-      'I would like this one.',
-      'Please call the police.',
-      'Can you speak slowly?',
-      'I forgot my phone.',
-    ],
-    answer: 0,
+    prompt: 'They enjoy _______ on the beach.',
+    options: ['walk', 'walked', 'to walk', 'walking'],
+    answer: 3,
+  },
+  {
+    prompt: 'He seems _______ today.',
+    options: ['tiring', 'tire', 'tired', 'to tiring'],
+    answer: 2,
+  },
+  {
+    prompt: 'We are _______ for the bus.',
+    options: ['wait', 'waited', 'waits', 'waiting'],
+    answer: 3,
   },
 ];
 
 const applyChallenges: Challenge[] = [
   {
-    prompt: 'Shopkeeper: "This shirt is 500 baht." You want smaller size.',
-    options: [
-      'Do you have another size?',
-      'Can I get a discount?',
-      'How much is this?',
-      'I would like this one.',
-    ],
-    answer: 0,
+    prompt: 'I need _______ my English skills. (It is necessary for me.)',
+    options: ['improving', 'improve', 'improved', 'to improving'],
+    answer: 1,
   },
   {
-    prompt: 'You buy two souvenirs and want to negotiate total price.',
-    options: [
-      'I would like this one.',
-      'How much is this?',
-      'Can I get a discount?',
-      'Do you have another size?',
-    ],
+    prompt: 'She avoided _______ to him after the argument.',
+    options: ['talk', 'to talk', 'talked', 'talking'],
+    answer: 3,
+  },
+  {
+    prompt: 'He decided _______ a new job.',
+    options: ['finding', 'find', 'to find', 'finded'],
+    answer: 2,
+  },
+  {
+    prompt: 'Look! The children are _______ in the park.',
+    options: ['play', 'played', 'plays', 'playing'],
+    answer: 3,
+  },
+  {
+    prompt: 'My hobby is _______ old maps.',
+    options: ['collect', 'to collect', 'collecting', 'collected'],
     answer: 2,
   },
 ];
@@ -186,11 +158,11 @@ function clearAutoMatches(input: string[][]) {
 }
 
 export default function PattayaLesson1Page() {
-  const [phase, setPhase] = useState<Phase>('learn');
-  const [learnStep, setLearnStep] = useState(0);
+  const [phase, setPhase] = useState<Phase>('practice');
   const [practiceStep, setPracticeStep] = useState(0);
   const [applyStep, setApplyStep] = useState(0);
-  const [feedback, setFeedback] = useState<string>('');
+  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const [learningCorrect, setLearningCorrect] = useState(0);
   const [learningWrong, setLearningWrong] = useState(0);
@@ -209,12 +181,10 @@ export default function PattayaLesson1Page() {
 
   const totalLearningTasks = practiceChallenges.length + applyChallenges.length;
   const progressPercent = useMemo(() => {
-    const learningUnits =
-      learnStep + practiceStep + applyStep + (phase === 'done' ? 1 : 0);
-    const totalUnits =
-      learnCards.length + totalLearningTasks + 1 + (phase === 'done' ? 1 : 0);
+    const learningUnits = practiceStep + applyStep + (phase === 'done' ? 1 : 0);
+    const totalUnits = totalLearningTasks + 1 + (phase === 'done' ? 1 : 0);
     return Math.min(100, Math.round((learningUnits / totalUnits) * 100));
-  }, [learnStep, practiceStep, applyStep, phase, totalLearningTasks]);
+  }, [practiceStep, applyStep, phase, totalLearningTasks]);
 
   function persistProgress() {
     const attemptsPayload = window.localStorage.getItem(STATS_KEY);
@@ -262,41 +232,51 @@ export default function PattayaLesson1Page() {
   }
 
   function handleChallengeAnswer(challenge: Challenge, pickedIndex: number) {
+    if (selectedIndex !== null) return;
     const isCorrect = pickedIndex === challenge.answer;
     if (isCorrect) {
       setLearningCorrect((v) => v + 1);
-      setFeedback('Nice! Correct answer.');
     } else {
       setLearningWrong((v) => v + 1);
-      setFeedback(`Not quite. Correct: ${challenge.options[challenge.answer]}`);
     }
+    setFeedbackIcon(isCorrect ? '✓' : '✗');
+    setSelectedIndex(pickedIndex);
 
-    window.setTimeout(() => {
-      setFeedback('');
-      if (phase === 'practice') {
-        const next = practiceStep + 1;
-        if (next >= practiceChallenges.length) {
-          setPhase('play');
+    window.setTimeout(
+      () => {
+        setFeedbackIcon(null);
+        setSelectedIndex(null);
+        if (phase === 'practice') {
+          const next = practiceStep + 1;
+          if (next >= practiceChallenges.length) {
+            setPhase('play');
+            return;
+          }
+          setPracticeStep(next);
           return;
         }
-        setPracticeStep(next);
-        return;
-      }
 
-      if (phase === 'apply') {
-        const next = applyStep + 1;
-        if (next >= applyChallenges.length) {
-          persistProgress();
-          setPhase('done');
-          return;
+        if (phase === 'apply') {
+          const next = applyStep + 1;
+          if (next >= applyChallenges.length) {
+            persistProgress();
+            setPhase('done');
+            return;
+          }
+          setApplyStep(next);
         }
-        setApplyStep(next);
-      }
-    }, 700);
+      },
+      isCorrect ? 300 : 800,
+    );
   }
 
   function attemptSwap(from: [number, number], to: [number, number]) {
-    if (!areAdjacent(from, to) || movesLeft <= 0) {
+    if (
+      !areAdjacent(from, to) ||
+      movesLeft <= 0 ||
+      animatingTiles.size > 0 ||
+      cascadingTiles.size > 0
+    ) {
       setPlayActionText('Pick neighboring candies only.');
       return;
     }
@@ -320,8 +300,8 @@ export default function PattayaLesson1Page() {
     const nextMoves = movesLeft - 1;
 
     // Mark matched tiles for animation
-    const matched = detectMatches(draft);
-    setAnimatingTiles(matched);
+    setAnimatingTiles(found);
+    setPlayActionText(`Matched ${found.size} blocks!`);
 
     // Animate matched tiles then cascade
     window.setTimeout(() => {
@@ -337,7 +317,7 @@ export default function PattayaLesson1Page() {
       }
       setCascadingTiles(cascading);
       setAnimatingTiles(new Set());
-    }, 400);
+    }, 620);
 
     window.setTimeout(() => {
       setMovesLeft(nextMoves);
@@ -351,11 +331,12 @@ export default function PattayaLesson1Page() {
           setPhase('apply');
         }, 450);
       }
-    }, 700);
+    }, 920);
   }
 
   function onTileClick(r: number, c: number) {
     if (phase !== 'play') return;
+    if (animatingTiles.size > 0 || cascadingTiles.size > 0) return;
     if (!selectedTile) {
       setSelectedTile([r, c]);
       setPlayActionText('Select a second tile to swap.');
@@ -364,7 +345,6 @@ export default function PattayaLesson1Page() {
     attemptSwap(selectedTile, [r, c]);
   }
 
-  const currentLearn = learnCards[learnStep];
   const currentPractice = practiceChallenges[practiceStep];
   const currentApply = applyChallenges[applyStep];
   const totalSessionScore = learningCorrect * 100 + playPoints;
@@ -374,9 +354,9 @@ export default function PattayaLesson1Page() {
       <div className={styles.container}>
         <div className={styles.header}>
           <div>
-            <h1 className={styles.title}>Pattaya Lesson 1: Market Match</h1>
+            <h1 className={styles.title}>Pattaya Lesson 1: Using -ing</h1>
             <p className={styles.subtitle}>
-              Hybrid loop: 70% learning + 30% match-3 gameplay.
+              When to use -ing and when to use the base verb or infinitive.
             </p>
           </div>
           <Link href="/pattaya-games" className={styles.headerHomeLink}>
@@ -409,59 +389,95 @@ export default function PattayaLesson1Page() {
             </div>
           </div>
 
-          {phase === 'learn' && (
-            <article className={styles.card}>
-              <span className={styles.phaseBadge}>LEARN</span>
-              <h2 className={styles.prompt}>{currentLearn.phrase}</h2>
-              <p className={styles.help}>{currentLearn.meaning}</p>
-              <p className={styles.help}>{currentLearn.usage}</p>
-              <button
-                type="button"
-                className={styles.primaryButton}
-                onClick={() => {
-                  const next = learnStep + 1;
-                  if (next >= learnCards.length) {
-                    setPhase('practice');
-                    return;
-                  }
-                  setLearnStep(next);
+          {phase === 'practice' && (
+            <article className={styles.card} style={{ position: 'relative' }}>
+              {feedbackIcon && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '80px',
+                    fontWeight: 'bold',
+                    zIndex: 2000,
+                    animation: 'feedbackFadeOut 0.3s ease-out forwards',
+                    color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {feedbackIcon}
+                </div>
+              )}
+              <style>{`
+                @keyframes feedbackFadeOut {
+                  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+                }
+              `}</style>
+              <span className={styles.phaseBadge}>PRACTICE</span>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '6px',
                 }}
               >
-                {learnStep + 1 >= learnCards.length
-                  ? 'Start Practice'
-                  : 'Next Learning Card'}
-              </button>
-            </article>
-          )}
-
-          {phase === 'practice' && (
-            <article className={styles.card}>
-              <span className={styles.phaseBadge}>PRACTICE</span>
+                <p
+                  style={{
+                    margin: 0,
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    color: '#666',
+                  }}
+                >
+                  Question {practiceStep + 1} of {practiceChallenges.length}
+                </p>
+                <div className={quizStyles.progressTrack}>
+                  <div
+                    className={quizStyles.progressFill}
+                    style={{
+                      backgroundColor: '#ea580c',
+                      width: `${(practiceStep / practiceChallenges.length) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
               <h2 className={styles.prompt}>{currentPractice.prompt}</h2>
-              <div className={styles.optionGrid}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '10px',
+                  flexDirection: 'column',
+                  marginTop: '10px',
+                }}
+              >
                 {currentPractice.options.map((option, idx) => (
                   <button
                     key={`${option}-${idx}`}
                     type="button"
-                    className={styles.optionButton}
+                    className={`${quizStyles.quizOptionButton} ${
+                      selectedIndex !== null && idx === currentPractice.answer
+                        ? quizStyles.quizOptionCorrectFlash
+                        : ''
+                    }`}
+                    style={{
+                      backgroundColor:
+                        selectedIndex === null
+                          ? '#ea580c'
+                          : idx === currentPractice.answer
+                            ? '#4CAF50'
+                            : '#ea580c',
+                    }}
                     onClick={() => handleChallengeAnswer(currentPractice, idx)}
-                    disabled={Boolean(feedback)}
+                    disabled={selectedIndex !== null}
                   >
                     {option}
                   </button>
                 ))}
               </div>
-              {feedback && (
-                <p
-                  className={
-                    feedback.startsWith('Nice')
-                      ? styles.resultGood
-                      : styles.resultBad
-                  }
-                >
-                  {feedback}
-                </p>
-              )}
             </article>
           )}
 
@@ -516,33 +532,88 @@ export default function PattayaLesson1Page() {
           )}
 
           {phase === 'apply' && (
-            <article className={styles.card}>
+            <article className={styles.card} style={{ position: 'relative' }}>
+              {feedbackIcon && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '80px',
+                    fontWeight: 'bold',
+                    zIndex: 2000,
+                    animation: 'feedbackFadeOut 0.3s ease-out forwards',
+                    color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {feedbackIcon}
+                </div>
+              )}
               <span className={styles.phaseBadge}>APPLY</span>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '6px',
+                }}
+              >
+                <p
+                  style={{
+                    margin: 0,
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    color: '#666',
+                  }}
+                >
+                  Question {applyStep + 1} of {applyChallenges.length}
+                </p>
+                <div className={quizStyles.progressTrack}>
+                  <div
+                    className={quizStyles.progressFill}
+                    style={{
+                      backgroundColor: '#ea580c',
+                      width: `${(applyStep / applyChallenges.length) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
               <h2 className={styles.prompt}>{currentApply.prompt}</h2>
-              <div className={styles.optionGrid}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '10px',
+                  flexDirection: 'column',
+                  marginTop: '10px',
+                }}
+              >
                 {currentApply.options.map((option, idx) => (
                   <button
                     key={`${option}-${idx}`}
                     type="button"
-                    className={styles.optionButton}
+                    className={`${quizStyles.quizOptionButton} ${
+                      selectedIndex !== null && idx === currentApply.answer
+                        ? quizStyles.quizOptionCorrectFlash
+                        : ''
+                    }`}
+                    style={{
+                      backgroundColor:
+                        selectedIndex === null
+                          ? '#ea580c'
+                          : idx === currentApply.answer
+                            ? '#4CAF50'
+                            : '#ea580c',
+                    }}
                     onClick={() => handleChallengeAnswer(currentApply, idx)}
-                    disabled={Boolean(feedback)}
+                    disabled={selectedIndex !== null}
                   >
                     {option}
                   </button>
                 ))}
               </div>
-              {feedback && (
-                <p
-                  className={
-                    feedback.startsWith('Nice')
-                      ? styles.resultGood
-                      : styles.resultBad
-                  }
-                >
-                  {feedback}
-                </p>
-              )}
             </article>
           )}
 
