@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import styles from './Lesson1.module.css';
 import quizStyles from '../../maze/_components/QuizButtons.module.css';
+import MazeHeader from '../../maze/_components/MazeHeader';
 
 type Phase = 'practice' | 'play' | 'apply' | 'done';
 
@@ -352,23 +353,7 @@ export default function PattayaLesson1Page() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <div>
-            <h1 className={styles.title}>Pattaya Lesson 1: Using -ing</h1>
-            <p className={styles.subtitle}>
-              When to use -ing and when to use the base verb or infinitive.
-            </p>
-          </div>
-          <Link href="/pattaya-games" className={styles.headerHomeLink}>
-            <Image
-              src="/assets/back.png"
-              alt="Back to Map"
-              width={34}
-              height={34}
-              className={styles.homeLinkImg}
-            />
-          </Link>
-        </div>
+        <MazeHeader score={0} backHref="/pattaya-games" />
 
         <section className={styles.panel}>
           <div className={styles.statsRow}>
