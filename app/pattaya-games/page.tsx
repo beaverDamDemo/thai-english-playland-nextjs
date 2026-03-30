@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../styles/map.module.css';
 import { lessonMapButtons } from './lessonMapConfig';
 
-const APP_VERSION = '0.0.14';
+const APP_VERSION = '0.0.16';
 const MAP_ASPECT_RATIO = 1024 / 1536;
 const PATTAYA_MAP_IMAGE_CACHE_BUSTER = '20260327-1';
 const TOTAL_LESSONS = lessonMapButtons.length;

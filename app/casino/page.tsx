@@ -6,7 +6,7 @@ import styles from '../../styles/map.module.css';
 import { useEffect, useState } from 'react';
 import { lessonMapButtons } from './lessonMapConfig';
 
-const APP_VERSION = '0.0.14';
+const APP_VERSION = '0.0.16';
 const MAP_ASPECT_RATIO = 1024 / 1536;
 const CASINO_MAP_IMAGE_CACHE_BUSTER = '20260326-1';
 const TOTAL_LESSONS = lessonMapButtons.length;
