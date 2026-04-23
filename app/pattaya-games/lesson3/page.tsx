@@ -1202,13 +1202,14 @@ export default function PattayaLesson3Page() {
             {showDebugOverlay && (
               <>
                 {/* Hit zone border - orange rectangle showing hit detection area */}
+                {/* Calculate directly from tankWidthPct to match tank div exactly */}
                 <div
                   style={{
                     position: 'absolute',
-                    left: `${debugInfo.tankX - debugInfo.tankW * 0.5}%`,
-                    top: `${debugInfo.tankTop}%`,
-                    width: `${debugInfo.tankW}%`,
-                    height: `${debugInfo.tankBot - debugInfo.tankTop}%`,
+                    left: `${tankX - tankWidthPct(tankDistDisplay) * 0.5}%`,
+                    top: `${100 - GROUND_PCT - tankWidthPct(tankDistDisplay) * 0.525}%`,
+                    width: `${tankWidthPct(tankDistDisplay)}%`,
+                    height: `${tankWidthPct(tankDistDisplay) * 0.5}%`,
                     border: '2px dashed rgba(255, 165, 0, 0.9)',
                     backgroundColor: 'rgba(255, 165, 0, 0.1)',
                     pointerEvents: 'none',
