@@ -1429,6 +1429,33 @@ export default function PattayaLesson3Page() {
                   />
                 ))}
               </g>
+
+              {/* Horizontal ticks on center vertical line — even 100m marks (wider, both sides) */}
+              <g stroke="#000000" strokeWidth="0.45" opacity="0.9">
+                {[6.26, 9.98, 14.67, 20.38, 27.2, 35.19, 44.44, 55.04].map(
+                  (dy, i) => (
+                    <line
+                      key={i}
+                      x1={mouseX - 1.2}
+                      y1={mouseY + dy}
+                      x2={mouseX + 1.2}
+                      y2={mouseY + dy}
+                    />
+                  ),
+                )}
+              </g>
+              {/* Horizontal ticks on center vertical line — odd 100m marks (narrower, both sides) */}
+              <g stroke="#000000" strokeWidth="0.35" opacity="0.9">
+                {[8.0, 12.2, 17.39, 23.65, 31.04, 39.65, 49.57].map((dy, i) => (
+                  <line
+                    key={i}
+                    x1={mouseX - 1}
+                    y1={mouseY + dy}
+                    x2={mouseX + 1}
+                    y2={mouseY + dy}
+                  />
+                ))}
+              </g>
             </svg>
 
             <div className={styles.shotCounter}>
