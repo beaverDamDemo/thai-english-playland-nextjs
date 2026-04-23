@@ -151,6 +151,8 @@ type Shell = {
   hit: boolean | null; // null = in flight
   tankXAtFire: number; // tank X% when fired
   tankDist: number; // tank distance when fired
+  opacity: number; // for fading out when flying over wall
+  fadingOverWall: boolean; // true when shell is flying over wall and fading
 };
 
 type HitEffect = { id: number; x: number; y: number };
@@ -376,14 +378,6 @@ export default function PattayaLesson3Page() {
               isHit,
             });
 
-            // DEBUG: update debug info for last shell (track where it landed)
-            setDebugInfo((prev) => ({
-              ...prev,
-              lastShellX: sx,
-              lastShellY: sy,
-              lastLateralMiss: lateralMissPct,
-            }));
-
             const spawnFlash = (
               x: number,
               y: number,
@@ -415,21 +409,69 @@ export default function PattayaLesson3Page() {
               spawnFlash(sx + 1, sy + 1, 'tank');
               setTankFlash(true);
               window.setTimeout(() => setTankFlash(false), 400);
-            } else {
-              // Wall hit: wall is always at GROUND_PCT bottom, 11.25% tall on screen
-              const wallHeightPct = (180 / 1600) * 100; // SVG aspect ratio
-              const wallHit =
-                sy >= GROUND_PCT - wallHeightPct && sy <= GROUND_PCT + 1;
-              if (wallHit) {
-                spawnFlash(sx, sy, 'wall');
-              } else {
-                // Ground hit — flash at grass line Y
-                spawnFlash(sx, GROUND_PCT, 'ground');
-              }
+              // Clear the gray circle marker on successful tank hit
+              setDebugInfo((prev) => ({
+                ...prev,
+                lastShellX: null,
+                lastShellY: null,
+                lastLateralMiss: null,
+              }));
+              return {
+                ...s,
+                t: t2,
+                screenX: sx,
+                screenY: sy,
+                hit: isHit,
+                opacity: 1,
+                fadingOverWall: false,
+              };
             }
-            return { ...s, t: t2, screenX: sx, screenY: sy, hit: isHit };
+            // Note: Explosion effects (spawnFlash) are only shown for tank hits, not for wall/ground misses
+            // DEBUG: update debug info only on misses (don't show gray circle for hits)
+            setDebugInfo((prev) => ({
+              ...prev,
+              lastShellX: sx,
+              lastShellY: sy,
+              lastLateralMiss: lateralMissPct,
+            }));
+            // Check if shell flew over the wall (above wall top when passing target)
+            const wallHeightPct = (180 / 1600) * 100; // SVG aspect ratio
+            const wallTop = GROUND_PCT - wallHeightPct;
+            const flewOverWall = sy < wallTop;
+            return {
+              ...s,
+              t: t2,
+              screenX: sx,
+              screenY: sy,
+              hit: isHit,
+              opacity: flewOverWall ? 1 : 1,
+              fadingOverWall: flewOverWall,
+            };
           }
 
+          // Shell still in flight - check if it's fading over wall
+          if (s.fadingOverWall) {
+            const newOpacity = Math.max(0, s.opacity - dt * 1.5); // fade over ~0.67 seconds
+            if (newOpacity <= 0) {
+              // Shell fully faded, mark as resolved (hit=false means missed)
+              return {
+                ...s,
+                t: t2,
+                screenX: sx,
+                screenY: sy,
+                hit: false,
+                opacity: 0,
+                fadingOverWall: true,
+              };
+            }
+            return {
+              ...s,
+              t: t2,
+              screenX: sx,
+              screenY: sy,
+              opacity: newOpacity,
+            };
+          }
           return { ...s, t: t2, screenX: sx, screenY: sy };
         })
         .filter(
@@ -480,6 +522,8 @@ export default function PattayaLesson3Page() {
       hit: null,
       tankXAtFire: tankXRef.current,
       tankDist: dist,
+      opacity: 1,
+      fadingOverWall: false,
     };
 
     shellsRef.current = [...shellsRef.current, newShell];
@@ -1187,7 +1231,6 @@ export default function PattayaLesson3Page() {
                             marginLeft: '-7px',
                             marginTop: '-7px',
                             backgroundColor: 'rgba(120, 120, 120, 0.85)',
-                            border: '2px solid rgba(60, 60, 60, 0.9)',
                             borderRadius: '50%',
                             boxShadow: '0 0 6px rgba(0, 0, 0, 0.5)',
                             pointerEvents: 'none',
@@ -1257,7 +1300,11 @@ export default function PattayaLesson3Page() {
                   <div
                     key={s.id}
                     className={styles.shellDot}
-                    style={{ left: `${s.screenX}%`, top: `${s.screenY}%` }}
+                    style={{
+                      left: `${s.screenX}%`,
+                      top: `${s.screenY}%`,
+                      opacity: s.opacity,
+                    }}
                   />
                 ),
             )}
