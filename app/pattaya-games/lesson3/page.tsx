@@ -1366,20 +1366,13 @@ export default function PattayaLesson3Page() {
               />
 
               {/* ── Reticle group — coordinates in viewBox (0–100) units ── */}
+              {/* Horizontal line - standard width */}
               <g stroke="#000000" strokeWidth="0.5" opacity="0.95">
-                {/* Main horizontal — left */}
-                <line x1="0" y1={mouseY} x2={mouseX - 4} y2={mouseY} />
-                {/* Main horizontal — right */}
-                <line x1={mouseX + 4} y1={mouseY} x2="100" y2={mouseY} />
-                {/* Main vertical — top */}
-                <line x1={mouseX} y1="0" x2={mouseX} y2={mouseY - 4} />
-                {/* Main vertical — bottom */}
-                <line
-                  x1={mouseX}
-                  y1={mouseY + 4}
-                  x2={mouseX}
-                  y2={mouseY + 22}
-                />
+                <line x1="0" y1={mouseY} x2="100" y2={mouseY} />
+              </g>
+              {/* Vertical line - narrower */}
+              <g stroke="#000000" strokeWidth="0.25" opacity="0.95">
+                <line x1={mouseX} y1="0" x2={mouseX} y2="100" />
               </g>
 
               {/*
@@ -1393,14 +1386,6 @@ export default function PattayaLesson3Page() {
                 Each mark shows "aim this far above target to hit at that range"
               */}
               <g stroke="#000000" strokeWidth="0.45" opacity="0.9">
-                {/* Vertical connecting bar */}
-                <line
-                  x1={mouseX + 4}
-                  y1={mouseY + 6.26}
-                  x2={mouseX + 4}
-                  y2={mouseY + 55.04}
-                />
-
                 {/* Major ticks — uniform length 4, labels all at same X */}
                 {[
                   { dy: 6.26, label: '800' },
@@ -1444,26 +1429,6 @@ export default function PattayaLesson3Page() {
                   />
                 ))}
               </g>
-
-              {/* Centre dot */}
-              <circle
-                cx={mouseX}
-                cy={mouseY}
-                r="0.6"
-                fill="#000000"
-                opacity="0.95"
-              />
-
-              {/* Aim circle */}
-              <circle
-                cx={mouseX}
-                cy={mouseY}
-                r="4"
-                fill="none"
-                stroke="#000000"
-                strokeWidth="0.35"
-                opacity="0.6"
-              />
             </svg>
 
             <div className={styles.shotCounter}>
