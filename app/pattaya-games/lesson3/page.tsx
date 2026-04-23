@@ -90,6 +90,38 @@ function tankWidthPct(dist: number) {
   return (TANK_W_REF * DIST_REF) / dist;
 }
 
+// ── Single source of truth for tank geometry ──
+// X values are in % of arena WIDTH (matches tankX, mouseX).
+// Y values are in % of arena HEIGHT (matches mouseY, shell sy, GROUND_PCT).
+//
+// The tank's SVG has aspect ratio 160:80 = 2:1, so rendered height in pixels
+// = rendered width in pixels × 0.5. To convert that to % of arena HEIGHT we
+// need the arena's aspect ratio (width/height). Pass it in via `arenaAspect`.
+//
+// Inside the SVG, the last 4/80 = 0.05 of height is empty space below the tracks,
+// so the tracks (visual ground contact) sit at GROUND_PCT, and the SVG's visual
+// bottom edge sits trackGap% (in arena-height units) below that.
+function getTankBounds(tankX: number, tankDist: number, arenaAspect: number) {
+  const width = tankWidthPct(tankDist); // % of arena width
+  // Convert visual height from %-of-arena-width → %-of-arena-height
+  const height = width * 0.5 * arenaAspect;
+  const trackGap = width * 0.025 * arenaAspect;
+  const bottom = GROUND_PCT + trackGap; // bottom edge of tank div from top of arena (%-of-height)
+  const top = bottom - height;
+  const left = tankX - width / 2;
+  const right = tankX + width / 2;
+  return {
+    left,
+    right,
+    top,
+    bottom,
+    centerX: tankX,
+    centerY: (top + bottom) / 2,
+    width,
+    height,
+  };
+}
+
 // The tank sits on the ground. Further tanks appear closer to the horizon.
 function tankYPct(dist: number) {
   // linear interpolation: 800m → GROUND_PCT, 1800m → HORIZON_PCT+2
@@ -158,31 +190,16 @@ export default function PattayaLesson3Page() {
   // DEBUG: visual hit zone and position indicators
   const [showDebugOverlay, setShowDebugOverlay] = useState(true);
   const [debugInfo, setDebugInfo] = useState<{
-    tankX: number;
-    tankW: number;
-    tankTop: number; // for hit detection (turret top to tracks)
-    tankBot: number; // for hit detection
-    tankTopActual: number; // actual tank div top (from top of container)
-    tankBotActual: number; // actual tank div bottom (from top of container)
-    tankHActual: number; // actual tank div height
     lastShellX: number | null;
+    lastShellY: number | null;
     lastLateralMiss: number | null;
   }>({
-    tankX: 20,
-    tankW: 8,
-    tankTop: 60,
-    tankBot: 66,
-    tankTopActual: 30,
-    tankBotActual: 34,
-    tankHActual: 4,
     lastShellX: null,
+    lastShellY: null,
     lastLateralMiss: null,
   });
   const [firing, setFiring] = useState(false);
   const [muzzleSmoke, setMuzzleSmoke] = useState(false);
-  const [wallCraters, setWallCraters] = useState<
-    { id: number; sx: number; sy: number }[]
-  >([]);
   const shellIdRef = useRef(0);
   const hitIdRef = useRef(0);
   const arenaRef = useRef<HTMLDivElement>(null);
@@ -190,6 +207,25 @@ export default function PattayaLesson3Page() {
   const lastTimeRef = useRef<number | null>(null);
   const mouseXRef = useRef(50);
   const mouseYRef = useRef(50);
+  // Arena aspect ratio (width / height) — needed for tank height calculations
+  const [arenaAspect, setArenaAspect] = useState(2.375);
+  const arenaAspectRef = useRef(2.375);
+
+  useEffect(() => {
+    const updateAspect = () => {
+      const el = arenaRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.height > 0) {
+        const ratio = rect.width / rect.height;
+        arenaAspectRef.current = ratio;
+        setArenaAspect(ratio);
+      }
+    };
+    updateAspect();
+    window.addEventListener('resize', updateAspect);
+    return () => window.removeEventListener('resize', updateAspect);
+  }, []);
 
   const [savedProgress, setSavedProgress] = useState(false);
 
@@ -289,36 +325,7 @@ export default function PattayaLesson3Page() {
       setTankX(nx);
       setTankDir(dir);
 
-      // DEBUG: update debug info with current tank position
-      // Use tankDistDisplay to match the actual tank rendering (not tankDistRef.current)
-      const currentTankW = tankWidthPct(tankDistDisplay);
-      const currentTrackGap = currentTankW * 0.025; // Gap below tracks
-
-      // Actual tank div positioning (matches the CSS in render exactly)
-      // bottom: 100 - GROUND_PCT - tankW*0.025 from top
-      // height: tankW * 0.5 (SVG aspect ratio 160x80 = 2:1)
-      const actualTankBotFromTop = 100 - GROUND_PCT - currentTankW * 0.025;
-      const actualTankH = currentTankW * 0.5;
-      const actualTankTopFromTop = actualTankBotFromTop - actualTankH;
-
-      // Hit zone matches tank visual bounds
-      const hitZoneBot = 100 - GROUND_PCT - currentTrackGap;
-      const hitZoneTop = hitZoneBot - currentTankW * 0.5;
-
-      const newDebugInfo = {
-        tankX: nx,
-        tankW: currentTankW,
-        tankTop: hitZoneTop, // Hit detection: tank top (matches visual)
-        tankBot: hitZoneBot, // Hit detection: tank bottom (matches visual)
-        tankTopActual: actualTankTopFromTop, // Actual tank div top (from container top)
-        tankBotActual: actualTankBotFromTop, // Actual tank div bottom (from container top)
-        tankHActual: actualTankH, // Actual tank div height
-      };
-
-      setDebugInfo((prev) => ({
-        ...prev,
-        ...newDebugInfo,
-      }));
+      // Debug info (positions are computed at render time via getTankBounds)
 
       // ── Advance shells ──
       const nextShells = shellsRef.current
@@ -343,43 +350,37 @@ export default function PattayaLesson3Page() {
 
           // Impact detection: shell reached or passed the target distance
           if (worldX >= s.dist) {
-            const tankW = tankWidthPct(s.tankDist);
-            // Tank visual height matches the tank div height: tankW * 0.5 (160x80 viewBox ratio)
-            const tankHPct = tankW * 0.5;
-            const trackGapPct = tankW * 0.025; // Gap below tracks in CSS
-
-            // ── Screen-space hit: tank visual bounds ──
-            // Tank bottom edge from top of container: 100 - GROUND_PCT - trackGapPct
-            // Tank top edge from top: bottom - height
-            const tankScreenBot = 100 - GROUND_PCT - trackGapPct;
-            const tankScreenTop = tankScreenBot - tankHPct;
-
-            // ── Lateral: compare crosshair X at fire time vs tank X at fire time ──
+            // ── Use getTankBounds as single source of truth ──
+            // Both bounds and sy are in % from TOP of arena (0=top, 100=bottom).
+            const bounds = getTankBounds(
+              s.tankXAtFire,
+              s.tankDist,
+              arenaAspectRef.current,
+            );
             const lateralMissPct = Math.abs(s.tankXAtFire - s.startXPct);
             const isHit =
-              sy >= tankScreenTop &&
-              sy <= tankScreenBot &&
-              lateralMissPct < tankW * 0.8;
+              sy >= bounds.top &&
+              sy <= bounds.bottom &&
+              lateralMissPct < bounds.width / 2;
 
             console.log('[HIT?]', {
               dist: s.dist.toFixed(1),
               sy: sy.toFixed(2),
-              tankScreenTop: tankScreenTop.toFixed(2),
-              tankScreenBot: tankScreenBot.toFixed(2),
-              tankXAtFire: s.tankXAtFire.toFixed(2),
-              startXPct: s.startXPct.toFixed(2),
-              lateralMissPct: lateralMissPct.toFixed(2),
-              tankW: tankW.toFixed(2),
-              lateralThreshold: (tankW * 0.8).toFixed(2),
-              lateralOK: lateralMissPct < tankW * 0.8,
-              heightOK: sy >= tankScreenTop && sy <= tankScreenBot,
+              tankTop: bounds.top.toFixed(2),
+              tankBot: bounds.bottom.toFixed(2),
+              tankLeft: bounds.left.toFixed(2),
+              tankRight: bounds.right.toFixed(2),
+              shellX: s.startXPct.toFixed(2),
+              lateralMiss: lateralMissPct.toFixed(2),
+              lateralThreshold: (bounds.width / 2).toFixed(2),
               isHit,
             });
 
-            // DEBUG: update debug info for last shell
+            // DEBUG: update debug info for last shell (track where it landed)
             setDebugInfo((prev) => ({
               ...prev,
-              lastShellX: s.startXPct,
+              lastShellX: sx,
+              lastShellY: sy,
               lastLateralMiss: lateralMissPct,
             }));
 
@@ -420,23 +421,6 @@ export default function PattayaLesson3Page() {
               const wallHit =
                 sy >= GROUND_PCT - wallHeightPct && sy <= GROUND_PCT + 1;
               if (wallHit) {
-                const cid = hitIdRef.current++;
-                const wallTopScreenPct = GROUND_PCT - wallHeightPct;
-                const craterSvgX = Math.max(
-                  0,
-                  Math.min(1600, (sx / 100) * 1600),
-                );
-                const craterSvgY = Math.max(
-                  0,
-                  Math.min(
-                    180,
-                    ((sy - wallTopScreenPct) / wallHeightPct) * 180,
-                  ),
-                );
-                setWallCraters((prev) => [
-                  ...prev,
-                  { id: cid, sx: craterSvgX, sy: craterSvgY },
-                ]);
                 spawnFlash(sx, sy, 'wall');
               } else {
                 // Ground hit — flash at grass line Y
@@ -815,46 +799,17 @@ export default function PattayaLesson3Page() {
                   opacity="0.5"
                   rx="2"
                 />
-                {/* Persistent crater marks — coords in SVG viewBox space (320×140) */}
-                {wallCraters.map((c) => (
-                  <g key={c.id}>
-                    <circle
-                      cx={c.sx}
-                      cy={c.sy}
-                      r="8"
-                      fill="#0a0804"
-                      opacity="0.9"
-                    />
-                    <circle
-                      cx={c.sx}
-                      cy={c.sy}
-                      r="4"
-                      fill="#1a1008"
-                      opacity="1"
-                    />
-                    {[0, 45, 90, 135, 180, 225, 270, 315].map((a, i) => (
-                      <line
-                        key={i}
-                        x1={c.sx}
-                        y1={c.sy}
-                        x2={c.sx + Math.cos((a * Math.PI) / 180) * 14}
-                        y2={c.sy + Math.sin((a * Math.PI) / 180) * 14}
-                        stroke="#3a2010"
-                        strokeWidth="1.5"
-                        opacity="0.55"
-                      />
-                    ))}
-                  </g>
-                ))}
               </svg>
             </div>
 
             <div
               className={styles.tank}
               style={{
+                // NOTE: width% is relative to arena WIDTH but bottom% is relative to arena HEIGHT.
+                // We use `left` + `bottom` (not `top`+`height`) so the SVG auto-sizes to its
+                // natural aspect ratio (160×80) using the width. This keeps the tank sitting
+                // exactly on the grass line regardless of arena aspect ratio.
                 left: `${tankX}%`,
-                // Tank always sits on the visible grass line (35% from bottom).
-                // SVG gap below tracks = 4/80 of SVG height = tankWidthPct*0.5*0.05 = tankWidthPct*0.025
                 bottom: `${100 - GROUND_PCT - tankWidthPct(tankDistDisplay) * 0.025}%`,
                 width: `${tankWidthPct(tankDistDisplay)}%`,
                 transform: `translateX(-50%) scaleX(${tankDir === -1 ? -1 : 1})`,
@@ -1199,85 +1154,92 @@ export default function PattayaLesson3Page() {
             </div>
 
             {/* DEBUG: Tank hit zone visualizer */}
-            {showDebugOverlay && (
-              <>
-                {/* Hit zone border - orange rectangle showing hit detection area */}
-                {/* Calculate directly from tankWidthPct to match tank div exactly */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: `${tankX - tankWidthPct(tankDistDisplay) * 0.5}%`,
-                    top: `${100 - GROUND_PCT - tankWidthPct(tankDistDisplay) * 0.525}%`,
-                    width: `${tankWidthPct(tankDistDisplay)}%`,
-                    height: `${tankWidthPct(tankDistDisplay) * 0.5}%`,
-                    border: '2px dashed rgba(255, 165, 0, 0.9)',
-                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
-                    pointerEvents: 'none',
-                    zIndex: 99,
-                    boxSizing: 'border-box',
-                  }}
-                />
-                {/* Last shell target marker */}
-                {debugInfo.lastShellX !== null && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: `${debugInfo.lastShellX}%`,
-                      bottom: `${100 - debugInfo.tankBot + 2}%`,
-                      width: '12px',
-                      height: '12px',
-                      marginLeft: '-6px',
-                      marginBottom: '-6px',
-                      backgroundColor: 'yellow',
-                      border: '2px solid black',
-                      borderRadius: '50%',
-                      pointerEvents: 'none',
-                      zIndex: 101,
-                    }}
-                  />
-                )}
-                {/* Tank position info panel - top right, gold background */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '5px',
-                    right: '5px',
-                    backgroundColor: 'gold',
-                    color: 'navy',
-                    fontFamily: 'monospace',
-                    fontSize: '11px',
-                    padding: '8px',
-                    borderRadius: '4px',
-                    zIndex: 200,
-                    whiteSpace: 'pre-wrap',
-                    lineHeight: '1.5',
-                    border: '1px solid navy',
-                  }}
-                >
-                  <strong>Tank:</strong>
-                  <br />
-                  {`  Left: ${debugInfo.tankX.toFixed(1)}%`}
-                  <br />
-                  {`  Top: ${(100 - GROUND_PCT - debugInfo.tankW * 0.025).toFixed(1)}%`}
-                  <br />
-                  {`  Size: ${debugInfo.tankW.toFixed(1)}% × ${debugInfo.tankHActual.toFixed(1)}%`}
-                  <br />
-                  <strong>Hit Zone:</strong>
-                  <br />
-                  {`  ${debugInfo.tankTop.toFixed(1)}% - ${debugInfo.tankBot.toFixed(1)}%`}
-                  {debugInfo.lastShellX !== null && (
-                    <>
+            {showDebugOverlay &&
+              (() => {
+                const b = getTankBounds(tankX, tankDistDisplay, arenaAspect);
+                return (
+                  <>
+                    {/* Orange hit zone rectangle — should overlap the yellow tank border exactly */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: `${b.left}%`,
+                        top: `${b.top}%`,
+                        width: `${b.width}%`,
+                        height: `${b.height}%`,
+                        border: '2px dashed rgba(255, 165, 0, 0.9)',
+                        backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                        pointerEvents: 'none',
+                        zIndex: 99,
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                    {/* Last shell landing marker (gray) */}
+                    {debugInfo.lastShellX !== null &&
+                      debugInfo.lastShellY !== null && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: `${debugInfo.lastShellX}%`,
+                            top: `${debugInfo.lastShellY}%`,
+                            width: '14px',
+                            height: '14px',
+                            marginLeft: '-7px',
+                            marginTop: '-7px',
+                            backgroundColor: 'rgba(120, 120, 120, 0.85)',
+                            border: '2px solid rgba(60, 60, 60, 0.9)',
+                            borderRadius: '50%',
+                            boxShadow: '0 0 6px rgba(0, 0, 0, 0.5)',
+                            pointerEvents: 'none',
+                            zIndex: 101,
+                          }}
+                        />
+                      )}
+                    {/* Gold info panel - top right */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '5px',
+                        backgroundColor: 'gold',
+                        color: 'navy',
+                        fontFamily: 'monospace',
+                        fontSize: '11px',
+                        padding: '8px',
+                        borderRadius: '4px',
+                        zIndex: 200,
+                        whiteSpace: 'pre-wrap',
+                        lineHeight: '1.5',
+                        border: '1px solid navy',
+                      }}
+                    >
+                      <strong>Tank (% from top-left):</strong>
                       <br />
-                      <strong>Last Shell:</strong>
+                      {`  Left:   ${b.left.toFixed(1)}%`}
                       <br />
-                      {`  X: ${debugInfo.lastShellX.toFixed(1)}%`}
+                      {`  Top:    ${b.top.toFixed(1)}%`}
                       <br />
-                      {`  Miss: ${debugInfo.lastLateralMiss?.toFixed(2)}%`}
-                    </>
-                  )}
-                </div>
-              </>
-            )}
+                      {`  Right:  ${b.right.toFixed(1)}%`}
+                      <br />
+                      {`  Bottom: ${b.bottom.toFixed(1)}%`}
+                      <br />
+                      {`  Size:   ${b.width.toFixed(1)}% × ${b.height.toFixed(1)}%`}
+                      <br />
+                      {`  Center: (${b.centerX.toFixed(1)}, ${b.centerY.toFixed(1)})`}
+                      {debugInfo.lastShellX !== null && (
+                        <>
+                          <br />
+                          <strong>Last Shell:</strong>
+                          <br />
+                          {`  X:    ${debugInfo.lastShellX.toFixed(1)}%`}
+                          <br />
+                          {`  Miss: ${debugInfo.lastLateralMiss?.toFixed(2)}% (threshold ${(b.width / 2).toFixed(2)}%)`}
+                        </>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
 
             {hitEffects.map((h) => (
               <div
@@ -1523,7 +1485,6 @@ export default function PattayaLesson3Page() {
                 setShells([]);
                 shellsRef.current = [];
                 setHitEffects([]);
-                setWallCraters([]);
                 setImpactFlashes([]);
                 setTankFlash(false);
                 setFiring(false);
