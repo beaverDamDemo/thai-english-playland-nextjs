@@ -334,6 +334,54 @@
   z-index: 20;
 }
 
+.scopeKick {
+  animation: scopeKickAnim 0.12s ease-out forwards;
+}
+
+@keyframes scopeKickAnim {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-2.4%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.muzzleSmoke {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 15;
+  border-radius: 50%;
+  width: 54px;
+  height: 54px;
+  background: radial-gradient(
+    circle,
+    rgba(200, 200, 180, 0.9) 0%,
+    rgba(160, 160, 140, 0.5) 50%,
+    transparent 80%
+  );
+  animation: muzzleSmokeAnim 0.6s ease-out forwards;
+}
+
+@keyframes muzzleSmokeAnim {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0.9;
+  }
+  40% {
+    transform: translate(-50%, -80%) scale(4.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -120%) scale(7.5);
+    opacity: 0;
+  }
+}
+
 .tankHitFlash {
   position: absolute;
   inset: 0;
