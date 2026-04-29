@@ -156,10 +156,8 @@ type Shell = {
 
 type HitEffect = { id: number; x: number; y: number };
 
-const DEV_MODE = true; // TODO: remove before release
-
 export default function PattayaLesson3Page() {
-  const [phase, setPhase] = useState<Phase>(DEV_MODE ? 'shoot' : 'quiz');
+  const [phase, setPhase] = useState<Phase>('quiz');
 
   const [round, setRound] = useState<QuizQuestion[]>(() => buildRound());
   const [qIndex, setQIndex] = useState(0);
@@ -171,7 +169,7 @@ export default function PattayaLesson3Page() {
   const [roundsDone, setRoundsDone] = useState(0);
   const [shotsEarned, setShotsEarned] = useState(0);
 
-  const [shotsLeft, setShotsLeft] = useState(DEV_MODE ? Infinity : 0);
+  const [shotsLeft, setShotsLeft] = useState(0);
   const [mouseX, setMouseX] = useState(50);
   const [mouseY, setMouseY] = useState(50);
   const [tankX, setTankX] = useState(20); // % across arena
@@ -188,17 +186,6 @@ export default function PattayaLesson3Page() {
     { id: number; x: number; y: number; type: 'tank' | 'wall' | 'ground' }[]
   >([]);
   const [tankFlash, setTankFlash] = useState(false);
-  // DEBUG: visual hit zone and position indicators
-  const [showDebugOverlay, setShowDebugOverlay] = useState(true);
-  const [debugInfo, setDebugInfo] = useState<{
-    lastShellX: number | null;
-    lastShellY: number | null;
-    lastLateralMiss: number | null;
-  }>({
-    lastShellX: null,
-    lastShellY: null,
-    lastLateralMiss: null,
-  });
   const [firing, setFiring] = useState(false);
   const [muzzleSmoke, setMuzzleSmoke] = useState(false);
   const shellIdRef = useRef(0);
@@ -209,7 +196,6 @@ export default function PattayaLesson3Page() {
   const mouseXRef = useRef(50);
   const mouseYRef = useRef(50);
   // Arena aspect ratio (width / height) — needed for tank height calculations
-  const [arenaAspect, setArenaAspect] = useState(2.375);
   const arenaAspectRef = useRef(2.375);
 
   useEffect(() => {
@@ -218,9 +204,7 @@ export default function PattayaLesson3Page() {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       if (rect.height > 0) {
-        const ratio = rect.width / rect.height;
-        arenaAspectRef.current = ratio;
-        setArenaAspect(ratio);
+        arenaAspectRef.current = rect.width / rect.height;
       }
     };
     updateAspect();
@@ -401,13 +385,6 @@ export default function PattayaLesson3Page() {
               spawnFlash(sx + 1, sy + 1, 'tank');
               setTankFlash(true);
               window.setTimeout(() => setTankFlash(false), 400);
-              // Clear the gray circle marker on successful tank hit
-              setDebugInfo((prev) => ({
-                ...prev,
-                lastShellX: null,
-                lastShellY: null,
-                lastLateralMiss: null,
-              }));
               return {
                 ...s,
                 t: t2,
@@ -419,13 +396,6 @@ export default function PattayaLesson3Page() {
               };
             }
             // Note: Explosion effects (spawnFlash) are only shown for tank hits, not for wall/ground misses
-            // DEBUG: update debug info only on misses (don't show gray circle for hits)
-            setDebugInfo((prev) => ({
-              ...prev,
-              lastShellX: sx,
-              lastShellY: sy,
-              lastLateralMiss: lateralMissPct,
-            }));
             // Check if shell flew over the wall (above wall top when passing target)
             const wallHeightPct = (180 / 1600) * 100; // SVG aspect ratio
             const wallTop = GROUND_PCT - wallHeightPct;
@@ -485,7 +455,7 @@ export default function PattayaLesson3Page() {
   }, [phase]);
 
   function fireShot() {
-    if (!DEV_MODE && shotsLeft <= 0) return;
+    if (shotsLeft <= 0) return;
     const arena = arenaRef.current;
     if (!arena) return;
 
@@ -527,7 +497,7 @@ export default function PattayaLesson3Page() {
     window.setTimeout(() => setFiring(false), 120);
     window.setTimeout(() => setMuzzleSmoke(false), 600);
 
-    if (!DEV_MODE) setShotsLeft((v) => v - 1);
+    setShotsLeft((v) => v - 1);
 
     // Auto-clean shell after it resolves (flight time + buffer)
     const flightMs = (dist / v0x) * 1000 + 600;
@@ -536,7 +506,7 @@ export default function PattayaLesson3Page() {
       setShells([...shellsRef.current]);
     }, flightMs);
 
-    if (!DEV_MODE && shotsLeft - 1 <= 0) {
+    if (shotsLeft - 1 <= 0) {
       window.setTimeout(() => {
         setPhase('done');
         persistProgress(tankHits);
@@ -723,8 +693,7 @@ export default function PattayaLesson3Page() {
             <div>
               <h1 className={styles.title}>Tank Shoot!</h1>
               <p className={styles.subtitle}>
-                Shots: {DEV_MODE ? '∞' : shotsLeft} left · Hits: {tankHits}
-                {DEV_MODE ? ' · DEV MODE' : ''}
+                Shots: {shotsLeft} left · Hits: {tankHits}
               </p>
             </div>
             <Link href="/pattaya-games" className={styles.headerHomeLink}>
@@ -840,9 +809,6 @@ export default function PattayaLesson3Page() {
                 bottom: `${100 - GROUND_PCT - tankWidthPct(tankDistDisplay) * 0.025}%`,
                 width: `${tankWidthPct(tankDistDisplay)}%`,
                 transform: `translateX(-50%) scaleX(${tankDir === -1 ? -1 : 1})`,
-                border: showDebugOverlay
-                  ? '1px dashed rgba(255, 255, 0, 0.9)'
-                  : undefined,
               }}
             >
               {/* Tiger I SVG */}
@@ -1180,93 +1146,6 @@ export default function PattayaLesson3Page() {
               </svg>
             </div>
 
-            {/* DEBUG: Tank hit zone visualizer */}
-            {showDebugOverlay &&
-              (() => {
-                const b = getTankBounds(tankX, tankDistDisplay, arenaAspect);
-                return (
-                  <>
-                    {/* Orange hit zone rectangle — should overlap the yellow tank border exactly */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        left: `${b.left}%`,
-                        top: `${b.top}%`,
-                        width: `${b.width}%`,
-                        height: `${b.height}%`,
-                        border: '2px dashed rgba(255, 165, 0, 0.9)',
-                        backgroundColor: 'rgba(255, 165, 0, 0.1)',
-                        pointerEvents: 'none',
-                        zIndex: 99,
-                        boxSizing: 'border-box',
-                      }}
-                    />
-                    {/* Last shell landing marker (gray) */}
-                    {debugInfo.lastShellX !== null &&
-                      debugInfo.lastShellY !== null && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            left: `${debugInfo.lastShellX}%`,
-                            top: `${debugInfo.lastShellY}%`,
-                            width: '14px',
-                            height: '14px',
-                            marginLeft: '-7px',
-                            marginTop: '-7px',
-                            backgroundColor: 'rgba(120, 120, 120, 0.85)',
-                            borderRadius: '50%',
-                            boxShadow: '0 0 6px rgba(0, 0, 0, 0.5)',
-                            pointerEvents: 'none',
-                            zIndex: 101,
-                          }}
-                        />
-                      )}
-                    {/* Gold info panel - top right */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '5px',
-                        backgroundColor: 'gold',
-                        color: 'navy',
-                        fontFamily: 'monospace',
-                        fontSize: '11px',
-                        padding: '8px',
-                        borderRadius: '4px',
-                        zIndex: 200,
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: '1.5',
-                        border: '1px solid navy',
-                      }}
-                    >
-                      <strong>Tank (% from top-left):</strong>
-                      <br />
-                      {`  Left:   ${b.left.toFixed(1)}%`}
-                      <br />
-                      {`  Top:    ${b.top.toFixed(1)}%`}
-                      <br />
-                      {`  Right:  ${b.right.toFixed(1)}%`}
-                      <br />
-                      {`  Bottom: ${b.bottom.toFixed(1)}%`}
-                      <br />
-                      {`  Size:   ${b.width.toFixed(1)}% × ${b.height.toFixed(1)}%`}
-                      <br />
-                      {`  Center: (${b.centerX.toFixed(1)}, ${b.centerY.toFixed(1)})`}
-                      {debugInfo.lastShellX !== null && (
-                        <>
-                          <br />
-                          <strong>Last Shell:</strong>
-                          <br />
-                          {`  X:    ${debugInfo.lastShellX.toFixed(1)}%`}
-                          <br />
-                          {`  Miss: ${debugInfo.lastLateralMiss?.toFixed(2)}% (threshold ${(b.width / 2).toFixed(2)}%)`}
-                        </>
-                      )}
-                    </div>
-                  </>
-                );
-              })()}
-
             {hitEffects.map((h) => (
               <div
                 key={h.id}
@@ -1442,15 +1321,11 @@ export default function PattayaLesson3Page() {
             </svg>
 
             <div className={styles.shotCounter}>
-              {DEV_MODE ? (
-                <span className={styles.shotDot}>∞</span>
-              ) : (
-                Array.from({ length: shotsLeft }).map((_, i) => (
-                  <span key={i} className={styles.shotDot}>
-                    ●
-                  </span>
-                ))
-              )}
+              {Array.from({ length: shotsLeft }).map((_, i) => (
+                <span key={i} className={styles.shotDot}>
+                  ●
+                </span>
+              ))}
             </div>
           </div>
 
@@ -1500,7 +1375,7 @@ export default function PattayaLesson3Page() {
                 setTotalWrong(0);
                 setRoundsDone(0);
                 setShotsEarned(0);
-                setShotsLeft(DEV_MODE ? Infinity : 0);
+                setShotsLeft(0);
                 setTankHits(0);
                 tankDistRef.current = MIN_DIST; // reset so next shoot session re-randomizes
                 setTankDistDisplay(MIN_DIST);
