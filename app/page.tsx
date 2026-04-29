@@ -237,41 +237,68 @@ export default function HomePage() {
     <main className={styles.playfulHome}>
       <div className={styles.shapeOne} aria-hidden="true" />
       <div className={styles.shapeTwo} aria-hidden="true" />
+      <div className={styles.shapeThree} aria-hidden="true" />
+      <div className={styles.shapeFour} aria-hidden="true" />
+
       <header className={`${styles.header} ${styles.centeredHeader}`}>
-        <h1 className={styles.title}>Thai English Playland</h1>
         {username ? (
-          <p className={styles.userGreeting}>
-            Logged in as <strong>{username}</strong>
-          </p>
-        ) : null}
+          <div className={styles.greetingSection}>
+            <div className={styles.avatarWrapper}>
+              <div className={styles.avatar}>🧒</div>
+            </div>
+            <div className={styles.welcomeText}>
+              <p className={styles.helloText}>Welcome back,</p>
+              <h1 className={styles.userName}>{username}!</h1>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.titleWrapper}>
+            <span className={styles.titleEmoji}>🎪</span>
+            <h1 className={styles.title}>Thai English Playland</h1>
+          </div>
+        )}
       </header>
+
+      <p className={styles.chooseGameText}>Choose a game to play</p>
 
       <section className={styles.hubGrid} aria-label="Game mode links">
         <Link href="/maze" className={`${styles.hubCard} ${styles.mazeCard}`}>
-          <span className={styles.hubTitle}>Maze Game Lessons</span>
-          <span className={styles.hubText}>
-            Classic lesson path with unlocks.
-          </span>
+          <span className={styles.hubIcon}>🌀</span>
+          <div className={styles.hubContent}>
+            <span className={styles.hubTitle}>Maze Adventures</span>
+            <span className={styles.hubText}>
+              Navigate through fun English lessons!
+            </span>
+          </div>
+          <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
           href="/casino"
           className={`${styles.hubCard} ${styles.casinoCard}`}
         >
-          <span className={styles.hubTitle}>Casino Game Lessons</span>
-          <span className={styles.hubText}>
-            Lesson map with 5 casino lesson slots.
-          </span>
+          <span className={styles.hubIcon}>🎰</span>
+          <div className={styles.hubContent}>
+            <span className={styles.hubTitle}>Casino Games</span>
+            <span className={styles.hubText}>
+              Spin, play, and learn English words!
+            </span>
+          </div>
+          <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
           href="/pattaya-games"
           className={`${styles.hubCard} ${styles.pattayaCard}`}
         >
-          <span className={styles.hubTitle}>Pattaya Games Screen</span>
-          <span className={styles.hubText}>
-            Various games and activities from Pattaya.
-          </span>
+          <span className={styles.hubIcon}>🏖️</span>
+          <div className={styles.hubContent}>
+            <span className={styles.hubTitle}>Pattaya Fun</span>
+            <span className={styles.hubText}>
+              Beach games and exciting activities!
+            </span>
+          </div>
+          <span className={styles.hubArrow}>→</span>
         </Link>
       </section>
 
@@ -279,22 +306,22 @@ export default function HomePage() {
         <h2 className={styles.progressTitle}>Your Progress</h2>
         <div className={styles.progressDisplay}>
           <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>Lesson Unlocks</h3>
+            <h3 className={styles.progressBlockTitle}>🏆 Levels Unlocked</h3>
             <div className={styles.progressRows}>
               <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Maze</span>
+                <span className={styles.progressLabel}>🌀 Maze</span>
                 <strong className={styles.progressValue}>
                   {mazeUnlocked}/{MAZE_TOTAL_LESSONS}
                 </strong>
               </div>
               <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Casino</span>
+                <span className={styles.progressLabel}>🎰 Casino</span>
                 <strong className={styles.progressValue}>
                   {casinoUnlocked}/{CASINO_TOTAL_LESSONS}
                 </strong>
               </div>
               <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Pattaya</span>
+                <span className={styles.progressLabel}>🏖️ Pattaya</span>
                 <strong className={styles.progressValue}>
                   {pattayaUnlocked}/{PATTAYA_TOTAL_LESSONS}
                 </strong>
@@ -303,24 +330,24 @@ export default function HomePage() {
           </article>
 
           <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>Quiz Totals</h3>
+            <h3 className={styles.progressBlockTitle}>📈 Quiz Stats</h3>
             <div className={styles.progressRows}>
               <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Correct</span>
+                <span className={styles.progressLabel}>✅ Correct</span>
                 <strong className={styles.progressValue}>{totalCorrect}</strong>
               </div>
               <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Wrong</span>
+                <span className={styles.progressLabel}>❌ Wrong</span>
                 <strong className={styles.progressValue}>{totalWrong}</strong>
               </div>
               <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Attempts</span>
+                <span className={styles.progressLabel}>🎯 Attempts</span>
                 <strong className={styles.progressValue}>
                   {totalAttempts}
                 </strong>
               </div>
               <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Moves</span>
+                <span className={styles.progressLabel}>👣 Moves</span>
                 <strong className={styles.progressValue}>{totalMoves}</strong>
               </div>
             </div>

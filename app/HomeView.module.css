@@ -1,92 +1,199 @@
-.homePage {
-  min-height: 100dvh;
-  padding: 24px;
-  display: grid;
-  gap: 18px;
-  background:
-    radial-gradient(
-      circle at 10% 10%,
-      rgba(255, 212, 125, 0.45),
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 90% 0%,
-      rgba(125, 203, 255, 0.35),
-      transparent 45%
-    ),
-    linear-gradient(180deg, #fffaf0 0%, #f7f9ff 100%);
-}
-
 .playfulHome {
   position: relative;
   isolation: isolate;
   min-height: 100dvh;
-  padding: 24px;
+  padding: 20px;
   display: grid;
-  grid-template-rows: auto auto 1fr auto auto;
-  gap: 18px;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 20px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 0% 0%, var(--home-grad-a), transparent 40%),
-    radial-gradient(circle at 100% 20%, var(--home-grad-b), transparent 45%),
-    linear-gradient(
-      145deg,
-      var(--home-grad-base-1) 0%,
-      var(--home-grad-base-2) 50%,
-      var(--home-grad-base-3) 100%
-    );
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(255, 183, 77, 0.4),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(77, 182, 255, 0.35),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 138, 202, 0.2),
+      transparent 60%
+    ),
+    linear-gradient(145deg, #fff8e1 0%, #ffe4ec 30%, #e3f2fd 60%, #f3e5f5 100%);
 }
 
 .shapeOne,
-.shapeTwo {
+.shapeTwo,
+.shapeThree,
+.shapeFour {
   position: absolute;
   pointer-events: none;
-  z-index: -1;
-  filter: blur(1px);
+  z-index: 0;
 }
 
 .shapeOne {
-  width: 260px;
-  height: 260px;
-  left: -90px;
-  top: 40px;
-  border-radius: 38% 62% 55% 45% / 48% 38% 62% 52%;
-  background: rgba(255, 149, 0, 0.25);
-  animation: floatA 6s ease-in-out infinite;
+  width: 120px;
+  height: 120px;
+  left: 20px;
+  top: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+  opacity: 0.6;
+  animation: floatA 5s ease-in-out infinite;
 }
 
 .shapeTwo {
-  width: 280px;
-  height: 280px;
-  right: -100px;
-  bottom: 20px;
-  border-radius: 52% 48% 42% 58% / 62% 41% 59% 38%;
-  background: rgba(0, 190, 255, 0.2);
-  animation: floatB 7s ease-in-out infinite;
+  width: 80px;
+  height: 80px;
+  right: 40px;
+  top: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a3f4 100%);
+  opacity: 0.5;
+  animation: floatB 6s ease-in-out infinite;
+}
+
+.shapeThree {
+  width: 60px;
+  height: 60px;
+  left: 15%;
+  bottom: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a29bfe 0%, #fd79a8 100%);
+  opacity: 0.4;
+  animation: floatA 7s ease-in-out infinite reverse;
+}
+
+.shapeFour {
+  width: 100px;
+  height: 100px;
+  right: 10%;
+  bottom: 180px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+  opacity: 0.5;
+  animation: floatB 5.5s ease-in-out infinite reverse;
 }
 
 .header {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 10px 0;
 }
 
 .centeredHeader {
   justify-content: center;
-  text-align: center;
 }
 
-.userGreeting {
-  margin: 4px 0 0;
-  font-size: 0.9rem;
-  color: #4f6390;
+.greetingSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 50%, #6c5ce7 100%);
+  padding: 4px;
+  box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3);
+  animation: bounceIn 0.6s ease-out;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+}
+
+.welcomeText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.helloText {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #636e72;
+  margin: 0;
+}
+
+.userName {
+  font-size: clamp(1.8rem, 6vw, 2.5rem);
+  font-weight: 900;
+  color: #6c5ce7;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(108, 92, 231, 0.2);
+}
+
+.titleWrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.titleEmoji {
+  font-size: 3.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 .title {
   margin: 0;
-  font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+  font-size: clamp(1.8rem, 6vw, 2.8rem);
+  font-weight: 900;
   line-height: 1.1;
-  color: var(--home-title);
+  background: linear-gradient(135deg, #6c5ce7 0%, #fd79a8 50%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+
+.userGreeting {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #636e72;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 6px 16px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.userGreeting strong {
+  color: #6c5ce7;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .heroCard,
@@ -99,56 +206,99 @@
   box-shadow: 0 8px 24px rgba(34, 52, 103, 0.08);
 }
 
+.chooseGameText {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #636e72;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.chooseGameText::before,
+.chooseGameText::after {
+  content: '';
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #6c5ce7, transparent);
+}
+
 .hubGrid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .progressCard {
+  position: relative;
+  z-index: 1;
   display: grid;
-  gap: 14px;
-  padding: 18px;
-  border-radius: 16px;
-  background: var(--home-card-bg);
-  border: 1px solid var(--home-card-border);
-  box-shadow: 0 10px 24px var(--home-card-shadow);
+  gap: 20px;
+  padding: 24px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .progressTitle {
   margin: 0;
-  font-size: 1.18rem;
-  font-weight: 800;
-  color: var(--home-title);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #2d3436;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progressTitle::before {
+  content: '📊';
+  font-size: 1.6rem;
 }
 
 .progressDisplay {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .progressBlock {
   display: grid;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 13px;
-  background: var(--home-block-bg);
-  border: 1px solid var(--home-block-border);
+  gap: 14px;
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.7) 100%
+  );
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 }
 
 .progressBlockTitle {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--home-subtitle);
+  color: #636e72;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .progressRows {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .progressRow {
@@ -156,27 +306,34 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding-bottom: 7px;
-  border-bottom: 1px dashed rgba(112, 132, 192, 0.34);
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  border: 2px dashed rgba(108, 92, 231, 0.2);
+  transition: all 0.2s ease;
 }
 
-.progressRow:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
+.progressRow:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(108, 92, 231, 0.4);
+  transform: translateX(4px);
 }
 
 .progressLabel {
-  font-size: 0.92rem;
-  color: var(--home-label);
+  font-size: 1rem;
+  color: #636e72;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .progressValue {
-  font-size: 1rem;
-  color: var(--home-value);
-  font-weight: 800;
+  font-size: 1.15rem;
+  color: #6c5ce7;
+  font-weight: 900;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
 .progressStats {
@@ -201,144 +358,184 @@
 }
 
 .bottomPageActions {
+  position: relative;
+  z-index: 1;
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
+  padding: 10px 0;
 }
 
 .progressActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
+  gap: 12px;
+  justify-content: center;
 }
 
 .progressUnlockButton,
 .progressResetButton,
 .logoutButton,
 .settingsLink {
-  justify-self: start;
-  align-self: start;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   border: none;
-  border-radius: 999px;
-  padding: 0 14px;
-  min-height: 32px;
+  border-radius: 16px;
+  padding: 0 20px;
+  min-height: 48px;
   cursor: pointer;
-  font-size: clamp(12px, 0.7vw, 13px);
+  font-size: 0.95rem;
   line-height: 1;
   font-weight: 800;
   transition:
-    transform 0.15s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease;
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.2s ease;
 }
 
 .progressUnlockButton {
-  background: linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%);
-  color: #402300;
-  box-shadow: 0 6px 14px rgba(255, 159, 28, 0.34);
+  background: linear-gradient(135deg, #ffd166 0%, #ffb347 100%);
+  color: #5a3d00;
+  box-shadow: 0 8px 20px rgba(255, 179, 71, 0.35);
 }
 
 .progressResetButton {
-  background: linear-gradient(135deg, #ff6a6a 0%, #d93f7a 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
   color: #fff;
-  box-shadow: 0 6px 14px rgba(217, 63, 122, 0.24);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.35);
 }
 
 .settingsLink {
-  background: linear-gradient(135deg, #71c4ff 0%, #4d8eff 100%);
+  background: linear-gradient(135deg, #74b9ff 0%, #6c5ce7 100%);
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 6px 14px rgba(77, 142, 255, 0.25);
+  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
 }
 
 .logoutButton {
-  background: linear-gradient(135deg, #8f9bb3 0%, #64748b 100%);
+  background: linear-gradient(135deg, #a0a0a0 0%, #808080 100%);
   color: #fff;
-  box-shadow: 0 6px 14px rgba(71, 85, 105, 0.28);
+  box-shadow: 0 8px 20px rgba(128, 128, 128, 0.35);
 }
 
-.progressUnlockButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 9px 18px rgba(255, 159, 28, 0.4);
-  filter: brightness(0.98);
-}
-
-.progressResetButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 9px 18px rgba(217, 63, 122, 0.3);
-  filter: brightness(0.98);
-}
-
-.settingsLink:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 9px 18px rgba(77, 142, 255, 0.32);
-  filter: brightness(0.98);
-}
-
+.progressUnlockButton:hover,
+.progressResetButton:hover,
+.settingsLink:hover,
 .logoutButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 9px 18px rgba(71, 85, 105, 0.34);
-  filter: brightness(0.98);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+.progressUnlockButton::before {
+  content: '🔓';
+}
+.progressResetButton::before {
+  content: '🔄';
+}
+.settingsLink::before {
+  content: '⚙️';
+}
+.logoutButton::before {
+  content: '👋';
 }
 
 .hubCard {
   position: relative;
-  display: grid;
-  gap: 8px;
-  min-height: 132px;
-  padding: 18px;
-  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 160px;
+  padding: 24px;
+  border-radius: 24px;
   text-decoration: none;
-  color: var(--home-hub-ink);
-  border: 1px solid var(--home-hub-border);
-  box-shadow: 0 10px 24px var(--home-hub-shadow);
+  color: #2d3436;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.12),
+    inset 0 2px 4px rgba(255, 255, 255, 0.5);
   transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.hubCard::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .hubCard:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 14px 28px var(--home-hub-hover-shadow);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.hubCard:hover::before {
+  opacity: 1;
+}
+
+.hubIcon {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.hubContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .hubTitle {
-  font-size: 1.12rem;
-  font-weight: 800;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #2d3436;
 }
 
 .hubText {
-  font-size: 0.94rem;
-  color: var(--home-hub-text);
+  font-size: 1rem;
+  color: #636e72;
+  font-weight: 500;
+}
+
+.hubArrow {
+  margin-top: auto;
+  font-size: 1.5rem;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.hubCard:hover .hubArrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .mazeCard {
-  background: linear-gradient(
-    135deg,
-    var(--home-maze-grad-1) 0%,
-    var(--home-maze-grad-2) 100%
-  );
+  background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
 }
 
 .casinoCard {
-  background: linear-gradient(
-    135deg,
-    var(--home-casino-grad-1) 0%,
-    var(--home-casino-grad-2) 100%
-  );
+  background: linear-gradient(135deg, #ffd3b6 0%, #ffaaa5 100%);
 }
 
 .pattayaCard {
-  background: linear-gradient(
-    135deg,
-    var(--home-pattaya-grad-1) 0%,
-    var(--home-pattaya-grad-2) 100%
-  );
+  background: linear-gradient(135deg, #dcedc1 0%, #aed9e0 100%);
 }
 
 .playfulScreen {
@@ -724,59 +921,75 @@
 }
 
 @media (max-width: 640px) {
-  .homePage {
-    padding: 14px;
-    gap: 14px;
-  }
-
   .playfulHome {
-    padding: 14px;
-    gap: 14px;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .centeredHeader {
-    align-items: center;
-  }
-
-  .playfulScreen {
-    padding: 14px;
-    gap: 14px;
-  }
-
-  .screenCard {
     padding: 16px;
-    border-radius: 16px;
+    gap: 16px;
   }
 
-  .screenLinks {
-    display: grid;
+  .avatarWrapper {
+    width: 80px;
+    height: 80px;
+  }
+
+  .avatar {
+    font-size: 2.5rem;
+  }
+
+  .helloText {
+    font-size: 1rem;
+  }
+
+  .userName {
+    font-size: 1.5rem;
+  }
+
+  .titleEmoji {
+    font-size: 2.5rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .hubGrid {
     grid-template-columns: 1fr;
   }
 
-  .headerHomeLink {
-    min-height: 28px;
-    padding: 5px 10px;
-    font-size: 0.78rem;
+  .hubCard {
+    min-height: 120px;
+    padding: 20px;
+  }
+
+  .hubIcon {
+    font-size: 2.5rem;
+  }
+
+  .hubTitle {
+    font-size: 1.15rem;
+  }
+
+  .progressCard {
+    padding: 18px;
   }
 
   .progressDisplay {
     grid-template-columns: 1fr;
   }
 
-  .progressTitle {
-    font-size: 1.06rem;
+  .progressRow {
+    padding: 10px 12px;
   }
 
-  .progressLabel {
-    font-size: 0.86rem;
+  .progressActions {
+    flex-direction: column;
+    width: 100%;
   }
 
-  .progressValue {
-    font-size: 0.92rem;
+  .progressUnlockButton,
+  .progressResetButton,
+  .logoutButton,
+  .settingsLink {
+    width: 100%;
+    min-height: 52px;
   }
 }
