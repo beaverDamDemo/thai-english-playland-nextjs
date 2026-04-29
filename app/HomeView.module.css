@@ -993,3 +993,397 @@
     min-height: 52px;
   }
 }
+
+/* Dark Theme Styles */
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .playfulHome {
+    background:
+      radial-gradient(
+        circle at 10% 10%,
+        rgba(255, 183, 77, 0.15),
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 90% 90%,
+        rgba(77, 182, 255, 0.12),
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 138, 202, 0.1),
+        transparent 60%
+      ),
+      linear-gradient(
+        145deg,
+        #1a1a2e 0%,
+        #16213e 30%,
+        #0f3460 60%,
+        #1a1a2e 100%
+      );
+  }
+
+  :global(:root:not([data-theme='light'])) .shapeOne {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 107, 107, 0.4) 0%,
+      rgba(255, 217, 61, 0.3) 100%
+    );
+  }
+
+  :global(:root:not([data-theme='light'])) .shapeTwo {
+    background: linear-gradient(
+      135deg,
+      rgba(78, 205, 196, 0.35) 0%,
+      rgba(68, 163, 244, 0.25) 100%
+    );
+  }
+
+  :global(:root:not([data-theme='light'])) .shapeThree {
+    background: linear-gradient(
+      135deg,
+      rgba(162, 155, 254, 0.3) 0%,
+      rgba(253, 121, 168, 0.25) 100%
+    );
+  }
+
+  :global(:root:not([data-theme='light'])) .shapeFour {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 234, 167, 0.25) 0%,
+      rgba(250, 177, 160, 0.2) 100%
+    );
+  }
+
+  :global(:root:not([data-theme='light'])) .helloText {
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .userName {
+    color: #a29bfe;
+    text-shadow: 2px 2px 0 rgba(162, 155, 254, 0.3);
+  }
+
+  :global(:root:not([data-theme='light'])) .avatarWrapper {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 50%, #a29bfe 100%);
+    box-shadow: 0 8px 24px rgba(162, 155, 254, 0.3);
+  }
+
+  :global(:root:not([data-theme='light'])) .avatar {
+    background: linear-gradient(135deg, #1e1e3f 0%, #2d2d5a 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .title {
+    background: linear-gradient(135deg, #a29bfe 0%, #fd79a8 50%, #ff6b6b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  :global(:root:not([data-theme='light'])) .userGreeting {
+    background: rgba(30, 30, 60, 0.7);
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .userGreeting strong {
+    color: #a29bfe;
+  }
+
+  :global(:root:not([data-theme='light'])) .chooseGameText {
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .chooseGameText::before,
+  :global(:root:not([data-theme='light'])) .chooseGameText::after {
+    background: linear-gradient(90deg, transparent, #a29bfe, transparent);
+  }
+
+  :global(:root:not([data-theme='light'])) .hubCard {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.3),
+      inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
+
+  :global(:root:not([data-theme='light'])) .hubCard:hover {
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
+
+  :global(:root:not([data-theme='light'])) .hubTitle {
+    color: #e8f0ff;
+  }
+
+  :global(:root:not([data-theme='light'])) .hubText {
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .mazeCard {
+    background: linear-gradient(135deg, #2d5a47 0%, #1e3d30 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .casinoCard {
+    background: linear-gradient(135deg, #5a3d2d 0%, #4a2d25 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .pattayaCard {
+    background: linear-gradient(135deg, #2d4a52 0%, #1e3a42 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .progressCard {
+    background: rgba(30, 30, 50, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 16px 40px rgba(0, 0, 0, 0.3),
+      inset 0 2px 4px rgba(255, 255, 255, 0.05);
+  }
+
+  :global(:root:not([data-theme='light'])) .progressTitle {
+    color: #e8f0ff;
+  }
+
+  :global(:root:not([data-theme='light'])) .progressBlock {
+    background: linear-gradient(
+      135deg,
+      rgba(40, 40, 70, 0.9) 0%,
+      rgba(30, 30, 50, 0.7) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  :global(:root:not([data-theme='light'])) .progressBlockTitle {
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .progressRow {
+    background: rgba(50, 50, 80, 0.5);
+    border-color: rgba(162, 155, 254, 0.2);
+  }
+
+  :global(:root:not([data-theme='light'])) .progressRow:hover {
+    background: rgba(60, 60, 100, 0.6);
+    border-color: rgba(162, 155, 254, 0.4);
+  }
+
+  :global(:root:not([data-theme='light'])) .progressLabel {
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .progressValue {
+    color: #a29bfe;
+  }
+
+  :global(:root:not([data-theme='light'])) .progressUnlockButton {
+    background: linear-gradient(135deg, #d4a853 0%, #b8860b 100%);
+    color: #1a1a2e;
+    box-shadow: 0 8px 20px rgba(184, 134, 11, 0.3);
+  }
+
+  :global(:root:not([data-theme='light'])) .progressResetButton {
+    background: linear-gradient(135deg, #c75450 0%, #a84040 100%);
+    box-shadow: 0 8px 20px rgba(167, 64, 64, 0.3);
+  }
+
+  :global(:root:not([data-theme='light'])) .settingsLink {
+    background: linear-gradient(135deg, #5a8fc7 0%, #6b5ce7 100%);
+    box-shadow: 0 8px 20px rgba(107, 92, 231, 0.3);
+  }
+
+  :global(:root:not([data-theme='light'])) .logoutButton {
+    background: linear-gradient(135deg, #7a7a8a 0%, #606070 100%);
+    box-shadow: 0 8px 20px rgba(96, 96, 112, 0.3);
+  }
+}
+
+/* Explicit dark theme data attribute */
+:global([data-theme='dark']) .playfulHome {
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(255, 183, 77, 0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(77, 182, 255, 0.12),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 138, 202, 0.1),
+      transparent 60%
+    ),
+    linear-gradient(145deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #1a1a2e 100%);
+}
+
+:global([data-theme='dark']) .shapeOne {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 107, 0.4) 0%,
+    rgba(255, 217, 61, 0.3) 100%
+  );
+}
+
+:global([data-theme='dark']) .shapeTwo {
+  background: linear-gradient(
+    135deg,
+    rgba(78, 205, 196, 0.35) 0%,
+    rgba(68, 163, 244, 0.25) 100%
+  );
+}
+
+:global([data-theme='dark']) .shapeThree {
+  background: linear-gradient(
+    135deg,
+    rgba(162, 155, 254, 0.3) 0%,
+    rgba(253, 121, 168, 0.25) 100%
+  );
+}
+
+:global([data-theme='dark']) .shapeFour {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 234, 167, 0.25) 0%,
+    rgba(250, 177, 160, 0.2) 100%
+  );
+}
+
+:global([data-theme='dark']) .helloText {
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .userName {
+  color: #a29bfe;
+  text-shadow: 2px 2px 0 rgba(162, 155, 254, 0.3);
+}
+
+:global([data-theme='dark']) .avatarWrapper {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 50%, #a29bfe 100%);
+  box-shadow: 0 8px 24px rgba(162, 155, 254, 0.3);
+}
+
+:global([data-theme='dark']) .avatar {
+  background: linear-gradient(135deg, #1e1e3f 0%, #2d2d5a 100%);
+}
+
+:global([data-theme='dark']) .title {
+  background: linear-gradient(135deg, #a29bfe 0%, #fd79a8 50%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:global([data-theme='dark']) .userGreeting {
+  background: rgba(30, 30, 60, 0.7);
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .userGreeting strong {
+  color: #a29bfe;
+}
+
+:global([data-theme='dark']) .chooseGameText {
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .chooseGameText::before,
+:global([data-theme='dark']) .chooseGameText::after {
+  background: linear-gradient(90deg, transparent, #a29bfe, transparent);
+}
+
+:global([data-theme='dark']) .hubCard {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+:global([data-theme='dark']) .hubCard:hover {
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+:global([data-theme='dark']) .hubTitle {
+  color: #e8f0ff;
+}
+
+:global([data-theme='dark']) .hubText {
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .mazeCard {
+  background: linear-gradient(135deg, #2d5a47 0%, #1e3d30 100%);
+}
+
+:global([data-theme='dark']) .casinoCard {
+  background: linear-gradient(135deg, #5a3d2d 0%, #4a2d25 100%);
+}
+
+:global([data-theme='dark']) .pattayaCard {
+  background: linear-gradient(135deg, #2d4a52 0%, #1e3a42 100%);
+}
+
+:global([data-theme='dark']) .progressCard {
+  background: rgba(30, 30, 50, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.05);
+}
+
+:global([data-theme='dark']) .progressTitle {
+  color: #e8f0ff;
+}
+
+:global([data-theme='dark']) .progressBlock {
+  background: linear-gradient(
+    135deg,
+    rgba(40, 40, 70, 0.9) 0%,
+    rgba(30, 30, 50, 0.7) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global([data-theme='dark']) .progressBlockTitle {
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .progressRow {
+  background: rgba(50, 50, 80, 0.5);
+  border-color: rgba(162, 155, 254, 0.2);
+}
+
+:global([data-theme='dark']) .progressRow:hover {
+  background: rgba(60, 60, 100, 0.6);
+  border-color: rgba(162, 155, 254, 0.4);
+}
+
+:global([data-theme='dark']) .progressLabel {
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .progressValue {
+  color: #a29bfe;
+}
+
+:global([data-theme='dark']) .progressUnlockButton {
+  background: linear-gradient(135deg, #d4a853 0%, #b8860b 100%);
+  color: #1a1a2e;
+  box-shadow: 0 8px 20px rgba(184, 134, 11, 0.3);
+}
+
+:global([data-theme='dark']) .progressResetButton {
+  background: linear-gradient(135deg, #c75450 0%, #a84040 100%);
+  box-shadow: 0 8px 20px rgba(167, 64, 64, 0.3);
+}
+
+:global([data-theme='dark']) .settingsLink {
+  background: linear-gradient(135deg, #5a8fc7 0%, #6b5ce7 100%);
+  box-shadow: 0 8px 20px rgba(107, 92, 231, 0.3);
+}
+
+:global([data-theme='dark']) .logoutButton {
+  background: linear-gradient(135deg, #7a7a8a 0%, #606070 100%);
+  box-shadow: 0 8px 20px rgba(96, 96, 112, 0.3);
+}
