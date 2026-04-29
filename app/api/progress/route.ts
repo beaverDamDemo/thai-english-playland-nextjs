@@ -21,13 +21,13 @@ export async function GET() {
 
   const rows = await db<ProgressRow[]>`
     SELECT game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned
-    FROM public.user_progress
+    FROM public.thai_english_playland_user_progress
     WHERE user_id = ${user.id};
   `;
 
   const progress: Record<GameMode, Omit<ProgressRow, 'game_mode'>> = {
-    maze:    { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
-    casino:  { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
+    maze: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
+    casino: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
     pattaya: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
   };
 
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
   }
 
   await db`
-    INSERT INTO public.user_progress (user_id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned, updated_at)
+    INSERT INTO public.thai_english_playland_user_progress (user_id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned, updated_at)
     VALUES (
       ${user.id}, ${game_mode},
       ${unlocked_lessons ?? 1},

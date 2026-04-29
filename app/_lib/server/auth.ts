@@ -62,7 +62,7 @@ export async function createSession(userId: number): Promise<string> {
   const expiresAt = new Date(Date.now() + SESSION_TTL_DAYS * 24 * 60 * 60 * 1000);
 
   await db`
-    INSERT INTO public.user_sessions (user_id, session_token, expires_at)
+    INSERT INTO public.thai_english_playland_user_sessions (user_id, session_token, expires_at)
     VALUES (${userId}, ${token}, ${expiresAt.toISOString()});
   `;
 
@@ -76,8 +76,8 @@ export async function getCurrentSessionUser() {
 
   const rows = await db<Array<{ id: number; username: string; }>>`
     SELECT u.id, u.username
-    FROM public.user_sessions s
-    JOIN public.app_users u ON u.id = s.user_id
+    FROM public.thai_english_playland_user_sessions s
+    JOIN public.thai_english_playland_users u ON u.id = s.user_id
     WHERE s.session_token = ${token}
       AND s.expires_at > NOW()
     LIMIT 1;
@@ -88,7 +88,7 @@ export async function getCurrentSessionUser() {
 
 export async function clearSessionToken(token: string): Promise<void> {
   await db`
-    DELETE FROM public.user_sessions
+    DELETE FROM public.thai_english_playland_user_sessions
     WHERE session_token = ${token};
   `;
 }

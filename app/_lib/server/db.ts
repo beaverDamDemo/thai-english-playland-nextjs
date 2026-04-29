@@ -5,11 +5,10 @@ declare global {
 }
 
 function createDbClient() {
-  const isProdMode = process.env.NODE_ENV === 'production' || process.env.USE_PROD_DB === 'true';
-  const url = isProdMode ? process.env.POSTGRES_URL_PROD : process.env.POSTGRES_URL;
+  const url = process.env.DATABASE_URL;
 
   if (!url) {
-    throw new Error(`Database URL is not set. ${isProdMode ? 'POSTGRES_URL_PROD' : 'POSTGRES_URL'} is required.`);
+    throw new Error('DATABASE_URL environment variable is required.');
   }
 
   const ssl = url.includes('sslmode=disable') ? false : 'require';

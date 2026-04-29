@@ -23,9 +23,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const users = await db<Array<{ id: number; username: string; password_hash: string }>>`
+  const users = await db<Array<{ id: number; username: string; password_hash: string; }>>`
     SELECT id, username, password_hash
-    FROM public.app_users
+    FROM public.thai_english_playland_users
     WHERE username = ${username}
     LIMIT 1;
   `;

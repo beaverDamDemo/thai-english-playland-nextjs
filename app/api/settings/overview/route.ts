@@ -10,7 +10,7 @@ export async function GET() {
 
   const userCountRows = await db<Array<{ total: number; }>>`
     SELECT COUNT(*)::int AS total
-    FROM public.app_users;
+    FROM public.thai_english_playland_users;
   `;
 
   return NextResponse.json({

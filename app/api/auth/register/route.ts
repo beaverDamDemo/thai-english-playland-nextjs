@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
   try {
     const users = await db<Array<{ id: number; username: string; }>>`
-      INSERT INTO public.app_users (username, password_hash)
+      INSERT INTO public.thai_english_playland_users (username, password_hash)
       VALUES (${username}, ${passwordHash})
       RETURNING id, username;
     `;
