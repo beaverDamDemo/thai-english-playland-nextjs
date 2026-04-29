@@ -263,3 +263,135 @@
     opacity: 0.6;
   }
 }
+
+/* Dark Theme Styles */
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .container::before,
+  :global(:root:not([data-theme='light'])) .container::after {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  :global(:root:not([data-theme='light'])) .card {
+    background: rgba(30, 30, 50, 0.95);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  :global(:root:not([data-theme='light'])) .title {
+    color: #e8f0ff;
+  }
+
+  :global(:root:not([data-theme='light'])) .subtitle {
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .label {
+    color: #c1d0ef;
+  }
+
+  :global(:root:not([data-theme='light'])) .input {
+    background: rgba(20, 25, 40, 0.8);
+    border-color: rgba(123, 151, 218, 0.3);
+    color: #e8f0ff;
+  }
+
+  :global(:root:not([data-theme='light'])) .input:focus {
+    border-color: #74b9ff;
+    background: rgba(25, 30, 50, 0.9);
+    box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.15);
+  }
+
+  :global(:root:not([data-theme='light'])) .input::placeholder {
+    color: #6b7a9c;
+  }
+
+  :global(:root:not([data-theme='light'])) .divider {
+    color: #6b7a9c;
+  }
+
+  :global(:root:not([data-theme='light'])) .divider::before,
+  :global(:root:not([data-theme='light'])) .divider::after {
+    background: rgba(123, 151, 218, 0.2);
+  }
+
+  :global(:root:not([data-theme='light'])) .switchMode {
+    border-color: rgba(123, 151, 218, 0.3);
+    color: #9fb5e7;
+  }
+
+  :global(:root:not([data-theme='light'])) .switchMode:hover {
+    border-color: #74b9ff;
+    color: #74b9ff;
+    background: rgba(116, 185, 255, 0.1);
+  }
+}
+
+/* Explicit dark theme data attribute */
+:global([data-theme='dark']) .container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+:global([data-theme='dark']) .container::before,
+:global([data-theme='dark']) .container::after {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+:global([data-theme='dark']) .card {
+  background: rgba(30, 30, 50, 0.95);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme='dark']) .title {
+  color: #e8f0ff;
+}
+
+:global([data-theme='dark']) .subtitle {
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .label {
+  color: #c1d0ef;
+}
+
+:global([data-theme='dark']) .input {
+  background: rgba(20, 25, 40, 0.8);
+  border-color: rgba(123, 151, 218, 0.3);
+  color: #e8f0ff;
+}
+
+:global([data-theme='dark']) .input:focus {
+  border-color: #74b9ff;
+  background: rgba(25, 30, 50, 0.9);
+  box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.15);
+}
+
+:global([data-theme='dark']) .input::placeholder {
+  color: #6b7a9c;
+}
+
+:global([data-theme='dark']) .divider {
+  color: #6b7a9c;
+}
+
+:global([data-theme='dark']) .divider::before,
+:global([data-theme='dark']) .divider::after {
+  background: rgba(123, 151, 218, 0.2);
+}
+
+:global([data-theme='dark']) .switchMode {
+  border-color: rgba(123, 151, 218, 0.3);
+  color: #9fb5e7;
+}
+
+:global([data-theme='dark']) .switchMode:hover {
+  border-color: #74b9ff;
+  color: #74b9ff;
+  background: rgba(116, 185, 255, 0.1);
+}
