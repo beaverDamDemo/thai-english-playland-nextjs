@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
