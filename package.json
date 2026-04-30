@@ -1,12 +1,12 @@
 {
   "name": "thai-english-playland",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "private": true,
   "scripts": {
     "check:quotes": "node scripts/check-unescaped-apostrophes.mjs",
     "typecheck": "tsc --noEmit",
     "verify": "npm run check:quotes && npm run lint && npm run typecheck",
-    "prebuild": "npm run verify",
+    "prebuild": "npm run verify && npm version patch --no-git-tag-version",
     "build": "next build",
     "start:dev": "next dev --webpack",
     "dev": "next dev --webpack",
