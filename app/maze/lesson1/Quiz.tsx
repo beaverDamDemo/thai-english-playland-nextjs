@@ -121,11 +121,26 @@ function shuffleArray<T>(items: T[]): T[] {
   return copy;
 }
 
+// Removes any option whose text already appears in the question prompt
+// (e.g. drops "7 AM" from the choices when the question is "7 AM is ___ in 24h format.").
+// The correct answer is always preserved, and its index is recomputed.
+function pruneSelfReferentialOptions(q: QuizQuestion): QuizQuestion {
+  const correctText = q.options[q.answer];
+  const filteredOptions = q.options.filter(
+    (opt) => opt === correctText || !q.q.includes(opt),
+  );
+  return {
+    ...q,
+    options: filteredOptions,
+    answer: filteredOptions.indexOf(correctText),
+  };
+}
+
 function buildBalancedQuestions(
   source: QuizQuestion[],
   count: number,
 ): QuizQuestion[] {
-  return shuffleArray(source).slice(0, count);
+  return shuffleArray(source).slice(0, count).map(pruneSelfReferentialOptions);
 }
 
 export default function Quiz({
