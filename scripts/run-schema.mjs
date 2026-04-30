@@ -1,5 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import postgres from 'postgres';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load .env.local file
 const envPath = path.join(__dirname, '..', '.env.local');
@@ -15,8 +20,6 @@ if (fs.existsSync(envPath)) {
     }
   });
 }
-
-const postgres = require('postgres');
 
 async function main() {
   const url = process.env.DATABASE_URL;

@@ -16,12 +16,13 @@
     "prestart": "npm run build",
     "start": "next start",
     "lint": "eslint",
-    "db:start": "node scripts/manage-postgres.js start",
-    "db:stop": "node scripts/manage-postgres.js stop",
-    "db:restart": "node scripts/manage-postgres.js restart",
-    "db:reset": "node scripts/manage-postgres.js reset",
-    "db:status": "node scripts/manage-postgres.js status",
-    "db:logs": "node scripts/manage-postgres.js logs"
+    "db:start": "node scripts/manage-postgres.mjs start",
+    "db:stop": "node scripts/manage-postgres.mjs stop",
+    "db:restart": "node scripts/manage-postgres.mjs restart",
+    "db:reset": "node scripts/manage-postgres.mjs reset",
+    "db:status": "node scripts/manage-postgres.mjs status",
+    "db:logs": "node scripts/manage-postgres.mjs logs",
+    "export:lessons": "node scripts/export-lessons.mjs"
   },
   "dependencies": {
     "@vercel/postgres": "^0.10.0",

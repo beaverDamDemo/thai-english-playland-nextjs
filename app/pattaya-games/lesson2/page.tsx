@@ -2,18 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './Lesson2.module.css';
-import quizStyles from '../../maze/_components/QuizButtons.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
+import Quiz, { type Challenge } from './Quiz';
 
 type Phase = 'practice' | 'play' | 'apply' | 'done';
-
-type Challenge = {
-  prompt: string;
-  options: string[];
-  answer: number;
-};
 
 const BOARD_SIZE = 7;
 const ICONS = ['🔥', '❄️', '🌬️', '🌞', '🪙', '💎', '🧃'];
@@ -436,95 +430,15 @@ export default function PattayaLesson2Page() {
           </div>
 
           {phase === 'practice' && (
-            <article className={styles.card} style={{ position: 'relative' }}>
-              {feedbackIcon && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    fontSize: '80px',
-                    fontWeight: 'bold',
-                    zIndex: 2000,
-                    animation: 'feedbackFadeOut 0.3s ease-out forwards',
-                    color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
-                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  {feedbackIcon}
-                </div>
-              )}
-              <style>{`
-                @keyframes feedbackFadeOut {
-                  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-                  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
-                }
-              `}</style>
-              <span className={styles.phaseBadge}>PRACTICE</span>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '6px',
-                }}
-              >
-                <p
-                  style={{
-                    margin: 0,
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                    color: '#666',
-                  }}
-                >
-                  Question {practiceStep + 1} of {practiceChallenges.length}
-                </p>
-                <div className={quizStyles.progressTrack}>
-                  <div
-                    className={quizStyles.progressFill}
-                    style={{
-                      backgroundColor: '#0f766e',
-                      width: `${(practiceStep / practiceChallenges.length) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <h2 className={styles.prompt}>{currentPractice.prompt}</h2>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '10px',
-                  flexDirection: 'column',
-                  marginTop: '10px',
-                }}
-              >
-                {currentPractice.options.map((option, idx) => (
-                  <button
-                    key={`${option}-${idx}`}
-                    type="button"
-                    className={`${quizStyles.quizOptionButton} ${
-                      selectedIndex !== null && idx === currentPractice.answer
-                        ? quizStyles.quizOptionCorrectFlash
-                        : ''
-                    }`}
-                    style={{
-                      backgroundColor:
-                        selectedIndex === null
-                          ? '#0f766e'
-                          : idx === currentPractice.answer
-                            ? '#4CAF50'
-                            : '#0f766e',
-                    }}
-                    onClick={() => handleChallengeAnswer(currentPractice, idx)}
-                    disabled={selectedIndex !== null}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </article>
+            <Quiz
+              challenge={currentPractice}
+              step={practiceStep}
+              total={practiceChallenges.length}
+              selectedIndex={selectedIndex}
+              feedbackIcon={feedbackIcon}
+              phaseLabel="PRACTICE"
+              onAnswer={handleChallengeAnswer}
+            />
           )}
 
           {phase === 'play' && (
@@ -579,89 +493,15 @@ export default function PattayaLesson2Page() {
           )}
 
           {phase === 'apply' && (
-            <article className={styles.card} style={{ position: 'relative' }}>
-              {feedbackIcon && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    fontSize: '80px',
-                    fontWeight: 'bold',
-                    zIndex: 2000,
-                    animation: 'feedbackFadeOut 0.3s ease-out forwards',
-                    color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
-                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  {feedbackIcon}
-                </div>
-              )}
-              <span className={styles.phaseBadge}>APPLY</span>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '6px',
-                }}
-              >
-                <p
-                  style={{
-                    margin: 0,
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                    color: '#666',
-                  }}
-                >
-                  Question {applyStep + 1} of {applyChallenges.length}
-                </p>
-                <div className={quizStyles.progressTrack}>
-                  <div
-                    className={quizStyles.progressFill}
-                    style={{
-                      backgroundColor: '#0f766e',
-                      width: `${(applyStep / applyChallenges.length) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <h2 className={styles.prompt}>{currentApply.prompt}</h2>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '10px',
-                  flexDirection: 'column',
-                  marginTop: '10px',
-                }}
-              >
-                {currentApply.options.map((option, idx) => (
-                  <button
-                    key={`${option}-${idx}`}
-                    type="button"
-                    className={`${quizStyles.quizOptionButton} ${
-                      selectedIndex !== null && idx === currentApply.answer
-                        ? quizStyles.quizOptionCorrectFlash
-                        : ''
-                    }`}
-                    style={{
-                      backgroundColor:
-                        selectedIndex === null
-                          ? '#0f766e'
-                          : idx === currentApply.answer
-                            ? '#4CAF50'
-                            : '#0f766e',
-                    }}
-                    onClick={() => handleChallengeAnswer(currentApply, idx)}
-                    disabled={selectedIndex !== null}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </article>
+            <Quiz
+              challenge={currentApply}
+              step={applyStep}
+              total={applyChallenges.length}
+              selectedIndex={selectedIndex}
+              feedbackIcon={feedbackIcon}
+              phaseLabel="APPLY"
+              onAnswer={handleChallengeAnswer}
+            />
           )}
 
           {phase === 'done' && (

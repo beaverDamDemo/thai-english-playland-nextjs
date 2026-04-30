@@ -117,6 +117,28 @@ The database schema is automatically created from `db/init/001_schema.sql` when 
    npm run db:reset
    ```
 
+## Exporting Lesson Content
+
+You can export every quiz/lesson's questions and answers to plain files for offline review (without playing the games).
+
+```bash
+npm run export:lessons
+```
+
+This produces two files at the project root:
+
+- `lessons-export.json` — structured data (machine-readable). Each entry contains the `game`, `lesson`, source file paths, and the extracted quiz arrays (`questions`, `practiceChallenges`, `applyChallenges`, or `verbs`).
+- `lessons-export.md` — human-readable. Each question is listed with its options, and the correct answer is marked with ✅. Pattaya lesson 3 includes the full irregular-verbs table.
+
+The script auto-discovers any `lessonN/` folder under `app/maze`, `app/casino`, and `app/pattaya-games`, so newly added lessons are picked up automatically.
+
+**Sources read:**
+
+- `app/<game>/lessonN/Quiz.tsx` (casino, maze)
+- `app/pattaya-games/lessonN/page.tsx` (pattaya stores quiz data in the page file)
+
+Both export files are regenerated on every run.
+
 ## Production Deployment
 
 For production deployment, ensure the `DATABASE_URL` environment variable is set with your production database credentials.

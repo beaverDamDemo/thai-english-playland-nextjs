@@ -3,15 +3,11 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './Lesson3.module.css';
+import MazeHeader from '../../maze/_components/MazeHeader';
+import Quiz, { type VerbEntry, type QuizQuestion } from './Quiz';
 
 const LESSONS_TOTAL = 8;
 const ROUND_SIZE = 4;
-
-type VerbEntry = {
-  base: string;
-  past: string;
-  participle: string;
-};
 
 const VERBS: VerbEntry[] = [
   { base: 'Buy', past: 'Bought', participle: 'Bought' },
@@ -27,13 +23,6 @@ const VERBS: VerbEntry[] = [
   { base: 'Drink', past: 'Drank', participle: 'Drunk' },
   { base: 'Run', past: 'Ran', participle: 'Run' },
 ];
-
-type QuizQuestion = {
-  verb: VerbEntry;
-  askPast: boolean;
-  correctAnswer: string;
-  options: string[];
-};
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -159,7 +148,7 @@ type HitEffect = { id: number; x: number; y: number };
 export default function PattayaLesson3Page() {
   const [phase, setPhase] = useState<Phase>('quiz');
 
-  const [round, setRound] = useState<QuizQuestion[]>(() => buildRound());
+  const [round, setRound] = useState<QuizQuestion[]>([]);
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -168,6 +157,13 @@ export default function PattayaLesson3Page() {
   const [totalWrong, setTotalWrong] = useState(0);
   const [roundsDone, setRoundsDone] = useState(0);
   const [shotsEarned, setShotsEarned] = useState(0);
+
+  // Generate round client-side only to avoid hydration mismatch
+  // (buildRound uses Math.random which would differ between server and client)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRound(buildRound());
+  }, []);
 
   const [shotsLeft, setShotsLeft] = useState(0);
   const [mouseX, setMouseX] = useState(50);
@@ -280,7 +276,7 @@ export default function PattayaLesson3Page() {
     }
 
     // Tank lateral speed in % of arena width per second
-    const TANK_PCT_SPEED = 0.01; // % per second (10x slower than previous)
+    const TANK_PCT_SPEED = 1.2; // % per second
 
     function tick(time: number) {
       if (lastTimeRef.current === null) lastTimeRef.current = time;
@@ -564,122 +560,35 @@ export default function PattayaLesson3Page() {
 
   if (phase === 'quiz') {
     const q = round[qIndex];
-    const label = q.askPast ? 'past simple' : 'past participle';
+    // Prevent hydration mismatch / undefined access during initial client render
+    if (!q) {
+      return (
+        <div className={styles.page}>
+          <div className={styles.container}>
+            <MazeHeader score={0} backHref="/pattaya-games" />
+            <div className={styles.panel}>
+              <p className={styles.prompt}>Loading quiz…</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <header className={styles.header}>
-            <div>
-              <h1 className={styles.title}>Irregular Verbs</h1>
-              <p className={styles.subtitle}>
-                Earn shots by answering correctly!
-              </p>
-            </div>
-            <Link href="/pattaya-games" className={styles.headerHomeLink}>
-              <span className={styles.backArrow}>←</span>
-            </Link>
-          </header>
-
-          <div className={styles.scoreBar}>
-            <span className={styles.scoreChip}>✓ {totalCorrect}</span>
-            <span className={styles.scoreChipBad}>✗ {totalWrong}</span>
-            <span className={styles.scoreChip}>🎯 {shotsEarned} shots</span>
-            <span className={styles.scoreChip}>Round {roundsDone + 1}</span>
-          </div>
-
-          <div className={styles.panel}>
-            <div className={styles.verbTable}>
-              <div className={styles.verbRow}>
-                <span className={styles.verbLabel}>Base</span>
-                <span className={styles.verbBase}>{q.verb.base}</span>
-              </div>
-              <div className={styles.verbRow}>
-                <span className={styles.verbLabel}>Past simple</span>
-                <span
-                  className={q.askPast ? styles.verbBlank : styles.verbKnown}
-                >
-                  {q.askPast ? '______?' : q.verb.past}
-                </span>
-              </div>
-              <div className={styles.verbRow}>
-                <span className={styles.verbLabel}>Past participle</span>
-                <span
-                  className={!q.askPast ? styles.verbBlank : styles.verbKnown}
-                >
-                  {!q.askPast ? '______?' : q.verb.participle}
-                </span>
-              </div>
-            </div>
-
-            <p className={styles.prompt}>
-              What is the <strong>{label}</strong> of{' '}
-              <strong>{q.verb.base.toLowerCase()}</strong>?
-            </p>
-
-            <div className={styles.optionGrid}>
-              {q.options.map((opt, i) => {
-                let cls = styles.optionButton;
-                if (selected !== null) {
-                  if (opt === q.correctAnswer) cls = styles.optionCorrect;
-                  else if (i === selected) cls = styles.optionWrong;
-                }
-                return (
-                  <button
-                    key={i}
-                    className={cls}
-                    onClick={() => handleAnswer(i)}
-                    disabled={selected !== null}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-
-            {feedback && (
-              <p
-                className={
-                  feedback === 'correct'
-                    ? styles.feedbackGood
-                    : styles.feedbackBad
-                }
-              >
-                {feedback === 'correct'
-                  ? '✓ Correct! +1 shot'
-                  : `✗ The answer is: ${q.correctAnswer}`}
-              </p>
-            )}
-          </div>
-
-          <div className={styles.refCard}>
-            <p className={styles.refTitle}>Reference</p>
-            <table className={styles.refTable}>
-              <thead>
-                <tr>
-                  <th>Base</th>
-                  <th>Past Simple</th>
-                  <th>Past Participle</th>
-                </tr>
-              </thead>
-              <tbody>
-                {VERBS.map((v) => (
-                  <tr key={v.base}>
-                    <td>{v.base}</td>
-                    <td>{v.past}</td>
-                    <td>{v.participle}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {shotsEarned > 0 && (
-            <div className={styles.skipWrap}>
-              <button className={styles.skipButton} onClick={skipToShoot}>
-                Go shoot ({shotsEarned} shots ready) →
-              </button>
-            </div>
-          )}
+          <MazeHeader score={0} backHref="/pattaya-games" />
+          <Quiz
+            question={q}
+            selected={selected}
+            feedback={feedback}
+            totalCorrect={totalCorrect}
+            totalWrong={totalWrong}
+            shotsEarned={shotsEarned}
+            roundNumber={roundsDone + 1}
+            verbs={VERBS}
+            onAnswer={handleAnswer}
+            onSkipToShoot={skipToShoot}
+          />
         </div>
       </div>
     );
@@ -689,17 +598,12 @@ export default function PattayaLesson3Page() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <header className={styles.header}>
-            <div>
-              <h1 className={styles.title}>Tank Shoot!</h1>
-              <p className={styles.subtitle}>
-                Shots: {shotsLeft} left · Hits: {tankHits}
-              </p>
-            </div>
-            <Link href="/pattaya-games" className={styles.headerHomeLink}>
-              <span className={styles.backArrow}>←</span>
-            </Link>
-          </header>
+          <MazeHeader score={0} backHref="/pattaya-games" />
+
+          <div className={styles.statsRow}>
+            <span className={styles.scoreChip}>🎯 Shots: {shotsLeft}</span>
+            <span className={styles.scoreChip}>💥 Hits: {tankHits}</span>
+          </div>
 
           <div
             ref={arenaRef}

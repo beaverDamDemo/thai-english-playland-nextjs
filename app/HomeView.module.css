@@ -310,13 +310,6 @@
   background: rgba(255, 255, 255, 0.6);
   border-radius: 12px;
   border: 2px dashed rgba(108, 92, 231, 0.2);
-  transition: all 0.2s ease;
-}
-
-.progressRow:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(108, 92, 231, 0.4);
-  transform: translateX(4px);
 }
 
 .progressLabel {
@@ -1160,11 +1153,6 @@
     border-color: rgba(162, 155, 254, 0.2);
   }
 
-  :global(:root:not([data-theme='light'])) .progressRow:hover {
-    background: rgba(60, 60, 100, 0.6);
-    border-color: rgba(162, 155, 254, 0.4);
-  }
-
   :global(:root:not([data-theme='light'])) .progressLabel {
     color: #9fb5e7;
   }
@@ -1352,11 +1340,6 @@
 :global([data-theme='dark']) .progressRow {
   background: rgba(50, 50, 80, 0.5);
   border-color: rgba(162, 155, 254, 0.2);
-}
-
-:global([data-theme='dark']) .progressRow:hover {
-  background: rgba(60, 60, 100, 0.6);
-  border-color: rgba(162, 155, 254, 0.4);
 }
 
 :global([data-theme='dark']) .progressLabel {
