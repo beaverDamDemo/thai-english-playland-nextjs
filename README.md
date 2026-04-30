@@ -34,11 +34,6 @@ npm run build
 npm run start
 ```
 
-### Existing Vercel project
-
-Deployment history is available here:
-[Vercel Link](https://vercel.com/fjasdojf-2974s-projects/english-lessons-maze-nextjs/deployments)
-
 ---
 
 # English Lessons Maze - Development Setup
@@ -142,3 +137,38 @@ Both export files are regenerated on every run.
 ## Production Deployment
 
 For production deployment, ensure the `DATABASE_URL` environment variable is set with your production database credentials.
+
+### Setting up a new production database
+
+When deploying to a new database (e.g., Aiven, Supabase, Neon), you need to run the database schema. Since Aiven doesn't provide a built-in SQL editor, use pgAdmin:
+
+**Using pgAdmin:**
+
+1. Open pgAdmin and create a new server connection with your production database credentials:
+   - Host: your database host (e.g., `pg-db-beaver-dam-demo-app-hub.e.aivencloud.com`)
+   - Port: your database port (e.g., `25943`)
+   - Database: your database name (e.g., `defaultdb`)
+   - Username: your database user (e.g., `avnadmin`)
+   - Password: your database password
+   - SSL Mode: `require`
+2. Connect to the server
+3. Open Query Tool (right-click database → Query Tool)
+4. Copy the contents of `db\init\001_schema.sql` and paste into the query editor
+5. Execute (F5 or click the play button)
+
+**Using psql (if installed):**
+
+```bash
+psql "postgres://user:password@host:port/dbname?sslmode=require" -f "db\init\001_schema.sql"
+```
+
+**Schema creates:**
+
+- Users table
+- Game progress table
+- Maze table
+- User progress table
+- Sessions table
+- Required indexes
+
+**Note:** The schema does not create a default admin user. Create users through the registration page at `/register` - the app uses scrypt hashing which is incompatible with PostgreSQL's bcrypt.
