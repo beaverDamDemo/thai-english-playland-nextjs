@@ -523,29 +523,100 @@
   background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
 }
 
-/* Maze card variant: inline map image next to title */
+/* Hub card variant: map image fills the entire card with overlaid text */
 .mazeCardWithMap {
+  position: relative;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  isolation: isolate;
+}
+
+.mazeCardWithMap .hubIcon,
+.mazeCardWithMap .mazeCardBody {
+  position: relative;
+  z-index: 2;
+}
+
+/* Hide arrow on map cards (replaced by image hover effect) */
+.mazeCardWithMap .hubArrow {
+  display: none;
+}
+
+/* Disable the card-level lift/scale on hover for map cards */
+.mazeCardWithMap.hubCard:hover {
+  transform: none;
+}
+
+/* Image hover effect: grayscale by default, restore color brightness on hover */
+.mazeCardMap {
+  transition: filter 0.4s ease;
+  filter: grayscale(0.25);
+}
+
+.mazeCardWithMap:hover .mazeCardMap {
+  filter: grayscale(0) saturate(1.2) brightness(1.15);
+}
+
+.mazeCardWithMap:hover .hubTitle {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.mazeCardWithMap .hubTitle {
+  transition: background 0.3s ease;
+}
+
+.mazeCardWithMap .hubIcon {
+  font-size: inherit;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 }
 
 .mazeCardBody {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  flex: 1;
-  min-width: 0;
-  flex-wrap: nowrap;
+  display: contents;
 }
 
+.mazeCardWithMap .hubTitle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border-radius: 10px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  white-space: nowrap;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Image fills the card as a cover background */
 .mazeCardMap {
-  height: auto;
-  width: clamp(48px, 11vw, 96px);
-  max-width: 100%;
-  border-radius: 12px;
-  object-fit: contain;
-  flex-shrink: 0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Subtle dark overlay so text stays readable on any image */
+.mazeCardWithMap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
 @media (max-width: 600px) {
@@ -1002,18 +1073,13 @@
   }
 
   .mazeCardWithMap {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
   }
 
   .mazeCardBody {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .mazeCardMap {
-    width: clamp(56px, 22vw, 96px);
+    justify-content: center;
   }
 
   .progressCard {

@@ -268,16 +268,16 @@ export default function HomePage() {
           className={`${styles.hubCard} ${styles.mazeCard} ${styles.mazeCardWithMap}`}
         >
           <span className={styles.hubIcon}>🌀</span>
+          <Image
+            src="/assets/tinified/map-with-9-clickable-locations.png"
+            alt="Map with 9 clickable lesson locations"
+            fill
+            sizes="(max-width: 640px) 50vw, 33vw"
+            className={styles.mazeCardMap}
+            priority
+          />
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>Maze Adventures</span>
-            <Image
-              src="/assets/tinified/map-with-9-clickable-locations.png"
-              alt="Map with 9 clickable lesson locations"
-              width={320}
-              height={200}
-              className={styles.mazeCardMap}
-              priority
-            />
           </div>
           <span className={styles.hubArrow}>→</span>
         </Link>
@@ -287,15 +287,15 @@ export default function HomePage() {
           className={`${styles.hubCard} ${styles.casinoCard} ${styles.mazeCardWithMap}`}
         >
           <span className={styles.hubIcon}>🎰</span>
+          <Image
+            src="/assets/tinified/casino-map-with-5-clickable-locations.png"
+            alt="Casino map with 5 clickable lesson locations"
+            fill
+            sizes="(max-width: 640px) 50vw, 33vw"
+            className={styles.mazeCardMap}
+          />
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>Casino Games</span>
-            <Image
-              src="/assets/tinified/casino-map-with-5-clickable-locations.png"
-              alt="Casino map with 5 clickable lesson locations"
-              width={320}
-              height={200}
-              className={styles.mazeCardMap}
-            />
           </div>
           <span className={styles.hubArrow}>→</span>
         </Link>
@@ -305,15 +305,15 @@ export default function HomePage() {
           className={`${styles.hubCard} ${styles.pattayaCard} ${styles.mazeCardWithMap}`}
         >
           <span className={styles.hubIcon}>🏖️</span>
+          <Image
+            src="/assets/tinified/pattaya%20Copilot_20260325_132439.png"
+            alt="Pattaya map with clickable lesson locations"
+            fill
+            sizes="(max-width: 640px) 50vw, 33vw"
+            className={styles.mazeCardMap}
+          />
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>Pattaya Fun</span>
-            <Image
-              src="/assets/tinified/pattaya%20Copilot_20260325_132439.png"
-              alt="Pattaya map with clickable lesson locations"
-              width={320}
-              height={200}
-              className={styles.mazeCardMap}
-            />
           </div>
           <span className={styles.hubArrow}>→</span>
         </Link>
