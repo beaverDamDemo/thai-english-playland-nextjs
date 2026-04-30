@@ -6,6 +6,7 @@ export type VerbEntry = {
   base: string;
   past: string;
   participle: string;
+  distractors?: string[];
 };
 
 export type QuizQuestion = {

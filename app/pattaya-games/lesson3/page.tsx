@@ -10,18 +10,78 @@ const LESSONS_TOTAL = 8;
 const ROUND_SIZE = 4;
 
 const VERBS: VerbEntry[] = [
-  { base: 'Bring', past: 'Brought', participle: 'Brought' },
-  { base: 'Buy', past: 'Bought', participle: 'Bought' },
-  { base: 'Come', past: 'Came', participle: 'Come' },
-  { base: 'Drink', past: 'Drank', participle: 'Drunk' },
-  { base: 'Give', past: 'Gave', participle: 'Given' },
-  { base: 'Go', past: 'Went', participle: 'Gone' },
-  { base: 'Make', past: 'Made', participle: 'Made' },
-  { base: 'Run', past: 'Ran', participle: 'Run' },
-  { base: 'Say', past: 'Said', participle: 'Said' },
-  { base: 'Sleep', past: 'Slept', participle: 'Slept' },
-  { base: 'Take', past: 'Took', participle: 'Taken' },
-  { base: 'Think', past: 'Thought', participle: 'Thought' },
+  {
+    base: 'Bring',
+    past: 'Brought',
+    participle: 'Brought',
+    distractors: ['Brang', 'Bringed', 'Brung', 'Broughten'],
+  },
+  {
+    base: 'Buy',
+    past: 'Bought',
+    participle: 'Bought',
+    distractors: ['Buyed', 'Buied', 'Boughten', 'Bayed'],
+  },
+  {
+    base: 'Come',
+    past: 'Came',
+    participle: 'Come',
+    distractors: ['Comed', 'Camed', 'Comen', 'Cumen'],
+  },
+  {
+    base: 'Drink',
+    past: 'Drank',
+    participle: 'Drunk',
+    distractors: ['Drinked', 'Dranken', 'Drinken', 'Dronk'],
+  },
+  {
+    base: 'Give',
+    past: 'Gave',
+    participle: 'Given',
+    distractors: ['Gived', 'Gaven', 'Givven', 'Gaved'],
+  },
+  {
+    base: 'Go',
+    past: 'Went',
+    participle: 'Gone',
+    distractors: ['Goed', 'Wented', 'Goned', 'Wenten'],
+  },
+  {
+    base: 'Make',
+    past: 'Made',
+    participle: 'Made',
+    distractors: ['Maked', 'Maden', 'Mayed', 'Mode'],
+  },
+  {
+    base: 'Run',
+    past: 'Ran',
+    participle: 'Run',
+    distractors: ['Runned', 'Rann', 'Ren', 'Runed'],
+  },
+  {
+    base: 'Say',
+    past: 'Said',
+    participle: 'Said',
+    distractors: ['Sayed', 'Sayd', 'Saided', 'Sed'],
+  },
+  {
+    base: 'Sleep',
+    past: 'Slept',
+    participle: 'Slept',
+    distractors: ['Sleeped', 'Slepted', 'Slep', 'Sleepen'],
+  },
+  {
+    base: 'Take',
+    past: 'Took',
+    participle: 'Taken',
+    distractors: ['Taked', 'Tooken', 'Tooked', 'Taen'],
+  },
+  {
+    base: 'Think',
+    past: 'Thought',
+    participle: 'Thought',
+    distractors: ['Thinked', 'Thunk', 'Thoughten', 'Thinken'],
+  },
 ];
 
 function shuffle<T>(arr: T[]): T[] {
@@ -33,14 +93,41 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function makeDisractors(
-  correct: string,
-  field: 'past' | 'participle',
-): string[] {
-  const pool = VERBS.map((v) =>
-    field === 'past' ? v.past : v.participle,
-  ).filter((w) => w.toLowerCase() !== correct.toLowerCase());
-  return shuffle(pool).slice(0, 3);
+function makeDisractors(verb: VerbEntry, correct: string): string[] {
+  const lowerCorrect = correct.toLowerCase();
+  const pool: string[] = [];
+
+  // The other form (past vs participle) is a strong, realistic distractor
+  // when it differs from the correct answer.
+  const otherForm = correct === verb.past ? verb.participle : verb.past;
+  if (otherForm.toLowerCase() !== lowerCorrect) {
+    pool.push(otherForm);
+  }
+
+  // Per-verb hand-crafted plausible wrong forms (regularized, alt vowels, etc.).
+  if (verb.distractors) {
+    for (const d of verb.distractors) {
+      if (d.toLowerCase() !== lowerCorrect && !pool.includes(d)) {
+        pool.push(d);
+      }
+    }
+  }
+
+  // Shuffle and take 3. If we somehow have fewer than 3 candidates, fall
+  // back to past/participle forms from other verbs.
+  const picked = shuffle(pool).slice(0, 3);
+  if (picked.length < 3) {
+    const fallback = VERBS.flatMap((v) => [v.past, v.participle]).filter(
+      (w) =>
+        w.toLowerCase() !== lowerCorrect &&
+        !picked.some((p) => p.toLowerCase() === w.toLowerCase()),
+    );
+    for (const w of shuffle(fallback)) {
+      if (picked.length >= 3) break;
+      picked.push(w);
+    }
+  }
+  return picked;
 }
 
 function buildRound(): QuizQuestion[] {
@@ -48,10 +135,7 @@ function buildRound(): QuizQuestion[] {
   return selected.map((verb) => {
     const askPast = Math.random() < 0.5;
     const correct = askPast ? verb.past : verb.participle;
-    const distractors = makeDisractors(
-      correct,
-      askPast ? 'past' : 'participle',
-    );
+    const distractors = makeDisractors(verb, correct);
     const options = shuffle([correct, ...distractors]);
     return { verb, askPast, correctAnswer: correct, options };
   });
