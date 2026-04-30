@@ -411,15 +411,6 @@ export default function PattayaLesson2Page() {
         <MazeHeader score={0} backHref="/pattaya-games" />
 
         <section className={styles.panel}>
-          <div className={styles.statsRow}>
-            <div className={styles.stat}>Phase: {phase.toUpperCase()}</div>
-            <div className={styles.stat}>
-              Learning Correct: {learningCorrect}
-            </div>
-            <div className={styles.stat}>Learning Wrong: {learningWrong}</div>
-            <div className={styles.stat}>Play Points: {playPoints}</div>
-          </div>
-
           <div className={styles.progress}>
             <div className={styles.progressTrack}>
               <div
@@ -436,7 +427,6 @@ export default function PattayaLesson2Page() {
               total={practiceChallenges.length}
               selectedIndex={selectedIndex}
               feedbackIcon={feedbackIcon}
-              phaseLabel="PRACTICE"
               onAnswer={handleChallengeAnswer}
             />
           )}
@@ -499,7 +489,6 @@ export default function PattayaLesson2Page() {
               total={applyChallenges.length}
               selectedIndex={selectedIndex}
               feedbackIcon={feedbackIcon}
-              phaseLabel="APPLY"
               onAnswer={handleChallengeAnswer}
             />
           )}

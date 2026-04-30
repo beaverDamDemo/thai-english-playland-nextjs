@@ -10,18 +10,18 @@ const LESSONS_TOTAL = 8;
 const ROUND_SIZE = 4;
 
 const VERBS: VerbEntry[] = [
-  { base: 'Buy', past: 'Bought', participle: 'Bought' },
   { base: 'Bring', past: 'Brought', participle: 'Brought' },
-  { base: 'Think', past: 'Thought', participle: 'Thought' },
-  { base: 'Go', past: 'Went', participle: 'Gone' },
-  { base: 'Give', past: 'Gave', participle: 'Given' },
-  { base: 'Take', past: 'Took', participle: 'Taken' },
-  { base: 'Say', past: 'Said', participle: 'Said' },
-  { base: 'Make', past: 'Made', participle: 'Made' },
+  { base: 'Buy', past: 'Bought', participle: 'Bought' },
   { base: 'Come', past: 'Came', participle: 'Come' },
-  { base: 'Sleep', past: 'Slept', participle: 'Slept' },
   { base: 'Drink', past: 'Drank', participle: 'Drunk' },
+  { base: 'Give', past: 'Gave', participle: 'Given' },
+  { base: 'Go', past: 'Went', participle: 'Gone' },
+  { base: 'Make', past: 'Made', participle: 'Made' },
   { base: 'Run', past: 'Ran', participle: 'Run' },
+  { base: 'Say', past: 'Said', participle: 'Said' },
+  { base: 'Sleep', past: 'Slept', participle: 'Slept' },
+  { base: 'Take', past: 'Took', participle: 'Taken' },
+  { base: 'Think', past: 'Thought', participle: 'Thought' },
 ];
 
 function shuffle<T>(arr: T[]): T[] {
@@ -581,10 +581,7 @@ export default function PattayaLesson3Page() {
             question={q}
             selected={selected}
             feedback={feedback}
-            totalCorrect={totalCorrect}
-            totalWrong={totalWrong}
             shotsEarned={shotsEarned}
-            roundNumber={roundsDone + 1}
             verbs={VERBS}
             onAnswer={handleAnswer}
             onSkipToShoot={skipToShoot}

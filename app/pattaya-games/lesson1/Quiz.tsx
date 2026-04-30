@@ -17,7 +17,6 @@ type QuizProps = {
   total: number;
   selectedIndex: number | null;
   feedbackIcon: '✓' | '✗' | null;
-  phaseLabel: 'PRACTICE' | 'APPLY';
   onAnswer: (challenge: Challenge, pickedIndex: number) => void;
 };
 
@@ -27,7 +26,6 @@ export default function Quiz({
   total,
   selectedIndex,
   feedbackIcon,
-  phaseLabel,
   onAnswer,
 }: QuizProps) {
   return (
@@ -57,7 +55,6 @@ export default function Quiz({
           100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
         }
       `}</style>
-      <span className={styles.phaseBadge}>{phaseLabel}</span>
       <div
         style={{
           display: 'flex',

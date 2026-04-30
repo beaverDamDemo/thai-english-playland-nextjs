@@ -19,10 +19,7 @@ type QuizProps = {
   question: QuizQuestion;
   selected: number | null;
   feedback: 'correct' | 'wrong' | null;
-  totalCorrect: number;
-  totalWrong: number;
   shotsEarned: number;
-  roundNumber: number;
   verbs: VerbEntry[];
   onAnswer: (optionIndex: number) => void;
   onSkipToShoot?: () => void;
@@ -32,10 +29,7 @@ export default function Quiz({
   question,
   selected,
   feedback,
-  totalCorrect,
-  totalWrong,
   shotsEarned,
-  roundNumber,
   verbs,
   onAnswer,
   onSkipToShoot,
@@ -44,13 +38,6 @@ export default function Quiz({
 
   return (
     <>
-      <div className={styles.scoreBar}>
-        <span className={styles.scoreChip}>✓ {totalCorrect}</span>
-        <span className={styles.scoreChipBad}>✗ {totalWrong}</span>
-        <span className={styles.scoreChip}>🎯 {shotsEarned} shots</span>
-        <span className={styles.scoreChip}>Round {roundNumber}</span>
-      </div>
-
       <div className={styles.panel}>
         <div className={styles.verbTable}>
           <div className={styles.verbRow}>
@@ -60,9 +47,7 @@ export default function Quiz({
           <div className={styles.verbRow}>
             <span className={styles.verbLabel}>Past simple</span>
             <span
-              className={
-                question.askPast ? styles.verbBlank : styles.verbKnown
-              }
+              className={question.askPast ? styles.verbBlank : styles.verbKnown}
             >
               {question.askPast ? '______?' : question.verb.past}
             </span>
@@ -107,9 +92,7 @@ export default function Quiz({
         {feedback && (
           <p
             className={
-              feedback === 'correct'
-                ? styles.feedbackGood
-                : styles.feedbackBad
+              feedback === 'correct' ? styles.feedbackGood : styles.feedbackBad
             }
           >
             {feedback === 'correct'

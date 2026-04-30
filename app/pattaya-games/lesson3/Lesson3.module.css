@@ -152,6 +152,12 @@
   gap: 8px;
 }
 
+@media (max-width: 480px) {
+  .optionGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .optionButton {
   padding: 12px 8px;
   border: 2px solid rgba(168, 213, 168, 0.3);
