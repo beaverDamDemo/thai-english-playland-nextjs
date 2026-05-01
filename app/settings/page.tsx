@@ -22,7 +22,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<{
-    type: 'all' | 'maze' | 'casino' | 'pattaya';
+    type: 'all' | 'maze' | 'casino' | 'pattaya' | 'deleteAccount';
     label: string;
   } | null>(null);
 
@@ -70,7 +70,20 @@ export default function SettingsPage() {
   const handleConfirmReset = () => {
     if (!confirmAction) return;
 
-    if (confirmAction.type === 'all') {
+    if (confirmAction.type === 'deleteAccount') {
+      fetch('/api/auth/delete-account', {
+        method: 'DELETE',
+      })
+        .then(() => {
+          alert('Account deleted successfully!');
+          setConfirmAction(null);
+          window.location.href = '/register';
+        })
+        .catch(() => {
+          alert('Failed to delete account. Please try again.');
+          setConfirmAction(null);
+        });
+    } else if (confirmAction.type === 'all') {
       const modes = ['maze', 'casino', 'pattaya'];
       Promise.all(
         modes.map((mode) =>
@@ -122,6 +135,10 @@ export default function SettingsPage() {
 
   const handleCancelReset = () => {
     setConfirmAction(null);
+  };
+
+  const handleDeleteAccount = () => {
+    setConfirmAction({ type: 'deleteAccount', label: 'Delete Account' });
   };
 
   const handleUnlockAllLessons = () => {
@@ -216,6 +233,20 @@ export default function SettingsPage() {
                 🏖️ Reset Pattaya
               </button>
             </div>
+          </section>
+
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>Account Management</h2>
+            <p className={styles.note}>
+              Delete your account and all associated data. This action cannot be
+              undone.
+            </p>
+            <button
+              onClick={handleDeleteAccount}
+              className={styles.deleteAccountButton}
+            >
+              Delete Account
+            </button>
           </section>
         </>
       ) : null}

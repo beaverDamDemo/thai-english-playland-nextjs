@@ -61,6 +61,9 @@ export default function AllUsersProgressPage() {
     <main className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>🏆 All Users Progress</h1>
+        <button onClick={() => router.back()} className={styles.backButton}>
+          ← Back to Home
+        </button>
       </div>
 
       <div className={styles.tableContainer}>
@@ -188,12 +191,6 @@ export default function AllUsersProgressPage() {
             })}
           </tbody>
         </table>
-      </div>
-
-      <div className={styles.header}>
-        <button onClick={() => router.back()} className={styles.backButton}>
-          ← Back to Home
-        </button>
       </div>
     </main>
   );

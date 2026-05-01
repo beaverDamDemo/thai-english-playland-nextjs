@@ -206,6 +206,11 @@
   box-shadow: 0 6px 16px rgba(255, 107, 107, 0.5);
 }
 
+.resetButton::before {
+  content: '🔄';
+  margin-right: 8px;
+}
+
 .buttonGroup {
   display: flex;
   flex-direction: column;
@@ -229,6 +234,32 @@
 .gameModeButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(255, 107, 107, 0.5);
+}
+
+.deleteAccountButton {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(45, 52, 54, 0.4);
+  font-size: 1rem;
+}
+
+.deleteAccountButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(45, 52, 54, 0.5);
+}
+
+.deleteAccountButton::before {
+  content: '⚠️';
+  margin-right: 8px;
 }
 
 .modalOverlay {
