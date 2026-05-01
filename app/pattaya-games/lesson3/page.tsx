@@ -349,6 +349,35 @@ export default function PattayaLesson3Page() {
     mouseYRef.current = my;
   }, []);
 
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const rect = arenaRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const touch = e.touches[0];
+    const mx = ((touch.clientX - rect.left) / rect.width) * 100;
+    const my = ((touch.clientY - rect.top) / rect.height) * 100;
+    setMouseX(mx);
+    setMouseY(my);
+    mouseXRef.current = mx;
+    mouseYRef.current = my;
+  }, []);
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const rect = arenaRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const touch = e.touches[0];
+      const mx = ((touch.clientX - rect.left) / rect.width) * 100;
+      const my = ((touch.clientY - rect.top) / rect.height) * 100;
+      setMouseX(mx);
+      setMouseY(my);
+      mouseXRef.current = mx;
+      mouseYRef.current = my;
+    },
+    [],
+  );
+
   // Main animation loop: moves tank + advances shells
   useEffect(() => {
     if (phase !== 'shoot') return;
@@ -690,6 +719,8 @@ export default function PattayaLesson3Page() {
             ref={arenaRef}
             className={styles.arena}
             onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove}
+            onTouchStart={handleTouchStart}
             onClick={fireShot}
           >
             {/* Sky with clouds */}

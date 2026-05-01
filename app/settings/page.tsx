@@ -25,6 +25,10 @@ export default function SettingsPage() {
     type: 'all' | 'maze' | 'casino' | 'pattaya' | 'deleteAccount';
     label: string;
   } | null>(null);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -75,12 +79,17 @@ export default function SettingsPage() {
         method: 'DELETE',
       })
         .then(() => {
-          alert('Account deleted successfully!');
+          showNotification('success', 'Account deleted successfully!');
           setConfirmAction(null);
-          window.location.href = '/register';
+          setTimeout(() => {
+            window.location.href = '/register';
+          }, 2000);
         })
         .catch(() => {
-          alert('Failed to delete account. Please try again.');
+          showNotification(
+            'error',
+            'Failed to delete account. Please try again.',
+          );
           setConfirmAction(null);
         });
     } else if (confirmAction.type === 'all') {
@@ -102,11 +111,14 @@ export default function SettingsPage() {
         ),
       )
         .then(() => {
-          alert('Progress reset successfully!');
+          showNotification('success', 'Progress reset successfully!');
           setConfirmAction(null);
         })
         .catch(() => {
-          alert('Failed to reset progress. Please try again.');
+          showNotification(
+            'error',
+            'Failed to reset progress. Please try again.',
+          );
           setConfirmAction(null);
         });
     } else {
@@ -123,11 +135,17 @@ export default function SettingsPage() {
         }),
       })
         .then(() => {
-          alert(`${confirmAction.label} progress reset successfully!`);
+          showNotification(
+            'success',
+            `${confirmAction.label} progress reset successfully!`,
+          );
           setConfirmAction(null);
         })
         .catch(() => {
-          alert('Failed to reset progress. Please try again.');
+          showNotification(
+            'error',
+            'Failed to reset progress. Please try again.',
+          );
           setConfirmAction(null);
         });
     }
@@ -135,6 +153,11 @@ export default function SettingsPage() {
 
   const handleCancelReset = () => {
     setConfirmAction(null);
+  };
+
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 4000);
   };
 
   const handleDeleteAccount = () => {
@@ -163,10 +186,13 @@ export default function SettingsPage() {
       ),
     )
       .then(() => {
-        alert('All lessons unlocked successfully!');
+        showNotification('success', 'All lessons unlocked successfully!');
       })
       .catch(() => {
-        alert('Failed to unlock lessons. Please try again.');
+        showNotification(
+          'error',
+          'Failed to unlock lessons. Please try again.',
+        );
       });
   };
 
@@ -274,6 +300,16 @@ export default function SettingsPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {notification && (
+        <div
+          className={`${styles.notification} ${
+            notification.type === 'success' ? styles.success : styles.error
+          }`}
+        >
+          {notification.type === 'success' ? '✓' : '✕'} {notification.message}
         </div>
       )}
     </main>
