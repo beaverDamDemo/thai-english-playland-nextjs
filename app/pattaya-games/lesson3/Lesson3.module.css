@@ -294,6 +294,7 @@
   cursor: none;
   border: 2px solid rgba(168, 213, 168, 0.25);
   user-select: none;
+  touch-action: none;
   margin-bottom: 10px;
 }
 
