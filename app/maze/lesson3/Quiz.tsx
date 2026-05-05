@@ -339,7 +339,7 @@ export default function Quiz({
       <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         {selectedQuestions[current].options.map((opt, i) => (
           <button
-            key={i}
+            key={`${current}-${i}`}
             onClick={() => handleAnswer(i)}
             className={`${styles.quizOptionButton} ${
               selectedIndex !== null && i === selectedQuestions[current].answer

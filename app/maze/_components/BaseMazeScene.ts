@@ -536,6 +536,43 @@ export class BaseMazeScene extends Phaser.Scene {
       }
     }
 
+    // Ensure goal position is always a path
+    const goalX = cols - 2;
+    const goalY = rows - 2;
+    maze[goalY][goalX] = 0;
+
+    // Ensure at least one path to goal from a neighboring cell
+    const goalNeighbors = [
+      { x: goalX - 1, y: goalY },
+      { x: goalX + 1, y: goalY },
+      { x: goalX, y: goalY - 1 },
+      { x: goalX, y: goalY + 1 },
+    ];
+
+    let hasPathNeighbor = false;
+    for (const neighbor of goalNeighbors) {
+      if (
+        neighbor.x > 0 &&
+        neighbor.x < cols - 1 &&
+        neighbor.y > 0 &&
+        neighbor.y < rows - 1 &&
+        maze[neighbor.y][neighbor.x] === 0
+      ) {
+        hasPathNeighbor = true;
+        break;
+      }
+    }
+
+    // If no path neighbor found, clear one adjacent cell
+    if (!hasPathNeighbor) {
+      for (const neighbor of goalNeighbors) {
+        if (neighbor.x > 0 && neighbor.x < cols - 1 && neighbor.y > 0 && neighbor.y < rows - 1) {
+          maze[neighbor.y][neighbor.x] = 0;
+          break;
+        }
+      }
+    }
+
     return maze;
   }
 }
