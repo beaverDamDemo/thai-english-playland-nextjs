@@ -155,10 +155,10 @@ const questions = [
 
 export default function Quiz({
   onComplete,
-  primaryColor = '#795548',
+  primaryColor,
 }: {
   onComplete: (score: number) => void;
-  primaryColor?: string;
+  primaryColor: string;
 }) {
   const [selectedQuestions] = useState(() => {
     const shuffled = [...questions].sort(() => Math.random() - 0.5);

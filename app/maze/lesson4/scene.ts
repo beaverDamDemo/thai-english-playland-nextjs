@@ -1,9 +1,14 @@
 import { BaseMazeScene, MazeSceneConfig } from '../_components/BaseMazeScene';
+import { getLessonConfig } from '../lessonMapConfig';
+
+const lessonConfig = getLessonConfig(4);
+if (!lessonConfig) throw new Error('Lesson 4 config not found');
 
 const config: MazeSceneConfig = {
   sceneKey: 'MazeScene',
-  backgroundColor: '#2196F3',
-  defaultThemeColor: '#2196F3',
+  backgroundColor: lessonConfig.color,
+  defaultThemeColor: lessonConfig.color,
+  tile: lessonConfig.tile,
 };
 
 export class MazeScene extends BaseMazeScene {

@@ -4,6 +4,7 @@ import Quiz from './Quiz';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
 import type { FC } from 'react';
+import { getLessonConfig, getBackgroundGradient } from '../lessonMapConfig';
 
 const MazePageComponent = dynamic(
   () => import('../_components/MazePageComponent'),
@@ -21,16 +22,20 @@ const MazePage: FC = () => {
       mounted = false;
     };
   }, []);
-  // Lesson 2 color theme
-  const themeColor = '#F44336';
-  const themeColorDark = '#D32F2F';
-  const backgroundGradient =
-    'linear-gradient(135deg, #F44336 0%, #C62828 100%)';
+
+  const lessonConfig = getLessonConfig(2);
+  if (!lessonConfig) return <div>Loading...</div>;
+
+  const {
+    color: themeColor,
+    colorDark: themeColorDark,
+    title: lessonTitle,
+  } = lessonConfig;
+  const backgroundGradient = getBackgroundGradient(themeColor, themeColorDark);
 
   if (!Scene) return <div>Loading...</div>;
 
-  // Provide required props to Quiz via a wrapper
-  const QuizWrapper = (props: Record<string, unknown>) => (
+  const QuizWrapper: React.ComponentType<Record<string, unknown>> = (props) => (
     <Quiz onComplete={() => {}} primaryColor={themeColor} {...props} />
   );
 
@@ -39,7 +44,7 @@ const MazePage: FC = () => {
       MazeScene={Scene}
       Quiz={QuizWrapper}
       lessonNumber={2}
-      lessonTitle="Verb Tenses"
+      lessonTitle={lessonTitle}
       themeColor={themeColor}
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}

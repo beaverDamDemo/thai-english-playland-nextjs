@@ -188,10 +188,10 @@ function buildBalancedQuestions(
 
 export default function Quiz({
   onComplete,
-  primaryColor = '#4CAF50',
+  primaryColor,
 }: {
   onComplete: (score: number) => void;
-  primaryColor?: string;
+  primaryColor: string;
 }) {
   // Select only 5 random questions from the full question bank
   const [selectedQuestions] = useState(() => {

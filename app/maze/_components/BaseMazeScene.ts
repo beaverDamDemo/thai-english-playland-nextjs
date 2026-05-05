@@ -4,6 +4,7 @@ export interface MazeSceneConfig {
   sceneKey: string;
   backgroundColor: string;
   defaultThemeColor: string;
+  tile?: string;
 }
 
 export class BaseMazeScene extends Phaser.Scene {
@@ -61,7 +62,7 @@ export class BaseMazeScene extends Phaser.Scene {
       },
     );
     this.load.image('goal', 'https://labs.phaser.io/assets/sprites/star.png');
-    this.load.image('wall', 'https://labs.phaser.io/assets/sprites/block.png');
+    this.load.image('wall', this.config.tile || 'https://labs.phaser.io/assets/sprites/block.png');
     this.load.image('enemy', '/assets/tinified/little-menace.png');
     this.load.image(
       'bullet',
