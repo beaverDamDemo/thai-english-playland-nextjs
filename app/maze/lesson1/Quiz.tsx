@@ -8,7 +8,7 @@ import {
 } from '@/app/_lib/client/quizStreak';
 import { useThaiQuestion } from '../_components/useThaiQuestion';
 import styles from '../_components/QuizButtons.module.css';
-import { shuffleArray, shuffleOptions } from '../_components/shuffleUtils';
+import { shuffleArray } from '../_components/shuffleUtils';
 
 type QuizQuestion = {
   q: string;
@@ -20,29 +20,29 @@ const questions: QuizQuestion[] = [
   // Keep some hour 7 questions (reduced from 18 to 4)
   {
     q: '7 AM is _______ in 24h format.',
-    options: ['19:00', '7 PM', '7:00'],
-    answer: 2,
+    options: ['7:00', '19:00', '7 PM'],
+    answer: 0,
   },
   {
     q: '7 PM is _______ in 24h format.',
-    options: ['7:00', '7 AM', '19:00'],
-    answer: 2,
+    options: ['7:00', '19:00', '7 AM'],
+    answer: 1,
   },
   {
     q: '19:00 in 24h format is _______.',
-    options: ['7:00', '7 PM', '7 AM'],
-    answer: 1,
+    options: ['7:00', '7 AM', '7 PM'],
+    answer: 2,
   },
   {
     q: 'I eat breakfast at 7 AM, which is _______ in 24h format.',
-    options: ['19:00', '7:00', '7 PM'],
-    answer: 1,
+    options: ['7:00', '19:00', '7 PM'],
+    answer: 0,
   },
   // Different hours
   {
     q: '3 PM is _______ in 24h format.',
-    options: ['15:00', '3:00', '21:00'],
-    answer: 0,
+    options: ['3:00', '15:00', '21:00'],
+    answer: 1,
   },
   {
     q: '9 AM is _______ in 24h format.',
@@ -51,23 +51,23 @@ const questions: QuizQuestion[] = [
   },
   {
     q: '15:00 in 24h format is _______.',
-    options: ['3:00', '3 PM', '3 AM'],
-    answer: 1,
+    options: ['3:00', '3 AM', '3 PM'],
+    answer: 2,
   },
   {
     q: '21:00 in 24h format is _______.',
-    options: ['9:00', '9 PM', '9 AM'],
-    answer: 1,
+    options: ['9:00', '9 AM', '9 PM'],
+    answer: 2,
   },
   {
     q: "The train leaves at 9:00. That means it's _______.",
-    options: ['9 AM', '21:00', '9 PM'],
-    answer: 0,
+    options: ['9:00', '9 AM', '9 PM'],
+    answer: 1,
   },
   {
     q: "The flight arrives at 15:00. That's the same as _______.",
-    options: ['3:00', '3 PM', '3 AM'],
-    answer: 1,
+    options: ['15:00', '3 AM', '3 PM'],
+    answer: 2,
   },
   // Noon and midnight
   {
@@ -77,28 +77,28 @@ const questions: QuizQuestion[] = [
   },
   {
     q: 'Midnight (12 AM) is _______ in 24h format.',
-    options: ['12:00', '24:00', '00:00'],
-    answer: 2,
+    options: ['00:00', '12:00', '24:00'],
+    answer: 0,
   },
   {
     q: '12:00 in 24h format is _______.',
-    options: ['12 AM', '12 PM', 'Noon'],
-    answer: 2,
+    options: ['12:00', '12 AM', '12 PM'],
+    answer: 0,
   },
   {
     q: '00:00 in 24h format is _______.',
-    options: ['12 PM', '12:00', 'Noon'],
+    options: ['00:00', '12 AM', '12 PM'],
     answer: 1,
   },
   {
     q: 'The sun is highest at noon, which is _______ in 24h format.',
-    options: ['00:00', '24:00', '12:00'],
-    answer: 2,
+    options: ['00:00', '12:00', '24:00'],
+    answer: 1,
   },
   {
     q: 'The day starts at midnight, which is _______ in 24h format.',
-    options: ['12:00', '00:00', '24:00'],
-    answer: 1,
+    options: ['00:00', '12:00', '24:00'],
+    answer: 0,
   },
   // Parts of the day
   {
@@ -173,58 +173,6 @@ const questions: QuizQuestion[] = [
   },
 ];
 
-function orderTimeOptions(options: string[]): string[] {
-  // Sort options: 24h format first (sorted chronologically), then AM, then PM
-  const sorted = [...options].sort((a, b) => {
-    const aIs24h = a.includes(':');
-    const bIs24h = b.includes(':');
-    const aIsAM = a.includes('AM') || a === 'Noon' || a === 'Midnight';
-    const bIsAM = b.includes('AM') || b === 'Noon' || b === 'Midnight';
-    const aIsPM = a.includes('PM');
-    const bIsPM = b.includes('PM');
-
-    // Priority: 24h > AM > PM
-    const getPriority = (is24h: boolean, isAM: boolean, isPM: boolean) => {
-      if (is24h) return 0;
-      if (isAM) return 1;
-      if (isPM) return 2;
-      return 3;
-    };
-
-    const priorityA = getPriority(aIs24h, aIsAM, aIsPM);
-    const priorityB = getPriority(bIs24h, bIsAM, bIsPM);
-
-    // If both are 24h format, sort by time value
-    if (aIs24h && bIs24h) {
-      const parseTime = (time: string): number => {
-        const match = time.match(/(\d+):(\d+)/);
-        if (match) {
-          return parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
-        }
-        return 0;
-      };
-      return parseTime(a) - parseTime(b);
-    }
-
-    return priorityA - priorityB;
-  });
-
-  return sorted;
-}
-
-function buildBalancedQuestions(
-  source: QuizQuestion[],
-  count: number,
-): QuizQuestion[] {
-  return shuffleArray(source)
-    .slice(0, count)
-    .map((q) => {
-      const orderedOptions = orderTimeOptions(q.options);
-      const newAnswerIndex = orderedOptions.indexOf(q.options[q.answer]);
-      return { ...q, options: orderedOptions, answer: newAnswerIndex };
-    });
-}
-
 export default function Quiz({
   onComplete,
   primaryColor,
@@ -234,7 +182,7 @@ export default function Quiz({
 }) {
   // Select only 5 random questions from the full question bank
   const [selectedQuestions] = useState(() => {
-    return buildBalancedQuestions(questions, 5);
+    return shuffleArray(questions).slice(0, 5);
   });
 
   const [current, setCurrent] = useState(0);
