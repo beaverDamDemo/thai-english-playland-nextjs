@@ -30,6 +30,7 @@ const MazePage: FC = () => {
     color: themeColor,
     colorDark: themeColorDark,
     title: lessonTitle,
+    columns,
   } = lessonConfig;
   const backgroundGradient = getBackgroundGradient(themeColor, themeColorDark);
 
@@ -48,6 +49,7 @@ const MazePage: FC = () => {
       themeColor={themeColor}
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}
+      columns={columns}
     />
   );
 };

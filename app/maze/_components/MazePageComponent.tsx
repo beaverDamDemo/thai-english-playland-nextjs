@@ -17,6 +17,7 @@ interface MazePageProps {
   themeColor: string;
   themeColorDark: string;
   backgroundGradient: string;
+  columns?: number;
   showWinScreen?: boolean;
   totalLessons?: number;
   statsKey?: string;
@@ -34,6 +35,7 @@ const MazePageComponent: FC<MazePageProps> = ({
   themeColor,
   themeColorDark,
   backgroundGradient,
+  columns = 21,
   showWinScreen = true,
   totalLessons = TOTAL_LESSONS,
   statsKey = 'englishMazeStats',
@@ -59,9 +61,14 @@ const MazePageComponent: FC<MazePageProps> = ({
   const gameRef = useRef<Phaser.Game | null>(null);
 
   const desktopWidth = 1200;
-  const desktopHeight = 800;
   const mobileWidth = 504;
-  const mobileHeight = 800;
+
+  // Calculate height dynamically based on columns
+  const tileSize = mobileWidth / columns;
+  const mazeHeight = 21 * tileSize;
+  const buttonsSpace = columns < 19 ? 250 : 200;
+  const mobileHeight = mazeHeight + buttonsSpace;
+  const desktopHeight = Math.max(800, mazeHeight + buttonsSpace);
 
   const gameMode = statsKey === 'englishCasinoStats' ? 'casino' : 'maze';
 
@@ -204,7 +211,7 @@ const MazePageComponent: FC<MazePageProps> = ({
     calculateScale();
     window.addEventListener('resize', calculateScale);
     return () => window.removeEventListener('resize', calculateScale);
-  }, []);
+  }, [desktopHeight, mobileHeight]);
 
   // Initialize the Phaser game on mount so the maze is visible behind the quiz.
   useEffect(() => {
@@ -214,7 +221,7 @@ const MazePageComponent: FC<MazePageProps> = ({
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 504,
-      height: 720,
+      height: mobileHeight,
       backgroundColor: '#228B22',
       scene: MazeScene,
       parent: 'game',

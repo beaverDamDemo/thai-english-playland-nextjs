@@ -9,6 +9,7 @@ const config: MazeSceneConfig = {
   backgroundColor: lessonConfig.color,
   defaultThemeColor: lessonConfig.color,
   tile: lessonConfig.tile,
+  columns: lessonConfig.columns,
 };
 
 export class MazeScene extends BaseMazeScene {

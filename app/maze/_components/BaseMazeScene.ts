@@ -5,6 +5,7 @@ export interface MazeSceneConfig {
   backgroundColor: string;
   defaultThemeColor: string;
   tile?: string;
+  columns?: number;
 }
 
 export class BaseMazeScene extends Phaser.Scene {
@@ -71,9 +72,10 @@ export class BaseMazeScene extends Phaser.Scene {
   }
 
   create() {
-    const rows = 21,
-      cols = 21;
-    this.tileSize = 24;
+    const rows = 21;
+    const cols = this.config.columns || 21;
+    const gameWidth = Number(this.sys.game.config.width);
+    this.tileSize = gameWidth / cols;
     this.walkSpeed = 70;
 
     // Get maxMoves from registry (set by React component)
@@ -210,7 +212,8 @@ export class BaseMazeScene extends Phaser.Scene {
 
   protected createMobileControls(themeColor: string) {
     const centerX = Number(this.sys.game.config.width) / 2;
-    const baseY = Number(this.sys.game.config.height) - 105;
+    const mazeHeight = 21 * this.tileSize;
+    const baseY = mazeHeight + 80;
     const btnSize = 60;
 
     // Helper to create styled button
