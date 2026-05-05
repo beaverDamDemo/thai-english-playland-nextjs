@@ -344,6 +344,9 @@ export default function HomePage() {
           >
             All Users Progress
           </Link>
+          <Link href="/usage-statistics" className={styles.usageStatisticsLink}>
+            📈 Usage Statistics
+          </Link>
           <button
             className={styles.logoutButton}
             onClick={handleLogout}

@@ -356,3 +356,138 @@
 [data-theme='dark'] .error {
   color: #fca5a5;
 }
+
+.leaderboardSection {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardSection {
+  background: white;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardSection {
+  background: #1e1e2e;
+  border: 1px solid #3a3a4a;
+}
+
+.leaderboardTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardTitle {
+  color: #1f2937;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardTitle {
+  color: #e0e0e0;
+}
+
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboardItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  transition: background 0.2s ease;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardItem {
+  background: #f9f9f9;
+}
+
+[data-theme='light'] .leaderboardItem:hover {
+  background: #f0f0f0;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardItem {
+  background: #252535;
+  border-color: #3a3a4a;
+}
+
+[data-theme='dark'] .leaderboardItem:hover {
+  background: #2a2a3a;
+}
+
+.leaderboardRank {
+  font-size: 24px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+.leaderboardUsername {
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 100px;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardUsername {
+  color: #1f2937;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardUsername {
+  color: #e0e0e0;
+}
+
+.leaderboardStats {
+  display: flex;
+  gap: 24px;
+  margin-left: auto;
+}
+
+.leaderboardStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.leaderboardStatLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardStatLabel {
+  color: #6b7280;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardStatLabel {
+  color: #9ca3af;
+}
+
+.leaderboardStatValue {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardStatValue {
+  color: #667eea;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardStatValue {
+  color: #8a8aff;
+}

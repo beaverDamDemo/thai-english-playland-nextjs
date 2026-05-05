@@ -56,6 +56,39 @@ export default function AllUsersProgressPage() {
   if (loading) return <div className={styles.loading}>Loading...</div>;
   if (error) return <div className={styles.error}>Error: {error}</div>;
 
+  // Calculate leaderboard rankings based on total correct answers and attempts
+  const leaderboard = users
+    .map((user) => {
+      const totalCorrect =
+        user.maze.correct_answers +
+        user.casino.correct_answers +
+        user.pattaya.correct_answers;
+      const totalWrong =
+        user.maze.wrong_answers +
+        user.casino.wrong_answers +
+        user.pattaya.wrong_answers;
+      const totalAttempts =
+        user.maze.quiz_attempts +
+        user.casino.quiz_attempts +
+        user.pattaya.quiz_attempts;
+      const successRate =
+        totalCorrect + totalWrong > 0
+          ? (totalCorrect / (totalCorrect + totalWrong)) * 100
+          : 0;
+      const score = totalCorrect * 10 + successRate * 2; // Scoring formula
+
+      return {
+        ...user,
+        totalCorrect,
+        totalWrong,
+        totalAttempts,
+        successRate,
+        score,
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+
   return (
     <main className={styles.container}>
       <div className={styles.header}>
@@ -64,6 +97,60 @@ export default function AllUsersProgressPage() {
           Back to Home
         </Link>
       </div>
+
+      <section className={styles.leaderboardSection}>
+        <h2 className={styles.leaderboardTitle}>🥇 Top 10 Leaderboard</h2>
+        <div className={styles.leaderboard}>
+          {leaderboard.map((user, index) => {
+            const medal =
+              index === 0
+                ? '🥇'
+                : index === 1
+                  ? '🥈'
+                  : index === 2
+                    ? '🥉'
+                    : `${index + 1}.`;
+            const maskedUsername =
+              user.username.length > 0
+                ? user.username[0] + '*'.repeat(user.username.length - 1)
+                : '';
+            const hue = Math.round((user.successRate / 100) * 120); // 0 to 120 (red to green)
+            const successRateColor = `hsl(${hue}, 70%, 50%)`;
+
+            return (
+              <div key={user.id} className={styles.leaderboardItem}>
+                <span className={styles.leaderboardRank}>{medal}</span>
+                <span className={styles.leaderboardUsername}>
+                  {maskedUsername}
+                </span>
+                <div className={styles.leaderboardStats}>
+                  <span className={styles.leaderboardStat}>
+                    <span className={styles.leaderboardStatLabel}>Score</span>
+                    <span className={styles.leaderboardStatValue}>
+                      {Math.round(user.score)}
+                    </span>
+                  </span>
+                  <span className={styles.leaderboardStat}>
+                    <span className={styles.leaderboardStatLabel}>Correct</span>
+                    <span className={styles.leaderboardStatValue}>
+                      {user.totalCorrect}
+                    </span>
+                  </span>
+                  <span className={styles.leaderboardStat}>
+                    <span className={styles.leaderboardStatLabel}>Success</span>
+                    <span
+                      className={styles.leaderboardStatValue}
+                      style={{ color: successRateColor }}
+                    >
+                      {user.successRate.toFixed(1)}%
+                    </span>
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       <div className={styles.tableContainer}>
         <table className={styles.table}>

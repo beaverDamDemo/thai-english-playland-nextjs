@@ -371,7 +371,8 @@
 .progressResetButton,
 .logoutButton,
 .settingsLink,
-.allUsersProgressLink {
+.allUsersProgressLink,
+.usageStatisticsLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -415,6 +416,17 @@
   box-shadow: 0 8px 20px rgba(0, 206, 201, 0.35);
 }
 
+.usageStatisticsLink {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.35);
+}
+
+.usageStatisticsLink::before {
+  content: none;
+}
+
 .logoutButton {
   background: linear-gradient(135deg, #a0a0a0 0%, #808080 100%);
   color: #fff;
@@ -425,7 +437,8 @@
 .progressResetButton:hover,
 .settingsLink:hover,
 .logoutButton:hover,
-.allUsersProgressLink:hover {
+.allUsersProgressLink:hover,
+.usageStatisticsLink:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
 }
@@ -1114,7 +1127,9 @@
   .progressUnlockButton,
   .progressResetButton,
   .logoutButton,
-  .settingsLink {
+  .settingsLink,
+  .allUsersProgressLink,
+  .usageStatisticsLink {
     width: 100%;
     min-height: 52px;
   }
