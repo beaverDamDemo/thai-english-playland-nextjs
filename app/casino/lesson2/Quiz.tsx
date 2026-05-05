@@ -108,7 +108,7 @@ const questions: Question[] = [
 
   // comprehension / meaning items
   {
-    q: "If you see 'There are 0 cookies', that means there _______ cookies.",
+    q: "If you see 'There are 0 cookies', that means there _______ any cookies.",
     options: ["aren't", 'are', 'is', 'was'],
     answer: 0,
   },

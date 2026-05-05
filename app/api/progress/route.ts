@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/app/_lib/server/db';
 import { getCurrentSessionUser } from '@/app/_lib/server/auth';
+import { evaluateProgressAchievements } from '@/app/_lib/server/achievements';
 
 export type GameMode = 'maze' | 'casino' | 'pattaya';
 
@@ -89,5 +90,12 @@ export async function POST(request: Request) {
       updated_at        = NOW();
   `;
 
-  return NextResponse.json({ ok: true });
+  let newAchievements: string[] = [];
+  try {
+    newAchievements = await evaluateProgressAchievements(user.id);
+  } catch (err) {
+    console.error('Failed to evaluate achievements:', err);
+  }
+
+  return NextResponse.json({ ok: true, newAchievements });
 }

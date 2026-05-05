@@ -28,6 +28,20 @@ const EMPTY_STATS: ProgressStats = {
   totalMovesEarned: 0,
 };
 
+type AchievementDef = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  category: string;
+  sortOrder: number;
+};
+
+type EarnedAchievement = {
+  id: string;
+  earned_at: string;
+};
+
 export default function HomePage() {
   const router = useRouter();
   const [mazeUnlocked, setMazeUnlocked] = useState(1);
@@ -38,6 +52,10 @@ export default function HomePage() {
   const [pattayaStats, setPattayaStats] = useState<ProgressStats>(EMPTY_STATS);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [achievementDefs, setAchievementDefs] = useState<AchievementDef[]>([]);
+  const [earnedAchievements, setEarnedAchievements] = useState<
+    EarnedAchievement[]
+  >([]);
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -113,6 +131,23 @@ export default function HomePage() {
               totalMovesEarned: pattaya.total_moves_earned,
             });
           }
+        },
+      )
+      .catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/achievements')
+      .then((r) => r.json())
+      .then(
+        (data: {
+          ok?: boolean;
+          definitions?: AchievementDef[];
+          earned?: EarnedAchievement[];
+        }) => {
+          if (!data.ok) return;
+          if (data.definitions) setAchievementDefs(data.definitions);
+          if (data.earned) setEarnedAchievements(data.earned);
         },
       )
       .catch(() => null);
@@ -327,6 +362,52 @@ export default function HomePage() {
               </div>
             </div>
           </article>
+        </div>
+      </section>
+
+      <section
+        className={styles.achievementsCard}
+        aria-label="Your achievements"
+      >
+        <h2 className={styles.progressTitle}>
+          🏅 Achievements
+          <span className={styles.achievementsCount}>
+            {earnedAchievements.length}/{achievementDefs.length}
+          </span>
+        </h2>
+        <div className={styles.achievementsGrid}>
+          {[...achievementDefs]
+            .sort((a, b) => a.sortOrder - b.sortOrder)
+            .map((def) => {
+              const earned = earnedAchievements.find((e) => e.id === def.id);
+              const isEarned = Boolean(earned);
+              return (
+                <div
+                  key={def.id}
+                  className={`${styles.achievementItem} ${
+                    isEarned
+                      ? styles.achievementEarned
+                      : styles.achievementLocked
+                  }`}
+                  title={
+                    isEarned && earned
+                      ? `Earned ${new Date(earned.earned_at).toLocaleDateString()}`
+                      : 'Not earned yet'
+                  }
+                >
+                  <span className={styles.achievementIcon}>{def.icon}</span>
+                  <div className={styles.achievementInfo}>
+                    <span className={styles.achievementTitle}>{def.title}</span>
+                    <span className={styles.achievementDescription}>
+                      {def.description}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          {achievementDefs.length === 0 && (
+            <p className={styles.achievementsEmpty}>Loading achievements...</p>
+          )}
         </div>
       </section>
 
