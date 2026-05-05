@@ -6,6 +6,7 @@ import {
   resetStreak,
   reportPerfectLesson,
 } from '@/app/_lib/client/quizStreak';
+import { useThaiQuestion } from '../_components/useThaiQuestion';
 import styles from '../_components/QuizButtons.module.css';
 
 type QuizQuestion = {
@@ -204,6 +205,7 @@ export default function Quiz({
   const [finished, setFinished] = useState(false);
   const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
   useEffect(() => {
     resetStreak();
@@ -343,6 +345,19 @@ export default function Quiz({
         >
           {selectedQuestions[current].q}
         </p>
+        {thaiQuestion && thaiQuestion !== selectedQuestions[current].q && (
+          <p
+            style={{
+              margin: '5px 0 15px 0',
+              fontSize: '14px',
+              fontWeight: '400',
+              color: '#666',
+              fontStyle: 'italic',
+            }}
+          >
+            ({thaiQuestion})
+          </p>
+        )}
       </div>
       <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         {selectedQuestions[current].options.map((opt, i) => (

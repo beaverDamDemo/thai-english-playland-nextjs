@@ -1,5 +1,6 @@
 'use client';
 
+import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
 import styles from './Lesson3.module.css';
 
 export type VerbEntry = {
@@ -36,6 +37,8 @@ export default function Quiz({
   onSkipToShoot,
 }: QuizProps) {
   const label = question.askPast ? 'past simple' : 'past participle';
+  const questionText = `What is the ${label} of ${question.verb.base.toLowerCase()}?`;
+  const thaiQuestion = useThaiQuestion(questionText);
 
   return (
     <>
@@ -69,6 +72,19 @@ export default function Quiz({
           What is the <strong>{label}</strong> of{' '}
           <strong>{question.verb.base.toLowerCase()}</strong>?
         </p>
+        {thaiQuestion && thaiQuestion !== questionText && (
+          <p
+            style={{
+              margin: '5px 0 15px 0',
+              fontSize: '14px',
+              fontWeight: '400',
+              color: '#666',
+              fontStyle: 'italic',
+            }}
+          >
+            ({thaiQuestion})
+          </p>
+        )}
 
         <div className={styles.optionGrid}>
           {question.options.map((opt, i) => {

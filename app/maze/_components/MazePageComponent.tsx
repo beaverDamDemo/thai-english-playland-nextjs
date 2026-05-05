@@ -333,7 +333,9 @@ const MazePageComponent: FC<MazePageProps> = ({
                 🎉 Congratulations! 🎉
               </h1>
               <p style={{ fontSize: '20px', color: '#333', margin: '10px 0' }}>
-                You successfully completed the maze!
+                {gameMode === 'casino'
+                  ? 'You successfully completed the lesson!'
+                  : 'You successfully completed the maze!'}
               </p>
               <p
                 style={{

@@ -286,8 +286,21 @@ export default function Quiz({
             color: '#333',
           }}
         >
-          {thaiQuestion || selectedQuestions[current].q}
+          {selectedQuestions[current].q}
         </p>
+        {thaiQuestion && thaiQuestion !== selectedQuestions[current].q && (
+          <p
+            style={{
+              margin: '5px 0 15px 0',
+              fontSize: '14px',
+              fontWeight: '400',
+              color: '#666',
+              fontStyle: 'italic',
+            }}
+          >
+            ({thaiQuestion})
+          </p>
+        )}
       </div>
       <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         {selectedQuestions[current].options.map((opt: string, i: number) => (

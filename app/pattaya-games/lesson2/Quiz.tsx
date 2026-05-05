@@ -1,5 +1,6 @@
 'use client';
 
+import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
 import styles from './Lesson2.module.css';
 import quizStyles from '../../maze/_components/QuizButtons.module.css';
 
@@ -28,6 +29,7 @@ export default function Quiz({
   feedbackIcon,
   onAnswer,
 }: QuizProps) {
+  const thaiQuestion = useThaiQuestion(challenge.prompt);
   return (
     <article className={styles.card} style={{ position: 'relative' }}>
       {feedbackIcon && (
@@ -84,6 +86,19 @@ export default function Quiz({
         </div>
       </div>
       <h2 className={styles.prompt}>{challenge.prompt}</h2>
+      {thaiQuestion && thaiQuestion !== challenge.prompt && (
+        <p
+          style={{
+            margin: '5px 0 15px 0',
+            fontSize: '14px',
+            fontWeight: '400',
+            color: '#666',
+            fontStyle: 'italic',
+          }}
+        >
+          ({thaiQuestion})
+        </p>
+      )}
       <div
         style={{
           display: 'flex',
