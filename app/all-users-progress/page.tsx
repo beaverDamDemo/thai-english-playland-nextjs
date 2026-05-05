@@ -29,6 +29,7 @@ type UserProgress = {
     quiz_attempts: number;
     total_moves_earned: number;
   };
+  last_active?: string;
 };
 
 export default function AllUsersProgressPage() {
@@ -36,7 +37,12 @@ export default function AllUsersProgressPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortColumn, setSortColumn] = useState<
-    'activity' | 'successRate' | 'joinedDate' | null
+    | 'activity'
+    | 'successRate'
+    | 'joinedDate'
+    | 'totalMoves'
+    | 'lastActive'
+    | null
   >(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [currentUser, setCurrentUser] = useState<{
@@ -76,7 +82,14 @@ export default function AllUsersProgressPage() {
   if (error) return <div className={styles.error}>Error: {error}</div>;
 
   // Handle sort click
-  const handleSort = (column: 'activity' | 'successRate' | 'joinedDate') => {
+  const handleSort = (
+    column:
+      | 'activity'
+      | 'successRate'
+      | 'joinedDate'
+      | 'totalMoves'
+      | 'lastActive',
+  ) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
@@ -102,6 +115,11 @@ export default function AllUsersProgressPage() {
         ? (aTotalCorrect / (aTotalCorrect + aTotalWrong)) * 100
         : 0;
     const aJoinedDate = new Date(a.created_at).getTime();
+    const aTotalMoves =
+      a.maze.total_moves_earned +
+      a.casino.total_moves_earned +
+      a.pattaya.total_moves_earned;
+    const aLastActive = a.last_active ? new Date(a.last_active).getTime() : 0;
 
     const bTotalCorrect =
       b.maze.correct_answers +
@@ -116,6 +134,11 @@ export default function AllUsersProgressPage() {
         ? (bTotalCorrect / (bTotalCorrect + bTotalWrong)) * 100
         : 0;
     const bJoinedDate = new Date(b.created_at).getTime();
+    const bTotalMoves =
+      b.maze.total_moves_earned +
+      b.casino.total_moves_earned +
+      b.pattaya.total_moves_earned;
+    const bLastActive = b.last_active ? new Date(b.last_active).getTime() : 0;
 
     let comparison = 0;
     if (sortColumn === 'activity') {
@@ -124,6 +147,10 @@ export default function AllUsersProgressPage() {
       comparison = aSuccessRate - bSuccessRate;
     } else if (sortColumn === 'joinedDate') {
       comparison = aJoinedDate - bJoinedDate;
+    } else if (sortColumn === 'totalMoves') {
+      comparison = aTotalMoves - bTotalMoves;
+    } else if (sortColumn === 'lastActive') {
+      comparison = aLastActive - bLastActive;
     }
 
     return sortDirection === 'asc' ? comparison : -comparison;
@@ -312,6 +339,22 @@ export default function AllUsersProgressPage() {
               </th>
               <th
                 className={`${styles.headerCell} ${styles.sortableHeader}`}
+                onClick={() => handleSort('totalMoves')}
+              >
+                Total Moves{' '}
+                {sortColumn === 'totalMoves' &&
+                  (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th
+                className={`${styles.headerCell} ${styles.sortableHeader}`}
+                onClick={() => handleSort('lastActive')}
+              >
+                Last Active{' '}
+                {sortColumn === 'lastActive' &&
+                  (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th
+                className={`${styles.headerCell} ${styles.sortableHeader}`}
                 onClick={() => handleSort('joinedDate')}
               >
                 Joined{' '}
@@ -340,12 +383,22 @@ export default function AllUsersProgressPage() {
                       (totalCorrect / (totalCorrect + totalWrong)) * 100,
                     )
                   : 0;
+              const totalMoves =
+                user.maze.total_moves_earned +
+                user.casino.total_moves_earned +
+                user.pattaya.total_moves_earned;
               // Calculate dynamic color based on success rate (0% = red, 50% = yellow, 100% = green)
               const hue = Math.round((successRate / 100) * 120); // 0 to 120 (red to green)
               const successRateColor = `hsl(${hue}, 70%, 50%)`;
               const successRateBarColor = `hsl(${hue}, 70%, 45%)`;
               const date = new Date(user.created_at);
               const joinedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+              const lastActiveDate = user.last_active
+                ? new Date(user.last_active)
+                : null;
+              const lastActiveDisplay = lastActiveDate
+                ? `${String(lastActiveDate.getDate()).padStart(2, '0')}/${String(lastActiveDate.getMonth() + 1).padStart(2, '0')}/${lastActiveDate.getFullYear()}`
+                : 'Never';
               const maskedUsername =
                 user.username.length > 0
                   ? user.username[0] + '*'.repeat(user.username.length - 1)
@@ -427,6 +480,13 @@ export default function AllUsersProgressPage() {
                         }}
                       />
                     </div>
+                  </td>
+                  <td className={`${styles.cell} ${styles.movesCell}`}>
+                    <div className={styles.movesValue}>{totalMoves}</div>
+                    <div className={styles.movesLabel}>moves</div>
+                  </td>
+                  <td className={`${styles.cell} ${styles.lastActiveCell}`}>
+                    {lastActiveDisplay}
                   </td>
                   <td className={`${styles.cell} ${styles.joinedDate}`}>
                     {joinedDate}

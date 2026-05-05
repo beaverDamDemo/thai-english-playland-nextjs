@@ -231,6 +231,35 @@
   color: #9ca3af;
 }
 
+.movesCell {
+  text-align: center;
+}
+
+.movesValue {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.movesLabel {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.lastActiveCell {
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+/* Light theme */
+[data-theme='light'] .lastActiveCell {
+  color: #6b7280;
+}
+
+/* Dark theme */
+[data-theme='dark'] .lastActiveCell {
+  color: #9ca3af;
+}
+
 .activityCell {
   text-align: center;
 }
