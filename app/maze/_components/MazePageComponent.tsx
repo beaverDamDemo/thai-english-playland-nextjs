@@ -227,6 +227,7 @@ const MazePageComponent: FC<MazePageProps> = ({
     game.registry.set('maxMoves', maxMoves);
     game.registry.set('onNoMoves', handleNoMoves);
     game.registry.set('onWin', handleWin);
+    game.registry.set('themeColor', themeColor);
 
     // When the scene has been created, show the quiz overlay after 0.5s
     // so the maze is visible briefly before the quiz fades in.
