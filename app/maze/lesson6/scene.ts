@@ -49,7 +49,7 @@ export class MazeScene extends Phaser.Scene {
     const rows = 21, cols = 21;
     this.tileSize = 24;
     this.walkSpeed = 70;
-    this.cameras.main.setBackgroundColor('#4CAF50');
+    this.cameras.main.setBackgroundColor('#009688');
     // Move handling: read initial maxMoves and callbacks from registry
     this.maxMoves = this.registry.get('maxMoves') ?? 5;
     this.movesRemaining = this.maxMoves;
@@ -58,7 +58,7 @@ export class MazeScene extends Phaser.Scene {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     this.addMoreMoves = this.registry.get('addMoreMoves') || ((_moves: number) => { });
 
-    this.cameras.main.setBackgroundColor('#4CAF50');
+    this.cameras.main.setBackgroundColor('#009688');
     this.maze = this.generateMaze(rows, cols);
 
     for (let y = 0; y < rows; y++) {
