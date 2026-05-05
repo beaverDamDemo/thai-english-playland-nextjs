@@ -9,6 +9,7 @@ import {
 } from '@/app/_lib/client/quizStreak';
 import { useThaiQuestion } from '../_components/useThaiQuestion';
 import styles from '../_components/QuizButtons.module.css';
+import { shuffleOptions } from '../_components/shuffleUtils';
 
 const questions = [
   {
@@ -322,7 +323,11 @@ export default function Quiz({
 }) {
   const [selectedQuestions] = useState(() => {
     const shuffled = [...questions].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 5);
+    return shuffled.slice(0, 5).map((q) => {
+      const shuffledOptions = shuffleOptions(q.options);
+      const newAnswerIndex = shuffledOptions.indexOf(q.options[q.answer]);
+      return { ...q, options: shuffledOptions, answer: newAnswerIndex };
+    });
   });
 
   const [current, setCurrent] = useState(0);

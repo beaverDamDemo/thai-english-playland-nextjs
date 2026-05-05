@@ -8,6 +8,7 @@ import {
 } from '@/app/_lib/client/quizStreak';
 import { useThaiQuestion } from '../_components/useThaiQuestion';
 import styles from '../_components/QuizButtons.module.css';
+import { shuffleArray, shuffleOptions } from '../_components/shuffleUtils';
 
 type QuizQuestion = {
   q: string;
@@ -172,20 +173,17 @@ const questions: QuizQuestion[] = [
   },
 ];
 
-function shuffleArray<T>(items: T[]): T[] {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
 function buildBalancedQuestions(
   source: QuizQuestion[],
   count: number,
 ): QuizQuestion[] {
-  return shuffleArray(source).slice(0, count);
+  return shuffleArray(source)
+    .slice(0, count)
+    .map((q) => {
+      const shuffledOptions = shuffleOptions(q.options);
+      const newAnswerIndex = shuffledOptions.indexOf(q.options[q.answer]);
+      return { ...q, options: shuffledOptions, answer: newAnswerIndex };
+    });
 }
 
 export default function Quiz({
