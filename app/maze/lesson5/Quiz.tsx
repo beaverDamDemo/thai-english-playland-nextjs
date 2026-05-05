@@ -1,7 +1,12 @@
 ﻿// app/maze/lesson5/Quiz.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  recordAnswer,
+  resetStreak,
+  reportPerfectLesson,
+} from '@/app/_lib/client/quizStreak';
 import { useThaiQuestion } from '../_components/useThaiQuestion';
 import styles from '../_components/QuizButtons.module.css';
 
@@ -158,7 +163,6 @@ const questions = [
   },
 ];
 
-
 export default function Quiz({
   onComplete,
   primaryColor = '#4CAF50',
@@ -178,10 +182,15 @@ export default function Quiz({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
+  useEffect(() => {
+    resetStreak();
+  }, []);
+
   function handleAnswer(index: number) {
     if (selectedIndex !== null) return;
     let newScore = score;
     const isCorrect = index === selectedQuestions[current].answer;
+    recordAnswer(isCorrect);
     if (isCorrect) {
       newScore = score + 1;
       setScore(newScore);
@@ -196,6 +205,7 @@ export default function Quiz({
         setSelectedIndex(null);
         if (nextQuestion >= selectedQuestions.length) {
           setFinished(true);
+          if (newScore === selectedQuestions.length) reportPerfectLesson();
           onComplete(newScore);
         } else {
           setCurrent(nextQuestion);
@@ -347,5 +357,3 @@ export default function Quiz({
     </div>
   );
 }
-
-

@@ -1,28 +1,33 @@
 // app/maze/lesson7/Quiz.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  recordAnswer,
+  resetStreak,
+  reportPerfectLesson,
+} from '@/app/_lib/client/quizStreak';
 import { useThaiQuestion } from '../_components/useThaiQuestion';
 import styles from '../_components/QuizButtons.module.css';
 
 const questions = [
   {
-    q: "_______ is my brother and he plays guitar.",
+    q: '_______ is my brother and he plays guitar.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "_______ is my sister and she loves painting.",
+    q: '_______ is my sister and she loves painting.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "That is _______ phone on the desk, next to her bag.",
+    q: 'That is _______ phone on the desk, next to her bag.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "[male] Johnny has a big dog. _______ dog barks loudly at strangers.",
+    q: '[male] Johnny has a big dog. _______ dog barks loudly at strangers.',
     options: ['his', 'he', 'she', 'her'],
     answer: 0,
   },
@@ -32,27 +37,27 @@ const questions = [
     answer: 0,
   },
   {
-    q: "[male] John is a dentist. _______ is a dentist who works nearby.",
+    q: '[male] John is a dentist. _______ is a dentist who works nearby.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[male] John owns a red car. _______ car is parked in front of the house.",
+    q: '[male] John owns a red car. _______ car is parked in front of the house.',
     options: ['his', 'he', 'she', 'her'],
     answer: 0,
   },
   {
-    q: "[female] Anna lives nearby. _______ house has a red roof and a garden.",
+    q: '[female] Anna lives nearby. _______ house has a red roof and a garden.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "[male] Uncle Tom lives in Berlin. _______ is my uncle who lives there.",
+    q: '[male] Uncle Tom lives in Berlin. _______ is my uncle who lives there.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[female] Sarah is a nurse and helps people every day. _______ is a nurse who helps people every day.",
+    q: '[female] Sarah is a nurse and helps people every day. _______ is a nurse who helps people every day.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
@@ -62,37 +67,37 @@ const questions = [
     answer: 0,
   },
   {
-    q: "[female] Ms. Taylor is a teacher at our school. _______ is a teacher at our school.",
+    q: '[female] Ms. Taylor is a teacher at our school. _______ is a teacher at our school.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[male] David is my cousin and he plays soccer. _______ is my cousin and he plays soccer.",
+    q: '[male] David is my cousin and he plays soccer. _______ is my cousin and he plays soccer.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "I saw [female] Emily at the store yesterday. I saw _______ at the store yesterday.",
+    q: 'I saw [female] Emily at the store yesterday. I saw _______ at the store yesterday.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "[male] Alex owns a dog. _______ dog is very friendly.",
+    q: '[male] Alex owns a dog. _______ dog is very friendly.',
     options: ['his', 'he', 'she', 'her'],
     answer: 0,
   },
   {
-    q: "[female] Mia has a cat. _______ cat sleeps all day.",
+    q: '[female] Mia has a cat. _______ cat sleeps all day.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "[male] Uncle Paul lives in Paris. _______ is my uncle who lives in Paris.",
+    q: '[male] Uncle Paul lives in Paris. _______ is my uncle who lives in Paris.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[female] Aunt Mary loves gardening. _______ is my aunt who loves gardening.",
+    q: '[female] Aunt Mary loves gardening. _______ is my aunt who loves gardening.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
@@ -107,17 +112,17 @@ const questions = [
     answer: 0,
   },
   {
-    q: "[male] Tom is a student in my class. _______ is a student in my class.",
+    q: '[male] Tom is a student in my class. _______ is a student in my class.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[female] Dr. Rose is a doctor at the hospital. _______ is a doctor at the hospital.",
+    q: '[female] Dr. Rose is a doctor at the hospital. _______ is a doctor at the hospital.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[male] James left his book on the shelf. _______ book is on the shelf.",
+    q: '[male] James left his book on the shelf. _______ book is on the shelf.',
     options: ['his', 'he', 'she', 'her'],
     answer: 0,
   },
@@ -127,32 +132,32 @@ const questions = [
     answer: 0,
   },
   {
-    q: "[male] Brian studies engineering. _______ is my brother who studies engineering.",
+    q: '[male] Brian studies engineering. _______ is my brother who studies engineering.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[female] Emma sings beautifully. _______ is my sister who sings beautifully.",
+    q: '[female] Emma sings beautifully. _______ is my sister who sings beautifully.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[female] Aunt Lisa teaches science. _______ is my aunt who teaches it.",
+    q: '[female] Aunt Lisa teaches science. _______ is my aunt who teaches it.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "I gave the flowers to [female] my aunt. I gave the flowers to _______ as a thank-you.",
+    q: 'I gave the flowers to [female] my aunt. I gave the flowers to _______ as a thank-you.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "I saw [male] my uncle at the library yesterday. _______ was reading a newspaper near the window.",
+    q: 'I saw [male] my uncle at the library yesterday. _______ was reading a newspaper near the window.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[male] Tom left his pencil on the desk. _______ pencil is still there next to the notebook.",
+    q: '[male] Tom left his pencil on the desk. _______ pencil is still there next to the notebook.',
     options: ['his', 'he', 'she', 'her'],
     answer: 0,
   },
@@ -162,22 +167,22 @@ const questions = [
     answer: 0,
   },
   {
-    q: "My cousin [male] Jack plays basketball. _______ is very tall and athletic, just like his dad.",
+    q: 'My cousin [male] Jack plays basketball. _______ is very tall and athletic, just like his dad.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[female] My sister volunteers often. _______ is very kind and helpful at the shelter.",
+    q: '[female] My sister volunteers often. _______ is very kind and helpful at the shelter.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "[male] My uncle goes to the cafe often. _______ likes to sit by the window and read.",
+    q: '[male] My uncle goes to the cafe often. _______ likes to sit by the window and read.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "I call [female] my aunt every weekend. I talk to _______ on Sundays about her garden.",
+    q: 'I call [female] my aunt every weekend. I talk to _______ on Sundays about her garden.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
@@ -192,12 +197,12 @@ const questions = [
     answer: 0,
   },
   {
-    q: "I gave the book to my classmate [female] Anna. I gave it to _______ after class.",
+    q: 'I gave the book to my classmate [female] Anna. I gave it to _______ after class.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "My neighbor [male] John plays the piano beautifully. _______ performs every weekend.",
+    q: 'My neighbor [male] John plays the piano beautifully. _______ performs every weekend.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
@@ -212,17 +217,17 @@ const questions = [
     answer: 0,
   },
   {
-    q: "I saw [female] my aunt at the concert last night. I waved to _______ from the crowd.",
+    q: 'I saw [female] my aunt at the concert last night. I waved to _______ from the crowd.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "[male] My brother forgot his keys at home. _______ had to come back to get them.",
+    q: '[male] My brother forgot his keys at home. _______ had to come back to get them.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "My colleague [female] Jane is always on time for meetings. _______ is very punctual.",
+    q: 'My colleague [female] Jane is always on time for meetings. _______ is very punctual.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
@@ -232,7 +237,7 @@ const questions = [
     answer: 0,
   },
   {
-    q: "[female] My sister enjoys painting in her free time. _______ has a studio at home.",
+    q: '[female] My sister enjoys painting in her free time. _______ has a studio at home.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
@@ -247,12 +252,12 @@ const questions = [
     answer: 0,
   },
   {
-    q: "[male] My brother lives in Canada. _______ is studying engineering there.",
+    q: '[male] My brother lives in Canada. _______ is studying engineering there.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
   {
-    q: "My friend [female] Lisa loves to dance. _______ takes ballet classes every week.",
+    q: 'My friend [female] Lisa loves to dance. _______ takes ballet classes every week.',
     options: ['she', 'he', 'his', 'her'],
     answer: 0,
   },
@@ -267,22 +272,21 @@ const questions = [
     answer: 0,
   },
   {
-    q: "I borrowed the pen from my classmate [male] John. I borrowed it from _______.",
+    q: 'I borrowed the pen from my classmate [male] John. I borrowed it from _______.',
     options: ['him', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "I helped my friend [female] Emily with her homework. I helped _______ after school.",
+    q: 'I helped my friend [female] Emily with her homework. I helped _______ after school.',
     options: ['her', 'he', 'she', 'his'],
     answer: 0,
   },
   {
-    q: "My coworker [male] James always brings his lunch to work. _______ packs it every morning.",
+    q: 'My coworker [male] James always brings his lunch to work. _______ packs it every morning.',
     options: ['he', 'she', 'his', 'her'],
     answer: 0,
   },
 ];
-
 
 export default function Quiz({
   onComplete,
@@ -303,10 +307,15 @@ export default function Quiz({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
+  useEffect(() => {
+    resetStreak();
+  }, []);
+
   function handleAnswer(index: number) {
     if (selectedIndex !== null) return;
     let newScore = score;
     const isCorrect = index === selectedQuestions[current].answer;
+    recordAnswer(isCorrect);
     if (isCorrect) {
       newScore = score + 1;
       setScore(newScore);
@@ -321,6 +330,7 @@ export default function Quiz({
         setSelectedIndex(null);
         if (nextQuestion >= selectedQuestions.length) {
           setFinished(true);
+          if (newScore === selectedQuestions.length) reportPerfectLesson();
           onComplete(newScore);
         } else {
           setCurrent(nextQuestion);
@@ -472,6 +482,3 @@ export default function Quiz({
     </div>
   );
 }
-
-
-

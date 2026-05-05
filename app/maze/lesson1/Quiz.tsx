@@ -1,6 +1,11 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  recordAnswer,
+  resetStreak,
+  reportPerfectLesson,
+} from '@/app/_lib/client/quizStreak';
 import styles from '../_components/QuizButtons.module.css';
 
 type QuizQuestion = {
@@ -200,10 +205,15 @@ export default function Quiz({
   const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
+  useEffect(() => {
+    resetStreak();
+  }, []);
+
   function handleAnswer(index: number) {
     if (selectedIndex !== null) return;
     let newScore = score;
     const isCorrect = index === selectedQuestions[current].answer;
+    recordAnswer(isCorrect);
     if (isCorrect) {
       newScore = score + 1;
       setScore(newScore);
@@ -218,6 +228,7 @@ export default function Quiz({
         setSelectedIndex(null);
         if (nextQuestion >= selectedQuestions.length) {
           setFinished(true);
+          if (newScore === selectedQuestions.length) reportPerfectLesson();
           onComplete(newScore);
         } else {
           setCurrent(nextQuestion);

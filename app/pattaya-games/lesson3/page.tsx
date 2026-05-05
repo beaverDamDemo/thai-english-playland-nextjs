@@ -2,6 +2,11 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  recordAnswer,
+  resetStreak,
+  reportPerfectLesson,
+} from '@/app/_lib/client/quizStreak';
 import styles from './Lesson3.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type VerbEntry, type QuizQuestion } from './Quiz';
@@ -294,10 +299,15 @@ export default function PattayaLesson3Page() {
 
   const [savedProgress, setSavedProgress] = useState(false);
 
+  useEffect(() => {
+    resetStreak();
+  }, []);
+
   function handleAnswer(optionIndex: number) {
     if (selected !== null) return;
     const q = round[qIndex];
     const isCorrect = q.options[optionIndex] === q.correctAnswer;
+    recordAnswer(isCorrect);
     setSelected(optionIndex);
     setFeedback(isCorrect ? 'correct' : 'wrong');
     if (isCorrect) {
@@ -627,6 +637,10 @@ export default function PattayaLesson3Page() {
     if (savedProgress) return;
     setSavedProgress(true);
     const passed = shotsEarned >= 3;
+
+    if (totalWrong === 0 && totalCorrect > 0) {
+      reportPerfectLesson();
+    }
 
     fetch('/api/progress')
       .then((r) => r.json())

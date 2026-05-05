@@ -2,7 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  recordAnswer,
+  resetStreak,
+  reportPerfectLesson,
+} from '@/app/_lib/client/quizStreak';
 import styles from './Lesson1.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type Challenge } from './Quiz';
@@ -270,9 +275,14 @@ export default function PattayaLesson1Page() {
       .catch(() => null);
   }
 
+  useEffect(() => {
+    resetStreak();
+  }, []);
+
   function handleChallengeAnswer(challenge: Challenge, pickedIndex: number) {
     if (selectedIndex !== null) return;
     const isCorrect = pickedIndex === challenge.answer;
+    recordAnswer(isCorrect);
     recordAttemptIfNeeded();
     if (isCorrect) {
       setLearningCorrect((v) => v + 1);
@@ -300,6 +310,12 @@ export default function PattayaLesson1Page() {
           const next = applyStep + 1;
           if (next >= applyChallenges.length) {
             persistProgress();
+            if (
+              learningCorrect ===
+              practiceChallenges.length + applyChallenges.length
+            ) {
+              reportPerfectLesson();
+            }
             setPhase('done');
             return;
           }
