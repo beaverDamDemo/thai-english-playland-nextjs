@@ -173,6 +173,45 @@ const questions: QuizQuestion[] = [
   },
 ];
 
+function orderTimeOptions(options: string[]): string[] {
+  // Sort options: 24h format first (sorted chronologically), then AM, then PM
+  const sorted = [...options].sort((a, b) => {
+    const aIs24h = a.includes(':');
+    const bIs24h = b.includes(':');
+    const aIsAM = a.includes('AM') || a === 'Noon' || a === 'Midnight';
+    const bIsAM = b.includes('AM') || b === 'Noon' || b === 'Midnight';
+    const aIsPM = a.includes('PM');
+    const bIsPM = b.includes('PM');
+
+    // Priority: 24h > AM > PM
+    const getPriority = (is24h: boolean, isAM: boolean, isPM: boolean) => {
+      if (is24h) return 0;
+      if (isAM) return 1;
+      if (isPM) return 2;
+      return 3;
+    };
+
+    const priorityA = getPriority(aIs24h, aIsAM, aIsPM);
+    const priorityB = getPriority(bIs24h, bIsAM, bIsPM);
+
+    // If both are 24h format, sort by time value
+    if (aIs24h && bIs24h) {
+      const parseTime = (time: string): number => {
+        const match = time.match(/(\d+):(\d+)/);
+        if (match) {
+          return parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
+        }
+        return 0;
+      };
+      return parseTime(a) - parseTime(b);
+    }
+
+    return priorityA - priorityB;
+  });
+
+  return sorted;
+}
+
 function buildBalancedQuestions(
   source: QuizQuestion[],
   count: number,
@@ -180,9 +219,9 @@ function buildBalancedQuestions(
   return shuffleArray(source)
     .slice(0, count)
     .map((q) => {
-      const shuffledOptions = shuffleOptions(q.options);
-      const newAnswerIndex = shuffledOptions.indexOf(q.options[q.answer]);
-      return { ...q, options: shuffledOptions, answer: newAnswerIndex };
+      const orderedOptions = orderTimeOptions(q.options);
+      const newAnswerIndex = orderedOptions.indexOf(q.options[q.answer]);
+      return { ...q, options: orderedOptions, answer: newAnswerIndex };
     });
 }
 
