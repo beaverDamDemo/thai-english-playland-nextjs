@@ -24,7 +24,7 @@ export const lessonConfigs: LessonConfig[] = [
   { num: 6, color: '#009688', colorDark: '#00796B', title: 'Pronouns', tile: '/assets/tinified/tile-brown-2.png', left: 82, top: 37 },
   { num: 7, color: '#E91E63', colorDark: '#C2185B', title: 'Pronouns (He/She)', tile: '/assets/tinified/tile-green-2.png', left: 3, top: 37 },
   { num: 8, color: '#3F51B5', colorDark: '#303F9F', title: 'Places & Prepositions', tile: 'https://labs.phaser.io/assets/sprites/block.png', left: 84, top: 25 },
-  { num: 9, color: '#795548', colorDark: '#5D4037', title: 'Present Simple', tile: 'https://labs.phaser.io/assets/sprites/block.png', left: 38, top: 22 },
+  { num: 9, color: '#795548', colorDark: '#5D4037', title: 'Present Simple', tile: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjM0IyNzI2IiBzdHJva2U9IiMxOTE5MTkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==', left: 38, top: 22 },
 ];
 
 export const lessonMapButtons: LessonMapButton[] = lessonConfigs.map(
