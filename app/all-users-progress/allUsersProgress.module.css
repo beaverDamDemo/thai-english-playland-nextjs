@@ -79,6 +79,16 @@
   letter-spacing: 0.05em;
 }
 
+.sortableHeader {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.sortableHeader:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* Light theme */
 [data-theme='light'] .headerCell {
   color: white;
@@ -137,6 +147,26 @@
 /* Dark theme hover override */
 [data-theme='dark'] .row:hover {
   background-color: #2a2a3a;
+}
+
+.currentUserRow {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.2) 0%,
+    rgba(118, 75, 162, 0.2) 100%
+  ) !important;
+  border-left: 4px solid #667eea;
+  font-weight: 600;
+}
+
+/* Dark theme for current user row */
+[data-theme='dark'] .currentUserRow {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.3) 0%,
+    rgba(118, 75, 162, 0.3) 100%
+  ) !important;
+  border-left-color: #8a8aff;
 }
 
 .cell {
@@ -423,7 +453,27 @@
 }
 
 [data-theme='dark'] .leaderboardItem:hover {
-  background: #2a2a3a;
+  background-color: #2a2a3a;
+}
+
+.currentUserLeaderboardItem {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.3) 0%,
+    rgba(118, 75, 162, 0.3) 100%
+  ) !important;
+  border: 2px solid #667eea !important;
+  font-weight: 700;
+}
+
+/* Dark theme for current user leaderboard item */
+[data-theme='dark'] .currentUserLeaderboardItem {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.4) 0%,
+    rgba(118, 75, 162, 0.4) 100%
+  ) !important;
+  border-color: #8a8aff !important;
 }
 
 .leaderboardRank {

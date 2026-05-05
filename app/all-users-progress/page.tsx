@@ -35,8 +35,27 @@ export default function AllUsersProgressPage() {
   const [users, setUsers] = useState<UserProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortColumn, setSortColumn] = useState<
+    'activity' | 'successRate' | 'joinedDate' | null
+  >(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [currentUser, setCurrentUser] = useState<{
+    id: number;
+    username: string;
+  } | null>(null);
 
   useEffect(() => {
+    // Fetch current user
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.ok && data.user) {
+          setCurrentUser({ id: data.user.id, username: data.user.username });
+        }
+      })
+      .catch(() => console.error('Failed to fetch current user'));
+
+    // Fetch all users progress
     fetch('/api/all-users-progress')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch users');
@@ -56,8 +75,62 @@ export default function AllUsersProgressPage() {
   if (loading) return <div className={styles.loading}>Loading...</div>;
   if (error) return <div className={styles.error}>Error: {error}</div>;
 
+  // Handle sort click
+  const handleSort = (column: 'activity' | 'successRate' | 'joinedDate') => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('desc');
+    }
+  };
+
+  // Sort users based on current sort column
+  const sortedUsers = [...users].sort((a, b) => {
+    if (!sortColumn) return 0;
+
+    const aTotalCorrect =
+      a.maze.correct_answers +
+      a.casino.correct_answers +
+      a.pattaya.correct_answers;
+    const aTotalWrong =
+      a.maze.wrong_answers + a.casino.wrong_answers + a.pattaya.wrong_answers;
+    const aTotalAttempts =
+      a.maze.quiz_attempts + a.casino.quiz_attempts + a.pattaya.quiz_attempts;
+    const aSuccessRate =
+      aTotalCorrect + aTotalWrong > 0
+        ? (aTotalCorrect / (aTotalCorrect + aTotalWrong)) * 100
+        : 0;
+    const aJoinedDate = new Date(a.created_at).getTime();
+
+    const bTotalCorrect =
+      b.maze.correct_answers +
+      b.casino.correct_answers +
+      b.pattaya.correct_answers;
+    const bTotalWrong =
+      b.maze.wrong_answers + b.casino.wrong_answers + b.pattaya.wrong_answers;
+    const bTotalAttempts =
+      b.maze.quiz_attempts + b.casino.quiz_attempts + b.pattaya.quiz_attempts;
+    const bSuccessRate =
+      bTotalCorrect + bTotalWrong > 0
+        ? (bTotalCorrect / (bTotalCorrect + bTotalWrong)) * 100
+        : 0;
+    const bJoinedDate = new Date(b.created_at).getTime();
+
+    let comparison = 0;
+    if (sortColumn === 'activity') {
+      comparison = aTotalAttempts - bTotalAttempts;
+    } else if (sortColumn === 'successRate') {
+      comparison = aSuccessRate - bSuccessRate;
+    } else if (sortColumn === 'joinedDate') {
+      comparison = aJoinedDate - bJoinedDate;
+    }
+
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
   // Calculate leaderboard rankings based on total correct answers and attempts
-  const leaderboard = users
+  let leaderboard = users
     .map((user) => {
       const totalCorrect =
         user.maze.correct_answers +
@@ -86,8 +159,48 @@ export default function AllUsersProgressPage() {
         score,
       };
     })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
+    .sort((a, b) => b.score - a.score);
+
+  // If current user exists and is not in top 10, add them as 11th
+  if (currentUser) {
+    const currentUserInLeaderboard = leaderboard.find(
+      (u) => u.id === currentUser.id,
+    );
+    if (!currentUserInLeaderboard) {
+      const currentUserData = users.find((u) => u.id === currentUser.id);
+      if (currentUserData) {
+        const totalCorrect =
+          currentUserData.maze.correct_answers +
+          currentUserData.casino.correct_answers +
+          currentUserData.pattaya.correct_answers;
+        const totalWrong =
+          currentUserData.maze.wrong_answers +
+          currentUserData.casino.wrong_answers +
+          currentUserData.pattaya.wrong_answers;
+        const totalAttempts =
+          currentUserData.maze.quiz_attempts +
+          currentUserData.casino.quiz_attempts +
+          currentUserData.pattaya.quiz_attempts;
+        const successRate =
+          totalCorrect + totalWrong > 0
+            ? (totalCorrect / (totalCorrect + totalWrong)) * 100
+            : 0;
+        const score = totalCorrect * 10 + successRate * 2;
+
+        leaderboard.push({
+          ...currentUserData,
+          totalCorrect,
+          totalWrong,
+          totalAttempts,
+          successRate,
+          score,
+        });
+      }
+    }
+  }
+
+  // Take only top 10 (or 11 if current user was added)
+  leaderboard = leaderboard.slice(0, currentUser ? 11 : 10);
 
   const maxScore = Math.max(...leaderboard.map((u) => u.score), 1);
   const maxCorrect = Math.max(...leaderboard.map((u) => u.totalCorrect), 1);
@@ -117,13 +230,17 @@ export default function AllUsersProgressPage() {
               user.username.length > 0
                 ? user.username[0] + '*'.repeat(user.username.length - 1)
                 : '';
+            const isCurrentUser = currentUser && user.id === currentUser.id;
             const hue = Math.round((user.successRate / 100) * 120); // 0 to 120 (red to green)
             const successRateColor = `hsl(${hue}, 70%, 50%)`;
             const scoreBarWidth = (user.score / maxScore) * 100;
             const correctBarWidth = (user.totalCorrect / maxCorrect) * 100;
 
             return (
-              <div key={user.id} className={styles.leaderboardItem}>
+              <div
+                key={user.id}
+                className={`${styles.leaderboardItem} ${isCurrentUser ? styles.currentUserLeaderboardItem : ''}`}
+              >
                 <span className={styles.leaderboardRank}>{medal}</span>
                 <span className={styles.leaderboardUsername}>
                   {maskedUsername}
@@ -177,13 +294,34 @@ export default function AllUsersProgressPage() {
               <th className={styles.headerCell}>🌀 Maze</th>
               <th className={styles.headerCell}>🎰 Casino</th>
               <th className={styles.headerCell}>🏖️ Pattaya</th>
-              <th className={styles.headerCell}>Activity</th>
-              <th className={styles.headerCell}>Success Rate</th>
-              <th className={styles.headerCell}>Joined</th>
+              <th
+                className={`${styles.headerCell} ${styles.sortableHeader}`}
+                onClick={() => handleSort('activity')}
+              >
+                Activity{' '}
+                {sortColumn === 'activity' &&
+                  (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th
+                className={`${styles.headerCell} ${styles.sortableHeader}`}
+                onClick={() => handleSort('successRate')}
+              >
+                Success Rate{' '}
+                {sortColumn === 'successRate' &&
+                  (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th
+                className={`${styles.headerCell} ${styles.sortableHeader}`}
+                onClick={() => handleSort('joinedDate')}
+              >
+                Joined{' '}
+                {sortColumn === 'joinedDate' &&
+                  (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
             </tr>
           </thead>
           <tbody className={styles.tbody}>
-            {users.map((user) => {
+            {sortedUsers.map((user) => {
               const totalCorrect =
                 user.maze.correct_answers +
                 user.casino.correct_answers +
@@ -212,9 +350,13 @@ export default function AllUsersProgressPage() {
                 user.username.length > 0
                   ? user.username[0] + '*'.repeat(user.username.length - 1)
                   : '';
+              const isCurrentUser = currentUser && user.id === currentUser.id;
 
               return (
-                <tr key={user.id} className={styles.row}>
+                <tr
+                  key={user.id}
+                  className={`${styles.row} ${isCurrentUser ? styles.currentUserRow : ''}`}
+                >
                   <td className={`${styles.cell} ${styles.usernameCell}`}>
                     {maskedUsername}
                   </td>
