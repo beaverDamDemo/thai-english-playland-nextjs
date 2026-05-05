@@ -491,3 +491,24 @@
 [data-theme='dark'] .leaderboardStatValue {
   color: #8a8aff;
 }
+
+.leaderboardBar {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardBar {
+  background: #3a3a4a;
+}
+
+.leaderboardBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}

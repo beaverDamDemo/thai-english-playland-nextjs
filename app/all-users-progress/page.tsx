@@ -89,6 +89,9 @@ export default function AllUsersProgressPage() {
     .sort((a, b) => b.score - a.score)
     .slice(0, 10);
 
+  const maxScore = Math.max(...leaderboard.map((u) => u.score), 1);
+  const maxCorrect = Math.max(...leaderboard.map((u) => u.totalCorrect), 1);
+
   return (
     <main className={styles.container}>
       <div className={styles.header}>
@@ -116,6 +119,8 @@ export default function AllUsersProgressPage() {
                 : '';
             const hue = Math.round((user.successRate / 100) * 120); // 0 to 120 (red to green)
             const successRateColor = `hsl(${hue}, 70%, 50%)`;
+            const scoreBarWidth = (user.score / maxScore) * 100;
+            const correctBarWidth = (user.totalCorrect / maxCorrect) * 100;
 
             return (
               <div key={user.id} className={styles.leaderboardItem}>
@@ -129,12 +134,24 @@ export default function AllUsersProgressPage() {
                     <span className={styles.leaderboardStatValue}>
                       {Math.round(user.score)}
                     </span>
+                    <div className={styles.leaderboardBar}>
+                      <div
+                        className={styles.leaderboardBarFill}
+                        style={{ width: `${scoreBarWidth}%` }}
+                      />
+                    </div>
                   </span>
                   <span className={styles.leaderboardStat}>
                     <span className={styles.leaderboardStatLabel}>Correct</span>
                     <span className={styles.leaderboardStatValue}>
                       {user.totalCorrect}
                     </span>
+                    <div className={styles.leaderboardBar}>
+                      <div
+                        className={styles.leaderboardBarFill}
+                        style={{ width: `${correctBarWidth}%` }}
+                      />
+                    </div>
                   </span>
                   <span className={styles.leaderboardStat}>
                     <span className={styles.leaderboardStatLabel}>Success</span>
