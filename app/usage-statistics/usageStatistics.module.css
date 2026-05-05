@@ -8,6 +8,16 @@
     sans-serif;
 }
 
+/* Light theme */
+[data-theme='light'] .container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Dark theme */
+[data-theme='dark'] .container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -19,6 +29,16 @@
   font-size: 32px;
   font-weight: bold;
   margin: 0;
+}
+
+/* Light theme */
+[data-theme='light'] .title {
+  color: white;
+}
+
+/* Dark theme */
+[data-theme='dark'] .title {
+  color: #e0e0e0;
 }
 
 .backLink {
@@ -86,7 +106,18 @@
   text-align: center;
   font-size: 18px;
   padding: 40px;
+}
+
+/* Light theme */
+[data-theme='light'] .loading,
+[data-theme='light'] .error {
   color: #666;
+}
+
+/* Dark theme */
+[data-theme='dark'] .loading,
+[data-theme='dark'] .error {
+  color: #e0e0e0;
 }
 
 .error {
@@ -94,10 +125,20 @@
 }
 
 .content {
-  background: white;
   border-radius: 12px;
   padding: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Light theme */
+[data-theme='light'] .content {
+  background: white;
+}
+
+/* Dark theme */
+[data-theme='dark'] .content {
+  background: #1e1e2e;
+  border: 1px solid #3a3a4a;
 }
 
 .card {
@@ -108,7 +149,16 @@
   font-size: 24px;
   font-weight: bold;
   margin: 0 0 24px 0;
+}
+
+/* Light theme */
+[data-theme='light'] .cardTitle {
   color: #333;
+}
+
+/* Dark theme */
+[data-theme='dark'] .cardTitle {
+  color: #e0e0e0;
 }
 
 .totalUsers {
@@ -142,11 +192,34 @@
   padding: 10px 20px;
   border: 2px solid #ddd;
   border-radius: 8px;
-  background: white;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
   transition: all 0.2s ease;
+}
+
+/* Light theme */
+[data-theme='light'] .timeframeButton {
+  background: white;
+  border-color: #ddd;
+  color: #333;
+}
+
+[data-theme='light'] .timeframeButton:hover {
+  border-color: #667eea;
+  background: #f5f5f5;
+}
+
+/* Dark theme */
+[data-theme='dark'] .timeframeButton {
+  background: #2a2a3a;
+  border-color: #3a3a4a;
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .timeframeButton:hover {
+  border-color: #667eea;
+  background: #3a3a4a;
 }
 
 .timeframeButton:hover {
@@ -160,11 +233,28 @@
   border-color: #667eea;
 }
 
+/* Dark theme override for active button */
+[data-theme='dark'] .timeframeButton.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
 .chartContainer {
   padding: 20px;
-  background: #f9f9f9;
   border-radius: 12px;
   overflow-x: auto;
+}
+
+/* Light theme */
+[data-theme='light'] .chartContainer {
+  background: #f9f9f9;
+}
+
+/* Dark theme */
+[data-theme='dark'] .chartContainer {
+  background: #2a2a3a;
+  border: 1px solid #3a3a4a;
 }
 
 .chart {
@@ -206,9 +296,18 @@
 .barLabel {
   margin-top: 8px;
   font-size: 11px;
-  color: #666;
   text-align: center;
   white-space: nowrap;
+}
+
+/* Light theme */
+[data-theme='light'] .barLabel {
+  color: #666;
+}
+
+/* Dark theme */
+[data-theme='dark'] .barLabel {
+  color: #9ca3af;
 }
 
 .gameModeStats {
@@ -219,9 +318,20 @@
 
 .gameModeItem {
   padding: 20px;
-  background: #f9f9f9;
   border-radius: 12px;
   border: 2px solid #e0e0e0;
+}
+
+/* Light theme */
+[data-theme='light'] .gameModeItem {
+  background: #f9f9f9;
+  border-color: #e0e0e0;
+}
+
+/* Dark theme */
+[data-theme='dark'] .gameModeItem {
+  background: #2a2a3a;
+  border-color: #3a3a4a;
 }
 
 .gameModeHeader {
@@ -238,7 +348,16 @@
 .gameModeName {
   font-size: 20px;
   font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .gameModeName {
   color: #333;
+}
+
+/* Dark theme */
+[data-theme='dark'] .gameModeName {
+  color: #e0e0e0;
 }
 
 .gameModeMetrics {
@@ -255,22 +374,49 @@
 
 .metricLabel {
   font-size: 12px;
-  color: #666;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+/* Light theme */
+[data-theme='light'] .metricLabel {
+  color: #666;
+}
+
+/* Dark theme */
+[data-theme='dark'] .metricLabel {
+  color: #9ca3af;
 }
 
 .metricValue {
   font-size: 24px;
   font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .metricValue {
   color: #667eea;
+}
+
+/* Dark theme */
+[data-theme='dark'] .metricValue {
+  color: #8a8aff;
 }
 
 .progressBar {
   height: 12px;
-  background: #e0e0e0;
   border-radius: 6px;
   overflow: hidden;
+}
+
+/* Light theme */
+[data-theme='light'] .progressBar {
+  background: #e0e0e0;
+}
+
+/* Dark theme */
+[data-theme='dark'] .progressBar {
+  background: #3a3a4a;
 }
 
 .progressFill {
@@ -291,12 +437,23 @@
   flex-direction: column;
   align-items: center;
   padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 12px;
   border: 2px solid #e0e0e0;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+/* Light theme */
+[data-theme='light'] .metricCard {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-color: #e0e0e0;
+}
+
+/* Dark theme */
+[data-theme='dark'] .metricCard {
+  background: linear-gradient(135deg, #2a2a3a 0%, #3a3a4a 100%);
+  border-color: #3a3a4a;
 }
 
 .metricCard:hover {
@@ -311,16 +468,34 @@
 
 .metricCardLabel {
   font-size: 14px;
-  color: #666;
   font-weight: 600;
   text-align: center;
   margin-bottom: 8px;
 }
 
+/* Light theme */
+[data-theme='light'] .metricCardLabel {
+  color: #666;
+}
+
+/* Dark theme */
+[data-theme='dark'] .metricCardLabel {
+  color: #9ca3af;
+}
+
 .metricCardValue {
   font-size: 28px;
   font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .metricCardValue {
   color: #667eea;
+}
+
+/* Dark theme */
+[data-theme='dark'] .metricCardValue {
+  color: #8a8aff;
 }
 
 .leaderboard {
@@ -334,10 +509,29 @@
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: #f9f9f9;
   border-radius: 12px;
   border: 2px solid #e0e0e0;
   transition: background 0.2s ease;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardItem {
+  background: #f9f9f9;
+  border-color: #e0e0e0;
+}
+
+[data-theme='light'] .leaderboardItem:hover {
+  background: #f0f0f0;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardItem {
+  background: #2a2a3a;
+  border-color: #3a3a4a;
+}
+
+[data-theme='dark'] .leaderboardItem:hover {
+  background: #3a3a4a;
 }
 
 .leaderboardItem:hover {
@@ -354,8 +548,17 @@
 .leaderboardUsername {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
   min-width: 100px;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardUsername {
+  color: #333;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardUsername {
+  color: #e0e0e0;
 }
 
 .leaderboardStats {
@@ -372,15 +575,33 @@
 
 .leaderboardStatLabel {
   font-size: 11px;
-  color: #666;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardStatLabel {
+  color: #666;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardStatLabel {
+  color: #9ca3af;
 }
 
 .leaderboardStatValue {
   font-size: 16px;
   font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .leaderboardStatValue {
   color: #667eea;
+}
+
+/* Dark theme */
+[data-theme='dark'] .leaderboardStatValue {
+  color: #8a8aff;
 }
 
 .progressStatsGrid {
@@ -391,9 +612,20 @@
 
 .progressStatCard {
   padding: 20px;
-  background: #f9f9f9;
   border-radius: 12px;
   border: 2px solid #e0e0e0;
+}
+
+/* Light theme */
+[data-theme='light'] .progressStatCard {
+  background: #f9f9f9;
+  border-color: #e0e0e0;
+}
+
+/* Dark theme */
+[data-theme='dark'] .progressStatCard {
+  background: #2a2a3a;
+  border-color: #3a3a4a;
 }
 
 .progressStatHeader {
@@ -410,7 +642,16 @@
 .progressStatName {
   font-size: 20px;
   font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .progressStatName {
   color: #333;
+}
+
+/* Dark theme */
+[data-theme='dark'] .progressStatName {
+  color: #e0e0e0;
 }
 
 .progressStatMetrics {
@@ -428,22 +669,49 @@
 
 .progressMetricLabel {
   font-size: 11px;
-  color: #666;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+/* Light theme */
+[data-theme='light'] .progressMetricLabel {
+  color: #666;
+}
+
+/* Dark theme */
+[data-theme='dark'] .progressMetricLabel {
+  color: #9ca3af;
 }
 
 .progressMetricValue {
   font-size: 18px;
   font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .progressMetricValue {
   color: #667eea;
+}
+
+/* Dark theme */
+[data-theme='dark'] .progressMetricValue {
+  color: #8a8aff;
 }
 
 .subTitle {
   font-size: 18px;
   font-weight: bold;
   margin: 24px 0 16px 0;
+}
+
+/* Light theme */
+[data-theme='light'] .subTitle {
   color: #333;
+}
+
+/* Dark theme */
+[data-theme='dark'] .subTitle {
+  color: #e0e0e0;
 }
 
 .retentionCard {
@@ -480,9 +748,19 @@
   height: 200px;
   align-items: flex-end;
   padding: 20px;
-  background: #f9f9f9;
   border-radius: 12px;
   overflow-x: auto;
+}
+
+/* Light theme */
+[data-theme='light'] .hourlyActivityChart {
+  background: #f9f9f9;
+}
+
+/* Dark theme */
+[data-theme='dark'] .hourlyActivityChart {
+  background: #2a2a3a;
+  border: 1px solid #3a3a4a;
 }
 
 .hourBarContainer {
@@ -516,11 +794,29 @@
 .hourLabel {
   margin-top: 6px;
   font-size: 10px;
-  color: #666;
   text-align: center;
+}
+
+/* Light theme */
+[data-theme='light'] .hourLabel {
+  color: #666;
+}
+
+/* Dark theme */
+[data-theme='dark'] .hourLabel {
+  color: #9ca3af;
 }
 
 .peakHour {
   font-weight: bold;
+}
+
+/* Light theme */
+[data-theme='light'] .peakHour {
   color: #667eea;
+}
+
+/* Dark theme */
+[data-theme='dark'] .peakHour {
+  color: #8a8aff;
 }
