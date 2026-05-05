@@ -235,10 +235,10 @@ export default function AllUsersProgressPage() {
   return (
     <main className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>🏆 All Users Progress</h1>
         <Link href="/" className={styles.backLink}>
           Back to Home
         </Link>
+        <h1 className={styles.title}>🏆 All Users Progress</h1>
       </div>
 
       <section className={styles.leaderboardSection}>

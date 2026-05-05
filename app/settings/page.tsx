@@ -202,10 +202,10 @@ export default function SettingsPage() {
   return (
     <main className={styles.container}>
       <div className={styles.headerRow}>
-        <h1 className={styles.title}>Settings</h1>
         <Link href="/" className={styles.backLink}>
           Back to Home
         </Link>
+        <h1 className={styles.title}>Settings</h1>
       </div>
 
       {loading ? <p className={styles.note}>Loading...</p> : null}
