@@ -102,22 +102,42 @@ const questions: Question[] = [
   // mixed context, still unambiguous because of nouns
   {
     q: 'Choose the correct sentence for one nearby cup:',
-    options: ['That cup is hot.', 'These cup is hot.', 'This cup is hot.', 'Those cup is hot.'],
+    options: [
+      'That cup is hot.',
+      'These cup is hot.',
+      'This cup is hot.',
+      'Those cup is hot.',
+    ],
     answer: 2,
   },
   {
     q: 'Choose the correct sentence for several nearby chairs:',
-    options: ['That chairs are comfortable.', 'These chairs are comfortable.', 'This chairs are comfortable.', 'Those chairs are comfortable.'],
+    options: [
+      'That chairs are comfortable.',
+      'These chairs are comfortable.',
+      'This chairs are comfortable.',
+      'Those chairs are comfortable.',
+    ],
     answer: 1,
   },
   {
     q: 'Choose the correct sentence for one far window:',
-    options: ['That window is open.', 'These window is open.', 'This window is open.', 'Those window is open.'],
+    options: [
+      'That window is open.',
+      'These window is open.',
+      'This window is open.',
+      'Those window is open.',
+    ],
     answer: 0,
   },
   {
     q: 'Choose the correct sentence for many far birds:',
-    options: ['That birds are loud.', 'These birds are loud.', 'This birds are loud.', 'Those birds are loud.'],
+    options: [
+      'That birds are loud.',
+      'These birds are loud.',
+      'This birds are loud.',
+      'Those birds are loud.',
+    ],
     answer: 3,
   },
 
@@ -314,6 +334,11 @@ export default function Quiz({
                   : idx === selectedQuestions[current].answer
                     ? '#4CAF50'
                     : primaryColor,
+              fontStyle:
+                selectedIndex !== null &&
+                idx === selectedQuestions[current].answer
+                  ? 'italic'
+                  : undefined,
             }}
           >
             {option}

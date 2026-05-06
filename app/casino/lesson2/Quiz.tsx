@@ -119,7 +119,12 @@ const questions: Question[] = [
   },
   {
     q: 'Choose the correct sentence:',
-    options: ['There are a pen on the desk.', 'There are is a pen on the desk.', 'There is a pen on the desk.', 'There is pens on the desk.'],
+    options: [
+      'There are a pen on the desk.',
+      'There are is a pen on the desk.',
+      'There is a pen on the desk.',
+      'There is pens on the desk.',
+    ],
     answer: 2,
   },
   {
@@ -306,6 +311,11 @@ export default function Quiz({
                   : idx === selectedQuestions[current].answer
                     ? '#4CAF50'
                     : primaryColor,
+              fontStyle:
+                selectedIndex !== null &&
+                idx === selectedQuestions[current].answer
+                  ? 'italic'
+                  : undefined,
             }}
           >
             {option}

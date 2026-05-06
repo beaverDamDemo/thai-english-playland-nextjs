@@ -129,6 +129,10 @@ export default function Quiz({
                   : idx === challenge.answer
                     ? '#4CAF50'
                     : THEME_COLOR,
+              fontStyle:
+                selectedIndex !== null && idx === challenge.answer
+                  ? 'italic'
+                  : undefined,
             }}
             onClick={() => onAnswer(challenge, idx)}
             disabled={selectedIndex !== null}

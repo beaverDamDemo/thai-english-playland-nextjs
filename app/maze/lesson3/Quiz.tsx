@@ -353,6 +353,11 @@ export default function Quiz({
                   : i === selectedQuestions[current].answer
                     ? '#4CAF50'
                     : primaryColor,
+              fontStyle:
+                selectedIndex !== null &&
+                i === selectedQuestions[current].answer
+                  ? 'italic'
+                  : undefined,
             }}
           >
             {opt}

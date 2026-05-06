@@ -29,6 +29,11 @@
   color: #ffcc00;
 }
 
+.homeLinkImg {
+  width: auto;
+  height: auto;
+}
+
 :global(:root[data-theme='dark']) .header {
   background: #0f1b33;
   color: #edf4ff;

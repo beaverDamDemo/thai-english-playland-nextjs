@@ -191,6 +191,7 @@
   color: #4ade80;
   font-size: clamp(0.85rem, 2vw, 1rem);
   font-weight: 700;
+  font-style: italic;
   cursor: default;
 }
 
