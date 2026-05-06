@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './register.module.css';
 
@@ -25,7 +25,7 @@ const MODE_CONFIG = {
   },
 };
 
-export default function RegisterPage() {
+function RegisterPageInner() {
   const searchParams = useSearchParams();
   const initialMode: Mode =
     searchParams.get('mode') === 'login' ? 'login' : 'register';
@@ -170,5 +170,13 @@ export default function RegisterPage() {
         </button>
       </section>
     </main>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterPageInner />
+    </Suspense>
   );
 }

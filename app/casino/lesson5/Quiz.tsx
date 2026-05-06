@@ -13,123 +13,123 @@ import type { Question } from '../types';
 const questions: Question[] = [
   {
     q: 'The cat is ___ the box.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 0,
   },
   {
     q: 'The book is ___ the table.',
-    options: ['in', 'on', 'under', 'next to'],
-    answer: 1,
-  },
-  {
-    q: 'The shoes are ___ the bed.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 2,
   },
   {
-    q: 'The lamp is ___ the sofa.',
-    options: ['in', 'on', 'under', 'next to'],
+    q: 'The shoes are ___ the bed.',
+    options: ['in', 'next to', 'on', 'under'],
     answer: 3,
   },
   {
+    q: 'The lamp is ___ the sofa.',
+    options: ['in', 'next to', 'on', 'under'],
+    answer: 1,
+  },
+  {
     q: 'There is a toy ___ the box.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 0,
   },
   {
     q: 'The cup is ___ the shelf.',
-    options: ['in', 'on', 'under', 'next to'],
-    answer: 1,
-  },
-  {
-    q: 'The cat is hiding ___ the chair.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 2,
   },
   {
-    q: 'The postbox is ___ the door.',
-    options: ['in', 'on', 'under', 'next to'],
+    q: 'The cat is hiding ___ the chair.',
+    options: ['in', 'next to', 'on', 'under'],
     answer: 3,
   },
   {
+    q: 'The postbox is ___ the door.',
+    options: ['in', 'next to', 'on', 'under'],
+    answer: 1,
+  },
+  {
     q: 'Put the keys ___ your bag.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 0,
   },
   {
     q: 'The picture hangs ___ the wall.',
-    options: ['in', 'on', 'under', 'next to'],
-    answer: 1,
-  },
-  {
-    q: 'The ball rolled ___ the table.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 2,
   },
   {
-    q: 'The bakery is ___ the bank.',
-    options: ['in', 'on', 'under', 'next to'],
+    q: 'The ball rolled ___ the table.',
+    options: ['in', 'next to', 'on', 'under'],
     answer: 3,
   },
   {
+    q: 'The bakery is ___ the bank.',
+    options: ['in', 'next to', 'on', 'under'],
+    answer: 1,
+  },
+  {
     q: 'There is water ___ the glass.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 0,
   },
   {
     q: 'The phone is ___ the desk.',
-    options: ['in', 'on', 'under', 'next to'],
-    answer: 1,
-  },
-  {
-    q: 'The cat sleeps ___ the blanket.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 2,
   },
   {
-    q: 'The bus stop is ___ the school.',
-    options: ['in', 'on', 'under', 'next to'],
+    q: 'The cat sleeps ___ the blanket.',
+    options: ['in', 'next to', 'on', 'under'],
     answer: 3,
   },
   {
+    q: 'The bus stop is ___ the school.',
+    options: ['in', 'next to', 'on', 'under'],
+    answer: 1,
+  },
+  {
     q: 'The letter is ___ the envelope.',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 0,
   },
   {
     q: 'The vase is ___ the table.',
-    options: ['in', 'on', 'under', 'next to'],
-    answer: 1,
-  },
-  {
-    q: 'The cat is ___ the blanket (it is below the blanket).',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 2,
   },
   {
-    q: 'The coffee shop is ___ the cinema.',
-    options: ['in', 'on', 'under', 'next to'],
+    q: 'The cat is ___ the blanket (it is below the blanket).',
+    options: ['in', 'next to', 'on', 'under'],
     answer: 3,
   },
   {
+    q: 'The coffee shop is ___ the cinema.',
+    options: ['in', 'next to', 'on', 'under'],
+    answer: 1,
+  },
+  {
     q: 'The toys are ___ the box (inside).',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 0,
   },
   {
     q: 'The remote control is ___ the TV.',
-    options: ['in', 'on', 'under', 'next to'],
-    answer: 1,
-  },
-  {
-    q: 'The cat is hiding ___ the table (below it).',
-    options: ['in', 'on', 'under', 'next to'],
+    options: ['in', 'next to', 'on', 'under'],
     answer: 2,
   },
   {
-    q: 'The post office is ___ the supermarket.',
-    options: ['in', 'on', 'under', 'next to'],
+    q: 'The cat is hiding ___ the table (below it).',
+    options: ['in', 'next to', 'on', 'under'],
     answer: 3,
+  },
+  {
+    q: 'The post office is ___ the supermarket.',
+    options: ['in', 'next to', 'on', 'under'],
+    answer: 1,
   },
 ];
 
@@ -148,7 +148,7 @@ export default function Quiz({
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [feedbackIcon, setFeedbackIcon] = useState<'?' | '?' | null>(null);
+  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
@@ -166,7 +166,7 @@ export default function Quiz({
       setScore(newScore);
     }
 
-    setFeedbackIcon(isCorrect ? '?' : '?');
+    setFeedbackIcon(isCorrect ? '✓' : '✗');
     setSelectedIndex(index);
     const nextQuestion = current + 1;
 
@@ -232,7 +232,7 @@ export default function Quiz({
             fontWeight: 'bold',
             zIndex: 2000,
             animation: 'feedbackFadeOut 0.3s ease-out forwards',
-            color: feedbackIcon === '?' ? '#4CAF50' : '#F44336',
+            color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
             textShadow: '0 2px 8px rgba(0,0,0,0.3)',
           }}
         >

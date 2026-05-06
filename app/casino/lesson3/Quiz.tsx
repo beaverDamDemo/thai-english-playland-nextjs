@@ -14,152 +14,132 @@ const questions: Question[] = [
   // singular near -> "This" (index 0)
   {
     q: '_______ is my book (near me).',
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 0,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 2,
   },
   {
     q: '_______ cup (in my hand) is hot.',
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 0,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 2,
   },
   {
     q: '_______ sandwich (on my plate) is for you.',
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 0,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 2,
   },
   {
     q: '_______ chair (next to me) is broken.',
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 0,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 2,
   },
 
   // singular far -> "That" (index 1)
   {
     q: '_______ is your house (over there).',
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 1,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 0,
   },
   {
     q: "Pointing to a distant tree: '_______ is tall.'",
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 1,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 0,
   },
   {
     q: "Pointing to a car far away: '_______ car is blue.'",
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 1,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 0,
   },
   {
     q: "Pointing to a mountain in the distance: '_______ is high.'",
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 1,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 0,
   },
 
   // plural near -> "These" (index 2)
   {
     q: '_______ are my keys (in my hand).',
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 2,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 1,
   },
   {
     q: "Pointing to several pens near you: '_______ pens are new.'",
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 2,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 1,
   },
   {
     q: "Pointing to two cookies in your hand: '_______ are for you.'",
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 2,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 1,
   },
   {
     q: "Pointing to nearby shoes: '_______ shoes are dirty.'",
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 2,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 1,
   },
 
   // plural far -> "Those" (index 3)
   {
     q: "Pointing to people across the street: '_______ people are waiting.'",
-    options: ['This', 'That', 'These', 'Those'],
+    options: ['That', 'These', 'This', 'Those'],
     answer: 3,
   },
   {
     q: "Pointing to houses far away: '_______ are old.'",
-    options: ['This', 'That', 'These', 'Those'],
+    options: ['That', 'These', 'This', 'Those'],
     answer: 3,
   },
   {
     q: "Pointing to trees in the distance: '_______ are tall.'",
-    options: ['This', 'That', 'These', 'Those'],
+    options: ['That', 'These', 'This', 'Those'],
     answer: 3,
   },
   {
     q: "Pointing to plates on the far table: '_______ plates are clean.'",
-    options: ['This', 'That', 'These', 'Those'],
+    options: ['That', 'These', 'This', 'Those'],
     answer: 3,
   },
 
   // mixed context, still unambiguous because of nouns
   {
     q: 'Choose the correct sentence for one nearby cup:',
-    options: [
-      'This cup is hot.',
-      'That cup is hot.',
-      'These cup is hot.',
-      'Those cup is hot.',
-    ],
-    answer: 0,
-  },
-  {
-    q: 'Choose the correct sentence for several nearby chairs:',
-    options: [
-      'This chairs are comfortable.',
-      'That chairs are comfortable.',
-      'These chairs are comfortable.',
-      'Those chairs are comfortable.',
-    ],
+    options: ['That cup is hot.', 'These cup is hot.', 'This cup is hot.', 'Those cup is hot.'],
     answer: 2,
   },
   {
-    q: 'Choose the correct sentence for one far window:',
-    options: [
-      'This window is open.',
-      'That window is open.',
-      'These window is open.',
-      'Those window is open.',
-    ],
+    q: 'Choose the correct sentence for several nearby chairs:',
+    options: ['That chairs are comfortable.', 'These chairs are comfortable.', 'This chairs are comfortable.', 'Those chairs are comfortable.'],
     answer: 1,
   },
   {
+    q: 'Choose the correct sentence for one far window:',
+    options: ['That window is open.', 'These window is open.', 'This window is open.', 'Those window is open.'],
+    answer: 0,
+  },
+  {
     q: 'Choose the correct sentence for many far birds:',
-    options: [
-      'This birds are loud.',
-      'That birds are loud.',
-      'These birds are loud.',
-      'Those birds are loud.',
-    ],
+    options: ['That birds are loud.', 'These birds are loud.', 'This birds are loud.', 'Those birds are loud.'],
     answer: 3,
   },
 
   // short comprehension items
   {
     q: "If something is close to you, you usually say '_______'.",
-    options: ['This/These', 'That/Those', 'There', 'Here'],
-    answer: 0,
+    options: ['Here', 'That/Those', 'There', 'This/These'],
+    answer: 3,
   },
   {
     q: "If something is far from you, you usually say '_______'.",
-    options: ['This/These', 'That/Those', 'Here', 'Now'],
-    answer: 1,
+    options: ['Here', 'Now', 'That/Those', 'This/These'],
+    answer: 2,
   },
   {
     q: "You point to one friend next to you: '_______ is my friend.'",
-    options: ['This', 'That', 'These', 'Those'],
-    answer: 0,
+    options: ['That', 'These', 'This', 'Those'],
+    answer: 2,
   },
   {
     q: "You point to many friends across the street: '_______ are my friends.'",
-    options: ['This', 'That', 'These', 'Those'],
+    options: ['That', 'These', 'This', 'Those'],
     answer: 3,
   },
 ];
@@ -179,7 +159,7 @@ export default function Quiz({
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [feedbackIcon, setFeedbackIcon] = useState<'?' | '?' | null>(null);
+  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
@@ -197,7 +177,7 @@ export default function Quiz({
       setScore(newScore);
     }
 
-    setFeedbackIcon(isCorrect ? '?' : '?');
+    setFeedbackIcon(isCorrect ? '✓' : '✗');
     setSelectedIndex(index);
     const nextQuestion = current + 1;
 
@@ -263,7 +243,7 @@ export default function Quiz({
             fontWeight: 'bold',
             zIndex: 2000,
             animation: 'feedbackFadeOut 0.3s ease-out forwards',
-            color: feedbackIcon === '?' ? '#4CAF50' : '#F44336',
+            color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
             textShadow: '0 2px 8px rgba(0,0,0,0.3)',
           }}
         >

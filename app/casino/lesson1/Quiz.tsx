@@ -11,26 +11,26 @@ import styles from '../../maze/_components/QuizButtons.module.css';
 import type { Question } from '../types';
 
 const questions: Question[] = [
-  { q: 'I _______ a cat.', options: ['have', 'has', 'is', 'dog'], answer: 0 },
+  { q: 'I _______ a cat.', options: ['dog', 'has', 'have', 'is'], answer: 2 },
   {
     q: 'She _______ a new phone.',
-    options: ['has', 'have', 'is', 'car'],
-    answer: 0,
+    options: ['car', 'has', 'have', 'is'],
+    answer: 1,
   },
   {
     q: 'They _______ two children.',
-    options: ['have', 'has', 'do', 'are'],
-    answer: 0,
+    options: ['are', 'do', 'has', 'have'],
+    answer: 3,
   },
   {
     q: 'He _______ a blue backpack.',
-    options: ['has', 'have', 'is', 'book'],
-    answer: 0,
+    options: ['book', 'has', 'have', 'is'],
+    answer: 1,
   },
   {
     q: 'We _______ a big house.',
-    options: ['have', 'has', 'are', 'home'],
-    answer: 0,
+    options: ['are', 'has', 'have', 'home'],
+    answer: 2,
   },
   {
     q: 'My sister _______ long hair.',
@@ -39,47 +39,47 @@ const questions: Question[] = [
   },
   {
     q: 'Do you _______ a pen?',
-    options: ['have', 'has', 'do', 'is'],
-    answer: 0,
+    options: ['do', 'has', 'have', 'is'],
+    answer: 2,
   },
   {
     q: 'The dog _______ a red collar.',
-    options: ['has', 'have', 'is', 'bark'],
-    answer: 0,
+    options: ['bark', 'has', 'have', 'is'],
+    answer: 1,
   },
   {
     q: 'I _______ two brothers.',
-    options: ['have', 'has', 'am', 'sister'],
-    answer: 0,
+    options: ['am', 'has', 'have', 'sister'],
+    answer: 2,
   },
   {
     q: 'She _______ a lot of homework today.',
-    options: ['has', 'have', 'does', 'play'],
-    answer: 0,
+    options: ['does', 'has', 'have', 'play'],
+    answer: 1,
   },
 
   // negative-form items where the correct answer is the negative (slot 1)
   {
     q: 'He _______ a car. He uses the bus.',
-    options: ['has', "doesn't have", 'is', 'walks'],
-    answer: 1,
+    options: ["doesn't have", 'has', 'is', 'walks'],
+    answer: 0,
   },
   {
     q: 'I _______ a bicycle; I walk to work.',
-    options: ['have', "don't have", 'am', 'drive'],
+    options: ['am', "don't have", 'drive', 'have'],
     answer: 1,
   },
   {
     q: 'They _______ a dog; they are allergic.',
-    options: ['have', "don't have", 'are', 'play'],
+    options: ['are', "don't have", 'have', 'play'],
     answer: 1,
   },
 
   // mixed controlled practice
   {
     q: 'My parents _______ a garden.',
-    options: ['have', 'has', 'do', 'are'],
-    answer: 0,
+    options: ['are', 'do', 'has', 'have'],
+    answer: 3,
   },
   {
     q: 'The teacher _______ many books.',
@@ -88,23 +88,23 @@ const questions: Question[] = [
   },
   {
     q: 'We _______ a meeting at 3 PM.',
-    options: ['have', 'has', 'will', 'go'],
-    answer: 0,
+    options: ['go', 'has', 'have', 'will'],
+    answer: 2,
   },
   {
     q: 'She _______ a cold, so she stays home.',
-    options: ['has', 'have', 'is', 'feels'],
-    answer: 0,
+    options: ['feels', 'has', 'have', 'is'],
+    answer: 1,
   },
   {
     q: 'Do they _______ a problem with the test?',
-    options: ['have', 'has', 'do', 'is'],
-    answer: 0,
+    options: ['do', 'has', 'have', 'is'],
+    answer: 2,
   },
   {
     q: 'I _______ a question about the homework.',
-    options: ['have', 'has', 'am', 'ask'],
-    answer: 0,
+    options: ['am', 'ask', 'has', 'have'],
+    answer: 3,
   },
   {
     q: 'He _______ a new job, he starts Monday.',
@@ -115,13 +115,13 @@ const questions: Question[] = [
   // 20 additional examples (keeps the same option ordering logic)
   {
     q: 'The shop _______ many toys for children.',
-    options: ['has', "doesn't have", 'is', 'sells'],
-    answer: 0,
+    options: ["doesn't have", 'has', 'is', 'sells'],
+    answer: 1,
   },
   {
     q: 'I _______ enough money to buy it.',
-    options: ['have', "don't have", 'am', 'will'],
-    answer: 0,
+    options: ['am', "don't have", 'have', 'will'],
+    answer: 2,
   },
   {
     q: 'She _______ three cats at home.',
@@ -130,88 +130,88 @@ const questions: Question[] = [
   },
   {
     q: 'We _______ time to finish the project.',
-    options: ['have', "don't have", 'are', 'do'],
-    answer: 0,
+    options: ['are', 'do', "don't have", 'have'],
+    answer: 3,
   },
   {
     q: 'He _______ a cold, so he stays in bed.',
-    options: ['has', "doesn't have", 'is', 'sleeps'],
-    answer: 0,
-  },
-  {
-    q: 'Do you _______ a map of the city?',
-    options: ['have', 'has', 'do', 'is'],
-    answer: 0,
-  },
-  {
-    q: 'They _______ a small apartment in the city.',
-    options: ['have', "don't have", 'are', 'live'],
-    answer: 0,
-  },
-  {
-    q: 'My friend _______ a new bicycle last week.',
-    options: ['has', "don't have", 'did', 'bought'],
-    answer: 0,
-  },
-  {
-    q: 'I _______ no idea what to do next.',
-    options: ['have', "don't have", 'am', 'know'],
-    answer: 0,
-  },
-  {
-    q: 'She _______ a cold drink after the run.',
-    options: ['has', "doesn't have", 'is', 'drinks'],
-    answer: 0,
-  },
-  {
-    q: 'We _______ a reservation at the restaurant.',
-    options: ['have', "don't have", 'are', 'made'],
-    answer: 0,
-  },
-  {
-    q: 'He _______ a lot of experience in this job.',
-    options: ['has', "doesn't have", 'is', 'works'],
-    answer: 0,
-  },
-  {
-    q: 'I _______ a small garden behind my house.',
-    options: ['have', "don't have", 'am', 'plant'],
-    answer: 0,
-  },
-  {
-    q: 'They _______ a problem with the computer yesterday.',
-    options: ['had', "didn't have", 'have', 'are'],
-    answer: 2,
-  }, // grammatical distractor (had) placed in slot 2; correct is slot 0 but here we intentionally show a common confusion: use present 'have' in this lesson context -> adjust to make correct slot 0
-  {
-    q: 'She _______ a passport, so she can travel.',
-    options: ['has', "doesn't have", 'is', 'travels'],
-    answer: 0,
-  },
-  {
-    q: 'I _______ a meeting every Monday morning.',
-    options: ['have', "don't have", 'am', 'go'],
-    answer: 0,
-  },
-  {
-    q: 'The car _______ a flat tire and cannot move.',
-    options: ['has', "doesn't have", 'is', 'stops'],
-    answer: 0,
-  },
-  {
-    q: 'Do they _______ any questions about the lesson?',
-    options: ['have', 'has', 'do', 'are'],
-    answer: 0,
-  },
-  {
-    q: 'He _______ no brothers; he is an only child.',
-    options: ['has', "doesn't have", 'is', 'lives'],
+    options: ["doesn't have", 'has', 'is', 'sleeps'],
     answer: 1,
   },
   {
-    q: 'We _______ enough chairs for everyone.',
-    options: ['have', "don't have", 'are', 'sit'],
+    q: 'Do you _______ a map of the city?',
+    options: ['do', 'has', 'have', 'is'],
+    answer: 2,
+  },
+  {
+    q: 'They _______ a small apartment in the city.',
+    options: ['are', "don't have", 'have', 'live'],
+    answer: 2,
+  },
+  {
+    q: 'My friend _______ a new bicycle last week.',
+    options: ['bought', 'did', "don't have", 'has'],
+    answer: 3,
+  },
+  {
+    q: 'I _______ no idea what to do next.',
+    options: ['am', "don't have", 'have', 'know'],
+    answer: 2,
+  },
+  {
+    q: 'She _______ a cold drink after the run.',
+    options: ["doesn't have", 'drinks', 'has', 'is'],
+    answer: 2,
+  },
+  {
+    q: 'We _______ a reservation at the restaurant.',
+    options: ['are', "don't have", 'have', 'made'],
+    answer: 2,
+  },
+  {
+    q: 'He _______ a lot of experience in this job.',
+    options: ["doesn't have", 'has', 'is', 'works'],
+    answer: 1,
+  },
+  {
+    q: 'I _______ a small garden behind my house.',
+    options: ['am', "don't have", 'have', 'plant'],
+    answer: 2,
+  },
+  {
+    q: 'They _______ a problem with the computer yesterday.',
+    options: ['are', "didn't have", 'had', 'have'],
+    answer: 3,
+  }, // grammatical distractor (had) placed in slot 2; correct is slot 0 but here we intentionally show a common confusion: use present 'have' in this lesson context -> adjust to make correct slot 0
+  {
+    q: 'She _______ a passport, so she can travel.',
+    options: ["doesn't have", 'has', 'is', 'travels'],
+    answer: 1,
+  },
+  {
+    q: 'I _______ a meeting every Monday morning.',
+    options: ['am', "don't have", 'go', 'have'],
+    answer: 3,
+  },
+  {
+    q: 'The car _______ a flat tire and cannot move.',
+    options: ["doesn't have", 'has', 'is', 'stops'],
+    answer: 1,
+  },
+  {
+    q: 'Do they _______ any questions about the lesson?',
+    options: ['are', 'do', 'has', 'have'],
+    answer: 3,
+  },
+  {
+    q: 'He _______ no brothers; he is an only child.',
+    options: ["doesn't have", 'has', 'is', 'lives'],
     answer: 0,
+  },
+  {
+    q: 'We _______ enough chairs for everyone.',
+    options: ['are', "don't have", 'have', 'sit'],
+    answer: 2,
   },
 ];
 
@@ -230,7 +230,7 @@ export default function Quiz({
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [feedbackIcon, setFeedbackIcon] = useState<'?' | '?' | null>(null);
+  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
@@ -247,7 +247,7 @@ export default function Quiz({
       newScore = score + 1;
       setScore(newScore);
     }
-    setFeedbackIcon(isCorrect ? '?' : '?');
+    setFeedbackIcon(isCorrect ? '✓' : '✗');
     setSelectedIndex(index);
     const nextQuestion = current + 1;
 
@@ -314,7 +314,7 @@ export default function Quiz({
             fontWeight: 'bold',
             zIndex: 2000,
             animation: 'feedbackFadeOut 0.3s ease-out forwards',
-            color: feedbackIcon === '?' ? '#4CAF50' : '#F44336',
+            color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
             textShadow: '0 2px 8px rgba(0,0,0,0.3)',
           }}
         >

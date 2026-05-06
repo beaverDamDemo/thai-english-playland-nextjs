@@ -13,8 +13,8 @@ import type { Question } from '../types';
 const questions: Question[] = [
   {
     q: 'There _______ a cat on the sofa.',
-    options: ['is', "isn't", 'are', 'have'],
-    answer: 0,
+    options: ['are', 'have', 'is', "isn't"],
+    answer: 2,
   },
   {
     q: 'There _______ two apples in the bowl.',
@@ -23,55 +23,55 @@ const questions: Question[] = [
   },
   {
     q: 'There _______ a book on the table.',
-    options: ['is', "isn't", 'are', 'do'],
-    answer: 0,
+    options: ['are', 'do', 'is', "isn't"],
+    answer: 2,
   },
   {
     q: 'There _______ any milk in the fridge.',
-    options: ["isn't", 'is', 'are', 'has'],
-    answer: 0,
+    options: ['are', 'has', 'is', "isn't"],
+    answer: 3,
   },
   {
     q: 'There _______ three chairs in the room.',
-    options: ['are', 'is', 'have', 'was'],
+    options: ['are', 'have', 'is', 'was'],
     answer: 0,
   },
   {
     q: 'There _______ a dog in the garden.',
-    options: ['is', "isn't", 'are', 'does'],
-    answer: 0,
+    options: ['are', 'does', 'is', "isn't"],
+    answer: 2,
   },
   {
     q: 'There _______ many students in class today.',
-    options: ['are', 'is', 'was', 'has'],
+    options: ['are', 'has', 'is', 'was'],
     answer: 0,
   },
   {
     q: 'There _______ a red car outside the house.',
-    options: ['is', "isn't", 'are', 'were'],
-    answer: 0,
+    options: ['are', 'is', "isn't", 'were'],
+    answer: 1,
   },
   {
     q: 'There _______ two windows in my bedroom.',
-    options: ['are', 'is', 'do', 'has'],
+    options: ['are', 'do', 'has', 'is'],
     answer: 0,
   },
   {
     q: 'There _______ a problem with the computer.',
-    options: ['is', "isn't", 'are', 'did'],
-    answer: 0,
+    options: ['are', 'did', 'is', "isn't"],
+    answer: 2,
   },
 
   // negative-focus items (correct answer is the negative in slot 1)
   {
     q: 'There _______ any sugar left.',
-    options: ['is', "isn't", 'are', 'do'],
-    answer: 1,
+    options: ['are', 'do', 'is', "isn't"],
+    answer: 3,
   },
   {
     q: 'There _______ no chairs in the hall.',
-    options: ['is', "isn't", 'are', 'have'],
-    answer: 1,
+    options: ['are', 'have', 'is', "isn't"],
+    answer: 3,
   },
   {
     q: 'There _______ not many buses today.',
@@ -82,8 +82,8 @@ const questions: Question[] = [
   // mixed practice
   {
     q: 'There _______ a phone on the desk.',
-    options: ['is', "isn't", 'are', 'have'],
-    answer: 0,
+    options: ['are', 'have', 'is', "isn't"],
+    answer: 2,
   },
   {
     q: 'There _______ five books in the bag.',
@@ -92,49 +92,44 @@ const questions: Question[] = [
   },
   {
     q: 'There _______ a letter for you.',
-    options: ['is', "isn't", 'are', 'do'],
-    answer: 0,
+    options: ['are', 'do', 'is', "isn't"],
+    answer: 2,
   },
   {
     q: 'There _______ two eggs in the box.',
-    options: ['are', 'is', 'have', 'was'],
+    options: ['are', 'have', 'is', 'was'],
     answer: 0,
   },
   {
     q: 'There _______ a light in the kitchen.',
-    options: ['is', "isn't", 'are', 'do'],
-    answer: 0,
+    options: ['are', 'do', 'is', "isn't"],
+    answer: 2,
   },
   {
     q: 'There _______ many trees in the park.',
-    options: ['are', 'is', 'was', 'has'],
+    options: ['are', 'has', 'is', 'was'],
     answer: 0,
   },
 
   // comprehension / meaning items
   {
     q: "If you see 'There are 0 cookies', that means there _______ any cookies.",
-    options: ["aren't", 'are', 'is', 'was'],
-    answer: 0,
+    options: ['are', "aren't", 'is', 'was'],
+    answer: 1,
   },
   {
     q: 'Choose the correct sentence:',
-    options: [
-      'There is a pen on the desk.',
-      'There are a pen on the desk.',
-      'There is pens on the desk.',
-      'There are is a pen on the desk.',
-    ],
-    answer: 0,
+    options: ['There are a pen on the desk.', 'There are is a pen on the desk.', 'There is a pen on the desk.', 'There is pens on the desk.'],
+    answer: 2,
   },
   {
     q: 'There _______ a lot of water in the bottle.',
-    options: ['is', 'are', 'have', 'do'],
-    answer: 0,
+    options: ['are', 'do', 'have', 'is'],
+    answer: 3,
   },
   {
     q: 'There _______ two people at the door.',
-    options: ['are', 'is', 'was', 'has'],
+    options: ['are', 'has', 'is', 'was'],
     answer: 0,
   },
 ];
@@ -154,7 +149,7 @@ export default function Quiz({
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [feedbackIcon, setFeedbackIcon] = useState<'?' | '?' | null>(null);
+  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
@@ -172,7 +167,7 @@ export default function Quiz({
       setScore(newScore);
     }
 
-    setFeedbackIcon(isCorrect ? '?' : '?');
+    setFeedbackIcon(isCorrect ? '✓' : '✗');
     setSelectedIndex(index);
     const nextQuestion = current + 1;
 
@@ -238,7 +233,7 @@ export default function Quiz({
             fontWeight: 'bold',
             zIndex: 2000,
             animation: 'feedbackFadeOut 0.3s ease-out forwards',
-            color: feedbackIcon === '?' ? '#4CAF50' : '#F44336',
+            color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
             textShadow: '0 2px 8px rgba(0,0,0,0.3)',
           }}
         >
