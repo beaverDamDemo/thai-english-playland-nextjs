@@ -119,8 +119,8 @@ const questions: Question[] = [
     answer: 1,
   },
   {
-    q: 'I _______ enough money to buy it.',
-    options: ['am', "don't have", 'have', 'will'],
+    q: 'My brother and I _______ the same birthday.',
+    options: ['am', 'has', 'have', 'is'],
     answer: 2,
   },
   {
@@ -129,9 +129,9 @@ const questions: Question[] = [
     answer: 0,
   },
   {
-    q: 'We _______ time to finish the project.',
-    options: ['are', 'do', "don't have", 'have'],
-    answer: 3,
+    q: 'This room _______ two windows.',
+    options: ['are', 'has', 'have', 'is'],
+    answer: 1,
   },
   {
     q: 'He _______ a cold, so he stays in bed.',
@@ -151,7 +151,7 @@ const questions: Question[] = [
   {
     q: 'My friend _______ a new bicycle last week.',
     options: ['bought', 'did', "don't have", 'has'],
-    answer: 3,
+    answer: 0,
   },
   {
     q: 'I _______ no idea what to do next.',
@@ -159,9 +159,9 @@ const questions: Question[] = [
     answer: 2,
   },
   {
-    q: 'She _______ a cold drink after the run.',
-    options: ["doesn't have", 'drinks', 'has', 'is'],
-    answer: 2,
+    q: 'My grandfather _______ white hair.',
+    options: ['has', 'have', 'is', 'white'],
+    answer: 0,
   },
   {
     q: 'We _______ a reservation at the restaurant.',
@@ -181,8 +181,8 @@ const questions: Question[] = [
   {
     q: 'They _______ a problem with the computer yesterday.',
     options: ['are', "didn't have", 'had', 'have'],
-    answer: 3,
-  }, // grammatical distractor (had) placed in slot 2; correct is slot 0 but here we intentionally show a common confusion: use present 'have' in this lesson context -> adjust to make correct slot 0
+    answer: 2,
+  },
   {
     q: 'She _______ a passport, so she can travel.',
     options: ["doesn't have", 'has', 'is', 'travels'],
