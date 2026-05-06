@@ -159,7 +159,7 @@ export default function HomePage() {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
     } finally {
-      router.replace('/login');
+      router.replace('/register?mode=login');
       router.refresh();
     }
   };

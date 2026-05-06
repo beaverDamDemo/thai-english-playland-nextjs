@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './register.module.css';
 
 type Mode = 'register' | 'login';
@@ -26,7 +26,10 @@ const MODE_CONFIG = {
 };
 
 export default function RegisterPage() {
-  const [mode, setMode] = useState<Mode>('register');
+  const searchParams = useSearchParams();
+  const initialMode: Mode =
+    searchParams.get('mode') === 'login' ? 'login' : 'register';
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
