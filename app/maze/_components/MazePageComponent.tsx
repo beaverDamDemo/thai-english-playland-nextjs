@@ -79,7 +79,7 @@ const MazePageComponent: FC<MazePageProps> = ({
     totalMovesEarned: number;
     unlockedLessons?: number;
   }) => {
-    void fetch('/api/progress', {
+    fetch('/api/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -90,23 +90,32 @@ const MazePageComponent: FC<MazePageProps> = ({
         total_moves_earned: next.totalMovesEarned,
         unlocked_lessons: next.unlockedLessons ?? unlockedLessons,
       }),
-    });
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.ok) {
+          console.error('Failed to save stats:', data.error);
+        }
+      })
+      .catch((err) => {
+        console.error('Error saving stats:', err);
+      });
   };
 
-  const handleQuizComplete = (finalScore: number) => {
+  const handleQuizComplete = (finalScore: number, totalQuestions: number) => {
     setMaxMoves(finalScore);
     setScore(finalScore);
-    const wasCorrect = finalScore > 0;
-    const nextCorrect = correctAnswers + (wasCorrect ? 1 : 0);
-    const nextWrong = wrongAnswers + (wasCorrect ? 0 : 1);
-    const nextAttempts = quizAttempts + 1;
+    const wrongCount = Math.max(0, totalQuestions - finalScore);
+    const nextCorrect = correctAnswers + finalScore;
+    const nextWrong = wrongAnswers + wrongCount;
+    const nextAttempts = quizAttempts + totalQuestions;
     const nextMovesEarned = totalMovesEarned + finalScore;
 
     setCorrectAnswers(nextCorrect);
     setWrongAnswers(nextWrong);
     setQuizAttempts(nextAttempts);
     setTotalMovesEarned(nextMovesEarned);
-    setLastQuizResult(wasCorrect ? 'Correct' : 'Wrong');
+    setLastQuizResult(finalScore > 0 ? 'Correct' : 'Wrong');
     saveStats({
       correctAnswers: nextCorrect,
       wrongAnswers: nextWrong,

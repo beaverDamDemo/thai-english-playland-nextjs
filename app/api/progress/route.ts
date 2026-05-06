@@ -65,30 +65,38 @@ export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as SaveBody;
   const { game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned } = body;
 
+  // console.log('POST /api/progress:', { user_id: user.id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned });
+
   const validModes: GameMode[] = ['maze', 'casino', 'pattaya'];
   if (!game_mode || !validModes.includes(game_mode as GameMode)) {
     return NextResponse.json({ ok: false, error: 'Invalid game_mode.' }, { status: 400 });
   }
 
-  await db`
-    INSERT INTO public.thai_english_playland_user_progress (user_id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned, updated_at)
-    VALUES (
-      ${user.id}, ${game_mode},
-      ${unlocked_lessons ?? 1},
-      ${correct_answers ?? 0},
-      ${wrong_answers ?? 0},
-      ${quiz_attempts ?? 0},
-      ${total_moves_earned ?? 0},
-      NOW()
-    )
-    ON CONFLICT (user_id, game_mode) DO UPDATE SET
-      unlocked_lessons  = EXCLUDED.unlocked_lessons,
-      correct_answers   = EXCLUDED.correct_answers,
-      wrong_answers     = EXCLUDED.wrong_answers,
-      quiz_attempts     = EXCLUDED.quiz_attempts,
-      total_moves_earned = EXCLUDED.total_moves_earned,
-      updated_at        = NOW();
-  `;
+  try {
+    await db`
+      INSERT INTO public.thai_english_playland_user_progress (user_id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned, updated_at)
+      VALUES (
+        ${user.id}, ${game_mode},
+        ${unlocked_lessons ?? 1},
+        ${correct_answers ?? 0},
+        ${wrong_answers ?? 0},
+        ${quiz_attempts ?? 0},
+        ${total_moves_earned ?? 0},
+        NOW()
+      )
+      ON CONFLICT (user_id, game_mode) DO UPDATE SET
+        unlocked_lessons  = EXCLUDED.unlocked_lessons,
+        correct_answers   = EXCLUDED.correct_answers,
+        wrong_answers     = EXCLUDED.wrong_answers,
+        quiz_attempts     = EXCLUDED.quiz_attempts,
+        total_moves_earned = EXCLUDED.total_moves_earned,
+        updated_at        = NOW();
+    `;
+    // console.log('POST /api/progress: Successfully saved');
+  } catch (err) {
+    console.error('POST /api/progress: Database error:', err);
+    return NextResponse.json({ ok: false, error: 'Database error.' }, { status: 500 });
+  }
 
   let newAchievements: string[] = [];
   try {

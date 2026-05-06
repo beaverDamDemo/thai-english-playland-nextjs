@@ -675,7 +675,8 @@ export default function PattayaLesson3Page() {
               game_mode: 'pattaya',
               correct_answers: (p?.correct_answers ?? 0) + totalCorrect,
               wrong_answers: (p?.wrong_answers ?? 0) + totalWrong,
-              quiz_attempts: (p?.quiz_attempts ?? 0) + roundsDone,
+              quiz_attempts:
+                (p?.quiz_attempts ?? 0) + totalCorrect + totalWrong,
               total_moves_earned: (p?.total_moves_earned ?? 0) + hits,
               unlocked_lessons: nextUnlocked,
             }),

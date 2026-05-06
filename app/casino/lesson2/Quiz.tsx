@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import {
@@ -62,7 +62,7 @@ const questions: Question[] = [
     answer: 0,
   },
 
-  // negative‑focus items (correct answer is the negative in slot 1)
+  // negative-focus items (correct answer is the negative in slot 1)
   {
     q: 'There _______ any sugar left.',
     options: ['is', "isn't", 'are', 'do'],
@@ -143,7 +143,7 @@ export default function Quiz({
   onComplete,
   primaryColor = '#E63946',
 }: {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, total: number) => void;
   primaryColor?: string;
 }) {
   const [selectedQuestions] = useState(() => {
@@ -154,7 +154,7 @@ export default function Quiz({
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
+  const [feedbackIcon, setFeedbackIcon] = useState<'?' | '?' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
@@ -172,7 +172,7 @@ export default function Quiz({
       setScore(newScore);
     }
 
-    setFeedbackIcon(isCorrect ? '✓' : '✗');
+    setFeedbackIcon(isCorrect ? '?' : '?');
     setSelectedIndex(index);
     const nextQuestion = current + 1;
 
@@ -183,7 +183,7 @@ export default function Quiz({
         if (nextQuestion >= selectedQuestions.length) {
           setFinished(true);
           if (newScore === selectedQuestions.length) reportPerfectLesson();
-          onComplete(newScore);
+          onComplete(newScore, selectedQuestions.length);
         } else {
           setCurrent(nextQuestion);
         }
@@ -238,7 +238,7 @@ export default function Quiz({
             fontWeight: 'bold',
             zIndex: 2000,
             animation: 'feedbackFadeOut 0.3s ease-out forwards',
-            color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
+            color: feedbackIcon === '?' ? '#4CAF50' : '#F44336',
             textShadow: '0 2px 8px rgba(0,0,0,0.3)',
           }}
         >

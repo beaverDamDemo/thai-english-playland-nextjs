@@ -1,4 +1,4 @@
-﻿// app/maze/lesson5/Quiz.tsx
+// app/maze/lesson5/Quiz.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -168,7 +168,7 @@ export default function Quiz({
   onComplete,
   primaryColor,
 }: {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, total: number) => void;
   primaryColor: string;
 }) {
   const [selectedQuestions] = useState(() => {
@@ -183,7 +183,7 @@ export default function Quiz({
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
+  const [feedbackIcon, setFeedbackIcon] = useState<'?' | '?' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
 
@@ -200,7 +200,7 @@ export default function Quiz({
       newScore = score + 1;
       setScore(newScore);
     }
-    setFeedbackIcon(isCorrect ? '✓' : '✗');
+    setFeedbackIcon(isCorrect ? '?' : '?');
     setSelectedIndex(index);
     const nextQuestion = current + 1;
 
@@ -211,7 +211,7 @@ export default function Quiz({
         if (nextQuestion >= selectedQuestions.length) {
           setFinished(true);
           if (newScore === selectedQuestions.length) reportPerfectLesson();
-          onComplete(newScore);
+          onComplete(newScore, selectedQuestions.length);
         } else {
           setCurrent(nextQuestion);
         }
@@ -267,7 +267,7 @@ export default function Quiz({
             fontWeight: 'bold',
             zIndex: 2000,
             animation: 'feedbackFadeOut 0.3s ease-out forwards',
-            color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
+            color: feedbackIcon === '?' ? '#4CAF50' : '#F44336',
             textShadow: '0 2px 8px rgba(0,0,0,0.3)',
           }}
         >

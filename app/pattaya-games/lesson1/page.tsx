@@ -265,7 +265,7 @@ export default function PattayaLesson1Page() {
               correct_answers: (p?.correct_answers ?? 0) + learningCorrect,
               wrong_answers: (p?.wrong_answers ?? 0) + learningWrong,
               quiz_attempts:
-                (p?.quiz_attempts ?? 0) + (attemptRecorded ? 1 : 1),
+                (p?.quiz_attempts ?? 0) + learningCorrect + learningWrong,
               total_moves_earned: (p?.total_moves_earned ?? 0) + earnedMoves,
               unlocked_lessons: nextUnlocked,
             }),

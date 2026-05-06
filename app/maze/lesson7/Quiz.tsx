@@ -293,7 +293,7 @@ export default function Quiz({
   onComplete,
   primaryColor,
 }: {
-  onComplete: (score: number) => void;
+  onComplete: (score: number, total: number) => void;
   primaryColor: string;
 }) {
   const [selectedQuestions] = useState(() => {
@@ -336,7 +336,7 @@ export default function Quiz({
         if (nextQuestion >= selectedQuestions.length) {
           setFinished(true);
           if (newScore === selectedQuestions.length) reportPerfectLesson();
-          onComplete(newScore);
+          onComplete(newScore, selectedQuestions.length);
         } else {
           setCurrent(nextQuestion);
         }
