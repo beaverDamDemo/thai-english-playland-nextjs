@@ -108,11 +108,14 @@ export default function CasinoScreenPage() {
                   className={`${styles.locationPin} ${
                     num === highlightedLesson ? styles.newlyUnlocked : ''
                   }`}
-                  style={{
-                    borderColor: color,
-                    left: `${left}%`,
-                    top: `${top}%`,
-                  }}
+                  style={
+                    {
+                      borderColor: color,
+                      left: `${left}%`,
+                      top: `${top}%`,
+                      '--location-border': color,
+                    } as React.CSSProperties
+                  }
                 >
                   {num}
                   {num === highlightedLesson && (
