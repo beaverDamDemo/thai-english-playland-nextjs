@@ -441,14 +441,28 @@ export default function PattayaLesson1Page() {
           </div>
 
           {phase === 'practice' && (
-            <Quiz
-              challenge={currentPractice}
-              step={practiceStep}
-              total={practiceChallenges.length}
-              selectedIndex={selectedIndex}
-              feedbackIcon={feedbackIcon}
-              onAnswer={handleChallengeAnswer}
-            />
+            <div
+              style={{
+                backgroundColor: 'white',
+                padding: '35px',
+                borderRadius: '16px',
+                width: '100%',
+                maxWidth: '520px',
+                margin: '0 auto',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+                border: '3px solid #ea580c',
+                boxSizing: 'border-box',
+              }}
+            >
+              <Quiz
+                challenge={currentPractice}
+                step={practiceStep}
+                total={practiceChallenges.length}
+                selectedIndex={selectedIndex}
+                feedbackIcon={feedbackIcon}
+                onAnswer={handleChallengeAnswer}
+              />
+            </div>
           )}
 
           {phase === 'play' && (
@@ -503,14 +517,28 @@ export default function PattayaLesson1Page() {
           )}
 
           {phase === 'apply' && (
-            <Quiz
-              challenge={currentApply}
-              step={applyStep}
-              total={applyChallenges.length}
-              selectedIndex={selectedIndex}
-              feedbackIcon={feedbackIcon}
-              onAnswer={handleChallengeAnswer}
-            />
+            <div
+              style={{
+                backgroundColor: 'white',
+                padding: '35px',
+                borderRadius: '16px',
+                width: '100%',
+                maxWidth: '520px',
+                margin: '0 auto',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+                border: '3px solid #ea580c',
+                boxSizing: 'border-box',
+              }}
+            >
+              <Quiz
+                challenge={currentApply}
+                step={applyStep}
+                total={applyChallenges.length}
+                selectedIndex={selectedIndex}
+                feedbackIcon={feedbackIcon}
+                onAnswer={handleChallengeAnswer}
+              />
+            </div>
           )}
 
           {phase === 'done' && (

@@ -88,29 +88,8 @@ export default function Quiz({
             />
           </div>
         </div>
-        <p
-          style={{
-            margin: '15px 0',
-            fontSize: '18px',
-            fontWeight: '500',
-            color: '#333',
-          }}
-        >
-          {challenge.prompt}
-        </p>
-        {thaiQuestion && thaiQuestion !== challenge.prompt && (
-          <p
-            style={{
-              margin: '5px 0 15px 0',
-              fontSize: '14px',
-              fontWeight: '400',
-              color: '#666',
-              fontStyle: 'italic',
-            }}
-          >
-            ({thaiQuestion})
-          </p>
-        )}
+        <h2 className={quizStyles.englishPrompt}>{challenge.prompt}</h2>
+        <p className={quizStyles.thaiPrompt}>{thaiQuestion || '\u00a0'}</p>
       </div>
       <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         {challenge.options.map((option, idx) => (

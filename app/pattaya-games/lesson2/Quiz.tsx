@@ -85,20 +85,8 @@ export default function Quiz({
           />
         </div>
       </div>
-      <h2 className={styles.prompt}>{challenge.prompt}</h2>
-      {thaiQuestion && thaiQuestion !== challenge.prompt && (
-        <p
-          style={{
-            margin: '5px 0 15px 0',
-            fontSize: '14px',
-            fontWeight: '400',
-            color: '#666',
-            fontStyle: 'italic',
-          }}
-        >
-          ({thaiQuestion})
-        </p>
-      )}
+      <h2 className={quizStyles.englishPrompt}>{challenge.prompt}</h2>
+      <p className={quizStyles.thaiPrompt}>{thaiQuestion || '\u00a0'}</p>
       <div
         style={{
           display: 'flex',

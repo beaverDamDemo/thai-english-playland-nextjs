@@ -106,17 +106,18 @@ export default function Quiz({
           })}
         </div>
 
-        {feedback && (
-          <p
-            className={
-              feedback === 'correct' ? styles.feedbackGood : styles.feedbackBad
-            }
-          >
-            {feedback === 'correct'
-              ? '✓ Correct! +1 shot'
-              : `✗ The answer is: ${question.correctAnswer}`}
-          </p>
-        )}
+        <p
+          className={
+            feedback === 'correct' ? styles.feedbackGood : styles.feedbackBad
+          }
+          style={{ opacity: feedback ? 1 : 0, minHeight: '24px' }}
+        >
+          {feedback === 'correct'
+            ? '✓ Correct! +1 shot'
+            : feedback === 'wrong'
+              ? `✗ The answer is: ${question.correctAnswer}`
+              : '\u00a0'}
+        </p>
       </div>
 
       <div className={styles.refCard}>
