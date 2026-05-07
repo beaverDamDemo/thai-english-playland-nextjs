@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   recordAnswer,
@@ -306,7 +306,7 @@ function spawnShipsForQuestion(q: Question, questionIndex: number): Ship[] {
   });
 }
 
-export default function PattayaLesson4Page() {
+function PattayaLesson4Content() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const timestamp = searchParams.get('t');
@@ -1163,5 +1163,13 @@ export default function PattayaLesson4Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PattayaLesson4Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PattayaLesson4Content />
+    </Suspense>
   );
 }
