@@ -10,7 +10,7 @@ export type Challenge = {
   answer: number;
 };
 
-const THEME_COLOR = '#0f766e';
+const THEME_COLOR = '#a81903';
 
 type QuizProps = {
   challenge: Challenge;
