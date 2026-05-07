@@ -120,7 +120,7 @@ export default function PattayaGamesScreenPage() {
                 return (
                   <div
                     key={num}
-                    className={styles.locationPin}
+                    className={`${styles.locationPin} ${styles.locationComingSoon}`}
                     style={{
                       borderColor: color,
                       left: `${left}%`,
