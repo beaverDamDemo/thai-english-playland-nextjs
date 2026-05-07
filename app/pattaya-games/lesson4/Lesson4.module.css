@@ -1,0 +1,435 @@
+.page {
+  min-height: 100vh;
+  padding: 8px;
+  background: linear-gradient(
+    180deg,
+    #0a1520 0%,
+    #0f2538 30%,
+    #142a40 70%,
+    #0d1a28 100%
+  );
+  color: #e8f1f8;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 30% 20%,
+      rgba(100, 150, 200, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 70% 80%,
+      rgba(150, 100, 80, 0.05) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.hud {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.chip {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.06)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #d4e8f8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.chipBad {
+  color: #ffb8b8;
+}
+
+.chipGood {
+  color: #c0ffd8;
+}
+
+.questionPanel {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 480px;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 40, 60, 0.85),
+    rgba(10, 30, 50, 0.9)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: center;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.questionText {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.4;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.questionThai {
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  color: #a8c8e0;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.arena {
+  position: relative;
+  flex: 1;
+  min-height: 380px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    #3a5a7e 0%,
+    #2a4a6e 25%,
+    #1a3550 55%,
+    #0e2236 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.sky {
+  position: absolute;
+  inset: 0 0 70% 0;
+  background: linear-gradient(180deg, #5a7a9e 0%, #6a89a8 40%, #7a98b8 100%);
+}
+
+.cloud {
+  position: absolute;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.85),
+    rgba(220, 235, 250, 0.5)
+  );
+  border-radius: 50%;
+  filter: blur(1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
+.sea {
+  position: absolute;
+  inset: 30% 0 0 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+    linear-gradient(180deg, #2a4a6e 0%, #1a3550 40%, #0f2540 100%);
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  animation: waveFlow 3s linear infinite;
+}
+
+@keyframes waveFlow {
+  0% {
+    transform: translateX(-20px);
+  }
+  100% {
+    transform: translateX(-60px);
+  }
+}
+
+.ship {
+  position: absolute;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition:
+    filter 0.12s,
+    opacity 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.shipFadingIn {
+  opacity: 0;
+}
+
+.shipFadingOut {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.ship:active {
+  filter: brightness(1.4) drop-shadow(0 6px 12px rgba(255, 200, 100, 0.4));
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.shipHull {
+  width: 90px;
+  height: 38px;
+  position: relative;
+}
+
+.shipLabel {
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.shipExploding {
+  pointer-events: none;
+  animation: explode 0.7s ease-out forwards;
+  filter: brightness(1.8) saturate(1.5);
+  transform-origin: center center;
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  35% {
+    transform: scale(1.5) rotate(15deg);
+    opacity: 1;
+    filter: brightness(2.5) saturate(2);
+  }
+  100% {
+    transform: scale(0.4) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.explosion {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: boom 0.8s ease-out forwards;
+  filter: drop-shadow(0 0 20px rgba(255, 150, 50, 0.8));
+}
+
+@keyframes boom {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.4);
+    opacity: 0;
+  }
+}
+
+.splash {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.9),
+    rgba(180, 220, 255, 0.5) 50%,
+    transparent 75%
+  );
+  animation: splash 0.7s ease-out forwards;
+  box-shadow: 0 0 20px rgba(200, 230, 255, 0.5);
+}
+
+@keyframes splash {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0;
+  }
+}
+
+.torpedo {
+  position: absolute;
+  width: 7px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #ffa54a 0%, #e07030 40%, #b04010 100%);
+  border-radius: 3.5px;
+  box-shadow:
+    0 0 12px rgba(255, 150, 60, 0.9),
+    0 0 20px rgba(255, 100, 50, 0.5);
+  pointer-events: none;
+}
+
+.torpedoTrail {
+  position: absolute;
+  width: 5px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.6));
+  transform: translate(-50%, 0);
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+.playerShip {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 54px;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+}
+
+.endPanel {
+  background: linear-gradient(
+    180deg,
+    rgba(20, 40, 60, 0.9),
+    rgba(10, 25, 45, 0.95)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  padding: 28px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.endTitle {
+  margin: 0;
+  font-size: 1.7rem;
+  color: #ffd166;
+  text-shadow: 0 2px 8px rgba(255, 180, 80, 0.5);
+}
+
+.endText {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #d4e8f8;
+  line-height: 1.4;
+}
+
+.btnRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  background: linear-gradient(135deg, #ffd166 0%, #ffb833 100%);
+  color: #1a2a3a;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(255, 180, 80, 0.4);
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 180, 80, 0.5);
+}
+
+.btnSecondary {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.08)
+  );
+  color: #d4e8f8;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btnSecondary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
