@@ -11,7 +11,7 @@ const MazePageComponent = dynamic(
   { ssr: false, loading: () => <div>Loading...</div> },
 );
 
-const CasinoLesson3Page: FC = () => {
+const CasinoLesson5Page: FC = () => {
   const [Scene, setScene] = useState<unknown>(null);
 
   useEffect(() => {
@@ -24,10 +24,10 @@ const CasinoLesson3Page: FC = () => {
     };
   }, []);
 
-  const themeColor = '#1D3557';
-  const themeColorDark = '#13253e';
+  const themeColor = '#2A9D8F';
+  const themeColorDark = '#1C6E64';
   const backgroundGradient =
-    'linear-gradient(135deg, #1D3557 0%, #0f1b2d 100%)';
+    'linear-gradient(135deg, #2A9D8F 0%, #1B5E55 100%)';
 
   if (!Scene) return <div>Loading...</div>;
 
@@ -39,8 +39,8 @@ const CasinoLesson3Page: FC = () => {
     <MazePageComponent
       MazeScene={Scene}
       Quiz={QuizWrapper}
-      lessonNumber={3}
-      lessonTitle="Casino Lesson 3: Slot Machine English"
+      lessonNumber={5}
+      lessonTitle="Casino Lesson 5: Cashier & Chips"
       themeColor={themeColor}
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}
@@ -48,18 +48,18 @@ const CasinoLesson3Page: FC = () => {
       statsKey="englishCasinoStats"
       unlockedKey="englishCasinoUnlockedLessons"
       pendingUnlockKey="englishCasinoPendingUnlockLesson"
-      backHref="/casino"
-      returnHref="/casino"
+      backHref="/games/casino"
+      returnHref="/games/casino"
       returnLabel="Return to Casino"
     />
   );
 };
 
-const DynamicCasinoLesson3Page = dynamic(
-  () => Promise.resolve(CasinoLesson3Page),
+const DynamicCasinoLesson5Page = dynamic(
+  () => Promise.resolve(CasinoLesson5Page),
   {
     ssr: false,
   },
 );
 
-export default DynamicCasinoLesson3Page;
+export default DynamicCasinoLesson5Page;

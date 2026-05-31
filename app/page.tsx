@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './HomeView.module.css';
 import { useEffect, useState } from 'react';
-import { lessonMapButtons as mazeLessonMapButtons } from './maze/lessonMapConfig';
-import { lessonMapButtons as casinoLessonMapButtons } from './casino/lessonMapConfig';
-import { lessonMapButtons as pattayaLessonMapButtons } from './pattaya-games/lessonMapConfig';
+import { lessonMapButtons as mazeLessonMapButtons } from './games/maze/lessonMapConfig';
+import { lessonMapButtons as casinoLessonMapButtons } from './games/casino/lessonMapConfig';
+import { lessonMapButtons as pattayaLessonMapButtons } from './games/pattaya-games/lessonMapConfig';
 
 const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
 const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);
@@ -194,7 +194,7 @@ export default function HomePage() {
 
       <section className={styles.hubGrid} aria-label="Game mode links">
         <Link
-          href="/maze"
+          href="/games/maze"
           className={`${styles.hubCard} ${styles.mazeCard} ${styles.mazeCardWithMap}`}
         >
           <Image
@@ -214,7 +214,7 @@ export default function HomePage() {
         </Link>
 
         <Link
-          href="/casino"
+          href="/games/casino"
           className={`${styles.hubCard} ${styles.casinoCard} ${styles.mazeCardWithMap}`}
         >
           <Image
@@ -233,7 +233,7 @@ export default function HomePage() {
         </Link>
 
         <Link
-          href="/pattaya-games"
+          href="/games/pattaya-games"
           className={`${styles.hubCard} ${styles.pattayaCard} ${styles.mazeCardWithMap}`}
         >
           <Image

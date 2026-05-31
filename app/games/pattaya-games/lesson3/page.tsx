@@ -693,7 +693,7 @@ export default function PattayaLesson3Page() {
       return (
         <div className={styles.page}>
           <div className={styles.container}>
-            <MazeHeader score={0} backHref="/pattaya-games" />
+            <MazeHeader score={0} backHref="/games/pattaya-games" />
             <div className={styles.panel}>
               <p className={styles.prompt}>Loading quiz…</p>
             </div>
@@ -704,7 +704,7 @@ export default function PattayaLesson3Page() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={0} backHref="/pattaya-games" />
+          <MazeHeader score={0} backHref="/games/pattaya-games" />
           <Quiz
             question={q}
             selected={selected}
@@ -723,7 +723,7 @@ export default function PattayaLesson3Page() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={0} backHref="/pattaya-games" />
+          <MazeHeader score={0} backHref="/games/pattaya-games" />
 
           <div className={styles.statsRow}>
             <span className={styles.scoreChip}>🎯 Shots: {shotsLeft}</span>
@@ -1392,7 +1392,7 @@ export default function PattayaLesson3Page() {
             <p className={styles.doneUnlock}>🔓 Lesson 4 unlocked!</p>
           )}
           <div className={styles.doneActions}>
-            <Link href="/pattaya-games" className={styles.doneLink}>
+            <Link href="/games/pattaya-games" className={styles.doneLink}>
               ← Back to map
             </Link>
             <button

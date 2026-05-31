@@ -6,9 +6,9 @@ import styles from './settings.module.css';
 import ThemeToggle from '../_components/ThemeToggle';
 import FontToggle from '../_components/FontToggle';
 import FontSizeToggle from '../_components/FontSizeToggle';
-import { lessonMapButtons as mazeLessonMapButtons } from '../maze/lessonMapConfig';
-import { lessonMapButtons as casinoLessonMapButtons } from '../casino/lessonMapConfig';
-import { lessonMapButtons as pattayaLessonMapButtons } from '../pattaya-games/lessonMapConfig';
+import { lessonMapButtons as mazeLessonMapButtons } from '../games/maze/lessonMapConfig';
+import { lessonMapButtons as casinoLessonMapButtons } from '../games/casino/lessonMapConfig';
+import { lessonMapButtons as pattayaLessonMapButtons } from '../games/pattaya-games/lessonMapConfig';
 
 const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
 const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);

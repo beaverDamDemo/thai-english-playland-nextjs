@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from '../../styles/map.module.css';
+import styles from '../../../styles/map.module.css';
 import { useEffect, useState } from 'react';
 import { lessonMapButtons } from './lessonMapConfig';
 
@@ -104,7 +104,7 @@ export default function CasinoScreenPage() {
               num <= unlockedLessons ? (
                 <Link
                   key={num}
-                  href={`/casino/lesson${num}`}
+                  href={`/games/casino/lesson${num}`}
                   className={`${styles.locationPin} ${
                     num === highlightedLesson ? styles.newlyUnlocked : ''
                   }`}

@@ -334,7 +334,7 @@ function PattayaLesson4Content() {
   const thaiQ = useThaiQuestion(currentQ?.q ?? '');
 
   const handlePlayAgain = useCallback(() => {
-    router.push(`/pattaya-games/lesson4?t=${Date.now()}`);
+    router.push(`/games/pattaya-games/lesson4?t=${Date.now()}`);
   }, [router]);
 
   // Shuffle questions on client only to avoid hydration mismatch
@@ -605,7 +605,7 @@ function PattayaLesson4Content() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={score} backHref="/pattaya-games" />
+          <MazeHeader score={score} backHref="/games/pattaya-games" />
           <div className={styles.endPanel}>
             <h2 className={styles.endTitle}>
               {passed ? 'Mission Accomplished!' : 'Mission Failed'}
@@ -623,7 +623,7 @@ function PattayaLesson4Content() {
                 Play again
               </button>
               <Link
-                href="/pattaya-games"
+                href="/games/pattaya-games"
                 className={`${styles.btn} ${styles.btnSecondary}`}
               >
                 Back to map
@@ -638,7 +638,7 @@ function PattayaLesson4Content() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={score} backHref="/pattaya-games" />
+        <MazeHeader score={score} backHref="/games/pattaya-games" />
 
         <div className={styles.hud}>
           <span className={styles.chip}>

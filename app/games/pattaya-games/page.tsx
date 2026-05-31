@@ -2,21 +2,22 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from '../../styles/map.module.css';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import styles from '../../../styles/map.module.css';
 import { lessonMapButtons } from './lessonMapConfig';
 
 const MAP_ASPECT_RATIO = 1024 / 1536;
-const MAP_IMAGE_CACHE_BUSTER = '20260321-1';
+const PATTAYA_MAP_IMAGE_CACHE_BUSTER = '20260327-1';
 const TOTAL_LESSONS = lessonMapButtons.length;
 
-export default function MazeScreenPage() {
+export default function PattayaGamesScreenPage() {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [unlockedLessons, setUnlockedLessons] = useState(1);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState(0);
   const [quizAttempts, setQuizAttempts] = useState(0);
   const [totalMovesEarned, setTotalMovesEarned] = useState(0);
+  const [lessonCompletions, setLessonCompletions] = useState(0);
   const [highlightedLesson, setHighlightedLesson] = useState<number | null>(
     null,
   );
@@ -39,7 +40,7 @@ export default function MazeScreenPage() {
           >;
         }) => {
           if (!data.ok || !data.progress) return;
-          const p = data.progress['maze'];
+          const p = data.progress['pattaya'];
           if (!p) return;
           const safeUnlocked = Math.min(
             TOTAL_LESSONS,
@@ -50,6 +51,7 @@ export default function MazeScreenPage() {
           setWrongAnswers(p.wrong_answers);
           setQuizAttempts(p.quiz_attempts);
           setTotalMovesEarned(p.total_moves_earned);
+          setLessonCompletions(0);
         },
       )
       .catch(() => null);
@@ -64,7 +66,7 @@ export default function MazeScreenPage() {
   return (
     <div className={styles.mazePage}>
       <header className={styles.pageHeader}>
-        <span className={styles.appTitle}>Maze Game Lessons</span>
+        <span className={styles.appTitle}>Pattaya Games Lessons</span>
         <Link href="/" className={styles.headerHomeLink}>
           <Image
             src="/assets/tinified/back.png"
@@ -93,18 +95,49 @@ export default function MazeScreenPage() {
               </div>
             )}
             <Image
-              src={`/assets/tinified/map-with-9-clickable-locations.png?v=${MAP_IMAGE_CACHE_BUSTER}`}
-              alt="Game Map"
+              src={`/assets/tinified/pattaya%20Copilot_20260325_132439.png?v=${PATTAYA_MAP_IMAGE_CACHE_BUSTER}`}
+              alt="Pattaya Lesson Map"
               fill
               priority
               unoptimized
               onLoad={() => setIsMapLoaded(true)}
             />
-            {lessonMapButtons.map(({ num, color, left, top }) =>
-              num <= unlockedLessons ? (
+
+            {lessonMapButtons.map(({ num, color, left, top, available }) => {
+              if (num > unlockedLessons) {
+                return (
+                  <div
+                    key={num}
+                    className={`${styles.locationPin} ${styles.locationLocked}`}
+                    style={{ left: `${left}%`, top: `${top}%` }}
+                  >
+                    🔒
+                  </div>
+                );
+              }
+
+              if (!available) {
+                return (
+                  <div
+                    key={num}
+                    className={`${styles.locationPin} ${styles.locationComingSoon}`}
+                    style={{
+                      borderColor: color,
+                      left: `${left}%`,
+                      top: `${top}%`,
+                      opacity: 0.78,
+                    }}
+                    title="Coming soon"
+                  >
+                    {num}
+                  </div>
+                );
+              }
+
+              return (
                 <Link
                   key={num}
-                  href={`/maze/lesson${num}`}
+                  href={`/games/pattaya-games/lesson${num}`}
                   className={`${styles.locationPin} ${
                     num === highlightedLesson ? styles.newlyUnlocked : ''
                   }`}
@@ -122,16 +155,8 @@ export default function MazeScreenPage() {
                     <span className={styles.unlockBadge}>New!</span>
                   )}
                 </Link>
-              ) : (
-                <div
-                  key={num}
-                  className={`${styles.locationPin} ${styles.locationLocked}`}
-                  style={{ left: `${left}%`, top: `${top}%` }}
-                >
-                  🔒
-                </div>
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -144,6 +169,9 @@ export default function MazeScreenPage() {
             Unlocked: {unlockedLessons}/{TOTAL_LESSONS}
           </span>
           <span className={styles.statChip}>Attempts: {quizAttempts}</span>
+          <span className={styles.statChip}>
+            Completions: {lessonCompletions}
+          </span>
           <span className={styles.statChip}>Moves: {totalMovesEarned}</span>
         </div>
       </footer>

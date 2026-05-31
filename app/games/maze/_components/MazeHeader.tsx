@@ -6,7 +6,7 @@ import styles from './MazeHeader.module.css';
 
 export default function MazeHeader({
   score,
-  backHref = '/maze',
+  backHref = '/games/maze',
 }: {
   score: number;
   backHref?: string;

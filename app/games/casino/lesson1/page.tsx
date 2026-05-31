@@ -11,7 +11,7 @@ const MazePageComponent = dynamic(
   { ssr: false, loading: () => <div>Loading...</div> },
 );
 
-const CasinoLesson4Page: FC = () => {
+const CasinoLessonPage: FC = () => {
   const [Scene, setScene] = useState<unknown>(null);
 
   useEffect(() => {
@@ -24,10 +24,10 @@ const CasinoLesson4Page: FC = () => {
     };
   }, []);
 
-  const themeColor = '#9C27B0';
-  const themeColorDark = '#7B1FA2';
+  const themeColor = '#F44336';
+  const themeColorDark = '#D32F2F';
   const backgroundGradient =
-    'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)';
+    'linear-gradient(135deg, #F44336 0%, #C62828 100%)';
 
   if (!Scene) return <div>Loading...</div>;
 
@@ -39,8 +39,8 @@ const CasinoLesson4Page: FC = () => {
     <MazePageComponent
       MazeScene={Scene}
       Quiz={QuizWrapper}
-      lessonNumber={4}
-      lessonTitle="Casino Lesson 4: Article Slots"
+      lessonNumber={1}
+      lessonTitle="Casino Lesson 1"
       themeColor={themeColor}
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}
@@ -48,18 +48,18 @@ const CasinoLesson4Page: FC = () => {
       statsKey="englishCasinoStats"
       unlockedKey="englishCasinoUnlockedLessons"
       pendingUnlockKey="englishCasinoPendingUnlockLesson"
-      backHref="/casino"
-      returnHref="/casino"
+      backHref="/games/casino"
+      returnHref="/games/casino"
       returnLabel="Return to Casino"
     />
   );
 };
 
-const DynamicCasinoLesson4Page = dynamic(
-  () => Promise.resolve(CasinoLesson4Page),
+const DynamicCasinoLessonPage = dynamic(
+  () => Promise.resolve(CasinoLessonPage),
   {
     ssr: false,
   },
 );
 
-export default DynamicCasinoLesson4Page;
+export default DynamicCasinoLessonPage;

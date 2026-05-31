@@ -8,75 +8,75 @@ import {
   resetStreak,
   reportPerfectLesson,
 } from '@/app/_lib/client/quizStreak';
-import styles from './Lesson2.module.css';
+import styles from './Lesson1.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type Challenge } from './Quiz';
 
 type Phase = 'practice' | 'play' | 'apply' | 'done';
 
-const BOARD_SIZE = 7;
-const ICONS = ['🔥', '❄️', '🌬️', '🌞', '🪙', '💎', '🧃'];
+const BOARD_SIZE = 6;
+const CANDIES = ['🍒', '🍋', '🍇', '🍉', '🍍', '🥥'];
 const LESSONS_TOTAL = 8;
 const LESSONS_MIN_PASS = 3;
 
 const practiceChallenges: Challenge[] = [
   {
-    prompt: 'Ice cream is usually _______.',
-    options: ['hot', 'cold', 'high', 'cheap'],
-    answer: 1,
-  },
-  {
-    prompt: 'A mountain is very _______.',
-    options: ['low', 'high', 'cool down', 'warm up'],
-    answer: 1,
-  },
-  {
-    prompt: 'Tea can be very _______ right after you make it.',
-    options: ['cold', 'cheap', 'hot', 'low'],
+    prompt: 'She is _______ to music right now.',
+    options: ['listen', 'listens', 'listening', 'listened'],
     answer: 2,
   },
   {
-    prompt: 'If the room is too warm, open the window to _______.',
-    options: ['warm up', 'cool down', 'go high', 'get expensive'],
+    prompt: 'I want _______ a movie tonight.',
+    options: ['watching', 'watch', 'watches', 'to watching'],
     answer: 1,
   },
   {
-    prompt: 'This T-shirt is only 100 baht. It is _______.',
-    options: ['expensive', 'high', 'cheap', 'cold'],
+    prompt: 'They enjoy _______ on the beach.',
+    options: ['walk', 'walked', 'to walk', 'walking'],
+    answer: 3,
+  },
+  {
+    prompt: 'He seems _______ today.',
+    options: ['tiring', 'tire', 'tired', 'to tiring'],
     answer: 2,
+  },
+  {
+    prompt: 'We are _______ for the bus.',
+    options: ['wait', 'waited', 'waits', 'waiting'],
+    answer: 3,
   },
 ];
 
 const applyChallenges: Challenge[] = [
   {
-    prompt: 'After running, I need some water to _______.',
-    options: ['cool down', 'warm up', 'stay high', 'be expensive'],
-    answer: 0,
-  },
-  {
-    prompt: 'In the morning, I stretch first to _______ my body.',
-    options: ['cool down', 'warm up', 'make low', 'make cheap'],
+    prompt: 'I need _______ my English skills. (It is necessary for me.)',
+    options: ['improving', 'improve', 'improved', 'to improving'],
     answer: 1,
   },
   {
-    prompt: 'The phone costs 30,000 baht. It is _______.',
-    options: ['cheap', 'cold', 'expensive', 'low'],
+    prompt: 'She avoided _______ to him after the argument.',
+    options: ['talk', 'to talk', 'talked', 'talking'],
+    answer: 3,
+  },
+  {
+    prompt: 'He decided _______ a new job.',
+    options: ['finding', 'find', 'to find', 'finded'],
     answer: 2,
   },
   {
-    prompt: 'The airplane is flying very _______ in the sky.',
-    options: ['cheap', 'high', 'cold', 'cool'],
-    answer: 1,
+    prompt: 'Look! The children are _______ in the park.',
+    options: ['play', 'played', 'plays', 'playing'],
+    answer: 3,
   },
   {
-    prompt: 'At night on the beach, the wind feels _______.',
-    options: ['hot', 'expensive', 'cold', 'high'],
+    prompt: 'My hobby is _______ old maps.',
+    options: ['collect', 'to collect', 'collecting', 'collected'],
     answer: 2,
   },
 ];
 
-function randomIcon() {
-  return ICONS[Math.floor(Math.random() * ICONS.length)];
+function randomCandy() {
+  return CANDIES[Math.floor(Math.random() * CANDIES.length)];
 }
 
 function hasAvailableMove(board: string[][]) {
@@ -102,9 +102,10 @@ function hasAvailableMove(board: string[][]) {
 }
 
 function makeBoard() {
+  // Keep trying until we get a clean board with at least one valid move.
   for (let attempt = 0; attempt < 100; attempt += 1) {
     const board: string[][] = Array.from({ length: BOARD_SIZE }, () =>
-      Array.from({ length: BOARD_SIZE }, () => randomIcon()),
+      Array.from({ length: BOARD_SIZE }, () => randomCandy()),
     );
     const cleaned = clearAutoMatches(board).board;
     if (hasAvailableMove(cleaned)) {
@@ -112,9 +113,10 @@ function makeBoard() {
     }
   }
 
+  // Fallback safety path.
   return clearAutoMatches(
     Array.from({ length: BOARD_SIZE }, () =>
-      Array.from({ length: BOARD_SIZE }, () => randomIcon()),
+      Array.from({ length: BOARD_SIZE }, () => randomCandy()),
     ),
   ).board;
 }
@@ -182,13 +184,13 @@ function clearAutoMatches(input: string[][]) {
       }
 
       for (let r = BOARD_SIZE - 1, idx = 0; r >= 0; r -= 1, idx += 1) {
-        board[r][c] = idx < column.length ? column[idx] : randomIcon();
+        board[r][c] = idx < column.length ? column[idx] : randomCandy();
       }
     }
   }
 }
 
-export default function PattayaLesson2Page() {
+export default function PattayaLesson1Page() {
   const [phase, setPhase] = useState<Phase>('practice');
   const [practiceStep, setPracticeStep] = useState(0);
   const [applyStep, setApplyStep] = useState(0);
@@ -203,10 +205,10 @@ export default function PattayaLesson2Page() {
   const [selectedTile, setSelectedTile] = useState<[number, number] | null>(
     null,
   );
-  const [movesLeft, setMovesLeft] = useState(9);
+  const [movesLeft, setMovesLeft] = useState(8);
   const [playPoints, setPlayPoints] = useState(0);
   const [playActionText, setPlayActionText] = useState(
-    'Match 3+ symbols to earn points!',
+    'Match 3+ candies to earn points!',
   );
   const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
   const [cascadingTiles, setCascadingTiles] = useState<Set<string>>(new Set());
@@ -252,7 +254,7 @@ export default function PattayaLesson2Page() {
             ? Math.min(LESSONS_TOTAL, Math.max(1, p.unlocked_lessons))
             : 1;
           const nextUnlocked = passed
-            ? Math.min(LESSONS_TOTAL, Math.max(prevUnlocked, 3))
+            ? Math.min(LESSONS_TOTAL, Math.max(prevUnlocked, 2))
             : prevUnlocked;
 
           return fetch('/api/progress', {
@@ -283,9 +285,9 @@ export default function PattayaLesson2Page() {
     recordAnswer(isCorrect);
     recordAttemptIfNeeded();
     if (isCorrect) {
-      setLearningCorrect((value) => value + 1);
+      setLearningCorrect((v) => v + 1);
     } else {
-      setLearningWrong((value) => value + 1);
+      setLearningWrong((v) => v + 1);
     }
     setFeedbackIcon(isCorrect ? '✓' : '✗');
     setSelectedIndex(pickedIndex);
@@ -332,7 +334,7 @@ export default function PattayaLesson2Page() {
       cascadingTiles.size > 0 ||
       swappingTiles.size > 0
     ) {
-      setPlayActionText('Pick neighboring symbols only.');
+      setPlayActionText('Pick neighboring candies only.');
       return;
     }
 
@@ -350,11 +352,13 @@ export default function PattayaLesson2Page() {
       return;
     }
 
+    // Step 1: commit swap to board and show swap animation
     setBoard(draft);
     setSwappingTiles(new Set([`${fr}-${fc}`, `${tr}-${tc}`]));
     setPlayActionText('Swapping...');
 
     window.setTimeout(() => {
+      // Step 2: swap animation done — start match flash
       setSwappingTiles(new Set());
 
       const resolved = clearAutoMatches(draft);
@@ -366,6 +370,7 @@ export default function PattayaLesson2Page() {
       setAnimatingTiles(found);
       setPlayActionText(`Matched ${found.size} blocks!`);
 
+      // Animate matched tiles then cascade
       window.setTimeout(() => {
         setBoard(boardAfterResolve);
         const cascading = new Set<string>();
@@ -382,7 +387,7 @@ export default function PattayaLesson2Page() {
 
       window.setTimeout(() => {
         setMovesLeft(nextMoves);
-        setPlayPoints((value) => value + gained);
+        setPlayPoints((v) => v + gained);
         setPlayActionText(
           needsReshuffle
             ? `Great! +${gained} points. ${nextMoves} moves left. Board reshuffled.`
@@ -406,9 +411,8 @@ export default function PattayaLesson2Page() {
       animatingTiles.size > 0 ||
       cascadingTiles.size > 0 ||
       swappingTiles.size > 0
-    ) {
+    )
       return;
-    }
     if (!selectedTile) {
       setSelectedTile([r, c]);
       setPlayActionText('Select a second tile to swap.');
@@ -424,7 +428,7 @@ export default function PattayaLesson2Page() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={0} backHref="/pattaya-games" />
+        <MazeHeader score={0} backHref="/games/pattaya-games" />
 
         <section className={styles.panel}>
           <div className={styles.progress}>
@@ -446,7 +450,7 @@ export default function PattayaLesson2Page() {
                 maxWidth: '520px',
                 margin: '0 auto',
                 boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
-                border: '3px solid #a81903',
+                border: '3px solid #305b0f',
                 boxSizing: 'border-box',
               }}
             >
@@ -465,7 +469,7 @@ export default function PattayaLesson2Page() {
             <article className={styles.card}>
               <span className={styles.phaseBadge}>PLAY</span>
               <h2 className={styles.prompt}>
-                Match 3+ symbols in 9 moves ({movesLeft} moves left)
+                Match 3+ candies in 8 moves ({movesLeft} moves left)
               </h2>
               <div className={styles.boardWrap}>
                 <div className={styles.board}>
@@ -522,7 +526,7 @@ export default function PattayaLesson2Page() {
                 maxWidth: '520px',
                 margin: '0 auto',
                 boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
-                border: '3px solid #a81903',
+                border: '3px solid #305b0f',
                 boxSizing: 'border-box',
               }}
             >
@@ -540,7 +544,7 @@ export default function PattayaLesson2Page() {
           {phase === 'done' && (
             <article className={styles.card}>
               <span className={styles.phaseBadge}>COMPLETE</span>
-              <h2 className={styles.prompt}>Lesson 2 Complete</h2>
+              <h2 className={styles.prompt}>Lesson 1 Complete</h2>
               <p className={styles.help}>
                 Learning accuracy: {learningCorrect}/
                 {practiceChallenges.length + applyChallenges.length}
@@ -548,7 +552,7 @@ export default function PattayaLesson2Page() {
               <p className={styles.help}>Play points: {playPoints}</p>
               <p className={styles.help}>Total score: {totalSessionScore}</p>
               <div className={styles.footerButtons}>
-                <Link href="/pattaya-games" className={styles.footerLink}>
+                <Link href="/games/pattaya-games" className={styles.footerLink}>
                   <Image
                     src="/assets/tinified/back.png"
                     alt="Return to Map"
