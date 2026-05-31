@@ -1,5 +1,16 @@
 # Copilot Instructions
 
+## Project Documentation
+
+Before writing any code or answering questions about this project, read the relevant doc files in `docs/`:
+
+- `docs/CONVENTIONS.md` — naming rules, component patterns, API shape, DB conventions, error handling, TypeScript rules. **Always follow this.**
+- `docs/API_REFERENCE.md` — all API route signatures, request bodies, and response types.
+- `docs/TODO.md` — current task backlog. Check this before suggesting new features.
+- `docs/PROMPTS.md` — preferred prompts and workflow instructions for common tasks.
+
+---
+
 ## Version Bump Policy
 
 - When bumping the app version, always update `package.json` `version`.
