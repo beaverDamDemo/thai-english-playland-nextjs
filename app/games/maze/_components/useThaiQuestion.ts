@@ -154,18 +154,12 @@ function fallbackThaiTranslation(question: string): string {
 
 export function useThaiQuestion(question: string): string {
   const [thaiQuestion, setThaiQuestion] = useState("");
+  const knownTranslation = KNOWN_THAI_TRANSLATIONS[question];
 
   useEffect(() => {
     let cancelled = false;
 
-    if (!question) return;
-
-    const knownTranslation = KNOWN_THAI_TRANSLATIONS[question];
-    if (knownTranslation) {
-      translationCache.set(question, knownTranslation);
-      setThaiQuestion(knownTranslation);
-      return;
-    }
+    if (!question || knownTranslation) return;
 
     const cached = translationCache.get(question);
     if (cached) return;
@@ -203,8 +197,8 @@ export function useThaiQuestion(question: string): string {
     return () => {
       cancelled = true;
     };
-  }, [question]);
+  }, [knownTranslation, question]);
 
   if (!question) return "";
-  return translationCache.get(question) ?? thaiQuestion;
+  return knownTranslation ?? translationCache.get(question) ?? thaiQuestion;
 }
