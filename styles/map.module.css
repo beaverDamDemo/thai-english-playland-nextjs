@@ -178,6 +178,17 @@
   overflow: hidden;
 }
 
+/* Starter learners zone background */
+.starterMap {
+  background-image: url("/assets/tinified/starter-learners-zone.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* subtle overlay to improve pin contrast */
+  background-color: rgba(15, 26, 51, 0.25);
+  background-blend-mode: overlay;
+}
+
 .loaderOverlay {
   position: absolute;
   inset: 0;
@@ -330,7 +341,7 @@
 }
 
 .locationComingSoon::after {
-  content: 'Coming soon';
+  content: "Coming soon";
   position: absolute;
   top: -36px;
   left: 50%;
@@ -384,7 +395,7 @@
   }
 }
 
-:global(:root[data-theme='dark']) .mazePage {
+:global(:root[data-theme="dark"]) .mazePage {
   background:
     radial-gradient(
       circle at top left,
@@ -399,36 +410,36 @@
     linear-gradient(180deg, #0f1a33 0%, #111a2b 100%);
 }
 
-:global(:root[data-theme='dark']) .pageHeader {
+:global(:root[data-theme="dark"]) .pageHeader {
   background: linear-gradient(135deg, #1c2f4f 0%, #2a244f 55%, #17384d 100%);
   color: #eaf1ff;
   border-bottom-color: rgba(142, 165, 235, 0.28);
   box-shadow: 0 6px 18px rgba(3, 7, 18, 0.35);
 }
 
-:global(:root[data-theme='dark']) .mapFooter {
+:global(:root[data-theme="dark"]) .mapFooter {
   background: rgba(16, 24, 44, 0.82);
   color: #d7e3ff;
   border-top-color: rgba(142, 165, 235, 0.24);
   box-shadow: 0 -6px 20px rgba(3, 7, 18, 0.34);
 }
 
-:global(:root[data-theme='dark']) .statChip {
+:global(:root[data-theme="dark"]) .statChip {
   background: linear-gradient(135deg, #24365f 0%, #1e4a57 100%);
   border-color: rgba(133, 161, 235, 0.34);
   color: #ecf3ff;
 }
 
-:global(:root[data-theme='dark']) .footerVersion {
+:global(:root[data-theme="dark"]) .footerVersion {
   color: #a9bbe7;
 }
 
-:global(:root[data-theme='dark']) .locationPin {
+:global(:root[data-theme="dark"]) .locationPin {
   background-color: #f2f7ff;
   color: #121b2f;
 }
 
-:global(:root[data-theme='dark']) .locationPin:hover {
+:global(:root[data-theme="dark"]) .locationPin:hover {
   background-color: var(--location-border);
   border-color: white !important;
   color: white;

@@ -71,8 +71,7 @@ export default function StarterLearnersZonePage() {
           style={{ aspectRatio: MAP_ASPECT_RATIO }}
         >
           <div
-            className={styles.mapContainer}
-            style={{ background: 'linear-gradient(170deg, #0d1b4b 0%, #1a3a6b 50%, #1e5080 100%)' }}
+            className={`${styles.mapContainer} ${styles.starterMap}`}
           >
             {lessonMapButtons.map(({ num, color, left, top }) =>
               num <= unlockedLessons ? (

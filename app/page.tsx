@@ -211,7 +211,7 @@ export default function HomePage() {
       <section className={styles.hubGrid} aria-label="Game mode links">
         <Link
           href="/games/starter"
-          className={`${styles.hubCard}`}
+          className={`${styles.hubCard} ${styles.starterCard} ${styles.mazeCardWithMap}`}
         >
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>
