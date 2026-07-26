@@ -1,0 +1,164 @@
+/* ── Page shell ── */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: #1a1a2e;
+  color: #fff;
+  font-family: inherit;
+}
+
+/* ── Header ── */
+.header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: #16213e;
+  border-bottom: 2px solid #e91e63;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+.back:hover {
+  transform: scale(1.1);
+}
+
+.title {
+  margin: 0;
+  flex: 1;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Progress dots */
+.dots {
+  display: flex;
+  gap: 6px;
+}
+.dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #444;
+  transition: background 0.5s ease;
+}
+.dotDone {
+  background: #e91e63;
+}
+
+/* ── SVG area ── */
+.main {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.svgCanvas {
+  display: block;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* ── Quiz panel ── */
+.quiz {
+  flex: 0 0 auto;
+  padding: 0.85rem 1rem 1rem;
+  background: #0f1930;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.question {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.option {
+  padding: 0.65rem 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: #1e2d50;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.1s;
+  text-transform: capitalize;
+}
+.option:hover:not(:disabled) {
+  background: #2a3f70;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.option:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.option:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.optionCorrect {
+  background: #2e7d32 !important;
+  border-color: #66bb6a !important;
+}
+.optionWrong {
+  background: #c62828 !important;
+  border-color: #ef5350 !important;
+}
+
+/* ── States ── */
+.hint {
+  margin: 0;
+  color: #aaa;
+  font-size: 0.95rem;
+}
+
+.complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+.complete p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.doneBtn {
+  color: #e91e63;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.doneBtn:hover {
+  text-decoration: underline;
+}

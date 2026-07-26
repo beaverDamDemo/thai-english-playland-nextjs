@@ -9,10 +9,12 @@ import { useEffect, useState } from 'react';
 import { lessonMapButtons as mazeLessonMapButtons } from './games/maze/lessonMapConfig';
 import { lessonMapButtons as casinoLessonMapButtons } from './games/casino/lessonMapConfig';
 import { lessonMapButtons as pattayaLessonMapButtons } from './games/pattaya-games/lessonMapConfig';
+import { lessonMapButtons as starterLessonMapButtons } from './games/starter/lessonMapConfig';
 
 const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
 const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);
 const PATTAYA_TOTAL_LESSONS = Math.max(1, pattayaLessonMapButtons.length);
+const STARTER_TOTAL_LESSONS = starterLessonMapButtons.length;
 
 type ProgressStats = {
   correctAnswers: number;
@@ -44,6 +46,8 @@ type EarnedAchievement = {
 
 export default function HomePage() {
   const router = useRouter();
+  const [starterUnlocked, setStarterUnlocked] = useState(0);
+  const [starterStats, setStarterStats] = useState<ProgressStats>(EMPTY_STATS);
   const [mazeUnlocked, setMazeUnlocked] = useState(1);
   const [casinoUnlocked, setCasinoUnlocked] = useState(1);
   const [pattayaUnlocked, setPattayaUnlocked] = useState(1);
@@ -89,9 +93,21 @@ export default function HomePage() {
           >;
         }) => {
           if (!data.ok || !data.progress) return;
+          const starter = data.progress['starter'];
           const maze = data.progress['maze'];
           const casino = data.progress['casino'];
           const pattaya = data.progress['pattaya'];
+          if (starter) {
+            setStarterUnlocked(
+              Math.min(STARTER_TOTAL_LESSONS, Math.max(0, starter.unlocked_lessons)),
+            );
+            setStarterStats({
+              correctAnswers: starter.correct_answers,
+              wrongAnswers: starter.wrong_answers,
+              quizAttempts: starter.quiz_attempts,
+              totalMovesEarned: starter.total_moves_earned,
+            });
+          }
           if (maze) {
             setMazeUnlocked(
               Math.min(MAZE_TOTAL_LESSONS, Math.max(1, maze.unlocked_lessons)),
@@ -194,6 +210,18 @@ export default function HomePage() {
 
       <section className={styles.hubGrid} aria-label="Game mode links">
         <Link
+          href="/games/starter"
+          className={`${styles.hubCard}`}
+        >
+          <div className={styles.mazeCardBody}>
+            <span className={styles.hubTitle}>
+              <span className={styles.hubIcon}>🌱</span>Starter Learners Zone
+            </span>
+          </div>
+          <span className={styles.hubArrow}>→</span>
+        </Link>
+
+        <Link
           href="/games/maze"
           className={`${styles.hubCard} ${styles.mazeCard} ${styles.mazeCardWithMap}`}
         >
@@ -256,7 +284,51 @@ export default function HomePage() {
         <h2 className={styles.progressTitle}>Your Progress</h2>
         <div className={styles.progressDisplay}>
           <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>🌀 Maze</h3>
+            <h3 className={styles.progressBlockTitle}>� Starter</h3>
+            <div className={styles.progressRows}>
+              {STARTER_TOTAL_LESSONS === 0 ? (
+                <div className={styles.progressRow}>
+                  <span className={styles.progressLabel}>Coming soon</span>
+                </div>
+              ) : (
+                <>
+                  <div className={styles.progressRow}>
+                    <span className={styles.progressLabel}>Unlocked</span>
+                    <strong className={styles.progressValue}>
+                      {starterUnlocked}/{STARTER_TOTAL_LESSONS}
+                    </strong>
+                  </div>
+                  <div className={styles.progressRow}>
+                    <span className={styles.progressLabel}>✅ Correct</span>
+                    <strong className={styles.progressValue}>
+                      {starterStats.correctAnswers}
+                    </strong>
+                  </div>
+                  <div className={styles.progressRow}>
+                    <span className={styles.progressLabel}>❌ Wrong</span>
+                    <strong className={styles.progressValue}>
+                      {starterStats.wrongAnswers}
+                    </strong>
+                  </div>
+                  <div className={styles.progressRow}>
+                    <span className={styles.progressLabel}>🎯 Attempts</span>
+                    <strong className={styles.progressValue}>
+                      {starterStats.quizAttempts}
+                    </strong>
+                  </div>
+                  <div className={styles.progressRow}>
+                    <span className={styles.progressLabel}>👣 Moves</span>
+                    <strong className={styles.progressValue}>
+                      {starterStats.totalMovesEarned}
+                    </strong>
+                  </div>
+                </>
+              )}
+            </div>
+          </article>
+
+          <article className={styles.progressBlock}>
+            <h3 className={styles.progressBlockTitle}>�🌀 Maze</h3>
             <div className={styles.progressRows}>
               <div className={styles.progressRow}>
                 <span className={styles.progressLabel}>Unlocked</span>

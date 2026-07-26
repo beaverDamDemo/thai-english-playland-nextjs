@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/app/_lib/server/db';
-import { getCurrentSessionUser } from '@/app/_lib/server/auth';
-import { evaluateProgressAchievements } from '@/app/_lib/server/achievements';
+import { NextResponse } from "next/server";
+import { db } from "@/app/_lib/server/db";
+import { getCurrentSessionUser } from "@/app/_lib/server/auth";
+import { evaluateProgressAchievements } from "@/app/_lib/server/achievements";
 
-export type GameMode = 'maze' | 'casino' | 'pattaya';
+export type GameMode = "maze" | "casino" | "pattaya" | "starter";
 
 export type ProgressRow = {
   game_mode: GameMode;
@@ -17,7 +17,10 @@ export type ProgressRow = {
 export async function GET() {
   const user = await getCurrentSessionUser();
   if (!user) {
-    return NextResponse.json({ ok: false, error: 'Not authenticated.' }, { status: 401 });
+    return NextResponse.json(
+      { ok: false, error: "Not authenticated." },
+      { status: 401 },
+    );
   }
 
   const rows = await db<ProgressRow[]>`
@@ -26,10 +29,35 @@ export async function GET() {
     WHERE user_id = ${user.id};
   `;
 
-  const progress: Record<GameMode, Omit<ProgressRow, 'game_mode'>> = {
-    maze: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
-    casino: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
-    pattaya: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
+  const progress: Record<GameMode, Omit<ProgressRow, "game_mode">> = {
+    maze: {
+      unlocked_lessons: 1,
+      correct_answers: 0,
+      wrong_answers: 0,
+      quiz_attempts: 0,
+      total_moves_earned: 0,
+    },
+    casino: {
+      unlocked_lessons: 1,
+      correct_answers: 0,
+      wrong_answers: 0,
+      quiz_attempts: 0,
+      total_moves_earned: 0,
+    },
+    pattaya: {
+      unlocked_lessons: 1,
+      correct_answers: 0,
+      wrong_answers: 0,
+      quiz_attempts: 0,
+      total_moves_earned: 0,
+    },
+    starter: {
+      unlocked_lessons: 1,
+      correct_answers: 0,
+      wrong_answers: 0,
+      quiz_attempts: 0,
+      total_moves_earned: 0,
+    },
   };
 
   for (const row of rows) {
@@ -59,17 +87,30 @@ type SaveBody = {
 export async function POST(request: Request) {
   const user = await getCurrentSessionUser();
   if (!user) {
-    return NextResponse.json({ ok: false, error: 'Not authenticated.' }, { status: 401 });
+    return NextResponse.json(
+      { ok: false, error: "Not authenticated." },
+      { status: 401 },
+    );
   }
 
   const body = (await request.json().catch(() => ({}))) as SaveBody;
-  const { game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned } = body;
+  const {
+    game_mode,
+    unlocked_lessons,
+    correct_answers,
+    wrong_answers,
+    quiz_attempts,
+    total_moves_earned,
+  } = body;
 
   // console.log('POST /api/progress:', { user_id: user.id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned });
 
-  const validModes: GameMode[] = ['maze', 'casino', 'pattaya'];
+  const validModes: GameMode[] = ["maze", "casino", "pattaya", "starter"];
   if (!game_mode || !validModes.includes(game_mode as GameMode)) {
-    return NextResponse.json({ ok: false, error: 'Invalid game_mode.' }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "Invalid game_mode." },
+      { status: 400 },
+    );
   }
 
   try {
@@ -94,15 +135,18 @@ export async function POST(request: Request) {
     `;
     // console.log('POST /api/progress: Successfully saved');
   } catch (err) {
-    console.error('POST /api/progress: Database error:', err);
-    return NextResponse.json({ ok: false, error: 'Database error.' }, { status: 500 });
+    console.error("POST /api/progress: Database error:", err);
+    return NextResponse.json(
+      { ok: false, error: "Database error." },
+      { status: 500 },
+    );
   }
 
   let newAchievements: string[] = [];
   try {
     newAchievements = await evaluateProgressAchievements(user.id);
   } catch (err) {
-    console.error('Failed to evaluate achievements:', err);
+    console.error("Failed to evaluate achievements:", err);
   }
 
   return NextResponse.json({ ok: true, newAchievements });

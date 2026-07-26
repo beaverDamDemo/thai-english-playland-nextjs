@@ -30,6 +30,7 @@
     "postgres": "^3.4.8",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "snapsvg-cjs": "^0.0.6",
     "touch-cli": "^0.0.1"
   },
   "devDependencies": {

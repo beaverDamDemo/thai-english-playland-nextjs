@@ -26,6 +26,7 @@ interface MazePageProps {
   backHref?: string;
   returnHref?: string;
   returnLabel?: string;
+  gameModeOverride?: string;
 }
 
 const MazePageComponent: FC<MazePageProps> = ({
@@ -42,6 +43,7 @@ const MazePageComponent: FC<MazePageProps> = ({
   backHref = '/games/maze',
   returnHref = '/games/maze',
   returnLabel = 'Return to Map',
+  gameModeOverride,
 }) => {
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -70,7 +72,7 @@ const MazePageComponent: FC<MazePageProps> = ({
   const mobileHeight = mazeHeight + buttonsSpace;
   const desktopHeight = Math.max(800, mazeHeight + buttonsSpace);
 
-  const gameMode = statsKey === 'englishCasinoStats' ? 'casino' : 'maze';
+  const gameMode = gameModeOverride ?? (statsKey === 'englishCasinoStats' ? 'casino' : 'maze');
 
   const saveStats = (next: {
     correctAnswers: number;
