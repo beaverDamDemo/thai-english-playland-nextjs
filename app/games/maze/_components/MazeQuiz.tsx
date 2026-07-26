@@ -12,6 +12,7 @@ import { shuffleArray, shuffleOptions } from './shuffleUtils';
 
 export type QuizQuestion = {
   q: string;
+  thai?: string;
   options: string[];
   answer: number;
 };
@@ -46,7 +47,9 @@ export default function MazeQuiz({
   const [finished, setFinished] = useState(false);
   const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const thaiQuestion = useThaiQuestion(selectedQuestions[current]?.q ?? '');
+  const thaiQuestion = useThaiQuestion(
+    selectedQuestions[current]?.thai ? '' : (selectedQuestions[current]?.q ?? ''),
+  );
 
   useEffect(() => {
     resetStreak();
@@ -185,7 +188,7 @@ export default function MazeQuiz({
         >
           {selectedQuestions[current].q}
         </p>
-        {thaiQuestion && thaiQuestion !== selectedQuestions[current].q && (
+        {(selectedQuestions[current].thai ?? thaiQuestion) && (
           <p
             style={{
               margin: '5px 0 15px 0',
@@ -195,7 +198,7 @@ export default function MazeQuiz({
               fontStyle: 'italic',
             }}
           >
-            ({thaiQuestion})
+            ({selectedQuestions[current].thai ?? thaiQuestion})
           </p>
         )}
       </div>

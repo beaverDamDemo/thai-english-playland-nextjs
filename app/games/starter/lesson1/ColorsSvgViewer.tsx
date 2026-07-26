@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type Snap from 'snapsvg-cjs';
+import { useThaiQuestion } from '@/app/games/maze/_components/useThaiQuestion';
 import styles from './ColorsSvgViewer.module.css';
 
 type SnapStatic = typeof Snap;
@@ -148,6 +149,7 @@ export default function ColorsSvgViewer() {
 
   const allRevealed = groupOrder.length > 0 && revealedCount >= groupOrder.length;
   const q = questions[qIndex % questions.length];
+  const thaiQuestion = useThaiQuestion(q.q);
 
   return (
     <div className={styles.page}>
@@ -170,6 +172,16 @@ export default function ColorsSvgViewer() {
           viewBox="0 0 1024 1536"
           xmlns="http://www.w3.org/2000/svg"
         />
+        {process.env.NODE_ENV !== 'production' && (
+          <aside className={styles.debugOverlay} aria-label="Lesson debug information">
+            <strong>Debug</strong>
+            <span>Groups: {groupOrder.length}</span>
+            <span>Revealed: {revealedCount}</span>
+            <span>Question: {qIndex + 1}</span>
+            <span>Selected: {selectedOption ?? 'none'}</span>
+            <span>Locked: {locked ? 'yes' : 'no'}</span>
+          </aside>
+        )}
       </main>
 
       <section className={styles.quiz}>
@@ -183,6 +195,7 @@ export default function ColorsSvgViewer() {
         ) : (
           <>
             <p className={styles.question}>{q.q}</p>
+            {thaiQuestion && <p className={styles.questionThai}>{thaiQuestion}</p>}
             <div className={styles.options}>
               {q.options.map((opt, i) => {
                 let cls = styles.option;
