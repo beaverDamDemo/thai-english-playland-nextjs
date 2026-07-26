@@ -9,12 +9,6 @@ import styles from './ColorsSvgViewer.module.css';
 
 type SnapStatic = typeof Snap;
 
-type DebugGroup = {
-  id: string;
-  originalFills: string[];
-  isStatic: boolean;
-};
-
 const GRAY = '#808080';
 
 const ALL_QUESTIONS = [
@@ -79,6 +73,38 @@ function getGroupFills(groupEl: SVGElement): string[] {
   return [...fills];
 }
 
+function getGroupIssues({
+  groupId,
+  label,
+  dataGroupColor,
+  originalFills,
+}: {
+  groupId: string | null;
+  label: string | null;
+  dataGroupColor: string | null;
+  originalFills: string[];
+}): string[] {
+  const issues: string[] = [];
+  if (!groupId) issues.push('missing id');
+  if (!label) issues.push('missing label');
+  if (!dataGroupColor) issues.push('missing data-group-color');
+
+  const isStatic = label === 'static';
+  if (!isStatic && groupId && label && groupId !== label) {
+    issues.push('id does not match label');
+  }
+
+  if (
+    dataGroupColor &&
+    originalFills.length > 0 &&
+    !originalFills.some((fill) => fill.toLowerCase() === dataGroupColor.toLowerCase())
+  ) {
+    issues.push('data-group-color does not match a group fill');
+  }
+
+  return issues;
+}
+
 /** Restore a group's original per-element colours with a CSS fill transition. */
 function revealGroup(groupEl: SVGElement): void {
   groupEl.querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline').forEach((el) => {
@@ -104,7 +130,7 @@ export default function ColorsSvgViewer() {
   const svgRef = useRef<SVGSVGElement>(null);
   const svgElRef = useRef<SVGSVGElement | null>(null);
   const [groupOrder, setGroupOrder] = useState<string[]>([]);
-  const [debugGroups, setDebugGroups] = useState<DebugGroup[]>([]);
+  const [groupsFoundCount, setGroupsFoundCount] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
   const [questions] = useState(() => shuffle(ALL_QUESTIONS));
   const [qIndex, setQIndex] = useState(0);
@@ -128,21 +154,38 @@ export default function ColorsSvgViewer() {
         s.append(fragment);
 
         const order: string[] = [];
-        const groups: DebugGroup[] = [];
-        svgEl.querySelectorAll<SVGGElement>('g[data-group-color]').forEach((g) => {
+        svgEl.querySelectorAll<SVGGElement>('g').forEach((g) => {
           const groupId = g.getAttribute('id') ?? g.id;
           const id = groupId || '(no id)';
-          const isStatic = g.getAttribute('inkscape:label') === 'static';
-          groups.push({ id, originalFills: getGroupFills(g), isStatic });
+          const label = g.getAttribute('inkscape:label');
+          const dataGroupColor = g.getAttribute('data-group-color');
+          const originalFills = getGroupFills(g);
+          const isStatic = label === 'static';
+          const issues = getGroupIssues({
+            groupId,
+            label,
+            dataGroupColor,
+            originalFills,
+          });
 
-          if (isStatic) return;
+          if (process.env.NODE_ENV !== 'production' && issues.length > 0) {
+            console.error('Invalid Lesson 1 SVG group metadata:', {
+              id,
+              label: label || '(no label)',
+              dataGroupColor: dataGroupColor || '(missing)',
+              originalFills,
+              issues,
+            });
+          }
+
+          if (isStatic || issues.length > 0) return;
           if (groupId) order.push(groupId);
           grayOutGroup(g);
         });
 
         if (!cancelled) {
           setGroupOrder(order);
-          setDebugGroups(groups);
+          setGroupsFoundCount(svgEl.querySelectorAll('g').length);
         }
       });
     });
@@ -201,25 +244,12 @@ export default function ColorsSvgViewer() {
         {process.env.NODE_ENV !== 'production' && (
           <aside className={styles.debugOverlay} aria-label="Lesson debug information">
             <strong>Debug</strong>
-            <span>Groups: {groupOrder.length}</span>
+            <span>Groups found: {groupsFoundCount}</span>
+            <span>Revealable: {groupOrder.length}</span>
             <span>Revealed: {revealedCount}</span>
             <span>Question: {qIndex + 1}</span>
             <span>Selected: {selectedOption ?? 'none'}</span>
             <span>Locked: {locked ? 'yes' : 'no'}</span>
-            <div className={styles.debugGroupList}>
-              {debugGroups.map((group, index) => {
-                const status = group.isStatic
-                  ? 'original (static)'
-                  : index < revealedCount
-                    ? 'revealed'
-                    : 'gray (#808080)';
-                return (
-                  <span key={`${group.id}-${index}`}>
-                    {group.id}: {status}; original {group.originalFills.join(', ') || 'no fill'}
-                  </span>
-                );
-              })}
-            </div>
           </aside>
         )}
       </main>
