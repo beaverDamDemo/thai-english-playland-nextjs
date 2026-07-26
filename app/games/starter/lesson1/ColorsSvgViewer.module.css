@@ -95,6 +95,15 @@
   pointer-events: none;
 }
 
+.debugGroupList {
+  display: grid;
+  gap: 0.2rem;
+  max-height: 9rem;
+  overflow: auto;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
 /* ── Quiz panel ── */
 .quiz {
   flex: 0 0 auto;

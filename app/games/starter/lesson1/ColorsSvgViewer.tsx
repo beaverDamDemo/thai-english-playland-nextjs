@@ -9,6 +9,12 @@ import styles from './ColorsSvgViewer.module.css';
 
 type SnapStatic = typeof Snap;
 
+type DebugGroup = {
+  id: string;
+  originalFills: string[];
+  isStatic: boolean;
+};
+
 const GRAY = '#808080';
 
 const ALL_QUESTIONS = [
@@ -62,6 +68,17 @@ function grayOutGroup(groupEl: SVGElement): void {
   });
 }
 
+function getGroupFills(groupEl: SVGElement): string[] {
+  const fills = new Set<string>();
+  groupEl.querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline').forEach((el) => {
+    const style = el.getAttribute('style') ?? '';
+    const fillInStyle = style.match(/fill:\s*([^;}\s]+)/);
+    const fill = fillInStyle ? fillInStyle[1].trim() : el.getAttribute('fill');
+    if (fill) fills.add(fill);
+  });
+  return [...fills];
+}
+
 /** Restore a group's original per-element colours with a CSS fill transition. */
 function revealGroup(groupEl: SVGElement): void {
   groupEl.querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline').forEach((el) => {
@@ -87,6 +104,7 @@ export default function ColorsSvgViewer() {
   const svgRef = useRef<SVGSVGElement>(null);
   const svgElRef = useRef<SVGSVGElement | null>(null);
   const [groupOrder, setGroupOrder] = useState<string[]>([]);
+  const [debugGroups, setDebugGroups] = useState<DebugGroup[]>([]);
   const [revealedCount, setRevealedCount] = useState(0);
   const [questions] = useState(() => shuffle(ALL_QUESTIONS));
   const [qIndex, setQIndex] = useState(0);
@@ -110,14 +128,22 @@ export default function ColorsSvgViewer() {
         s.append(fragment);
 
         const order: string[] = [];
+        const groups: DebugGroup[] = [];
         svgEl.querySelectorAll<SVGGElement>('g[data-group-color]').forEach((g) => {
-          if (g.getAttribute('inkscape:label') === 'static') return;
-          const id = g.getAttribute('id') ?? g.id;
-          if (id) order.push(id);
+          const groupId = g.getAttribute('id') ?? g.id;
+          const id = groupId || '(no id)';
+          const isStatic = g.getAttribute('inkscape:label') === 'static';
+          groups.push({ id, originalFills: getGroupFills(g), isStatic });
+
+          if (isStatic) return;
+          if (groupId) order.push(groupId);
           grayOutGroup(g);
         });
 
-        if (!cancelled) setGroupOrder(order);
+        if (!cancelled) {
+          setGroupOrder(order);
+          setDebugGroups(groups);
+        }
       });
     });
 
@@ -180,6 +206,20 @@ export default function ColorsSvgViewer() {
             <span>Question: {qIndex + 1}</span>
             <span>Selected: {selectedOption ?? 'none'}</span>
             <span>Locked: {locked ? 'yes' : 'no'}</span>
+            <div className={styles.debugGroupList}>
+              {debugGroups.map((group, index) => {
+                const status = group.isStatic
+                  ? 'original (static)'
+                  : index < revealedCount
+                    ? 'revealed'
+                    : 'gray (#808080)';
+                return (
+                  <span key={`${group.id}-${index}`}>
+                    {group.id}: {status}; original {group.originalFills.join(', ') || 'no fill'}
+                  </span>
+                );
+              })}
+            </div>
           </aside>
         )}
       </main>
