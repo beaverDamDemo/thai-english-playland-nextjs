@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/app/_lib/server/db';
+import { NextResponse } from "next/server";
+import { db } from "@/app/_lib/server/db";
 
 export async function GET() {
   // Get total users count
@@ -44,12 +44,16 @@ export async function GET() {
 
   // Get game mode popularity (by quiz attempts)
   const gameModePopularityResult = await db`
+    WITH game_modes (game_mode) AS (
+      VALUES ('maze'), ('casino'), ('pattaya'), ('starter')
+    )
     SELECT
-      game_mode,
-      SUM(quiz_attempts) as total_attempts,
-      COUNT(DISTINCT user_id) as unique_users
-    FROM public.thai_english_playland_user_progress
-    GROUP BY game_mode
+      m.game_mode,
+      COALESCE(SUM(p.quiz_attempts), 0) as total_attempts,
+      COUNT(DISTINCT p.user_id) as unique_users
+    FROM game_modes m
+    LEFT JOIN public.thai_english_playland_user_progress p ON p.game_mode = m.game_mode
+    GROUP BY m.game_mode
     ORDER BY total_attempts DESC;
   `;
 
@@ -91,15 +95,19 @@ export async function GET() {
 
   // Get progress statistics by game mode
   const progressStatsResult = await db`
+    WITH game_modes (game_mode, total_lessons) AS (
+      VALUES ('maze', 9), ('casino', 9), ('pattaya', 9), ('starter', 6)
+    )
     SELECT
-      game_mode,
-      AVG(unlocked_lessons) as avg_unlocked_lessons,
-      AVG(CASE WHEN quiz_attempts > 0 THEN (correct_answers::float / (correct_answers + wrong_answers)) * 100 ELSE 0 END) as avg_success_rate,
-      COUNT(CASE WHEN unlocked_lessons >= 9 THEN 1 END) as completed_users,
-      COUNT(DISTINCT user_id) as total_users_in_mode
-    FROM public.thai_english_playland_user_progress
-    GROUP BY game_mode
-    ORDER BY game_mode;
+      m.game_mode,
+      COALESCE(AVG(p.unlocked_lessons), 0) as avg_unlocked_lessons,
+      COALESCE(AVG(CASE WHEN p.quiz_attempts > 0 THEN (p.correct_answers::float / (p.correct_answers + p.wrong_answers)) * 100 ELSE 0 END), 0) as avg_success_rate,
+      COUNT(CASE WHEN p.unlocked_lessons >= m.total_lessons THEN 1 END) as completed_users,
+      COUNT(DISTINCT p.user_id) as total_users_in_mode
+    FROM game_modes m
+    LEFT JOIN public.thai_english_playland_user_progress p ON p.game_mode = m.game_mode
+    GROUP BY m.game_mode, m.total_lessons
+    ORDER BY m.game_mode;
   `;
 
   // Get quiz attempts over time (daily for last 30 days)
@@ -144,15 +152,15 @@ export async function GET() {
     data: {
       totalUsers,
       dailyUsers: dailyUsersResult.map((row) => ({
-        date: row.date?.toISOString().split('T')[0] || '',
+        date: row.date?.toISOString().split("T")[0] || "",
         count: Number(row.count || 0),
       })),
       weeklyUsers: weeklyUsersResult.map((row) => ({
-        weekStart: row.week_start?.toISOString().split('T')[0] || '',
+        weekStart: row.week_start?.toISOString().split("T")[0] || "",
         count: Number(row.count || 0),
       })),
       monthlyUsers: monthlyUsersResult.map((row) => ({
-        monthStart: row.month_start?.toISOString().split('T')[0] || '',
+        monthStart: row.month_start?.toISOString().split("T")[0] || "",
         count: Number(row.count || 0),
       })),
       gameModePopularity: gameModePopularityResult.map((row) => ({
@@ -165,11 +173,21 @@ export async function GET() {
         userCount: Number(row.user_count || 0),
       })),
       engagementMetrics: {
-        avgQuizAttempts: Number(engagementMetricsResult[0]?.avg_quiz_attempts || 0),
-        avgCorrectAnswers: Number(engagementMetricsResult[0]?.avg_correct_answers || 0),
-        avgWrongAnswers: Number(engagementMetricsResult[0]?.avg_wrong_answers || 0),
-        avgMovesEarned: Number(engagementMetricsResult[0]?.avg_moves_earned || 0),
-        avgSuccessRate: Number(engagementMetricsResult[0]?.avg_success_rate || 0),
+        avgQuizAttempts: Number(
+          engagementMetricsResult[0]?.avg_quiz_attempts || 0,
+        ),
+        avgCorrectAnswers: Number(
+          engagementMetricsResult[0]?.avg_correct_answers || 0,
+        ),
+        avgWrongAnswers: Number(
+          engagementMetricsResult[0]?.avg_wrong_answers || 0,
+        ),
+        avgMovesEarned: Number(
+          engagementMetricsResult[0]?.avg_moves_earned || 0,
+        ),
+        avgSuccessRate: Number(
+          engagementMetricsResult[0]?.avg_success_rate || 0,
+        ),
       },
       mostActiveUsers: mostActiveUsersResult.map((row) => ({
         username: row.username,
@@ -187,7 +205,7 @@ export async function GET() {
       })),
       activityOverTime: {
         dailyActivity: dailyActivityResult.map((row) => ({
-          date: row.date?.toISOString().split('T')[0] || '',
+          date: row.date?.toISOString().split("T")[0] || "",
           totalAttempts: Number(row.total_attempts || 0),
           activeUsers: Number(row.active_users || 0),
         })),
@@ -198,9 +216,12 @@ export async function GET() {
         retention: {
           returningUsers: Number(retentionResult[0]?.returning_users || 0),
           totalUsers: Number(retentionResult[0]?.total_users || 0),
-          retentionRate: retentionResult[0]?.total_users > 0
-            ? ((Number(retentionResult[0]?.returning_users || 0) / Number(retentionResult[0]?.total_users || 1)) * 100)
-            : 0,
+          retentionRate:
+            retentionResult[0]?.total_users > 0
+              ? (Number(retentionResult[0]?.returning_users || 0) /
+                  Number(retentionResult[0]?.total_users || 1)) *
+                100
+              : 0,
         },
       },
     },

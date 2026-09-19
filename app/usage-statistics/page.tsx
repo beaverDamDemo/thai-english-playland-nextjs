@@ -51,6 +51,18 @@ type UserGrowthData = {
   };
 };
 
+function getGameModeDetails(gameMode: string): { emoji: string; name: string } {
+  if (gameMode === 'maze') return { emoji: '🌀', name: 'Maze' };
+  if (gameMode === 'casino') return { emoji: '🎰', name: 'Casino' };
+  if (gameMode === 'pattaya') return { emoji: '🏖️', name: 'Pattaya' };
+  if (gameMode === 'starter') return { emoji: '🌱', name: 'Starter Learners Zone' };
+
+  return {
+    emoji: '🎮',
+    name: gameMode.charAt(0).toUpperCase() + gameMode.slice(1),
+  };
+}
+
 export default function UsageStatisticsPage() {
   const [data, setData] = useState<UserGrowthData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -194,14 +206,7 @@ export default function UsageStatisticsPage() {
                 1,
               );
               const barWidth = (mode.totalAttempts / maxAttempts) * 100;
-              const gameEmoji =
-                mode.gameMode === 'maze'
-                  ? '🌀'
-                  : mode.gameMode === 'casino'
-                    ? '🎰'
-                    : '🏖️';
-              const gameName =
-                mode.gameMode.charAt(0).toUpperCase() + mode.gameMode.slice(1);
+              const { emoji: gameEmoji, name: gameName } = getGameModeDetails(mode.gameMode);
 
               return (
                 <div key={mode.gameMode} className={styles.gameModeItem}>
@@ -348,14 +353,7 @@ export default function UsageStatisticsPage() {
 
           <div className={styles.progressStatsGrid}>
             {data.progressStats.map((stat) => {
-              const gameEmoji =
-                stat.gameMode === 'maze'
-                  ? '🌀'
-                  : stat.gameMode === 'casino'
-                    ? '🎰'
-                    : '🏖️';
-              const gameName =
-                stat.gameMode.charAt(0).toUpperCase() + stat.gameMode.slice(1);
+              const { emoji: gameEmoji, name: gameName } = getGameModeDetails(stat.gameMode);
               const completionRate =
                 stat.totalUsersInMode > 0
                   ? (

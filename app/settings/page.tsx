@@ -25,7 +25,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<{
-    type: 'all' | 'maze' | 'casino' | 'pattaya' | 'deleteAccount';
+    type: 'all' | 'maze' | 'casino' | 'pattaya' | 'starter' | 'deleteAccount';
     label: string;
   } | null>(null);
   const [notification, setNotification] = useState<{
@@ -69,9 +69,11 @@ export default function SettingsPage() {
     setConfirmAction({ type: 'all', label: 'Reset All Progress' });
   };
 
-  const handleResetGameMode = (mode: string) => {
-    const label = `Reset ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
-    setConfirmAction({ type: mode as 'maze' | 'casino' | 'pattaya', label });
+  const handleResetGameMode = (
+    mode: 'maze' | 'casino' | 'pattaya' | 'starter',
+    name: string,
+  ) => {
+    setConfirmAction({ type: mode, label: `Reset ${name}` });
   };
 
   const handleConfirmReset = () => {
@@ -244,19 +246,25 @@ export default function SettingsPage() {
             </p>
             <div className={styles.buttonGroup}>
               <button
-                onClick={() => handleResetGameMode('maze')}
+                onClick={() => handleResetGameMode('starter', 'Starter Learners Zone')}
+                className={styles.gameModeButton}
+              >
+                🌱 Reset Starter Learners Zone
+              </button>
+              <button
+                onClick={() => handleResetGameMode('maze', 'Maze')}
                 className={styles.gameModeButton}
               >
                 🌀 Reset Maze
               </button>
               <button
-                onClick={() => handleResetGameMode('casino')}
+                onClick={() => handleResetGameMode('casino', 'Casino')}
                 className={styles.gameModeButton}
               >
                 🎰 Reset Casino
               </button>
               <button
-                onClick={() => handleResetGameMode('pattaya')}
+                onClick={() => handleResetGameMode('pattaya', 'Pattaya')}
                 className={styles.gameModeButton}
               >
                 🏖️ Reset Pattaya

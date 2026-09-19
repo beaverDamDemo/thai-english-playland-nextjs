@@ -1,6 +1,6 @@
 {
   "name": "thai-english-playland",
-  "version": "0.0.31",
+  "version": "0.0.33",
   "private": true,
   "scripts": {
     "check:quotes": "node scripts/check-unescaped-apostrophes.mjs",
@@ -12,7 +12,10 @@
     "dev": "npm run db:start && next dev --webpack --port 4200",
     "dev:local": "npm run db:start && npm run dev:local-only",
     "dev:local-only": "next dev --webpack --port 4200",
-    "dev:prod": "USE_PROD_DB=true next dev --webpack --port 4200",
+    "start:dev:local": "npm run db:start && npm run dev:local-only",
+    "start:dev:local-only": "next dev --webpack --port 4200",
+    "not-working-!-dev:prod": "cross-env USE_PROD_DB=true next dev --webpack --port 4200",
+    "not-working-!-start:dev:prod": "cross-env USE_PROD_DB=true next dev --webpack --port 4200",
     "prestart": "npm run build",
     "start": "next start --port 4200",
     "lint": "eslint",
@@ -38,6 +41,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "^16.2.4",
     "gh-pages": "^6.3.0",
