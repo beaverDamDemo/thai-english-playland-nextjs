@@ -9,10 +9,12 @@ import FontSizeToggle from '../_components/FontSizeToggle';
 import { lessonMapButtons as mazeLessonMapButtons } from '../games/maze/lessonMapConfig';
 import { lessonMapButtons as casinoLessonMapButtons } from '../games/casino/lessonMapConfig';
 import { lessonMapButtons as pattayaLessonMapButtons } from '../games/pattaya-games/lessonMapConfig';
+import { lessonMapButtons as starterLessonMapButtons } from '../games/starter/lessonMapConfig';
 
 const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
 const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);
 const PATTAYA_TOTAL_LESSONS = Math.max(1, pattayaLessonMapButtons.length);
+const STARTER_TOTAL_LESSONS = Math.max(1, starterLessonMapButtons.length);
 
 type SettingsResponse = {
   ok: boolean;
@@ -98,7 +100,7 @@ export default function SettingsPage() {
           setConfirmAction(null);
         });
     } else if (confirmAction.type === 'all') {
-      const modes = ['maze', 'casino', 'pattaya'];
+      const modes = ['maze', 'casino', 'pattaya', 'starter'];
       Promise.all(
         modes.map((mode) =>
           fetch('/api/progress', {
@@ -174,6 +176,7 @@ export default function SettingsPage() {
       { game_mode: 'maze', unlocked_lessons: MAZE_TOTAL_LESSONS },
       { game_mode: 'casino', unlocked_lessons: CASINO_TOTAL_LESSONS },
       { game_mode: 'pattaya', unlocked_lessons: PATTAYA_TOTAL_LESSONS },
+      { game_mode: 'starter', unlocked_lessons: STARTER_TOTAL_LESSONS },
     ];
     Promise.all(
       updates.map((u) =>
