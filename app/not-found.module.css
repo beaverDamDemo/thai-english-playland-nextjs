@@ -1,31 +1,44 @@
 .page {
-  position: relative;
   align-items: center;
   background-color: #111;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  text-align: center;
+}
+
+.imageArea {
+  position: relative;
+  --image-ratio: 16 / 9;
+  aspect-ratio: var(--image-ratio);
+  height: min(96vh, calc(96vw / (var(--image-ratio))));
+  max-width: 96vw;
   background-image: url("/assets/tinified/404-quality-40.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 2rem;
-  text-align: center;
 }
 
 .primaryAction {
   position: absolute;
   font-weight: 700;
   text-decoration: none;
-  top: 66%;
-  left: 16%;
+  top: 61.5%;
+  left: 13%;
   color: #141058;
   font-size: 5.5vw;
+  transform: translateY(0);
+  top: 69%;
+  left: 21%;
+  color: #141058;
+  font-size: 3.7vw;
+  transform: translateY(0);
 }
 
 .primaryAction:hover,
 .primaryAction:focus-visible {
-  color: #555;
+  color: #3a35a2;
 }
 
 @media (max-width: 480px) {
