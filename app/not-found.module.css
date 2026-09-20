@@ -40,7 +40,29 @@
 .primaryAction:focus-visible {
   color: #3a35a2;
 }
+.primaryAction {
+  position: absolute;
+  font-weight: 700;
+  text-decoration: none;
+  top: 69.4%;
+  left: 21%;
+  color: #141058;
+  font-size: 3.7vw;
+  transform: translateY(0) rotate(-1deg);
+  animation: pulseGlow 1.8s infinite;
+}
 
+@keyframes pulseGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 0 rgba(58, 53, 162, 0);
+  }
+  50% {
+    text-shadow:
+      0 0 8px rgba(58, 53, 162, 0.7),
+      0 0 16px rgba(58, 53, 162, 0.4);
+  }
+}
 @media (max-width: 480px) {
   .page {
     padding: 1rem;
