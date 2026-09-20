@@ -1,0 +1,36 @@
+.page {
+  position: relative;
+  align-items: center;
+  background-color: #111;
+  background-image: url("/assets/tinified/404-quality-40.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+}
+
+.primaryAction {
+  position: absolute;
+  font-weight: 700;
+  text-decoration: none;
+  top: 66%;
+  left: 16%;
+  /* transform: translate(-50%, -50%); */
+  color: #000;
+  font-size: 3.9rem;
+}
+
+.primaryAction:hover,
+.primaryAction:focus-visible {
+  color: #555;
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 1rem;
+  }
+}
