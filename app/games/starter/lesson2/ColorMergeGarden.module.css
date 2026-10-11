@@ -24,13 +24,6 @@
   margin: 0 auto;
 }
 
-.eyebrow {
-  color: #65816a;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
 .page {
   padding: 0 0 max(18px, env(safe-area-inset-bottom));
 }
@@ -56,17 +49,6 @@
 
 .heading {
   text-align: center;
-}
-
-.eyebrow {
-  margin: 0 0 6px;
-}
-
-.heading h1 {
-  margin: 0;
-  color: #244a32;
-  font-size: 1.8rem;
-  line-height: 1.1;
 }
 
 .instructions {
@@ -122,34 +104,6 @@
   color: #8a998b;
   font-size: 0.85rem;
   font-weight: 600;
-}
-
-.progress {
-  display: block;
-  width: 100%;
-  height: 7px;
-  overflow: hidden;
-  border: 0;
-  border-radius: 999px;
-  background: #dfe8d8;
-  color: #4c9a5f;
-  appearance: none;
-}
-
-.progress::-webkit-progress-bar {
-  border-radius: 999px;
-  background: #dfe8d8;
-}
-
-.progress::-webkit-progress-value {
-  border-radius: 999px;
-  background: #4c9a5f;
-  transition: width 0.25s ease;
-}
-
-.progress::-moz-progress-bar {
-  border-radius: 999px;
-  background: #4c9a5f;
 }
 
 .selectionHint {
@@ -249,12 +203,58 @@
   background: #6a1b9a;
 }
 
+.swatchCell[data-color='pink'] {
+  background: #c2185b;
+}
+
+.swatchCell[data-color='brown'] {
+  background: #795548;
+}
+
+.swatchCell[data-color='black'] {
+  background: #111;
+}
+
+.swatchCell[data-color='white'] {
+  background: #fff;
+}
+
+.swatchCell[data-color='gray'] {
+  background: #6c757d;
+}
+
+.swatchCell[data-color='cyan'] {
+  background: #008b9a;
+}
+
 .selected {
   z-index: 1;
   border-color: #14241a;
   box-shadow:
     0 0 0 2px #fff,
     0 0 0 4px #14241a;
+}
+
+.matchedCell {
+  animation: matchedPair 460ms ease-out both;
+}
+
+@keyframes matchedPair {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    background: #b7dda9;
+  }
+  65% {
+    transform: scale(0.76);
+    opacity: 0.75;
+    background: #b7dda9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    background: #bdc8ba;
+  }
 }
 
 .actions,
@@ -324,10 +324,6 @@
     padding: 0 0 28px;
   }
 
-  .heading h1 {
-    font-size: 2.15rem;
-  }
-
   .board {
     gap: 8px;
     padding: 11px;
@@ -342,7 +338,7 @@
   }
 
   .actions {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
   }
 
   .resetButton {
@@ -352,8 +348,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cell,
-  .progress::-webkit-progress-value,
-  .mergeButton {
+  .mergeButton,
+  .matchedCell {
     transition: none;
+    animation: none;
   }
 }

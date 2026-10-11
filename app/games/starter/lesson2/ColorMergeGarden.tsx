@@ -6,7 +6,19 @@ import { useState } from 'react';
 import styles from './ColorMergeGarden.module.css';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 
-type ColorName = 'red' | 'blue' | 'yellow' | 'green' | 'orange' | 'purple';
+type ColorName =
+  | 'red'
+  | 'blue'
+  | 'yellow'
+  | 'green'
+  | 'orange'
+  | 'purple'
+  | 'pink'
+  | 'brown'
+  | 'black'
+  | 'white'
+  | 'gray'
+  | 'cyan';
 type Tile =
   | { id: number; color: ColorName; representation: 'word'; word: string }
   | { id: number; color: ColorName; representation: 'swatch' };
@@ -18,12 +30,22 @@ const COLORS: ColorName[] = [
   'green',
   'orange',
   'purple',
+  'pink',
+  'brown',
+  'black',
+  'white',
+  'gray',
+  'cyan',
 ];
-function createBoard(deterministic = false): (Tile | null)[] {
+function activeColorsForLevel(level: number): ColorName[] {
+  return COLORS.slice(0, Math.min(6 + (level - 1) * 2, COLORS.length));
+}
+
+function createBoard(level: number, deterministic = false): (Tile | null)[] {
   const board: (Tile | null)[] = Array(36).fill(null);
   const availableSlots = Array.from({ length: 36 }, (_, index) => index);
 
-  COLORS.forEach((color, colorIndex) => {
+  activeColorsForLevel(level).forEach((color, colorIndex) => {
     const wordTile: Tile = {
       id: colorIndex * 2,
       color,
@@ -50,38 +72,36 @@ function createBoard(deterministic = false): (Tile | null)[] {
   return board;
 }
 
-function promptForTile(tile: Tile): string {
-  return tile.representation === 'word'
-    ? `Find the solid ${tile.color} tile.`
-    : `Find the word "${tile.color}".`;
-}
-
 export default function ColorMergeGarden() {
   const [level, setLevel] = useState(1);
-  const [board, setBoard] = useState(() => createBoard(true));
+  const [board, setBoard] = useState(() => createBoard(1, true));
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [matchedColors, setMatchedColors] = useState<ColorName[]>([]);
+  const [lastMatchedColor, setLastMatchedColor] = useState<ColorName | null>(
+    null,
+  );
   const [message, setMessage] = useState('');
   const [levelComplete, setLevelComplete] = useState(false);
 
-  const levelGoal = COLORS.length;
-  const score = matchedColors.length;
+  const activeColors = activeColorsForLevel(level);
+  const levelGoal = activeColors.length;
   const selectedTile = board.find((tile) => tile?.id === selectedId);
 
   function selectTile(tile: Tile): void {
     if (levelComplete) return;
+    setLastMatchedColor(null);
 
     if (matchedColors.includes(tile.color)) return;
 
     if (selectedId === tile.id) {
       setSelectedId(null);
-      setMessage('Selection cleared. Choose a color word or tile.');
+      setMessage('Selection cleared. Choose a pair to match.');
       return;
     }
 
     if (selectedId === null || !selectedTile) {
       setSelectedId(tile.id);
-      setMessage(promptForTile(tile));
+      setMessage('Tile selected. Find its match.');
       return;
     }
 
@@ -91,33 +111,38 @@ export default function ColorMergeGarden() {
     ) {
       const nextMatchedColors = [...matchedColors, tile.color];
       setMatchedColors(nextMatchedColors);
+      setLastMatchedColor(tile.color);
       setSelectedId(null);
-      if (nextMatchedColors.length === COLORS.length) {
+      if (nextMatchedColors.length === activeColors.length) {
         setLevelComplete(true);
-        setMessage('All six color pairs matched!');
+        setMessage('All color pairs matched!');
       } else {
-        setMessage(`Matched ${tile.color}! Find another color pair.`);
+        setMessage(
+          `Pair matched! ${activeColors.length - nextMatchedColors.length} to go.`,
+        );
       }
     } else {
       setSelectedId(tile.id);
-      setMessage(`Not a match. ${promptForTile(tile)}`);
+      setMessage('Not a match. No penalty; try another pair.');
     }
   }
 
   function growGarden(): void {
     const nextLevel = level + 1;
     setLevel(nextLevel);
-    setBoard(createBoard());
+    setBoard(createBoard(nextLevel));
     setSelectedId(null);
     setMatchedColors([]);
+    setLastMatchedColor(null);
     setMessage('Match each color word with its solid color tile.');
     setLevelComplete(false);
   }
 
   function resetBoard(): void {
-    setBoard(createBoard());
+    setBoard(createBoard(level));
     setSelectedId(null);
     setMatchedColors([]);
+    setLastMatchedColor(null);
     setMessage('');
     setLevelComplete(false);
   }
@@ -133,25 +158,13 @@ export default function ColorMergeGarden() {
             height={34}
           />
         </Link>
-        <h1 className={styles.headerTitle}>Color Merge Garden</h1>
-        <div className={lessonHeaderStyles.dots} aria-label="Level progress">
-          {Array.from({ length: 6 }, (_, index) => (
-            <span
-              key={index}
-              className={`${lessonHeaderStyles.dot} ${score >= Math.ceil(((index + 1) * levelGoal) / 6) ? lessonHeaderStyles.dotDone : ''}`}
-            />
-          ))}
-        </div>
+        <h1 className={styles.headerTitle} id="game-title">
+          Color Merge Garden
+        </h1>
       </header>
 
       <section className={styles.game} aria-labelledby="game-title">
-        <div className={styles.heading}>
-          <p className={styles.eyebrow}>GROW YOUR COLOR GARDEN</p>
-          <h1 id="game-title">Color Merge Garden</h1>
-          <p className={styles.instructions}>
-            Tap a color word, then tap its blank color tile.
-          </p>
-        </div>
+        <div className={styles.heading}></div>
 
         <div className={styles.scoreRow}>
           <div className={styles.levelLabel}>
@@ -164,20 +177,13 @@ export default function ColorMergeGarden() {
             <span>MATCHED PAIRS</span>
             <strong>
               {matchedColors.length}
-              <span> / {COLORS.length}</span>
+              <span> / {levelGoal}</span>
             </strong>
           </div>
         </div>
 
-        <progress
-          className={styles.progress}
-          value={Math.min(score, levelGoal)}
-          max={levelGoal}
-          aria-label="Garden level progress"
-        />
-
         <p className={styles.selectionHint} aria-live="polite">
-          {message || 'Find all six color pairs to grow the garden.'}
+          {message || `Find all ${levelGoal} color pairs to grow the garden.`}
         </p>
 
         <div
@@ -186,11 +192,21 @@ export default function ColorMergeGarden() {
           aria-label="6 by 6 color game board"
         >
           {board.map((tile, index) => {
-            if (!tile || matchedColors.includes(tile.color)) {
+            if (!tile) {
               return (
                 <div
                   key={index}
                   className={`${styles.cell} ${styles.emptyCell}`}
+                  aria-hidden="true"
+                />
+              );
+            }
+
+            if (matchedColors.includes(tile.color)) {
+              return (
+                <div
+                  key={index}
+                  className={`${styles.cell} ${styles.emptyCell} ${lastMatchedColor === tile.color ? styles.matchedCell : ''}`}
                   aria-hidden="true"
                 />
               );
@@ -222,7 +238,7 @@ export default function ColorMergeGarden() {
 
         {levelComplete ? (
           <div className={styles.completion} role="status">
-            <p>Garden grown. You matched all six colors.</p>
+            <p>Garden grown. You matched every color.</p>
             <button
               className={styles.mergeButton}
               type="button"
@@ -242,10 +258,6 @@ export default function ColorMergeGarden() {
             </button>
           </div>
         )}
-
-        <p className={styles.learningNote}>
-          Each written color matches one solid, unlabeled color tile.
-        </p>
       </section>
     </main>
   );
