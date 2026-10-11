@@ -41,6 +41,25 @@
   white-space: nowrap;
 }
 
+.soundToggle {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.soundToggle:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
 .game {
   display: flex;
   flex-direction: column;
@@ -118,7 +137,7 @@
 .board {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   padding: 8px;
   border: 2px solid #526052;
@@ -126,6 +145,10 @@
   background: #d4ddd0;
   box-shadow: 0 10px 30px rgba(20, 36, 26, 0.16);
   touch-action: manipulation;
+}
+
+.openingBoard {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .cell {
@@ -158,6 +181,137 @@
   background: #bdc8ba;
   box-shadow: inset 0 1px 3px rgba(24, 36, 26, 0.18);
   cursor: default;
+}
+
+.gardenCell {
+  position: relative;
+  overflow: hidden;
+  border-color: var(--garden-border, #4d713d);
+  background: var(--garden-background, #dbeac6);
+  box-shadow: inset 0 1px 3px rgba(24, 36, 26, 0.14);
+  opacity: 0.68;
+}
+
+.gardenCell::before {
+  position: absolute;
+  top: 26%;
+  left: 34%;
+  width: 23%;
+  height: 35%;
+  border-radius: 100% 0 100% 0;
+  background: var(--garden-leaf, #287a40);
+  box-shadow: 8px 4px 0 -1px var(--garden-leaf-light, #52a652);
+  content: '';
+  transform: rotate(-30deg);
+}
+
+.gardenCell::after {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: 2px;
+  height: 30%;
+  border-radius: 2px;
+  background: var(--garden-stem, #467742);
+  content: '';
+  transform: rotate(8deg);
+  transform-origin: top center;
+}
+
+.gardenCell[data-color='red'] {
+  --garden-background: #f6c4c1;
+  --garden-border: #c62828;
+  --garden-leaf: #c62828;
+  --garden-leaf-light: #ef5350;
+  --garden-stem: #a52828;
+}
+
+.gardenCell[data-color='blue'] {
+  --garden-background: #c4dcf7;
+  --garden-border: #0057d9;
+  --garden-leaf: #0057d9;
+  --garden-leaf-light: #4a9eff;
+  --garden-stem: #245fa3;
+}
+
+.gardenCell[data-color='yellow'] {
+  --garden-background: #fff0b3;
+  --garden-border: #ae8200;
+  --garden-leaf: #c89b00;
+  --garden-leaf-light: #f1c232;
+  --garden-stem: #977719;
+}
+
+.gardenCell[data-color='green'] {
+  --garden-background: #c7e8c9;
+  --garden-border: #00852f;
+  --garden-leaf: #00852f;
+  --garden-leaf-light: #57b96a;
+  --garden-stem: #327c39;
+}
+
+.gardenCell[data-color='orange'] {
+  --garden-background: #ffddc2;
+  --garden-border: #d94b00;
+  --garden-leaf: #d94b00;
+  --garden-leaf-light: #ff8a42;
+  --garden-stem: #a34b1e;
+}
+
+.gardenCell[data-color='purple'] {
+  --garden-background: #e1d0f2;
+  --garden-border: #6a1b9a;
+  --garden-leaf: #6a1b9a;
+  --garden-leaf-light: #a668d4;
+  --garden-stem: #6b4b8a;
+}
+
+.gardenCell[data-color='pink'] {
+  --garden-background: #f6c9de;
+  --garden-border: #c2185b;
+  --garden-leaf: #c2185b;
+  --garden-leaf-light: #eb6097;
+  --garden-stem: #963357;
+}
+
+.gardenCell[data-color='brown'] {
+  --garden-background: #e4d4c7;
+  --garden-border: #795548;
+  --garden-leaf: #795548;
+  --garden-leaf-light: #a98269;
+  --garden-stem: #624437;
+}
+
+.gardenCell[data-color='black'] {
+  --garden-background: #c9cbca;
+  --garden-border: #343837;
+  --garden-leaf: #343837;
+  --garden-leaf-light: #666d6a;
+  --garden-stem: #474d4a;
+}
+
+.gardenCell[data-color='white'] {
+  --garden-background: #fff;
+  --garden-border: #7c8580;
+  --garden-leaf: #5c8050;
+  --garden-leaf-light: #82a873;
+  --garden-stem: #607b55;
+}
+
+.gardenCell[data-color='gray'] {
+  --garden-background: #d4d8dc;
+  --garden-border: #59636c;
+  --garden-leaf: #59636c;
+  --garden-leaf-light: #87929a;
+  --garden-stem: #59636c;
+}
+
+.gardenCell[data-color='cyan'] {
+  --garden-background: #c0e8e9;
+  --garden-border: #008b9a;
+  --garden-leaf: #008b9a;
+  --garden-leaf-light: #36b7c2;
+  --garden-stem: #287d85;
 }
 
 .cell:focus-visible {
@@ -242,18 +396,15 @@
 @keyframes matchedPair {
   0% {
     transform: scale(1);
-    opacity: 1;
-    background: #b7dda9;
+    opacity: 0.68;
   }
   65% {
     transform: scale(0.76);
-    opacity: 0.75;
-    background: #b7dda9;
+    opacity: 0.42;
   }
   100% {
     transform: scale(1);
-    opacity: 1;
-    background: #bdc8ba;
+    opacity: 0.68;
   }
 }
 
