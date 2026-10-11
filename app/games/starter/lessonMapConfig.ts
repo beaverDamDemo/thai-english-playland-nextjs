@@ -31,7 +31,7 @@ export const lessonConfigs: LessonConfig[] = [
     num: 2,
     color: "#ffef40",
     colorDark: "#343536",
-    title: "Animals",
+    title: "Color Merge Garden",
     tile: "/assets/tinified/tile-green-2.png",
     columns: 17,
     left: 22,

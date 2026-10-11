@@ -1,7 +1,5 @@
-'use client';
-import Quiz from './Quiz';
-import StarterLessonPage from '../_components/StarterLessonPage';
+import ColorMergeGarden from './ColorMergeGarden';
 
 export default function Page() {
-  return <StarterLessonPage lessonNumber={2} Quiz={Quiz} />;
+  return <ColorMergeGarden />;
 }
