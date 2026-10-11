@@ -42,7 +42,8 @@ one → two → three → four → five
 Later levels
 Mix digits and words:
 3 → four → 5 → six → 7
-Laterseven → 8 → nine → 10
+Later
+seven → 8 → nine → 10
 Why it works
 Feels like a path puzzle.
 Learning happens automatically.

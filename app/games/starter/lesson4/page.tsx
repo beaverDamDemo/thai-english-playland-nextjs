@@ -1,7 +1,5 @@
-'use client';
-import Quiz from './Quiz';
-import StarterLessonPage from '../_components/StarterLessonPage';
+import EmptyGrid from './EmptyGrid';
 
 export default function Page() {
-  return <StarterLessonPage lessonNumber={4} Quiz={Quiz} />;
+  return <EmptyGrid />;
 }

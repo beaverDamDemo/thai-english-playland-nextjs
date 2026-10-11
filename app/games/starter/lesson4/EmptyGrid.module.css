@@ -1,0 +1,94 @@
+.page {
+  box-sizing: border-box;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      ellipse at 8% 25%,
+      rgba(104, 190, 198, 0.2),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 100% 88%,
+      rgba(255, 191, 91, 0.2),
+      transparent 40%
+    ),
+    #f3f7f3;
+  color: #202d31;
+}
+
+.headerTitle {
+  min-width: 0;
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  color: #fff;
+  font-size: clamp(1rem, 4.5vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lessonTag {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.workspace {
+  box-sizing: border-box;
+  display: grid;
+  width: min(100%, 800px);
+  flex: 1;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  align-self: center;
+  padding: 24px 16px max(32px, env(safe-area-inset-bottom));
+}
+
+.gridLabel {
+  margin: 0;
+  color: #315c5b;
+  font-size: 0.9rem;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+}
+
+.grid {
+  box-sizing: border-box;
+  display: grid;
+  width: min(100%, min(76svh, 680px));
+  aspect-ratio: 1;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  gap: clamp(4px, 1vw, 8px);
+  padding: clamp(8px, 1.8vw, 12px);
+  border: 2px solid #435b59;
+  border-radius: 14px;
+  background: #cbd9d4;
+  box-shadow: 0 10px 28px rgba(29, 57, 56, 0.16);
+}
+
+.cell {
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid #81938d;
+  border-radius: 3px;
+  background: #fffefa;
+}
+
+@media (max-width: 480px) {
+  .grid {
+    width: min(100%, 76svh);
+    border-radius: 10px;
+  }
+}
