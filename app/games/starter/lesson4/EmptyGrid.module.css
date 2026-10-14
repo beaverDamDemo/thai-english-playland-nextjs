@@ -45,32 +45,56 @@
 
 .workspace {
   box-sizing: border-box;
-  display: grid;
-  width: min(100%, 800px);
+  display: flex;
   flex: 1;
-  align-content: center;
-  justify-items: center;
-  gap: 10px;
-  align-self: center;
-  padding: 24px 16px max(32px, env(safe-area-inset-bottom));
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px 16px max(28px, env(safe-area-inset-bottom));
 }
 
-.gridLabel {
+.gameLayout {
+  display: grid;
+  width: min(100%, 1080px);
+  grid-template-columns: minmax(0, 1fr) 240px;
+  align-items: center;
+  gap: 22px;
+}
+
+.boardArea {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 12px;
+}
+
+.boardHeading {
+  text-align: center;
+}
+
+.boardTitle {
+  margin: 0 0 4px;
+  color: #202d31;
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+
+.status {
+  min-height: 1.25rem;
   margin: 0;
   color: #315c5b;
-  font-size: 0.9rem;
-  font-weight: 850;
-  letter-spacing: 0.05em;
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .grid {
   box-sizing: border-box;
   display: grid;
-  width: min(100%, min(76svh, 680px));
+  width: min(100%, min(72svh, 660px));
   aspect-ratio: 1;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   grid-template-rows: repeat(8, minmax(0, 1fr));
-  gap: clamp(4px, 1vw, 8px);
+  gap: clamp(2px, 0.6vw, 5px);
   padding: clamp(8px, 1.8vw, 12px);
   border: 2px solid #435b59;
   border-radius: 14px;
@@ -79,16 +103,213 @@
 }
 
 .cell {
+  position: relative;
+  display: grid;
   min-width: 0;
   min-height: 0;
+  aspect-ratio: 1;
+  place-items: center;
+  padding: 0;
   border: 1px solid #81938d;
-  border-radius: 3px;
+  border-radius: 4px;
   background: #fffefa;
 }
 
-@media (max-width: 480px) {
+.emptyCell {
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.emptyCell:hover {
+  border-color: #1c6671;
+  background: #e9f4ef;
+}
+
+.occupiedCell {
+  cursor: grab;
+}
+
+.occupiedCell:active {
+  cursor: grabbing;
+}
+
+.connectedCell {
+  border-color: #25835d;
+  background: #e5f2e8;
+}
+
+.terminal {
+  border-color: #ba693b;
+  background: #f7e8dc;
+}
+
+.endTerminal {
+  border-color: #155d72;
+  background: #e2eff1;
+}
+
+.terminalLabel {
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  color: #6a4834;
+  font-size: clamp(0.34rem, 0.75vw, 0.5rem);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
+.pipeArtwork {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.toolPanel {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(67, 91, 89, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 254, 250, 0.76);
+}
+
+.panelTitle {
+  margin: 0;
+  color: #315c5b;
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.toolGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.toolButton {
+  display: flex;
+  min-width: 0;
+  min-height: 82px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid #a7b9b1;
+  border-radius: 8px;
+  background: #fffefa;
+  color: #304745;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: grab;
+  touch-action: manipulation;
+}
+
+.toolButton:active {
+  cursor: grabbing;
+}
+
+.toolButton .pipeArtwork {
+  width: 44px;
+  height: 44px;
+}
+
+.selectedTool {
+  border-color: #075c77;
+  background: #e5f1f2;
+  box-shadow: 0 0 0 2px rgba(7, 92, 119, 0.16);
+}
+
+.clearButton {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #1c6671;
+  border-radius: 8px;
+  background: #1c6671;
+  color: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.clearButton {
+  border-color: #9bada5;
+  background: transparent;
+  color: #315c5b;
+}
+
+.toolButton:focus-visible,
+.clearButton:focus-visible,
+.cell:focus-visible {
+  outline: 3px solid #a24a24;
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .gameLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
   .grid {
-    width: min(100%, 76svh);
+    width: min(100%, min(56svh, 560px));
+  }
+
+  .toolPanel {
+    width: min(100%, 560px);
+    box-sizing: border-box;
+    justify-self: center;
+  }
+
+  .toolGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .toolButton {
+    min-height: 72px;
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .grid {
+    width: min(100%, min(52svh, 500px));
     border-radius: 10px;
+  }
+
+  .toolPanel {
+    padding: 12px;
+  }
+
+  .toolGrid {
+    gap: 5px;
+  }
+
+  .toolButton {
+    min-height: 64px;
+    padding: 4px 2px;
+  }
+
+  .toolButton .pipeArtwork {
+    width: 38px;
+    height: 38px;
   }
 }

@@ -159,6 +159,7 @@ function revealGroup(groupEl: SVGElement): void {
 export default function ColorsSvgViewer() {
   const svgRef = useRef<SVGSVGElement>(null);
   const svgElRef = useRef<SVGSVGElement | null>(null);
+  const hasSavedCompletionRef = useRef(false);
   const [groupOrder, setGroupOrder] = useState<string[]>([]);
   const [groupsFoundCount, setGroupsFoundCount] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
@@ -249,6 +250,57 @@ export default function ColorsSvgViewer() {
   const allRevealed = groupOrder.length > 0 && revealedCount >= groupOrder.length;
   const q = questions[qIndex % questions.length];
   const thaiQuestion = useThaiQuestion(q.q);
+
+  useEffect(() => {
+    if (!allRevealed || hasSavedCompletionRef.current) return;
+    hasSavedCompletionRef.current = true;
+
+    const saveCompletionProgress = async () => {
+      try {
+        const progressRes = await fetch('/api/progress');
+        const progressData = (await progressRes.json().catch(() => ({}))) as {
+          ok?: boolean;
+          progress?: Record<
+            string,
+            {
+              unlocked_lessons: number;
+              correct_answers: number;
+              wrong_answers: number;
+              quiz_attempts: number;
+              total_moves_earned: number;
+            }
+          >;
+        };
+
+        if (!progressData.ok || !progressData.progress) return;
+
+        const starter = progressData.progress.starter ?? {
+          unlocked_lessons: 1,
+          correct_answers: 0,
+          wrong_answers: 0,
+          quiz_attempts: 0,
+          total_moves_earned: 0,
+        };
+
+        await fetch('/api/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            game_mode: 'starter',
+            unlocked_lessons: Math.max(starter.unlocked_lessons, 2),
+            correct_answers: starter.correct_answers,
+            wrong_answers: starter.wrong_answers,
+            quiz_attempts: starter.quiz_attempts,
+            total_moves_earned: starter.total_moves_earned,
+          }),
+        });
+      } catch {
+        // Ignore transient network/auth issues; unlock state will sync on next successful run.
+      }
+    };
+
+    void saveCompletionProgress();
+  }, [allRevealed]);
 
   return (
     <div className={styles.page}>

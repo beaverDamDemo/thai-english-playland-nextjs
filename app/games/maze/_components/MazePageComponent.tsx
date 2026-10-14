@@ -183,7 +183,7 @@ const MazePageComponent: FC<MazePageProps> = ({
           >;
         }) => {
           if (!data.ok || !data.progress) return;
-          const mode = statsKey === 'englishCasinoStats' ? 'casino' : 'maze';
+          const mode = gameMode;
           const p = data.progress[mode];
           if (!p) return;
           setCorrectAnswers(p.correct_answers);
@@ -196,7 +196,7 @@ const MazePageComponent: FC<MazePageProps> = ({
         },
       )
       .catch(() => null);
-  }, [statsKey, totalLessons]);
+  }, [gameMode, totalLessons]);
 
   // Calculate scale to fit content to screen
   useEffect(() => {

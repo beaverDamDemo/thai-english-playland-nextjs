@@ -51,7 +51,7 @@ export const lessonConfigs: LessonConfig[] = [
     num: 4,
     color: "#ffef40",
     colorDark: "#343536",
-    title: "Empty Grid",
+    title: "Pipe Connect",
     tile: "/assets/tinified/tile-brown-2.png",
     columns: 19,
     left: 28,
