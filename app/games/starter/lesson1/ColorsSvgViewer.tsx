@@ -6,6 +6,7 @@ import Image from 'next/image';
 import type Snap from 'snapsvg-cjs';
 import { useThaiQuestion } from '@/app/games/maze/_components/useThaiQuestion';
 import styles from './ColorsSvgViewer.module.css';
+import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 
 type SnapStatic = typeof Snap;
 
@@ -255,52 +256,12 @@ export default function ColorsSvgViewer() {
     if (!allRevealed || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
 
-    const saveCompletionProgress = async () => {
-      try {
-        const progressRes = await fetch('/api/progress');
-        const progressData = (await progressRes.json().catch(() => ({}))) as {
-          ok?: boolean;
-          progress?: Record<
-            string,
-            {
-              unlocked_lessons: number;
-              correct_answers: number;
-              wrong_answers: number;
-              quiz_attempts: number;
-              total_moves_earned: number;
-            }
-          >;
-        };
-
-        if (!progressData.ok || !progressData.progress) return;
-
-        const starter = progressData.progress.starter ?? {
-          unlocked_lessons: 1,
-          correct_answers: 0,
-          wrong_answers: 0,
-          quiz_attempts: 0,
-          total_moves_earned: 0,
-        };
-
-        await fetch('/api/progress', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            game_mode: 'starter',
-            unlocked_lessons: Math.max(starter.unlocked_lessons, 2),
-            correct_answers: starter.correct_answers,
-            wrong_answers: starter.wrong_answers,
-            quiz_attempts: starter.quiz_attempts,
-            total_moves_earned: starter.total_moves_earned,
-          }),
-        });
-      } catch {
-        // Ignore transient network/auth issues; unlock state will sync on next successful run.
-      }
-    };
-
-    void saveCompletionProgress();
+    void saveProgressDelta('starter', { unlocked_lessons: 2 });
   }, [allRevealed]);
+
+  useEffect(() => {
+    pingLessonOpen('starter');
+  }, []);
 
   return (
     <div className={styles.page}>

@@ -7,11 +7,11 @@ import {
   resetStreak,
   reportPerfectLesson,
 } from '@/app/_lib/client/quizStreak';
+import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 import styles from './Lesson3.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type VerbEntry, type QuizQuestion } from './Quiz';
 
-const LESSONS_TOTAL = 8;
 const ROUND_SIZE = 4;
 
 const VERBS: VerbEntry[] = [
@@ -301,6 +301,7 @@ export default function PattayaLesson3Page() {
 
   useEffect(() => {
     resetStreak();
+    pingLessonOpen('pattaya');
   }, []);
 
   function handleAnswer(optionIndex: number) {
@@ -642,48 +643,13 @@ export default function PattayaLesson3Page() {
       reportPerfectLesson();
     }
 
-    fetch('/api/progress')
-      .then((r) => r.json())
-      .then(
-        (data: {
-          ok?: boolean;
-          progress?: Record<
-            string,
-            {
-              unlocked_lessons: number;
-              correct_answers: number;
-              wrong_answers: number;
-              quiz_attempts: number;
-              total_moves_earned: number;
-            }
-          >;
-        }) => {
-          const p =
-            data.ok && data.progress
-              ? (data.progress['pattaya'] ?? null)
-              : null;
-          const prevUnlocked = p
-            ? Math.min(LESSONS_TOTAL, Math.max(1, p.unlocked_lessons))
-            : 1;
-          const nextUnlocked = passed
-            ? Math.min(LESSONS_TOTAL, Math.max(prevUnlocked, 4))
-            : prevUnlocked;
-          return fetch('/api/progress', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              game_mode: 'pattaya',
-              correct_answers: (p?.correct_answers ?? 0) + totalCorrect,
-              wrong_answers: (p?.wrong_answers ?? 0) + totalWrong,
-              quiz_attempts:
-                (p?.quiz_attempts ?? 0) + totalCorrect + totalWrong,
-              total_moves_earned: (p?.total_moves_earned ?? 0) + hits,
-              unlocked_lessons: nextUnlocked,
-            }),
-          });
-        },
-      )
-      .catch(() => null);
+    void saveProgressDelta('pattaya', {
+      correct_answers: totalCorrect,
+      wrong_answers: totalWrong,
+      quiz_attempts: totalCorrect + totalWrong,
+      total_moves_earned: hits,
+      unlocked_lessons: passed ? 4 : undefined,
+    });
   }
 
   if (phase === 'quiz') {

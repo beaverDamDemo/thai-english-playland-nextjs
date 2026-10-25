@@ -96,7 +96,7 @@ export async function GET() {
   // Get progress statistics by game mode
   const progressStatsResult = await db`
     WITH game_modes (game_mode, total_lessons) AS (
-      VALUES ('maze', 9), ('casino', 9), ('pattaya', 9), ('starter', 6)
+      VALUES ('maze', 9), ('casino', 6), ('pattaya', 8), ('starter', 7)
     )
     SELECT
       m.game_mode,

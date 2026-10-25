@@ -27,6 +27,7 @@ export async function GET() {
     maze: { unlocked_lessons: number; correct_answers: number; wrong_answers: number; quiz_attempts: number; total_moves_earned: number; };
     casino: { unlocked_lessons: number; correct_answers: number; wrong_answers: number; quiz_attempts: number; total_moves_earned: number; };
     pattaya: { unlocked_lessons: number; correct_answers: number; wrong_answers: number; quiz_attempts: number; total_moves_earned: number; };
+    starter: { unlocked_lessons: number; correct_answers: number; wrong_answers: number; quiz_attempts: number; total_moves_earned: number; };
     last_active: Date | null;
   };
 
@@ -41,6 +42,7 @@ export async function GET() {
         maze: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
         casino: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
         pattaya: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
+        starter: { unlocked_lessons: 1, correct_answers: 0, wrong_answers: 0, quiz_attempts: 0, total_moves_earned: 0 },
         last_active: row.progress_updated_at || null,
       });
     } else {

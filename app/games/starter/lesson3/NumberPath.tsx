@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
+import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 import styles from './NumberPath.module.css';
 
 type NumberTile = {
@@ -16,19 +17,6 @@ type BoardCell = NumberTile | null;
 type BoardPoint = {
   x: number;
   y: number;
-};
-
-type StarterProgress = {
-  unlocked_lessons: number;
-  correct_answers: number;
-  wrong_answers: number;
-  quiz_attempts: number;
-  total_moves_earned: number;
-};
-
-type ProgressResponse = {
-  ok?: boolean;
-  progress?: Record<string, StarterProgress>;
 };
 
 const SMALL_NUMBER_WORDS = [
@@ -108,29 +96,7 @@ function createBoard(stage: number, randomize = true): BoardCell[] {
 }
 
 async function unlockNextLesson(): Promise<void> {
-  try {
-    const response = await fetch('/api/progress');
-    if (!response.ok) return;
-
-    const data = (await response.json()) as ProgressResponse;
-    const progress = data.progress?.starter;
-    if (!data.ok || !progress) return;
-
-    await fetch('/api/progress', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        game_mode: 'starter',
-        unlocked_lessons: Math.max(progress.unlocked_lessons, 4),
-        correct_answers: progress.correct_answers,
-        wrong_answers: progress.wrong_answers,
-        quiz_attempts: progress.quiz_attempts,
-        total_moves_earned: progress.total_moves_earned,
-      }),
-    });
-  } catch {
-    // Keep the completed path playable if progress saving is unavailable.
-  }
+  await saveProgressDelta('starter', { unlocked_lessons: 4 });
 }
 
 export default function NumberPath() {
@@ -147,6 +113,10 @@ export default function NumberPath() {
 
   const numbers = numbersForStage(stage);
   const [board, setBoard] = useState<BoardCell[]>(() => createBoard(1, false));
+
+  useEffect(() => {
+    pingLessonOpen('starter');
+  }, []);
   const nextNumber = numbers[path.length];
 
   useEffect(() => {

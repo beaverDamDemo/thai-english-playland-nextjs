@@ -4,6 +4,14 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import styles from './allUsersProgress.module.css';
 
+type GameProgress = {
+  unlocked_lessons: number;
+  correct_answers: number;
+  wrong_answers: number;
+  quiz_attempts: number;
+  total_moves_earned: number;
+};
+
 type UserProgress = {
   id: number;
   username: string;
@@ -22,15 +30,16 @@ type UserProgress = {
     quiz_attempts: number;
     total_moves_earned: number;
   };
-  pattaya: {
-    unlocked_lessons: number;
-    correct_answers: number;
-    wrong_answers: number;
-    quiz_attempts: number;
-    total_moves_earned: number;
-  };
+  pattaya: GameProgress;
+  starter: GameProgress;
   last_active?: string;
 };
+
+const GAME_KEYS = ['maze', 'casino', 'pattaya', 'starter'] as const;
+
+function sumStat(user: UserProgress, key: keyof GameProgress): number {
+  return GAME_KEYS.reduce((total, game) => total + (user[game]?.[key] ?? 0), 0);
+}
 
 export default function AllUsersProgressPage() {
   const [users, setUsers] = useState<UserProgress[]>([]);
@@ -102,42 +111,26 @@ export default function AllUsersProgressPage() {
   const sortedUsers = [...users].sort((a, b) => {
     if (!sortColumn) return 0;
 
-    const aTotalCorrect =
-      a.maze.correct_answers +
-      a.casino.correct_answers +
-      a.pattaya.correct_answers;
-    const aTotalWrong =
-      a.maze.wrong_answers + a.casino.wrong_answers + a.pattaya.wrong_answers;
-    const aTotalAttempts =
-      a.maze.quiz_attempts + a.casino.quiz_attempts + a.pattaya.quiz_attempts;
+    const aTotalCorrect = sumStat(a, 'correct_answers');
+    const aTotalWrong = sumStat(a, 'wrong_answers');
+    const aTotalAttempts = sumStat(a, 'quiz_attempts');
     const aSuccessRate =
       aTotalCorrect + aTotalWrong > 0
         ? (aTotalCorrect / (aTotalCorrect + aTotalWrong)) * 100
         : 0;
     const aJoinedDate = new Date(a.created_at).getTime();
-    const aTotalMoves =
-      a.maze.total_moves_earned +
-      a.casino.total_moves_earned +
-      a.pattaya.total_moves_earned;
+    const aTotalMoves = sumStat(a, 'total_moves_earned');
     const aLastActive = a.last_active ? new Date(a.last_active).getTime() : 0;
 
-    const bTotalCorrect =
-      b.maze.correct_answers +
-      b.casino.correct_answers +
-      b.pattaya.correct_answers;
-    const bTotalWrong =
-      b.maze.wrong_answers + b.casino.wrong_answers + b.pattaya.wrong_answers;
-    const bTotalAttempts =
-      b.maze.quiz_attempts + b.casino.quiz_attempts + b.pattaya.quiz_attempts;
+    const bTotalCorrect = sumStat(b, 'correct_answers');
+    const bTotalWrong = sumStat(b, 'wrong_answers');
+    const bTotalAttempts = sumStat(b, 'quiz_attempts');
     const bSuccessRate =
       bTotalCorrect + bTotalWrong > 0
         ? (bTotalCorrect / (bTotalCorrect + bTotalWrong)) * 100
         : 0;
     const bJoinedDate = new Date(b.created_at).getTime();
-    const bTotalMoves =
-      b.maze.total_moves_earned +
-      b.casino.total_moves_earned +
-      b.pattaya.total_moves_earned;
+    const bTotalMoves = sumStat(b, 'total_moves_earned');
     const bLastActive = b.last_active ? new Date(b.last_active).getTime() : 0;
 
     let comparison = 0;
@@ -159,18 +152,9 @@ export default function AllUsersProgressPage() {
   // Calculate leaderboard rankings based on total correct answers and attempts
   let leaderboard = users
     .map((user) => {
-      const totalCorrect =
-        user.maze.correct_answers +
-        user.casino.correct_answers +
-        user.pattaya.correct_answers;
-      const totalWrong =
-        user.maze.wrong_answers +
-        user.casino.wrong_answers +
-        user.pattaya.wrong_answers;
-      const totalAttempts =
-        user.maze.quiz_attempts +
-        user.casino.quiz_attempts +
-        user.pattaya.quiz_attempts;
+      const totalCorrect = sumStat(user, 'correct_answers');
+      const totalWrong = sumStat(user, 'wrong_answers');
+      const totalAttempts = sumStat(user, 'quiz_attempts');
       const successRate =
         totalCorrect + totalWrong > 0
           ? (totalCorrect / (totalCorrect + totalWrong)) * 100
@@ -196,18 +180,9 @@ export default function AllUsersProgressPage() {
     if (!currentUserInLeaderboard) {
       const currentUserData = users.find((u) => u.id === currentUser.id);
       if (currentUserData) {
-        const totalCorrect =
-          currentUserData.maze.correct_answers +
-          currentUserData.casino.correct_answers +
-          currentUserData.pattaya.correct_answers;
-        const totalWrong =
-          currentUserData.maze.wrong_answers +
-          currentUserData.casino.wrong_answers +
-          currentUserData.pattaya.wrong_answers;
-        const totalAttempts =
-          currentUserData.maze.quiz_attempts +
-          currentUserData.casino.quiz_attempts +
-          currentUserData.pattaya.quiz_attempts;
+        const totalCorrect = sumStat(currentUserData, 'correct_answers');
+        const totalWrong = sumStat(currentUserData, 'wrong_answers');
+        const totalAttempts = sumStat(currentUserData, 'quiz_attempts');
         const successRate =
           totalCorrect + totalWrong > 0
             ? (totalCorrect / (totalCorrect + totalWrong)) * 100
@@ -321,6 +296,7 @@ export default function AllUsersProgressPage() {
               <th className={styles.headerCell}>🌀 Maze</th>
               <th className={styles.headerCell}>🎰 Casino</th>
               <th className={styles.headerCell}>🏖️ Pattaya</th>
+              <th className={styles.headerCell}>🌱 Starter</th>
               <th
                 className={`${styles.headerCell} ${styles.sortableHeader}`}
                 onClick={() => handleSort('activity')}
@@ -365,28 +341,16 @@ export default function AllUsersProgressPage() {
           </thead>
           <tbody className={styles.tbody}>
             {sortedUsers.map((user) => {
-              const totalCorrect =
-                user.maze.correct_answers +
-                user.casino.correct_answers +
-                user.pattaya.correct_answers;
-              const totalWrong =
-                user.maze.wrong_answers +
-                user.casino.wrong_answers +
-                user.pattaya.wrong_answers;
-              const totalAttempts =
-                user.maze.quiz_attempts +
-                user.casino.quiz_attempts +
-                user.pattaya.quiz_attempts;
+              const totalCorrect = sumStat(user, 'correct_answers');
+              const totalWrong = sumStat(user, 'wrong_answers');
+              const totalAttempts = sumStat(user, 'quiz_attempts');
               const successRate =
                 totalCorrect + totalWrong > 0
                   ? Math.round(
                       (totalCorrect / (totalCorrect + totalWrong)) * 100,
                     )
                   : 0;
-              const totalMoves =
-                user.maze.total_moves_earned +
-                user.casino.total_moves_earned +
-                user.pattaya.total_moves_earned;
+              const totalMoves = sumStat(user, 'total_moves_earned');
               // Calculate dynamic color based on success rate (0% = red, 50% = yellow, 100% = green)
               const hue = Math.round((successRate / 100) * 120); // 0 to 120 (red to green)
               const successRateColor = `hsl(${hue}, 70%, 50%)`;
@@ -449,6 +413,19 @@ export default function AllUsersProgressPage() {
                       </div>
                       <div className={styles.wrong}>
                         ❌ {user.pattaya.wrong_answers}
+                      </div>
+                    </div>
+                  </td>
+                  <td className={styles.cell}>
+                    <div className={styles.gameStats}>
+                      <div className={styles.level}>
+                        L{user.starter.unlocked_lessons}
+                      </div>
+                      <div className={styles.correct}>
+                        ✅ {user.starter.correct_answers}
+                      </div>
+                      <div className={styles.wrong}>
+                        ❌ {user.starter.wrong_answers}
                       </div>
                     </div>
                   </td>

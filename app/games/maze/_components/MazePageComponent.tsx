@@ -6,6 +6,11 @@ import * as Phaser from 'phaser';
 import MazeHeader from './MazeHeader';
 import dynamic from 'next/dynamic';
 import type { FC, MouseEvent } from 'react';
+import {
+  pingLessonOpen,
+  saveProgressDelta,
+  type ProgressGameMode,
+} from '@/app/_lib/client/progress';
 
 const TOTAL_LESSONS = 9;
 
@@ -72,37 +77,28 @@ const MazePageComponent: FC<MazePageProps> = ({
   const mobileHeight = mazeHeight + buttonsSpace;
   const desktopHeight = Math.max(800, mazeHeight + buttonsSpace);
 
-  const gameMode = gameModeOverride ?? (statsKey === 'englishCasinoStats' ? 'casino' : 'maze');
+  const gameMode = (gameModeOverride ??
+    (statsKey === 'englishCasinoStats' ? 'casino' : 'maze')) as ProgressGameMode;
 
-  const saveStats = (next: {
-    correctAnswers: number;
-    wrongAnswers: number;
-    quizAttempts: number;
-    totalMovesEarned: number;
+  const saveStats = (delta: {
+    correctAnswers?: number;
+    wrongAnswers?: number;
+    quizAttempts?: number;
+    totalMovesEarned?: number;
     unlockedLessons?: number;
   }) => {
-    fetch('/api/progress', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        game_mode: gameMode,
-        correct_answers: next.correctAnswers,
-        wrong_answers: next.wrongAnswers,
-        quiz_attempts: next.quizAttempts,
-        total_moves_earned: next.totalMovesEarned,
-        unlocked_lessons: next.unlockedLessons ?? unlockedLessons,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.ok) {
-          console.error('Failed to save stats:', data.error);
-        }
-      })
-      .catch((err) => {
-        console.error('Error saving stats:', err);
-      });
+    void saveProgressDelta(gameMode, {
+      correct_answers: delta.correctAnswers,
+      wrong_answers: delta.wrongAnswers,
+      quiz_attempts: delta.quizAttempts,
+      total_moves_earned: delta.totalMovesEarned,
+      unlocked_lessons: delta.unlockedLessons,
+    });
   };
+
+  useEffect(() => {
+    pingLessonOpen(gameMode);
+  }, [gameMode, lessonNumber]);
 
   const handleQuizComplete = (finalScore: number, totalQuestions: number) => {
     setMaxMoves(finalScore);
@@ -119,10 +115,10 @@ const MazePageComponent: FC<MazePageProps> = ({
     setTotalMovesEarned(nextMovesEarned);
     setLastQuizResult(finalScore > 0 ? 'Correct' : 'Wrong');
     saveStats({
-      correctAnswers: nextCorrect,
-      wrongAnswers: nextWrong,
-      quizAttempts: nextAttempts,
-      totalMovesEarned: nextMovesEarned,
+      correctAnswers: finalScore,
+      wrongAnswers: wrongCount,
+      quizAttempts: totalQuestions,
+      totalMovesEarned: finalScore,
     });
 
     // fade out the overlay, then unmount it
@@ -154,13 +150,7 @@ const MazePageComponent: FC<MazePageProps> = ({
       Math.max(unlockedLessons, lessonNumber + 1),
     );
     setUnlockedLessons(nextUnlockedLessons);
-    saveStats({
-      correctAnswers,
-      wrongAnswers,
-      quizAttempts,
-      totalMovesEarned,
-      unlockedLessons: nextUnlockedLessons,
-    });
+    saveStats({ unlockedLessons: nextUnlockedLessons });
 
     setGameWon(true);
   };

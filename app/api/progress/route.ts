@@ -77,6 +77,7 @@ export async function GET() {
 
 type SaveBody = {
   game_mode?: string;
+  delta?: boolean;
   unlocked_lessons?: number;
   correct_answers?: number;
   wrong_answers?: number;
@@ -114,6 +115,37 @@ export async function POST(request: Request) {
   }
 
   try {
+    if (body.delta === true) {
+      // Counters are increments applied atomically, so clients never need to
+      // read-then-write (which could overwrite newer data with stale totals).
+      const inc = (v: unknown) =>
+        typeof v === "number" && Number.isFinite(v)
+          ? Math.max(0, Math.floor(v))
+          : 0;
+      const unlock =
+        typeof unlocked_lessons === "number" && Number.isFinite(unlocked_lessons)
+          ? Math.max(1, Math.floor(unlocked_lessons))
+          : 1;
+      await db`
+        INSERT INTO public.thai_english_playland_user_progress AS p (user_id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned, updated_at)
+        VALUES (
+          ${user.id}, ${game_mode},
+          ${unlock},
+          ${inc(correct_answers)},
+          ${inc(wrong_answers)},
+          ${inc(quiz_attempts)},
+          ${inc(total_moves_earned)},
+          NOW()
+        )
+        ON CONFLICT (user_id, game_mode) DO UPDATE SET
+          unlocked_lessons   = GREATEST(p.unlocked_lessons, EXCLUDED.unlocked_lessons),
+          correct_answers    = p.correct_answers + EXCLUDED.correct_answers,
+          wrong_answers      = p.wrong_answers + EXCLUDED.wrong_answers,
+          quiz_attempts      = p.quiz_attempts + EXCLUDED.quiz_attempts,
+          total_moves_earned = p.total_moves_earned + EXCLUDED.total_moves_earned,
+          updated_at         = NOW();
+      `;
+    } else {
     await db`
       INSERT INTO public.thai_english_playland_user_progress (user_id, game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned, updated_at)
       VALUES (
@@ -133,6 +165,7 @@ export async function POST(request: Request) {
         total_moves_earned = EXCLUDED.total_moves_earned,
         updated_at        = NOW();
     `;
+    }
     // console.log('POST /api/progress: Successfully saved');
   } catch (err) {
     console.error("POST /api/progress: Database error:", err);

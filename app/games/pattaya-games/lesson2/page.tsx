@@ -8,6 +8,7 @@ import {
   resetStreak,
   reportPerfectLesson,
 } from '@/app/_lib/client/quizStreak';
+import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 import styles from './Lesson2.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type Challenge } from './Quiz';
@@ -16,7 +17,6 @@ type Phase = 'practice' | 'play' | 'apply' | 'done';
 
 const BOARD_SIZE = 7;
 const ICONS = ['🔥', '❄️', '🌬️', '🌞', '🪙', '💎', '🧃'];
-const LESSONS_TOTAL = 8;
 const LESSONS_MIN_PASS = 3;
 
 const practiceChallenges: Challenge[] = [
@@ -228,53 +228,18 @@ export default function PattayaLesson2Page() {
     const earnedMoves = Math.max(1, Math.floor(playPoints / 120));
     const passed = learningCorrect >= LESSONS_MIN_PASS;
 
-    fetch('/api/progress')
-      .then((r) => r.json())
-      .then(
-        (data: {
-          ok?: boolean;
-          progress?: Record<
-            string,
-            {
-              unlocked_lessons: number;
-              correct_answers: number;
-              wrong_answers: number;
-              quiz_attempts: number;
-              total_moves_earned: number;
-            }
-          >;
-        }) => {
-          const p =
-            data.ok && data.progress
-              ? (data.progress['pattaya'] ?? null)
-              : null;
-          const prevUnlocked = p
-            ? Math.min(LESSONS_TOTAL, Math.max(1, p.unlocked_lessons))
-            : 1;
-          const nextUnlocked = passed
-            ? Math.min(LESSONS_TOTAL, Math.max(prevUnlocked, 3))
-            : prevUnlocked;
-
-          return fetch('/api/progress', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              game_mode: 'pattaya',
-              correct_answers: (p?.correct_answers ?? 0) + learningCorrect,
-              wrong_answers: (p?.wrong_answers ?? 0) + learningWrong,
-              quiz_attempts:
-                (p?.quiz_attempts ?? 0) + learningCorrect + learningWrong,
-              total_moves_earned: (p?.total_moves_earned ?? 0) + earnedMoves,
-              unlocked_lessons: nextUnlocked,
-            }),
-          });
-        },
-      )
-      .catch(() => null);
+    void saveProgressDelta('pattaya', {
+      correct_answers: learningCorrect,
+      wrong_answers: learningWrong,
+      quiz_attempts: learningCorrect + learningWrong,
+      total_moves_earned: earnedMoves,
+      unlocked_lessons: passed ? 3 : undefined,
+    });
   }
 
   useEffect(() => {
     resetStreak();
+    pingLessonOpen('pattaya');
   }, []);
 
   function handleChallengeAnswer(challenge: Challenge, pickedIndex: number) {
