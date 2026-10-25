@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styles from '../../../styles/map.module.css';
+import GameFooter from '@/app/_components/GameFooter';
 import { lessonMapButtons } from './lessonMapConfig';
 
 const MAP_ASPECT_RATIO = 1024 / 1536;
@@ -161,20 +162,17 @@ export default function PattayaGamesScreenPage() {
         </div>
       </div>
 
-      <footer className={styles.mapFooter}>
-        <div className={styles.footerStats}>
-          <span className={styles.statChip}>Correct: {correctAnswers}</span>
-          <span className={styles.statChip}>Wrong: {wrongAnswers}</span>
-          <span className={styles.statChip}>
-            Unlocked: {unlockedLessons}/{TOTAL_LESSONS}
-          </span>
-          <span className={styles.statChip}>Attempts: {quizAttempts}</span>
-          <span className={styles.statChip}>
-            Completions: {lessonCompletions}
-          </span>
-          <span className={styles.statChip}>Moves: {totalMovesEarned}</span>
-        </div>
-      </footer>
+      <GameFooter
+        game="pattaya"
+        stats={[
+          { label: 'Correct', value: correctAnswers },
+          { label: 'Wrong', value: wrongAnswers },
+          { label: 'Unlocked', value: `${unlockedLessons}/${TOTAL_LESSONS}` },
+          { label: 'Attempts', value: quizAttempts },
+          { label: 'Completions', value: lessonCompletions },
+          { label: 'Moves', value: totalMovesEarned },
+        ]}
+      />
     </div>
   );
 }

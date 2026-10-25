@@ -9,6 +9,7 @@ import {
   reportPerfectLesson,
 } from '@/app/_lib/client/quizStreak';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
 import styles from './Lesson4.module.css';
@@ -1132,10 +1133,19 @@ function PattayaLesson4Content() {
   );
 }
 
-export default function PattayaLesson4Page() {
+function PattayaLesson4PageContent() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <PattayaLesson4Content />
     </Suspense>
+  );
+}
+
+export default function PattayaLesson4Page() {
+  return (
+    <>
+      <PattayaLesson4PageContent />
+      <GameStatsFooter game="pattaya" totalLessons={8} />
+    </>
   );
 }

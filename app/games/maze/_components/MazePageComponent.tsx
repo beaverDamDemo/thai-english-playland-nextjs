@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import * as Phaser from 'phaser';
 import MazeHeader from './MazeHeader';
+import GameFooter from '@/app/_components/GameFooter';
 import dynamic from 'next/dynamic';
 import type { FC, MouseEvent } from 'react';
 import {
@@ -56,9 +57,6 @@ const MazePageComponent: FC<MazePageProps> = ({
   const [quizAttempts, setQuizAttempts] = useState(0);
   const [totalMovesEarned, setTotalMovesEarned] = useState(0);
   const [unlockedLessons, setUnlockedLessons] = useState(1);
-  const [lastQuizResult, setLastQuizResult] = useState<
-    'Correct' | 'Wrong' | 'N/A'
-  >('N/A');
   const [maxMoves, setMaxMoves] = useState(0);
   const [showQuizOverlay, setShowQuizOverlay] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -113,7 +111,6 @@ const MazePageComponent: FC<MazePageProps> = ({
     setWrongAnswers(nextWrong);
     setQuizAttempts(nextAttempts);
     setTotalMovesEarned(nextMovesEarned);
-    setLastQuizResult(finalScore > 0 ? 'Correct' : 'Wrong');
     saveStats({
       correctAnswers: finalScore,
       wrongAnswers: wrongCount,
@@ -389,28 +386,16 @@ const MazePageComponent: FC<MazePageProps> = ({
               </Link>
             </div>
           </div>
-          <footer
-            style={{
-              backgroundColor: '#1c1c1c',
-              color: '#e8e8e8',
-              padding: '10px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '10px',
-              fontSize: '13px',
-              borderTop: `3px solid ${themeColor}`,
-              flexWrap: 'wrap',
-            }}
-          >
-            <span>Correct: {correctAnswers}</span>
-            <span>Wrong: {wrongAnswers}</span>
-            <span>
-              Unlocked Lessons: {unlockedLessons}/{totalLessons}
-            </span>
-            <span>Quiz Attempts: {quizAttempts}</span>
-            <span>Player Status: Winner</span>
-          </footer>
+          <GameFooter
+            game={gameMode}
+            stats={[
+              { label: 'Correct', value: correctAnswers },
+              { label: 'Wrong', value: wrongAnswers },
+              { label: 'Unlocked', value: `${unlockedLessons}/${totalLessons}` },
+              { label: 'Attempts', value: quizAttempts },
+              { label: 'Moves', value: totalMovesEarned },
+            ]}
+          />
         </div>
       </div>
     );
@@ -540,28 +525,16 @@ const MazePageComponent: FC<MazePageProps> = ({
             </div>
           )}
         </div>
-        <footer
-          style={{
-            backgroundColor: '#1c1c1c',
-            color: '#e8e8e8',
-            padding: '10px 14px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '10px',
-            fontSize: '13px',
-            borderTop: `3px solid ${themeColor}`,
-            flexWrap: 'wrap',
-          }}
-        >
-          <span>Correct: {correctAnswers}</span>
-          <span>Wrong: {wrongAnswers}</span>
-          <span>
-            Unlocked Lessons: {unlockedLessons}/{TOTAL_LESSONS}
-          </span>
-          <span>Total Moves Earned: {totalMovesEarned}</span>
-          <span>Last Quiz: {lastQuizResult}</span>
-        </footer>
+        <GameFooter
+          game={gameMode}
+          stats={[
+            { label: 'Correct', value: correctAnswers },
+            { label: 'Wrong', value: wrongAnswers },
+            { label: 'Unlocked', value: `${unlockedLessons}/${totalLessons}` },
+            { label: 'Attempts', value: quizAttempts },
+            { label: 'Moves', value: totalMovesEarned },
+          ]}
+        />
       </div>
     </div>
   );

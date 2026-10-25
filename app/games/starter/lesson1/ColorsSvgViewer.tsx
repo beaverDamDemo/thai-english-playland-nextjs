@@ -7,6 +7,7 @@ import type Snap from 'snapsvg-cjs';
 import { useThaiQuestion } from '@/app/games/maze/_components/useThaiQuestion';
 import styles from './ColorsSvgViewer.module.css';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 
 type SnapStatic = typeof Snap;
 
@@ -265,7 +266,7 @@ export default function ColorsSvgViewer() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
+      <header className={styles.header} data-game="starter">
         <Link href="/games/starter" className={styles.back}>
           <Image src="/assets/tinified/back.png" alt="Back" width={34} height={34} />
         </Link>
@@ -324,6 +325,7 @@ export default function ColorsSvgViewer() {
           </>
         )}
       </section>
+      <GameStatsFooter game="starter" totalLessons={7} />
     </div>
   );
 }

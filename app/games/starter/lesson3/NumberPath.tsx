@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './NumberPath.module.css';
 
 type NumberTile = {
@@ -99,7 +100,7 @@ async function unlockNextLesson(): Promise<void> {
   await saveProgressDelta('starter', { unlocked_lessons: 4 });
 }
 
-export default function NumberPath() {
+function NumberPathContent() {
   const [stage, setStage] = useState(1);
   const [path, setPath] = useState<number[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -270,7 +271,7 @@ export default function NumberPath() {
 
   return (
     <main className={styles.page}>
-      <header className={lessonHeaderStyles.header}>
+      <header className={lessonHeaderStyles.header} data-game="starter">
         <Link href="/games/starter" className={lessonHeaderStyles.back}>
           <Image
             src="/assets/tinified/back.png"
@@ -440,5 +441,14 @@ export default function NumberPath() {
         )}
       </section>
     </main>
+  );
+}
+
+export default function NumberPath() {
+  return (
+    <>
+      <NumberPathContent />
+      <GameStatsFooter game="starter" totalLessons={7} />
+    </>
   );
 }

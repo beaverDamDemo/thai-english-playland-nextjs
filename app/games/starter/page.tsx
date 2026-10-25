@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '../../../styles/map.module.css';
+import GameFooter from '@/app/_components/GameFooter';
 import { useEffect, useState } from 'react';
 import { lessonMapButtons } from './lessonMapConfig';
 
@@ -109,17 +110,16 @@ export default function StarterLearnersZonePage() {
         </div>
       </div>
 
-      <footer className={styles.mapFooter}>
-        <div className={styles.footerStats}>
-          <span className={styles.statChip}>Correct: {correctAnswers}</span>
-          <span className={styles.statChip}>Wrong: {wrongAnswers}</span>
-          <span className={styles.statChip}>
-            Unlocked: {unlockedLessons}/{TOTAL_LESSONS}
-          </span>
-          <span className={styles.statChip}>Attempts: {quizAttempts}</span>
-          <span className={styles.statChip}>Moves: {totalMovesEarned}</span>
-        </div>
-      </footer>
+      <GameFooter
+        game="starter"
+        stats={[
+          { label: 'Correct', value: correctAnswers },
+          { label: 'Wrong', value: wrongAnswers },
+          { label: 'Unlocked', value: `${unlockedLessons}/${TOTAL_LESSONS}` },
+          { label: 'Attempts', value: quizAttempts },
+          { label: 'Moves', value: totalMovesEarned },
+        ]}
+      />
     </div>
   );
 }

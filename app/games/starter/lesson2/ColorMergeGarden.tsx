@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './ColorMergeGarden.module.css';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 
 type ColorName =
   | 'red'
@@ -160,7 +161,7 @@ function createBoard(level: number, deterministic = false): (Tile | null)[] {
   return tiles;
 }
 
-export default function ColorMergeGarden() {
+function ColorMergeGardenContent() {
   const hasSavedCompletionRef = useRef(false);
   const [level, setLevel] = useState(1);
   const [board, setBoard] = useState<(Tile | null)[]>(() =>
@@ -289,7 +290,7 @@ export default function ColorMergeGarden() {
 
   return (
     <main className={styles.page}>
-      <header className={lessonHeaderStyles.header}>
+      <header className={lessonHeaderStyles.header} data-game="starter">
         <Link href="/games/starter" className={lessonHeaderStyles.back}>
           <Image
             src="/assets/tinified/back.png"
@@ -415,5 +416,14 @@ export default function ColorMergeGarden() {
         )}
       </section>
     </main>
+  );
+}
+
+export default function ColorMergeGarden() {
+  return (
+    <>
+      <ColorMergeGardenContent />
+      <GameStatsFooter game="starter" totalLessons={7} />
+    </>
   );
 }

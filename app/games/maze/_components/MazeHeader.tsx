@@ -18,7 +18,7 @@ export default function MazeHeader({
   void score;
 
   return (
-    <header className={`${styles.header} ${styles[game]}`}>
+    <header className={styles.header} data-game={game}>
       <Link href={backHref} className={styles.backArrow}>
         <Image
           src="/assets/tinified/back.png"

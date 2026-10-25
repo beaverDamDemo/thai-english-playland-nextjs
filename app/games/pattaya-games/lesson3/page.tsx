@@ -8,6 +8,7 @@ import {
   reportPerfectLesson,
 } from '@/app/_lib/client/quizStreak';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './Lesson3.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type VerbEntry, type QuizQuestion } from './Quiz';
@@ -234,7 +235,7 @@ type Shell = {
 
 type HitEffect = { id: number; x: number; y: number };
 
-export default function PattayaLesson3Page() {
+function PattayaLesson3PageContent() {
   const [phase, setPhase] = useState<Phase>('quiz');
 
   const [round, setRound] = useState<QuizQuestion[]>([]);
@@ -1392,5 +1393,14 @@ export default function PattayaLesson3Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PattayaLesson3Page() {
+  return (
+    <>
+      <PattayaLesson3PageContent />
+      <GameStatsFooter game="pattaya" totalLessons={8} />
+    </>
   );
 }

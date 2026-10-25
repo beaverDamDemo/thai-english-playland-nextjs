@@ -9,6 +9,18 @@
   letter-spacing: 0.06em;
 }
 
+/* Per-game colors come from [data-game] in globals.css */
+.game {
+  background: var(--game-bg);
+  border-top-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+:global(:root[data-theme='dark']) .game {
+  background: var(--game-bg-dark);
+  border-top-color: rgba(120, 151, 233, 0.3);
+}
+
 .version {
   opacity: 0.9;
 }

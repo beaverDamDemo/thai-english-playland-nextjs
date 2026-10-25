@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useId, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './EmptyGrid.module.css';
 
 type Direction = 'north' | 'east' | 'south' | 'west';
@@ -250,7 +251,7 @@ function PipeArtwork({
   );
 }
 
-export default function EmptyGrid() {
+function EmptyGridContent() {
   const hasSavedCompletionRef = useRef(false);
   const [pipes, setPipes] = useState<Array<PipePiece | null>>(() =>
     Array(CELL_COUNT).fill(null),
@@ -318,7 +319,7 @@ export default function EmptyGrid() {
 
   return (
     <main className={styles.page}>
-      <header className={lessonHeaderStyles.header}>
+      <header className={lessonHeaderStyles.header} data-game="starter">
         <Link href="/games/starter" className={lessonHeaderStyles.back}>
           <Image
             src="/assets/tinified/back.png"
@@ -453,5 +454,14 @@ export default function EmptyGrid() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function EmptyGrid() {
+  return (
+    <>
+      <EmptyGridContent />
+      <GameStatsFooter game="starter" totalLessons={7} />
+    </>
   );
 }

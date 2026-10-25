@@ -286,3 +286,21 @@ body,
 .fontSizeToggleIcon {
   transform: translateY(-1px);
 }
+
+/* Per-game palette shared by the game header and footer. */
+[data-game='maze'] {
+  --game-bg: #1b5e20;
+  --game-bg-dark: #0f2e1a;
+}
+[data-game='casino'] {
+  --game-bg: #8b1a1a;
+  --game-bg-dark: #3a1010;
+}
+[data-game='pattaya'] {
+  --game-bg: #0277bd;
+  --game-bg-dark: #0b2a44;
+}
+[data-game='starter'] {
+  --game-bg: #6a1b9a;
+  --game-bg-dark: #2a1240;
+}

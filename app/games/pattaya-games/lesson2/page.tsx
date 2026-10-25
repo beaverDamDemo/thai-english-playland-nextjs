@@ -9,6 +9,7 @@ import {
   reportPerfectLesson,
 } from '@/app/_lib/client/quizStreak';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './Lesson2.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type Challenge } from './Quiz';
@@ -188,7 +189,7 @@ function clearAutoMatches(input: string[][]) {
   }
 }
 
-export default function PattayaLesson2Page() {
+function PattayaLesson2PageContent() {
   const [phase, setPhase] = useState<Phase>('practice');
   const [practiceStep, setPracticeStep] = useState(0);
   const [applyStep, setApplyStep] = useState(0);
@@ -535,5 +536,14 @@ export default function PattayaLesson2Page() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function PattayaLesson2Page() {
+  return (
+    <>
+      <PattayaLesson2PageContent />
+      <GameStatsFooter game="pattaya" totalLessons={8} />
+    </>
   );
 }

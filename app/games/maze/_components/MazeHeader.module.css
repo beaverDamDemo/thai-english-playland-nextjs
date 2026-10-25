@@ -1,28 +1,11 @@
 /* app/maze/_components/MazeHeader.module.css */
-/* Per-game header colors: [light theme, dark theme] */
-.maze {
-  --header-bg: #1b5e20;
-  --header-bg-dark: #0f2e1a;
-}
-.casino {
-  --header-bg: #8b1a1a;
-  --header-bg-dark: #3a1010;
-}
-.pattaya {
-  --header-bg: #0277bd;
-  --header-bg-dark: #0b2a44;
-}
-.starter {
-  --header-bg: #6a1b9a;
-  --header-bg-dark: #2a1240;
-}
-
+/* Per-game colors come from [data-game] in globals.css */
 .header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   padding: 10px 20px;
-  background: var(--header-bg, #222);
+  background: var(--game-bg, #222);
   color: #fff;
   font-size: 18px;
 }
@@ -53,7 +36,7 @@
 }
 
 :global(:root[data-theme='dark']) .header {
-  background: var(--header-bg-dark, #0f1b33);
+  background: var(--game-bg-dark, #0f1b33);
   color: #edf4ff;
   border-bottom: 1px solid rgba(120, 151, 233, 0.3);
 }
