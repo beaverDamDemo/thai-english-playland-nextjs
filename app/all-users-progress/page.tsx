@@ -292,11 +292,21 @@ export default function AllUsersProgressPage() {
         <table className={styles.table}>
           <thead className={styles.thead}>
             <tr>
-              <th className={styles.headerCell}>Username</th>
-              <th className={styles.headerCell}>🌀 Maze</th>
-              <th className={styles.headerCell}>🎰 Casino</th>
-              <th className={styles.headerCell}>🏖️ Pattaya</th>
-              <th className={styles.headerCell}>🌱 Starter</th>
+              <th className={`${styles.headerCell} ${styles.stickyCol}`}>
+                Username
+              </th>
+              <th className={styles.headerCell} data-game="maze">
+                🌀 Maze
+              </th>
+              <th className={styles.headerCell} data-game="casino">
+                🎰 Casino
+              </th>
+              <th className={styles.headerCell} data-game="pattaya">
+                🏖️ Pattaya
+              </th>
+              <th className={styles.headerCell} data-game="starter">
+                🌱 Starter
+              </th>
               <th
                 className={`${styles.headerCell} ${styles.sortableHeader}`}
                 onClick={() => handleSort('activity')}
@@ -374,7 +384,9 @@ export default function AllUsersProgressPage() {
                   key={user.id}
                   className={`${styles.row} ${isCurrentUser ? styles.currentUserRow : ''}`}
                 >
-                  <td className={`${styles.cell} ${styles.usernameCell}`}>
+                  <td
+                    className={`${styles.cell} ${styles.usernameCell} ${styles.stickyCol}`}
+                  >
                     {maskedUsername}
                   </td>
                   <td className={styles.cell}>

@@ -35,6 +35,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fredoka.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('playland-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="antialiased">
         {children}
         <AppFooter />

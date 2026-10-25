@@ -1,3 +1,4 @@
+/* Light styles are the default; dark overrides follow. Shared pieces live in _styles/statsShared.module.css */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -6,136 +7,64 @@
     system-ui,
     -apple-system,
     sans-serif;
-}
-
-/* Light theme */
-[data-theme='light'] .container {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-/* Dark theme */
 [data-theme='dark'] .container {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   margin-bottom: 40px;
 }
 
 .title {
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: bold;
   margin: 0;
-}
-
-/* Light theme */
-[data-theme='light'] .title {
   color: white;
 }
 
-/* Dark theme */
 [data-theme='dark'] .title {
   color: #e0e0e0;
 }
 
 .backLink {
-  text-decoration: none;
-  font-weight: 700;
-  padding: 12px 20px;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.backLink::before {
-  content: '🏠';
-  font-size: 1.1rem;
-}
-
-/* Light theme */
-[data-theme='light'] .backLink {
-  color: white;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.15) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-[data-theme='light'] .backLink:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.25) 100%
-  );
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Dark theme */
-[data-theme='dark'] .backLink {
-  color: #e0e0e0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.06) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-[data-theme='dark'] .backLink:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  composes: backLink from '../_styles/statsShared.module.css';
 }
 
 .loading,
 .error {
   text-align: center;
-  font-size: 18px;
+  font-size: 1.125rem;
   padding: 40px;
+  color: white;
 }
 
-/* Light theme */
-[data-theme='light'] .loading,
-[data-theme='light'] .error {
-  color: #666;
-}
-
-/* Dark theme */
-[data-theme='dark'] .loading,
-[data-theme='dark'] .error {
+[data-theme='dark'] .loading {
   color: #e0e0e0;
 }
 
 .error {
-  color: #f44336;
+  color: #fecaca;
+}
+
+[data-theme='dark'] .error {
+  color: #fca5a5;
 }
 
 .content {
   border-radius: 12px;
   padding: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Light theme */
-[data-theme='light'] .content {
   background: white;
 }
 
-/* Dark theme */
 [data-theme='dark'] .content {
   background: #1e1e2e;
   border: 1px solid #3a3a4a;
@@ -146,25 +75,22 @@
 }
 
 .cardTitle {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
   margin: 0 0 24px 0;
-}
-
-/* Light theme */
-[data-theme='light'] .cardTitle {
   color: #333;
 }
 
-/* Dark theme */
 [data-theme='dark'] .cardTitle {
   color: #e0e0e0;
 }
 
 .totalUsers {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 12px;
@@ -173,17 +99,18 @@
 }
 
 .totalUsersLabel {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
 }
 
 .totalUsersValue {
-  font-size: 36px;
+  font-size: 2.25rem;
   font-weight: bold;
 }
 
 .timeframeSelector {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 24px;
 }
@@ -193,24 +120,23 @@
   border: 2px solid #ddd;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   transition: all 0.2s ease;
-}
-
-/* Light theme */
-[data-theme='light'] .timeframeButton {
   background: white;
-  border-color: #ddd;
   color: #333;
 }
 
-[data-theme='light'] .timeframeButton:hover {
+.timeframeButton:hover {
   border-color: #667eea;
   background: #f5f5f5;
 }
 
-/* Dark theme */
+.timeframeButton:focus-visible {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+}
+
 [data-theme='dark'] .timeframeButton {
   background: #2a2a3a;
   border-color: #3a3a4a;
@@ -222,18 +148,7 @@
   background: #3a3a4a;
 }
 
-.timeframeButton:hover {
-  border-color: #667eea;
-  background: #f5f5f5;
-}
-
-.timeframeButton.active {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
-}
-
-/* Dark theme override for active button */
+.timeframeButton.active,
 [data-theme='dark'] .timeframeButton.active {
   background: #667eea;
   color: white;
@@ -244,14 +159,9 @@
   padding: 20px;
   border-radius: 12px;
   overflow-x: auto;
-}
-
-/* Light theme */
-[data-theme='light'] .chartContainer {
   background: #f9f9f9;
 }
 
-/* Dark theme */
 [data-theme='dark'] .chartContainer {
   background: #2a2a3a;
   border: 1px solid #3a3a4a;
@@ -288,24 +198,19 @@
 }
 
 .barValue {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bold;
   color: white;
 }
 
 .barLabel {
   margin-top: 8px;
-  font-size: 11px;
+  font-size: 0.7rem;
   text-align: center;
   white-space: nowrap;
-}
-
-/* Light theme */
-[data-theme='light'] .barLabel {
   color: #666;
 }
 
-/* Dark theme */
 [data-theme='dark'] .barLabel {
   color: #9ca3af;
 }
@@ -316,22 +221,19 @@
   gap: 20px;
 }
 
+/* Game cards pick up --game-bg from [data-game] in globals.css */
 .gameModeItem {
   padding: 20px;
   border-radius: 12px;
   border: 2px solid #e0e0e0;
-}
-
-/* Light theme */
-[data-theme='light'] .gameModeItem {
+  border-left: 6px solid var(--game-bg, #667eea);
   background: #f9f9f9;
-  border-color: #e0e0e0;
 }
 
-/* Dark theme */
 [data-theme='dark'] .gameModeItem {
   background: #2a2a3a;
   border-color: #3a3a4a;
+  border-left-color: var(--game-bg, #8a8aff);
 }
 
 .gameModeHeader {
@@ -342,27 +244,23 @@
 }
 
 .gameModeIcon {
-  font-size: 28px;
+  font-size: 1.75rem;
 }
 
 .gameModeName {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .gameModeName {
   color: #333;
 }
 
-/* Dark theme */
 [data-theme='dark'] .gameModeName {
   color: #e0e0e0;
 }
 
 .gameModeMetrics {
   display: flex;
-  gap: 32px;
+  flex-wrap: wrap;
+  gap: 16px 32px;
   margin-bottom: 16px;
 }
 
@@ -373,32 +271,22 @@
 }
 
 .metricLabel {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-}
-
-/* Light theme */
-[data-theme='light'] .metricLabel {
   color: #666;
 }
 
-/* Dark theme */
 [data-theme='dark'] .metricLabel {
   color: #9ca3af;
 }
 
 .metricValue {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .metricValue {
   color: #667eea;
 }
 
-/* Dark theme */
 [data-theme='dark'] .metricValue {
   color: #8a8aff;
 }
@@ -407,23 +295,22 @@
   height: 12px;
   border-radius: 6px;
   overflow: hidden;
-}
-
-/* Light theme */
-[data-theme='light'] .progressBar {
   background: #e0e0e0;
 }
 
-/* Dark theme */
 [data-theme='dark'] .progressBar {
   background: #3a3a4a;
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--game-bg, #667eea);
   border-radius: 6px;
   transition: width 0.3s ease;
+}
+
+[data-theme='dark'] .progressFill {
+  background: var(--game-bg, #8a8aff);
 }
 
 .metricsGrid {
@@ -439,18 +326,12 @@
   padding: 24px;
   border-radius: 12px;
   border: 2px solid #e0e0e0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-/* Light theme */
-[data-theme='light'] .metricCard {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-color: #e0e0e0;
-}
-
-/* Dark theme */
 [data-theme='dark'] .metricCard {
   background: linear-gradient(135deg, #2a2a3a 0%, #3a3a4a 100%);
   border-color: #3a3a4a;
@@ -462,151 +343,67 @@
 }
 
 .metricCardIcon {
-  font-size: 32px;
+  font-size: 2rem;
   margin-bottom: 12px;
 }
 
 .metricCardLabel {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   text-align: center;
   margin-bottom: 8px;
-}
-
-/* Light theme */
-[data-theme='light'] .metricCardLabel {
   color: #666;
 }
 
-/* Dark theme */
 [data-theme='dark'] .metricCardLabel {
   color: #9ca3af;
 }
 
 .metricCardValue {
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .metricCardValue {
   color: #667eea;
 }
 
-/* Dark theme */
 [data-theme='dark'] .metricCardValue {
   color: #8a8aff;
 }
 
 .leaderboard {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  composes: leaderboard from '../_styles/statsShared.module.css';
 }
 
 .leaderboardItem {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  border: 2px solid #e0e0e0;
-  transition: background 0.2s ease;
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardItem {
-  background: #f9f9f9;
-  border-color: #e0e0e0;
-}
-
-[data-theme='light'] .leaderboardItem:hover {
-  background: #f0f0f0;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardItem {
-  background: #2a2a3a;
-  border-color: #3a3a4a;
-}
-
-[data-theme='dark'] .leaderboardItem:hover {
-  background: #3a3a4a;
-}
-
-.leaderboardItem:hover {
-  background: #f0f0f0;
+  composes: leaderboardItem from '../_styles/statsShared.module.css';
 }
 
 .leaderboardRank {
-  font-size: 24px;
-  font-weight: bold;
-  min-width: 40px;
-  text-align: center;
+  composes: leaderboardRank from '../_styles/statsShared.module.css';
 }
 
 .leaderboardUsername {
-  font-size: 16px;
-  font-weight: 600;
-  min-width: 100px;
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardUsername {
-  color: #333;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardUsername {
-  color: #e0e0e0;
+  composes: leaderboardUsername from '../_styles/statsShared.module.css';
 }
 
 .leaderboardStats {
-  display: flex;
-  gap: 24px;
-  margin-left: auto;
+  composes: leaderboardStats from '../_styles/statsShared.module.css';
 }
 
 .leaderboardStat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  composes: leaderboardStat from '../_styles/statsShared.module.css';
 }
 
 .leaderboardStatLabel {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardStatLabel {
-  color: #666;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardStatLabel {
-  color: #9ca3af;
+  composes: leaderboardStatLabel from '../_styles/statsShared.module.css';
 }
 
 .leaderboardStatValue {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardStatValue {
-  color: #667eea;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardStatValue {
-  color: #8a8aff;
+  composes: leaderboardStatValue from '../_styles/statsShared.module.css';
 }
 
 .progressStatsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 20px;
 }
 
@@ -614,18 +411,14 @@
   padding: 20px;
   border-radius: 12px;
   border: 2px solid #e0e0e0;
-}
-
-/* Light theme */
-[data-theme='light'] .progressStatCard {
+  border-left: 6px solid var(--game-bg, #667eea);
   background: #f9f9f9;
-  border-color: #e0e0e0;
 }
 
-/* Dark theme */
 [data-theme='dark'] .progressStatCard {
   background: #2a2a3a;
   border-color: #3a3a4a;
+  border-left-color: var(--game-bg, #8a8aff);
 }
 
 .progressStatHeader {
@@ -636,20 +429,15 @@
 }
 
 .progressStatIcon {
-  font-size: 28px;
+  font-size: 1.75rem;
 }
 
 .progressStatName {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .progressStatName {
   color: #333;
 }
 
-/* Dark theme */
 [data-theme='dark'] .progressStatName {
   color: #e0e0e0;
 }
@@ -668,55 +456,41 @@
 }
 
 .progressMetricLabel {
-  font-size: 11px;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-}
-
-/* Light theme */
-[data-theme='light'] .progressMetricLabel {
   color: #666;
 }
 
-/* Dark theme */
 [data-theme='dark'] .progressMetricLabel {
   color: #9ca3af;
 }
 
 .progressMetricValue {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .progressMetricValue {
   color: #667eea;
 }
 
-/* Dark theme */
 [data-theme='dark'] .progressMetricValue {
   color: #8a8aff;
 }
 
 .subTitle {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   margin: 24px 0 16px 0;
-}
-
-/* Light theme */
-[data-theme='light'] .subTitle {
   color: #333;
 }
 
-/* Dark theme */
 [data-theme='dark'] .subTitle {
   color: #e0e0e0;
 }
 
 .retentionCard {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 16px 24px;
   padding: 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 12px;
@@ -728,17 +502,17 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  flex: 1;
+  flex: 1 1 140px;
 }
 
 .retentionLabel {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   opacity: 0.9;
 }
 
 .retentionValue {
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: bold;
 }
 
@@ -750,14 +524,9 @@
   padding: 20px;
   border-radius: 12px;
   overflow-x: auto;
-}
-
-/* Light theme */
-[data-theme='light'] .hourlyActivityChart {
   background: #f9f9f9;
 }
 
-/* Dark theme */
 [data-theme='dark'] .hourlyActivityChart {
   background: #2a2a3a;
   border: 1px solid #3a3a4a;
@@ -786,37 +555,41 @@
 }
 
 .hourBarValue {
-  font-size: 10px;
+  font-size: 0.65rem;
   font-weight: bold;
   color: white;
 }
 
 .hourLabel {
   margin-top: 6px;
-  font-size: 10px;
+  font-size: 0.65rem;
   text-align: center;
-}
-
-/* Light theme */
-[data-theme='light'] .hourLabel {
   color: #666;
 }
 
-/* Dark theme */
 [data-theme='dark'] .hourLabel {
   color: #9ca3af;
 }
 
 .peakHour {
   font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .peakHour {
   color: #667eea;
 }
 
-/* Dark theme */
 [data-theme='dark'] .peakHour {
   color: #8a8aff;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 20px 12px;
+  }
+
+  .content {
+    padding: 20px 14px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+  }
 }

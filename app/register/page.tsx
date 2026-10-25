@@ -55,6 +55,8 @@ const TEXT = {
   username: { en: 'Username', th: 'ชื่อผู้ใช้' },
   usernamePlaceholder: { en: 'Enter your name', th: 'ใส่ชื่อของคุณ' },
   password: { en: 'Password', th: 'รหัสผ่าน' },
+  showPassword: { en: 'Show password', th: 'แสดงรหัสผ่าน' },
+  hidePassword: { en: 'Hide password', th: 'ซ่อนรหัสผ่าน' },
   wait: { en: 'Please wait...', th: 'กรุณารอสักครู่...' },
   or: { en: 'or', th: 'หรือ' },
 };
@@ -94,6 +96,7 @@ function RegisterPageInner() {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -181,18 +184,31 @@ function RegisterPageInner() {
               <span className={styles.labelEmoji}>🔐</span>
               {pair(TEXT.password)}
             </label>
-            <input
-              id="password"
-              className={styles.input}
-              type="password"
-              autoComplete={
-                mode === 'register' ? 'new-password' : 'current-password'
-              }
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder={pair(config.passwordPlaceholder)}
-              required
-            />
+            <div className={styles.passwordWrap}>
+              <input
+                id="password"
+                className={styles.input}
+                type={showPassword ? 'text' : 'password'}
+                autoComplete={
+                  mode === 'register' ? 'new-password' : 'current-password'
+                }
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder={pair(config.passwordPlaceholder)}
+                required
+              />
+              <button
+                type="button"
+                className={styles.togglePassword}
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={pair(
+                  showPassword ? TEXT.hidePassword : TEXT.showPassword,
+                )}
+                aria-pressed={showPassword}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
 
           {/* Error Message */}

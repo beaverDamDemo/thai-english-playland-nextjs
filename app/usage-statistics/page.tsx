@@ -209,7 +209,11 @@ export default function UsageStatisticsPage() {
               const { emoji: gameEmoji, name: gameName } = getGameModeDetails(mode.gameMode);
 
               return (
-                <div key={mode.gameMode} className={styles.gameModeItem}>
+                <div
+                  key={mode.gameMode}
+                  className={styles.gameModeItem}
+                  data-game={mode.gameMode}
+                >
                   <div className={styles.gameModeHeader}>
                     <span className={styles.gameModeIcon}>{gameEmoji}</span>
                     <span className={styles.gameModeName}>{gameName}</span>
@@ -363,7 +367,11 @@ export default function UsageStatisticsPage() {
                   : '0';
 
               return (
-                <div key={stat.gameMode} className={styles.progressStatCard}>
+                <div
+                  key={stat.gameMode}
+                  className={styles.progressStatCard}
+                  data-game={stat.gameMode}
+                >
                   <div className={styles.progressStatHeader}>
                     <span className={styles.progressStatIcon}>{gameEmoji}</span>
                     <span className={styles.progressStatName}>{gameName}</span>

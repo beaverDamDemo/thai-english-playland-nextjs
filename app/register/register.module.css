@@ -1,4 +1,4 @@
-/* Playful colorful theme for kids */
+/* Playful colorful theme for kids. Dark theme is driven by [data-theme='dark'] (set before first paint in layout.tsx). */
 
 .container {
   min-height: 100dvh;
@@ -34,10 +34,10 @@
 }
 
 .card {
-  width: min(400px, 100%);
+  width: min(440px, 100%);
   background: #ffffff;
   border-radius: 32px;
-  padding: 28px 24px;
+  padding: 32px 28px;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.15),
     0 8px 20px rgba(0, 0, 0, 0.1);
@@ -78,11 +78,10 @@
 }
 
 .thai {
-  font-size: 0.85em;
+  font-size: 0.95em;
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0;
-  opacity: 0.9;
 }
 
 .modeIcon {
@@ -140,12 +139,14 @@
 }
 
 .input {
+  width: 100%;
   min-height: 52px;
   padding: 12px 18px;
   border-radius: 16px;
   border: 3px solid #dfe6e9;
   font-size: 1rem;
   background: #f8f9fa;
+  color: #2d3436;
   transition: all 0.2s ease;
 }
 
@@ -154,6 +155,32 @@
   border-color: #74b9ff;
   background: #ffffff;
   box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.2);
+}
+
+.passwordWrap {
+  position: relative;
+}
+
+.passwordWrap .input {
+  padding-right: 56px;
+}
+
+.togglePassword {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.togglePassword:hover {
+  background: rgba(116, 185, 255, 0.15);
 }
 
 .error {
@@ -250,104 +277,21 @@
   background: rgba(116, 185, 255, 0.1);
 }
 
-/* Decorative elements */
-.decorations {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
+.submit:focus-visible,
+.switchMode:focus-visible,
+.togglePassword:focus-visible {
+  outline: 4px solid #0984e3;
+  outline-offset: 3px;
 }
 
-.star {
-  position: absolute;
-  font-size: 2rem;
-  opacity: 0.3;
-  animation: twinkle 2s ease-in-out infinite;
-}
-
-@keyframes twinkle {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.3;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.6;
+@media (max-width: 380px) {
+  .card {
+    padding: 24px 18px;
+    border-radius: 24px;
   }
 }
 
-/* Dark Theme Styles */
-@media (prefers-color-scheme: dark) {
-  :global(:root:not([data-theme='light'])) .container {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  }
-
-  :global(:root:not([data-theme='light'])) .container::before,
-  :global(:root:not([data-theme='light'])) .container::after {
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  :global(:root:not([data-theme='light'])) .card {
-    background: rgba(30, 30, 50, 0.95);
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.4),
-      0 8px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  :global(:root:not([data-theme='light'])) .title {
-    color: #e8f0ff;
-  }
-
-  :global(:root:not([data-theme='light'])) .subtitle {
-    color: #9fb5e7;
-  }
-
-  :global(:root:not([data-theme='light'])) .label {
-    color: #c1d0ef;
-  }
-
-  :global(:root:not([data-theme='light'])) .input {
-    background: rgba(20, 25, 40, 0.8);
-    border-color: rgba(123, 151, 218, 0.3);
-    color: #e8f0ff;
-  }
-
-  :global(:root:not([data-theme='light'])) .input:focus {
-    border-color: #74b9ff;
-    background: rgba(25, 30, 50, 0.9);
-    box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.15);
-  }
-
-  :global(:root:not([data-theme='light'])) .input::placeholder {
-    color: #6b7a9c;
-  }
-
-  :global(:root:not([data-theme='light'])) .divider {
-    color: #6b7a9c;
-  }
-
-  :global(:root:not([data-theme='light'])) .divider::before,
-  :global(:root:not([data-theme='light'])) .divider::after {
-    background: rgba(123, 151, 218, 0.2);
-  }
-
-  :global(:root:not([data-theme='light'])) .switchMode {
-    border-color: rgba(123, 151, 218, 0.3);
-    color: #9fb5e7;
-  }
-
-  :global(:root:not([data-theme='light'])) .switchMode:hover {
-    border-color: #74b9ff;
-    color: #74b9ff;
-    background: rgba(116, 185, 255, 0.1);
-  }
-}
-
-/* Explicit dark theme data attribute */
+/* Dark theme */
 :global([data-theme='dark']) .container {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
 }
@@ -389,11 +333,11 @@
 }
 
 :global([data-theme='dark']) .input::placeholder {
-  color: #6b7a9c;
+  color: #8393b8;
 }
 
 :global([data-theme='dark']) .divider {
-  color: #6b7a9c;
+  color: #8393b8;
 }
 
 :global([data-theme='dark']) .divider::before,
@@ -410,4 +354,8 @@
   border-color: #74b9ff;
   color: #74b9ff;
   background: rgba(116, 185, 255, 0.1);
+}
+
+:global([data-theme='dark']) .togglePassword:hover {
+  background: rgba(116, 185, 255, 0.15);
 }

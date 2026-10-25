@@ -1,56 +1,49 @@
+/* Light styles are the default; dark overrides follow. Shared pieces live in _styles/statsShared.module.css */
 .container {
   min-height: 100vh;
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-/* Light theme */
-[data-theme='light'] .container {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-/* Dark theme */
 [data-theme='dark'] .container {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   margin-bottom: 1rem;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: clamp(1.6rem, 6vw, 2.5rem);
   font-weight: 700;
   margin: 0;
-}
-
-/* Light theme */
-[data-theme='light'] .title {
   color: white;
 }
 
-/* Dark theme */
 [data-theme='dark'] .title {
   color: #e0e0e0;
 }
 
+.backLink {
+  composes: backLink from '../_styles/statsShared.module.css';
+}
+
+/* Scrolls sideways on narrow screens; the username column stays pinned */
 .tableContainer {
   margin: 0 auto;
   border-radius: 1rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-/* Light theme */
-[data-theme='light'] .tableContainer {
+  overflow-x: auto;
   background: white;
 }
 
-/* Dark theme */
 [data-theme='dark'] .tableContainer {
   background: #1e1e2e;
   border: 1px solid #3a3a4a;
@@ -58,14 +51,13 @@
 
 .table {
   min-width: 100%;
+  border-collapse: collapse;
 }
 
-/* Light theme */
-[data-theme='light'] .thead {
+.thead {
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
 }
 
-/* Dark theme */
 [data-theme='dark'] .thead {
   background: linear-gradient(90deg, #4a4a6a 0%, #5a5a7a 100%);
 }
@@ -77,6 +69,17 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  color: white;
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .headerCell {
+  color: #e0e0e0;
+}
+
+/* Game columns get a coloured underline from [data-game] in globals.css */
+.headerCell[data-game] {
+  box-shadow: inset 0 -4px 0 var(--game-bg);
 }
 
 .sortableHeader {
@@ -89,22 +92,10 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Light theme */
-[data-theme='light'] .headerCell {
-  color: white;
-}
-
-/* Dark theme */
-[data-theme='dark'] .headerCell {
-  color: #e0e0e0;
-}
-
-/* Light theme */
-[data-theme='light'] .tbody {
+.tbody {
   background: white;
 }
 
-/* Dark theme */
 [data-theme='dark'] .tbody {
   background: #1e1e2e;
 }
@@ -114,20 +105,18 @@
   transition: background-color 0.2s;
 }
 
-/* Light theme */
-[data-theme='light'] .row {
-  border-bottom-color: #e5e7eb;
-}
-
-[data-theme='light'] .row:nth-child(even) {
+.row:nth-child(even) {
   background-color: #f9fafb;
 }
 
-[data-theme='light'] .row:nth-child(odd) {
+.row:nth-child(odd) {
   background-color: white;
 }
 
-/* Dark theme */
+.row:hover {
+  background-color: #f3f4f6;
+}
+
 [data-theme='dark'] .row {
   border-bottom-color: #3a3a4a;
 }
@@ -140,32 +129,33 @@
   background-color: #1e1e2e;
 }
 
-.row:hover {
-  background-color: #f3f4f6;
-}
-
-/* Dark theme hover override */
 [data-theme='dark'] .row:hover {
   background-color: #2a2a3a;
 }
 
-.currentUserRow {
+/* Extra specificity beats the zebra and hover rules without !important */
+.row.currentUserRow:nth-child(n) {
   background: linear-gradient(
     135deg,
     rgba(102, 126, 234, 0.2) 0%,
     rgba(118, 75, 162, 0.2) 100%
-  ) !important;
-  border-left: 4px solid #667eea;
+  );
   font-weight: 600;
 }
 
-/* Dark theme for current user row */
-[data-theme='dark'] .currentUserRow {
+[data-theme='dark'] .row.currentUserRow:nth-child(n) {
   background: linear-gradient(
     135deg,
     rgba(102, 126, 234, 0.3) 0%,
     rgba(118, 75, 162, 0.3) 100%
-  ) !important;
+  );
+}
+
+.row.currentUserRow:nth-child(n) .usernameCell {
+  border-left: 4px solid #667eea;
+}
+
+[data-theme='dark'] .row.currentUserRow:nth-child(n) .usernameCell {
   border-left-color: #8a8aff;
 }
 
@@ -175,16 +165,38 @@
   font-size: 0.875rem;
 }
 
-.usernameCell {
-  font-weight: 600;
+.stickyCol {
+  position: sticky;
+  left: 0;
+  z-index: 1;
 }
 
-/* Light theme */
-[data-theme='light'] .usernameCell {
+.headerCell.stickyCol {
+  background: #667eea;
+}
+
+[data-theme='dark'] .headerCell.stickyCol {
+  background: #4a4a6a;
+}
+
+.cell.stickyCol {
+  background: inherit;
+}
+
+/* Solid colours so scrolled content doesn't show through the translucent highlight */
+.row.currentUserRow .cell.stickyCol {
+  background: #dfe3fb;
+}
+
+[data-theme='dark'] .row.currentUserRow .cell.stickyCol {
+  background: #2f3050;
+}
+
+.usernameCell {
+  font-weight: 600;
   color: #1f2937;
 }
 
-/* Dark theme */
 [data-theme='dark'] .usernameCell {
   color: #e0e0e0;
 }
@@ -195,14 +207,9 @@
 
 .level {
   font-weight: 500;
-}
-
-/* Light theme */
-[data-theme='light'] .level {
   color: #374151;
 }
 
-/* Dark theme */
 [data-theme='dark'] .level {
   color: #b0b0c0;
 }
@@ -221,12 +228,10 @@
   color: #10b981;
 }
 
-/* Light theme */
-[data-theme='light'] .joinedDate {
+.joinedDate {
   color: #6b7280;
 }
 
-/* Dark theme */
 [data-theme='dark'] .joinedDate {
   color: #9ca3af;
 }
@@ -248,14 +253,9 @@
 .lastActiveCell {
   text-align: center;
   font-size: 0.875rem;
-}
-
-/* Light theme */
-[data-theme='light'] .lastActiveCell {
   color: #6b7280;
 }
 
-/* Dark theme */
 [data-theme='dark'] .lastActiveCell {
   color: #9ca3af;
 }
@@ -274,7 +274,9 @@
   color: #9ca3af;
 }
 
-.activityBarContainer {
+.activityBarContainer,
+.successRateBarContainer,
+.leaderboardBar {
   width: 100%;
   height: 6px;
   background: #e5e7eb;
@@ -283,12 +285,14 @@
   overflow: hidden;
 }
 
-/* Dark theme */
-[data-theme='dark'] .activityBarContainer {
+[data-theme='dark'] .activityBarContainer,
+[data-theme='dark'] .successRateBarContainer,
+[data-theme='dark'] .leaderboardBar {
   background: #3a3a4a;
 }
 
-.activityBar {
+.activityBar,
+.leaderboardBarFill {
   height: 100%;
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
   border-radius: 3px;
@@ -304,114 +308,31 @@
   font-size: 1.1rem;
 }
 
-.successRateBarContainer {
-  width: 100%;
-  height: 6px;
-  background: #e5e7eb;
-  border-radius: 3px;
-  margin-top: 4px;
-  overflow: hidden;
-}
-
-/* Dark theme */
-[data-theme='dark'] .successRateBarContainer {
-  background: #3a3a4a;
-}
-
 .successRateBar {
   height: 100%;
   border-radius: 3px;
   transition: width 0.3s ease;
 }
 
-.backLink {
-  text-decoration: none;
-  font-weight: 700;
-  padding: 12px 20px;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.backLink::before {
-  content: '🏠';
-  font-size: 1.1rem;
-}
-
-/* Light theme */
-[data-theme='light'] .backLink {
-  color: white;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.15) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-[data-theme='light'] .backLink:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.25) 100%
-  );
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Dark theme */
-[data-theme='dark'] .backLink {
-  color: #e0e0e0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.06) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-[data-theme='dark'] .backLink:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-}
-
-.loading {
-  padding: 2rem;
-  text-align: center;
-  font-size: 1.25rem;
-}
-
-/* Light theme */
-[data-theme='light'] .loading {
-  color: white;
-}
-
-/* Dark theme */
-[data-theme='dark'] .loading {
-  color: #e0e0e0;
-}
-
+.loading,
 .error {
   padding: 2rem;
   text-align: center;
   font-size: 1.25rem;
 }
 
-/* Light theme */
-[data-theme='light'] .error {
+.loading {
+  color: white;
+}
+
+[data-theme='dark'] .loading {
+  color: #e0e0e0;
+}
+
+.error {
   color: #fecaca;
 }
 
-/* Dark theme */
 [data-theme='dark'] .error {
   color: #fca5a5;
 }
@@ -421,14 +342,9 @@
   padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardSection {
   background: white;
 }
 
-/* Dark theme */
 [data-theme='dark'] .leaderboardSection {
   background: #1e1e2e;
   border: 1px solid #3a3a4a;
@@ -438,156 +354,75 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 1rem 0;
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardTitle {
   color: #1f2937;
 }
 
-/* Dark theme */
 [data-theme='dark'] .leaderboardTitle {
   color: #e0e0e0;
 }
 
 .leaderboard {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  composes: leaderboard from '../_styles/statsShared.module.css';
 }
 
 .leaderboardItem {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  border: 2px solid #e0e0e0;
-  transition: background 0.2s ease;
+  composes: leaderboardItem from '../_styles/statsShared.module.css';
 }
 
-/* Light theme */
-[data-theme='light'] .leaderboardItem {
-  background: #f9f9f9;
+.leaderboardRank {
+  composes: leaderboardRank from '../_styles/statsShared.module.css';
 }
 
-[data-theme='light'] .leaderboardItem:hover {
-  background: #f0f0f0;
+.leaderboardUsername {
+  composes: leaderboardUsername from '../_styles/statsShared.module.css';
 }
 
-/* Dark theme */
-[data-theme='dark'] .leaderboardItem {
-  background: #252535;
-  border-color: #3a3a4a;
+.leaderboardStats {
+  composes: leaderboardStats from '../_styles/statsShared.module.css';
 }
 
-[data-theme='dark'] .leaderboardItem:hover {
-  background-color: #2a2a3a;
+.leaderboardStat {
+  composes: leaderboardStat from '../_styles/statsShared.module.css';
 }
 
-.currentUserLeaderboardItem {
+.leaderboardStatLabel {
+  composes: leaderboardStatLabel from '../_styles/statsShared.module.css';
+}
+
+.leaderboardStatValue {
+  composes: leaderboardStatValue from '../_styles/statsShared.module.css';
+}
+
+main .currentUserLeaderboardItem.currentUserLeaderboardItem {
   background: linear-gradient(
     135deg,
     rgba(102, 126, 234, 0.3) 0%,
     rgba(118, 75, 162, 0.3) 100%
-  ) !important;
-  border: 2px solid #667eea !important;
+  );
+  border-color: #667eea;
   font-weight: 700;
 }
 
-/* Dark theme for current user leaderboard item */
-[data-theme='dark'] .currentUserLeaderboardItem {
+[data-theme='dark'] main .currentUserLeaderboardItem.currentUserLeaderboardItem {
   background: linear-gradient(
     135deg,
     rgba(102, 126, 234, 0.4) 0%,
     rgba(118, 75, 162, 0.4) 100%
-  ) !important;
-  border-color: #8a8aff !important;
+  );
+  border-color: #8a8aff;
 }
 
-.leaderboardRank {
-  font-size: 24px;
-  font-weight: bold;
-  min-width: 40px;
-  text-align: center;
-}
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.75rem;
+  }
 
-.leaderboardUsername {
-  font-size: 16px;
-  font-weight: 600;
-  min-width: 100px;
-}
+  .leaderboardSection {
+    padding: 1rem;
+  }
 
-/* Light theme */
-[data-theme='light'] .leaderboardUsername {
-  color: #1f2937;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardUsername {
-  color: #e0e0e0;
-}
-
-.leaderboardStats {
-  display: flex;
-  gap: 24px;
-  margin-left: auto;
-}
-
-.leaderboardStat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.leaderboardStatLabel {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardStatLabel {
-  color: #6b7280;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardStatLabel {
-  color: #9ca3af;
-}
-
-.leaderboardStatValue {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Light theme */
-[data-theme='light'] .leaderboardStatValue {
-  color: #667eea;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardStatValue {
-  color: #8a8aff;
-}
-
-.leaderboardBar {
-  width: 100%;
-  height: 6px;
-  background: #e5e7eb;
-  border-radius: 3px;
-  margin-top: 4px;
-  overflow: hidden;
-}
-
-/* Dark theme */
-[data-theme='dark'] .leaderboardBar {
-  background: #3a3a4a;
-}
-
-.leaderboardBarFill {
-  height: 100%;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  .cell,
+  .headerCell {
+    padding: 0.75rem 1rem;
+  }
 }
