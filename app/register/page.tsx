@@ -6,24 +6,86 @@ import styles from './register.module.css';
 
 type Mode = 'register' | 'login';
 
-const MODE_CONFIG = {
+type Bilingual = { en: string; th: string };
+
+// Hardcoded Thai translations: no online translation service is used on this page.
+const MODE_CONFIG: Record<
+  Mode,
+  {
+    bannerText: Bilingual;
+    bannerIcon: string;
+    titleEmoji: string;
+    subtitle: Bilingual;
+    buttonText: Bilingual;
+    switchText: Bilingual;
+    switchAction: Bilingual;
+    passwordPlaceholder: Bilingual;
+  }
+> = {
   register: {
-    bannerText: 'New Player',
+    bannerText: { en: 'New Player', th: 'ผู้เล่นใหม่' },
     bannerIcon: '🌟',
     titleEmoji: '🎮',
-    buttonText: 'Create Account',
-    switchText: 'Already have an account?',
-    switchAction: 'Log in here!',
+    subtitle: {
+      en: 'Create your account and start the adventure!',
+      th: 'สร้างบัญชีของคุณและเริ่มการผจญภัย!',
+    },
+    buttonText: { en: 'Create Account', th: 'สร้างบัญชี' },
+    switchText: { en: 'Already have an account?', th: 'มีบัญชีอยู่แล้วใช่ไหม?' },
+    switchAction: { en: 'Log in here!', th: 'เข้าสู่ระบบที่นี่!' },
+    passwordPlaceholder: { en: 'Create a password', th: 'สร้างรหัสผ่าน' },
   },
   login: {
-    bannerText: 'Welcome Back',
+    bannerText: { en: 'Welcome Back', th: 'ยินดีต้อนรับกลับ' },
     bannerIcon: '🚀',
     titleEmoji: '🏠',
-    buttonText: 'Log In',
-    switchText: "Don't have an account?",
-    switchAction: 'Join the fun!',
+    subtitle: {
+      en: 'Ready to continue your journey?',
+      th: 'พร้อมที่จะเดินทางต่อหรือยัง?',
+    },
+    buttonText: { en: 'Log In', th: 'เข้าสู่ระบบ' },
+    switchText: { en: "Don't have an account?", th: 'ยังไม่มีบัญชีใช่ไหม?' },
+    switchAction: { en: 'Join the fun!', th: 'มาสนุกด้วยกัน!' },
+    passwordPlaceholder: { en: 'Enter your password', th: 'ใส่รหัสผ่านของคุณ' },
   },
 };
+
+const TEXT = {
+  title: { en: 'Thai English Playland', th: 'ไทยอิงลิชเพลย์แลนด์' },
+  username: { en: 'Username', th: 'ชื่อผู้ใช้' },
+  usernamePlaceholder: { en: 'Enter your name', th: 'ใส่ชื่อของคุณ' },
+  password: { en: 'Password', th: 'รหัสผ่าน' },
+  wait: { en: 'Please wait...', th: 'กรุณารอสักครู่...' },
+  or: { en: 'or', th: 'หรือ' },
+};
+
+const ERROR_TRANSLATIONS: Record<string, string> = {
+  'Request failed.': 'คำขอล้มเหลว',
+  'Network error, please try again.': 'เครือข่ายขัดข้อง กรุณาลองอีกครั้ง',
+  'Missing username or password.': 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน',
+  'Invalid username or password.': 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+  'Username must be 3-30 chars (letters, numbers, _ or -).':
+    'ชื่อผู้ใช้ต้องมี 3-30 ตัวอักษร (ตัวอักษร ตัวเลข _ หรือ -)',
+  'Password must be at least 8 characters.':
+    'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร',
+  'Username already exists.': 'ชื่อผู้ใช้นี้ถูกใช้แล้ว',
+  'Registration failed.': 'การสมัครสมาชิกล้มเหลว',
+};
+
+function pair(text: Bilingual): string {
+  return `${text.en} / ${text.th}`;
+}
+
+function Both({ text }: { text: Bilingual }) {
+  return (
+    <>
+      <span>{text.en}</span>
+      <span className={styles.thai} lang="th">
+        {text.th}
+      </span>
+    </>
+  );
+}
 
 function RegisterPageInner() {
   const searchParams = useSearchParams();
@@ -81,18 +143,18 @@ function RegisterPageInner() {
         {/* Mode Indicator Banner */}
         <div className={`${styles.modeBanner} ${styles[mode]}`}>
           <span className={styles.modeIcon}>{config.bannerIcon}</span>
-          <span>{config.bannerText}</span>
+          <span className={styles.stack}>
+            <Both text={config.bannerText} />
+          </span>
         </div>
 
         {/* Title with Emoji */}
         <h1 className={styles.title}>
           <span className={styles.titleEmoji}>{config.titleEmoji}</span>
-          Thai English Playland
+          <Both text={TEXT.title} />
         </h1>
-        <p className={styles.subtitle}>
-          {mode === 'register'
-            ? 'Create your account and start the adventure!'
-            : 'Ready to continue your journey?'}
+        <p className={`${styles.subtitle} ${styles.stack}`}>
+          <Both text={config.subtitle} />
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>
@@ -100,7 +162,7 @@ function RegisterPageInner() {
           <div className={styles.inputGroup}>
             <label className={styles.label} htmlFor="username">
               <span className={styles.labelEmoji}>👤</span>
-              Username
+              {pair(TEXT.username)}
             </label>
             <input
               id="username"
@@ -108,7 +170,7 @@ function RegisterPageInner() {
               autoComplete="username"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              placeholder="Enter your name"
+              placeholder={pair(TEXT.usernamePlaceholder)}
               required
             />
           </div>
@@ -117,7 +179,7 @@ function RegisterPageInner() {
           <div className={styles.inputGroup}>
             <label className={styles.label} htmlFor="password">
               <span className={styles.labelEmoji}>🔐</span>
-              Password
+              {pair(TEXT.password)}
             </label>
             <input
               id="password"
@@ -128,11 +190,7 @@ function RegisterPageInner() {
               }
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder={
-                mode === 'register'
-                  ? 'Create a password'
-                  : 'Enter your password'
-              }
+              placeholder={pair(config.passwordPlaceholder)}
               required
             />
           </div>
@@ -141,7 +199,14 @@ function RegisterPageInner() {
           {error ? (
             <p className={styles.error}>
               <span>⚠️</span>
-              {error}
+              <span className={styles.stack}>
+                <span>{error}</span>
+                {ERROR_TRANSLATIONS[error] ? (
+                  <span className={styles.thai} lang="th">
+                    {ERROR_TRANSLATIONS[error]}
+                  </span>
+                ) : null}
+              </span>
             </p>
           ) : null}
 
@@ -151,13 +216,15 @@ function RegisterPageInner() {
             type="submit"
             disabled={loading}
           >
-            {loading ? '⏳ Please wait...' : `🚀 ${config.buttonText}`}
+            <span className={styles.stack}>
+              <Both text={loading ? TEXT.wait : config.buttonText} />
+            </span>
           </button>
         </form>
 
         {/* Divider */}
         <div className={styles.divider}>
-          <span>or</span>
+          <span>{pair(TEXT.or)}</span>
         </div>
 
         {/* Mode Switch Button */}
@@ -166,7 +233,14 @@ function RegisterPageInner() {
           type="button"
           onClick={toggleMode}
         >
-          {config.switchText} <strong>{config.switchAction}</strong>
+          <span className={styles.stack}>
+            <span>
+              {config.switchText.en} <strong>{config.switchAction.en}</strong>
+            </span>
+            <span className={styles.thai} lang="th">
+              {config.switchText.th} <strong>{config.switchAction.th}</strong>
+            </span>
+          </span>
         </button>
       </section>
     </main>
