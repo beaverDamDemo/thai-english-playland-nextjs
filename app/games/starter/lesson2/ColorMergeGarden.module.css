@@ -34,8 +34,8 @@
   flex: 1;
   overflow: hidden;
   color: #fff;
-  font-size: clamp(0.82rem, 4.2vw, 1.2rem);
-  font-weight: 700;
+  font-size: clamp(1rem, 4.5vw, 1.35rem);
+  font-weight: 800;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;

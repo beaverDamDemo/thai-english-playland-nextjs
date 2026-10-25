@@ -15,9 +15,15 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 1rem;
-  background: #16213e;
-  border-bottom: 2px solid #e91e63;
+  padding: 10px 20px;
+  background: #222;
+  color: #fff;
+}
+
+:global(:root[data-theme='dark']) .header {
+  background: #0f1b33;
+  color: #edf4ff;
+  border-bottom: 1px solid rgba(120, 151, 233, 0.3);
 }
 
 .back {
@@ -36,9 +42,11 @@
 .title {
   margin: 0;
   flex: 1;
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  min-width: 0;
+  color: #fff;
+  font-size: clamp(1rem, 4.5vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 /* Progress dots */
