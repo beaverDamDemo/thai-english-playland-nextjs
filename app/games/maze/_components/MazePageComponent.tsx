@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
@@ -309,7 +309,7 @@ const MazePageComponent: FC<MazePageProps> = ({
             height: `${isMobilePortrait ? mobileHeight : desktopHeight}px`,
           }}
         >
-          <MazeHeader score={score} backHref={backHref} />
+          <MazeHeader score={score} backHref={backHref} game={gameMode} />
           <div
             style={{
               flex: 1,
@@ -339,7 +339,7 @@ const MazePageComponent: FC<MazePageProps> = ({
                   margin: '0 0 20px 0',
                 }}
               >
-                🎉 Congratulations! 🎉
+                ðŸŽ‰ Congratulations! ðŸŽ‰
               </h1>
               <p style={{ fontSize: '20px', color: '#333', margin: '10px 0' }}>
                 {gameMode === 'casino'
@@ -439,7 +439,7 @@ const MazePageComponent: FC<MazePageProps> = ({
           position: 'relative',
         }}
       >
-        <MazeHeader score={score} backHref={backHref} />
+        <MazeHeader score={score} backHref={backHref} game={gameMode} />
 
         <div style={{ flex: 1, position: 'relative' }}>
           <div

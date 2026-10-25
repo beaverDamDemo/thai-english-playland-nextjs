@@ -393,7 +393,7 @@ export default function PattayaLesson1Page() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={0} backHref="/games/pattaya-games" />
+        <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
 
         <section className={styles.panel}>
           <div className={styles.progress}>

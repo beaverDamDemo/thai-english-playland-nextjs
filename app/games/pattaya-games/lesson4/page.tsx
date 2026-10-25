@@ -571,7 +571,7 @@ function PattayaLesson4Content() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={score} backHref="/games/pattaya-games" />
+          <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
           <div className={styles.endPanel}>
             <h2 className={styles.endTitle}>
               {passed ? 'Mission Accomplished!' : 'Mission Failed'}
@@ -604,7 +604,7 @@ function PattayaLesson4Content() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={score} backHref="/games/pattaya-games" />
+        <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
 
         <div className={styles.hud}>
           <span className={styles.chip}>

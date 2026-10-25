@@ -659,7 +659,7 @@ export default function PattayaLesson3Page() {
       return (
         <div className={styles.page}>
           <div className={styles.container}>
-            <MazeHeader score={0} backHref="/games/pattaya-games" />
+            <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
             <div className={styles.panel}>
               <p className={styles.prompt}>Loading quiz…</p>
             </div>
@@ -670,7 +670,7 @@ export default function PattayaLesson3Page() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={0} backHref="/games/pattaya-games" />
+          <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
           <Quiz
             question={q}
             selected={selected}
@@ -689,7 +689,7 @@ export default function PattayaLesson3Page() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={0} backHref="/games/pattaya-games" />
+          <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
 
           <div className={styles.statsRow}>
             <span className={styles.scoreChip}>🎯 Shots: {shotsLeft}</span>
