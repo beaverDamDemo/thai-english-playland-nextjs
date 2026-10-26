@@ -28,8 +28,11 @@ async function main() {
     process.exit(1);
   }
 
-  const sqlFile = path.join(__dirname, '..', 'db', 'init', '001_schema.sql');
-  const sql = fs.readFileSync(sqlFile, 'utf8');
+  const schemaDir = path.join(__dirname, '..', 'db', 'init');
+  const sqlFiles = fs
+    .readdirSync(schemaDir)
+    .filter((file) => file.endsWith('.sql'))
+    .sort();
 
   console.log('Connecting to database...');
 
@@ -58,8 +61,11 @@ async function main() {
   });
 
   try {
-    console.log('Running schema SQL...');
-    await sqlClient.unsafe(sql);
+    for (const file of sqlFiles) {
+      console.log(`Running ${file}...`);
+      const sql = fs.readFileSync(path.join(schemaDir, file), 'utf8');
+      await sqlClient.unsafe(sql);
+    }
     console.log('Schema applied successfully!');
   } catch (err) {
     console.error('Error running schema:', err.message);

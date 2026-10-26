@@ -19,6 +19,7 @@
     "prestart": "npm run build",
     "start": "next start --port 4200",
     "lint": "eslint",
+    "db:schema": "node scripts/run-schema.mjs",
     "db:start": "node scripts/manage-postgres.mjs start",
     "db:stop": "node scripts/manage-postgres.mjs stop",
     "db:restart": "node scripts/manage-postgres.mjs restart",

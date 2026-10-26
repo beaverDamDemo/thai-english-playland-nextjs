@@ -122,6 +122,33 @@ export async function GET() {
     ORDER BY date ASC;
   `;
 
+  // Count distinct users who opened at least one lesson on each tracked day.
+  const dailyLessonUsersResult = await db`
+    WITH tracking AS (
+      SELECT started_at
+      FROM public.thai_english_playland_activity_tracking
+      WHERE id = 1
+    ),
+    activity_days AS (
+      SELECT generate_series(
+        GREATEST(CURRENT_DATE - 29, tracking.started_at)::timestamp,
+        CURRENT_DATE::timestamp,
+        INTERVAL '1 day'
+      )::date AS activity_date
+      FROM tracking
+    )
+    SELECT
+      TO_CHAR(days.activity_date, 'YYYY-MM-DD') AS date,
+      COUNT(activity.user_id) AS count,
+      TO_CHAR(tracking.started_at, 'YYYY-MM-DD') AS tracking_started_at
+    FROM tracking
+    JOIN activity_days days ON TRUE
+    LEFT JOIN public.thai_english_playland_daily_lesson_activity activity
+      ON activity.activity_date = days.activity_date
+    GROUP BY days.activity_date, tracking.started_at
+    ORDER BY days.activity_date ASC;
+  `;
+
   // Get peak activity periods (hour of day)
   const hourlyActivityResult = await db`
     SELECT
@@ -204,6 +231,12 @@ export async function GET() {
         totalUsersInMode: Number(row.total_users_in_mode || 0),
       })),
       activityOverTime: {
+        dailyLessonUsers: dailyLessonUsersResult.map((row) => ({
+          date: row.date,
+          count: Number(row.count || 0),
+        })),
+        lessonActivityTrackingStart:
+          dailyLessonUsersResult[0]?.tracking_started_at || null,
         dailyActivity: dailyActivityResult.map((row) => ({
           date: row.date?.toISOString().split("T")[0] || "",
           totalAttempts: Number(row.total_attempts || 0),

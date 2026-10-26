@@ -141,6 +141,40 @@
   height: 55%;
 }
 
+.skeletonDescription {
+  width: min(520px, 90%);
+  height: 16px;
+  margin: -12px 0 20px;
+}
+
+.skeletonDailyActivityChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 240px;
+  padding: 20px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+
+[data-theme='dark'] .skeletonDailyActivityChart {
+  background: #2a2a3a;
+}
+
+.skeletonDailyActivityBar {
+  flex: 1;
+  height: 40%;
+}
+
+.skeletonDailyActivityBar:nth-child(3n) {
+  height: 75%;
+}
+
+.skeletonDailyActivityBar:nth-child(3n + 1) {
+  height: 55%;
+}
+
 .skeletonModeGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
@@ -434,6 +468,97 @@
 
 [data-theme='dark'] .barLabel {
   color: #9ca3af;
+}
+
+.dailyLessonDescription {
+  margin: -12px 0 20px;
+  color: #666;
+  line-height: 1.5;
+}
+
+[data-theme='dark'] .dailyLessonDescription,
+[data-theme='dark'] .dailyLessonEmpty {
+  color: #9ca3af;
+}
+
+.dailyLessonChartContainer {
+  overflow-x: auto;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+
+[data-theme='dark'] .dailyLessonChartContainer {
+  background: #2a2a3a;
+  border: 1px solid #3a3a4a;
+}
+
+.dailyLessonChart {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 1080px;
+  height: 250px;
+}
+
+.dailyLessonBarContainer {
+  display: grid;
+  grid-template-rows: 18px minmax(0, 1fr) 18px;
+  flex: 1;
+  gap: 5px;
+  min-width: 28px;
+  text-align: center;
+}
+
+.dailyLessonBarValue {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #596b83;
+}
+
+[data-theme='dark'] .dailyLessonBarValue {
+  color: #c4cce0;
+}
+
+.dailyLessonBarTrack {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom: 1px solid #d1d5db;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(25% - 1px),
+    rgba(148, 163, 184, 0.16) calc(25% - 1px),
+    rgba(148, 163, 184, 0.16) 25%
+  );
+}
+
+[data-theme='dark'] .dailyLessonBarTrack {
+  border-bottom-color: #4b5563;
+}
+
+.dailyLessonBar {
+  width: 70%;
+  min-height: 0;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(180deg, #8b9cf0 0%, #667eea 100%);
+  transition: height 0.3s ease;
+}
+
+.dailyLessonDate {
+  font-size: 0.65rem;
+  color: #666;
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .dailyLessonDate {
+  color: #9ca3af;
+}
+
+.dailyLessonEmpty {
+  margin: 0;
+  color: #666;
 }
 
 .gameModeStats {

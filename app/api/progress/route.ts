@@ -166,6 +166,14 @@ export async function POST(request: Request) {
         updated_at        = NOW();
     `;
     }
+    if (body.delta === true) {
+      await db`
+        INSERT INTO public.thai_english_playland_daily_lesson_activity
+          (activity_date, user_id)
+        VALUES (CURRENT_DATE, ${user.id})
+        ON CONFLICT (activity_date, user_id) DO NOTHING;
+      `;
+    }
     // console.log('POST /api/progress: Successfully saved');
   } catch (err) {
     console.error("POST /api/progress: Database error:", err);

@@ -42,6 +42,8 @@ type UserGrowthData = {
       totalAttempts: number;
       activeUsers: number;
     }>;
+    dailyLessonUsers: Array<{ date: string; count: number }>;
+    lessonActivityTrackingStart: string | null;
     hourlyActivity: Array<{ hour: number; activityCount: number }>;
     retention: {
       returningUsers: number;
@@ -116,6 +118,19 @@ export default function UsageStatisticsPage() {
                 <span
                   key={index}
                   className={`${styles.skeleton} ${styles.skeletonChartBar}`}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <span className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <span className={`${styles.skeleton} ${styles.skeletonDescription}`} />
+            <div className={styles.skeletonDailyActivityChart}>
+              {Array.from({ length: 12 }, (_, index) => (
+                <span
+                  key={index}
+                  className={`${styles.skeleton} ${styles.skeletonDailyActivityBar}`}
                 />
               ))}
             </div>
@@ -264,6 +279,11 @@ export default function UsageStatisticsPage() {
     }
   };
 
+  const maxDailyLessonUsers = Math.max(
+    ...data.activityOverTime.dailyLessonUsers.map((day) => day.count),
+    1,
+  );
+
   return (
     <main className={styles.container}>
       <div className={styles.header}>
@@ -306,6 +326,67 @@ export default function UsageStatisticsPage() {
           <div className={styles.chartContainer}>
             <div className={styles.chart}>{renderChart()}</div>
           </div>
+        </section>
+
+        <section className={styles.card}>
+          <h2 className={styles.cardTitle}>Daily Lesson Participation</h2>
+          <p className={styles.dailyLessonDescription}>
+            Signed-in users who opened at least one lesson each day.
+            {data.activityOverTime.lessonActivityTrackingStart
+              ? ` Tracking started ${new Date(
+                  `${data.activityOverTime.lessonActivityTrackingStart}T00:00:00`,
+                ).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}.`
+              : ' Daily tracking has not started yet.'}
+          </p>
+          {data.activityOverTime.dailyLessonUsers.length > 0 ? (
+            <div
+              className={styles.dailyLessonChartContainer}
+              role="group"
+              aria-label="Daily unique users who opened at least one lesson"
+            >
+              <div className={styles.dailyLessonChart} role="list">
+                {data.activityOverTime.dailyLessonUsers.map((item) => {
+                  const date = new Date(`${item.date}T00:00:00`);
+                  const dateLabel = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                  });
+                  const barHeight =
+                    (item.count / maxDailyLessonUsers) * 100;
+
+                  return (
+                    <div
+                      key={item.date}
+                      className={styles.dailyLessonBarContainer}
+                      role="listitem"
+                      aria-label={`${dateLabel}: ${item.count} signed-in ${item.count === 1 ? 'user' : 'users'} opened a lesson`}
+                    >
+                      <span className={styles.dailyLessonBarValue}>
+                        {item.count}
+                      </span>
+                      <div className={styles.dailyLessonBarTrack}>
+                        <div
+                          className={styles.dailyLessonBar}
+                          style={{ height: `${barHeight}%` }}
+                        />
+                      </div>
+                      <span className={styles.dailyLessonDate}>
+                        {dateLabel}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <p className={styles.dailyLessonEmpty}>
+              No lesson activity has been recorded yet.
+            </p>
+          )}
         </section>
 
         <section className={styles.card}>
