@@ -40,6 +40,31 @@
   outline-offset: 2px;
 }
 
+.skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.2) 25%,
+    rgba(148, 163, 184, 0.38) 50%,
+    rgba(148, 163, 184, 0.2) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
 [data-theme='dark'] .backLink {
   color: #e0e0e0;
   background: linear-gradient(

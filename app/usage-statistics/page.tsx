@@ -88,7 +88,119 @@ export default function UsageStatisticsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className={styles.loading}>Loading...</div>;
+  if (loading) {
+    return (
+      <main className={styles.container} aria-busy="true">
+        <p className={styles.srOnly} role="status">
+          Loading usage statistics
+        </p>
+        <div className={styles.header} aria-hidden="true">
+          <span className={`${styles.skeleton} ${styles.skeletonBackLink}`} />
+          <span className={`${styles.skeleton} ${styles.skeletonPageTitle}`} />
+        </div>
+
+        <div className={styles.content} aria-hidden="true">
+          <section className={styles.card}>
+            <span className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={styles.skeletonTotal}>
+              <span className={`${styles.skeleton} ${styles.skeletonMedium}`} />
+              <span className={`${styles.skeleton} ${styles.skeletonNumber}`} />
+            </div>
+            <div className={styles.skeletonSelector}>
+              <span className={`${styles.skeleton} ${styles.skeletonPill}`} />
+              <span className={`${styles.skeleton} ${styles.skeletonPill}`} />
+              <span className={`${styles.skeleton} ${styles.skeletonPill}`} />
+            </div>
+            <div className={styles.skeletonChart}>
+              {Array.from({ length: 12 }, (_, index) => (
+                <span
+                  key={index}
+                  className={`${styles.skeleton} ${styles.skeletonChartBar}`}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <span className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={styles.skeletonModeGrid}>
+              {Array.from({ length: 3 }, (_, index) => (
+                <div key={index} className={styles.skeletonModeCard}>
+                  <span className={`${styles.skeleton} ${styles.skeletonMedium}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonShort}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonProgress}`} />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <span className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={styles.skeletonMetricsGrid}>
+              {Array.from({ length: 5 }, (_, index) => (
+                <div key={index} className={styles.skeletonMetricCard}>
+                  <span className={`${styles.skeleton} ${styles.skeletonIcon}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonMedium}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonShort}`} />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <span className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={styles.skeletonLeaderboard}>
+              {Array.from({ length: 4 }, (_, index) => (
+                <div key={index} className={styles.skeletonLeaderboardItem}>
+                  <span className={`${styles.skeleton} ${styles.skeletonRank}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonName}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <span className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={styles.skeletonModeGrid}>
+              {Array.from({ length: 3 }, (_, index) => (
+                <div key={index} className={styles.skeletonProgressCard}>
+                  <span className={`${styles.skeleton} ${styles.skeletonMedium}`} />
+                  <div className={styles.skeletonProgressMetrics}>
+                    {Array.from({ length: 4 }, (_, metricIndex) => (
+                      <span
+                        key={metricIndex}
+                        className={`${styles.skeleton} ${styles.skeletonShort}`}
+                      />
+                    ))}
+                  </div>
+                  <span className={`${styles.skeleton} ${styles.skeletonProgress}`} />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <span className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={styles.skeletonTotal}>
+              <span className={`${styles.skeleton} ${styles.skeletonMedium}`} />
+              <span className={`${styles.skeleton} ${styles.skeletonMedium}`} />
+            </div>
+            <div className={styles.skeletonHourlyChart}>
+              {Array.from({ length: 12 }, (_, index) => (
+                <span
+                  key={index}
+                  className={`${styles.skeleton} ${styles.skeletonHourBar}`}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+      </main>
+    );
+  }
   if (error) return <div className={styles.error}>Error: {error}</div>;
   if (!data) return <div className={styles.error}>No data available</div>;
 
@@ -310,9 +422,8 @@ export default function UsageStatisticsPage() {
                       ? '🥉'
                       : `${index + 1}.`;
               const maskedUsername =
-                user.username.length > 0
-                  ? user.username[0] + '*'.repeat(user.username.length - 1)
-                  : '';
+                user.username.slice(0, 2) +
+                '*'.repeat(Math.max(user.username.length - 2, 0));
 
               return (
                 <div key={user.username} className={styles.leaderboardItem}>

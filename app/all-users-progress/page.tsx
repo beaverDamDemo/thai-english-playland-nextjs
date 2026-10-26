@@ -87,7 +87,65 @@ export default function AllUsersProgressPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className={styles.loading}>Loading...</div>;
+  if (loading) {
+    return (
+      <main className={styles.container} aria-busy="true">
+        <p className={styles.srOnly} role="status">
+          Loading all users progress
+        </p>
+        <div className={styles.header} aria-hidden="true">
+          <span className={`${styles.skeleton} ${styles.skeletonBackLink}`} />
+          <span className={`${styles.skeleton} ${styles.skeletonPageTitle}`} />
+        </div>
+
+        <section className={styles.leaderboardSection} aria-hidden="true">
+          <span className={`${styles.skeleton} ${styles.skeletonSectionTitle}`} />
+          <div className={styles.skeletonLeaderboard}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <div key={index} className={styles.skeletonLeaderboardItem}>
+                <span className={`${styles.skeleton} ${styles.skeletonRank}`} />
+                <span className={`${styles.skeleton} ${styles.skeletonName}`} />
+                <div className={styles.skeletonLeaderboardStats}>
+                  <span className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                  <span className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div className={styles.tableContainer} aria-hidden="true">
+          <table className={styles.table}>
+            <thead className={styles.thead}>
+              <tr>
+                {Array.from({ length: 10 }, (_, index) => (
+                  <th key={index} className={styles.headerCell}>
+                    <span
+                      className={`${styles.skeleton} ${styles.skeletonTableHeading}`}
+                    />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className={styles.tbody}>
+              {Array.from({ length: 6 }, (_, rowIndex) => (
+                <tr key={rowIndex} className={styles.row}>
+                  {Array.from({ length: 10 }, (_, cellIndex) => (
+                    <td key={cellIndex} className={styles.cell}>
+                      <span
+                        className={`${styles.skeleton} ${styles.skeletonTableCell}`}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    );
+  }
   if (error) return <div className={styles.error}>Error: {error}</div>;
 
   // Handle sort click
@@ -229,9 +287,8 @@ export default function AllUsersProgressPage() {
                     ? '🥉'
                     : `${index + 1}.`;
             const maskedUsername =
-              user.username.length > 0
-                ? user.username[0] + '*'.repeat(user.username.length - 1)
-                : '';
+              user.username.slice(0, 2) +
+              '*'.repeat(Math.max(user.username.length - 2, 0));
             const isCurrentUser = currentUser && user.id === currentUser.id;
             const hue = Math.round((user.successRate / 100) * 120); // 0 to 120 (red to green)
             const successRateColor = `hsl(${hue}, 70%, 50%)`;
@@ -374,9 +431,8 @@ export default function AllUsersProgressPage() {
                 ? `${String(lastActiveDate.getDate()).padStart(2, '0')}/${String(lastActiveDate.getMonth() + 1).padStart(2, '0')}/${lastActiveDate.getFullYear()}`
                 : 'Never';
               const maskedUsername =
-                user.username.length > 0
-                  ? user.username[0] + '*'.repeat(user.username.length - 1)
-                  : '';
+                user.username.slice(0, 2) +
+                '*'.repeat(Math.max(user.username.length - 2, 0));
               const isCurrentUser = currentUser && user.id === currentUser.id;
 
               return (
