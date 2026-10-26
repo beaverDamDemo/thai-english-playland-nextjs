@@ -803,7 +803,7 @@
 
 @media (max-width: 600px) {
   .container {
-    padding: 20px 12px;
+    padding: 20px var(--mobile-page-gutter, 16px);
   }
 
   .content {

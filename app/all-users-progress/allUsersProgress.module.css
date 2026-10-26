@@ -506,7 +506,7 @@ main .currentUserLeaderboardItem.currentUserLeaderboardItem {
 
 @media (max-width: 600px) {
   .container {
-    padding: 1rem 0.75rem;
+    padding: 1rem var(--mobile-page-gutter, 16px);
   }
 
   .leaderboardSection {

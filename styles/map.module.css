@@ -24,7 +24,7 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 10px 14px 8px;
+  padding: 10px var(--mobile-page-gutter, 16px) 8px;
   background: linear-gradient(135deg, #fff1b8 0%, #ffdce9 55%, #dff5ff 100%);
   color: #1d2744;
   font-size: 17px;
@@ -88,7 +88,8 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 10px;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  padding: 10px var(--mobile-page-gutter, 16px)
+    calc(10px + env(safe-area-inset-bottom, 0px));
   background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(8px);
   color: #24375f;

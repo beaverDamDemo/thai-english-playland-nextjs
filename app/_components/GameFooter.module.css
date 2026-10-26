@@ -5,7 +5,8 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  padding: 10px var(--mobile-page-gutter, 16px)
+    calc(10px + env(safe-area-inset-bottom, 0px));
   background: var(--game-bg, #222);
   color: #fff;
   font-size: 12px;

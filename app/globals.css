@@ -6,6 +6,7 @@
   --accent: #ff4d6d; /* vivid pink/red for highlights */
   --secondary: #4da6ff; /* bright blue for buttons/links */
   --tertiary: #ffd54d; /* sunny yellow for maze walls or effects */
+  --mobile-page-gutter: 16px;
 
   --home-grad-a: rgba(255, 192, 89, 0.45);
   --home-grad-b: rgba(106, 221, 255, 0.35);
