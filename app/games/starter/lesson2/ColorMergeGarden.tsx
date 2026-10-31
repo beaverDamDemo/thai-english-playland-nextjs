@@ -43,6 +43,21 @@ const COLORS: ColorName[] = [
 ];
 const STORAGE_KEY = 'color-merge-garden-progress';
 const MAX_LEVEL = 4;
+// Red is only taught on level 1; later levels draw from this order instead.
+const LEVEL_ONE_COLORS: ColorName[] = ['red', 'blue', 'yellow', 'green'];
+const LATER_LEVEL_COLORS: ColorName[] = [
+  'blue',
+  'yellow',
+  'green',
+  'orange',
+  'purple',
+  'gray',
+  'pink',
+  'brown',
+  'black',
+  'white',
+  'cyan',
+];
 
 type SavedProgress = {
   level: number;
@@ -61,7 +76,8 @@ const MSG_NEW_LEVEL: Message = {
 };
 
 function activeColorsForLevel(level: number): ColorName[] {
-  return COLORS.slice(0, Math.min(4 + (level - 1) * 2, COLORS.length));
+  if (level === 1) return LEVEL_ONE_COLORS;
+  return LATER_LEVEL_COLORS.slice(0, 4 + (level - 1) * 2);
 }
 
 function isColorName(value: unknown): value is ColorName {
