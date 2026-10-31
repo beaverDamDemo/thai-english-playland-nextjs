@@ -1,0 +1,384 @@
+.page {
+  box-sizing: border-box;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #f7f3ec, #e4eef2);
+  color: #202d31;
+}
+
+.headerTitle {
+  min-width: 0;
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  color: #fff;
+  font-size: clamp(1rem, 4.5vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lessonTag {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.workspace {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px 16px max(28px, env(safe-area-inset-bottom));
+}
+
+.gameLayout {
+  display: grid;
+  width: min(100%, 980px);
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: center;
+  gap: 22px;
+}
+
+.stageArea {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 12px;
+}
+
+.levels {
+  display: grid;
+  width: min(100%, 300px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 2px;
+  border: 2px solid rgba(14, 116, 144, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #3b6772;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.levelNumber {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(14, 116, 144, 0.2);
+  font-size: 0.8rem;
+}
+
+.levelCurrent {
+  border-color: #0e7490;
+  background: #fff;
+}
+
+.levelDone {
+  border-color: #1d704b;
+  background: #e4f3ea;
+  color: #1d704b;
+}
+
+.levelDone .levelNumber {
+  background: #1d704b;
+  color: #fff;
+}
+
+.heading {
+  text-align: center;
+}
+
+.instruction {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  font-weight: 850;
+}
+
+.instructionThai {
+  margin: 0;
+  color: #3b6772;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.status {
+  min-height: 1.4rem;
+  margin: 6px 0 0;
+  color: #1d704b;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.buddy {
+  position: relative;
+  width: min(100%, calc(52svh * 200 / 360), 260px);
+  aspect-ratio: 200 / 360;
+}
+
+.buddyBody {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.slot {
+  position: absolute;
+  padding: 0;
+  border: 2px dashed transparent;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.slot_hat {
+  top: 3%;
+  left: 25%;
+  width: 50%;
+  height: 15%;
+}
+
+.slot_shirt {
+  top: 31%;
+  left: 18%;
+  width: 64%;
+  height: 31%;
+}
+
+.slot_pants {
+  top: 60%;
+  left: 27%;
+  width: 46%;
+  height: 27%;
+}
+
+.slot_shoes {
+  top: 86%;
+  left: 15%;
+  width: 70%;
+  height: 12%;
+}
+
+.slotIcon {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.slotHint {
+  opacity: 0.35;
+}
+
+.slotReady {
+  border-color: #0e7490;
+  background: rgba(14, 116, 144, 0.1);
+}
+
+.suitcase {
+  position: relative;
+  display: grid;
+  width: min(100%, 360px);
+  justify-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.suitcaseHandle {
+  width: 90px;
+  height: 36px;
+  border: 8px solid #6b4a32;
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+}
+
+.suitcaseBody {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 26px 16px;
+  border: 4px solid #6b4a32;
+  border-radius: 14px;
+  background: #b9824f;
+}
+
+.suitcaseSlot {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border: 2px dashed rgba(255, 255, 255, 0.65);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 2.1rem;
+}
+
+.suitcase.slotReady .suitcaseBody {
+  box-shadow: 0 0 0 4px rgba(14, 116, 144, 0.45);
+}
+
+.toolPanel {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(67, 91, 89, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 254, 250, 0.8);
+}
+
+.panelTitle {
+  margin: 0;
+  color: #315c5b;
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.trayGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.trayItem {
+  display: flex;
+  min-width: 0;
+  min-height: 84px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid #a7b9b1;
+  border-radius: 8px;
+  background: #fffefa;
+  color: #304745;
+  font: inherit;
+  font-weight: 800;
+  cursor: grab;
+  touch-action: manipulation;
+}
+
+.trayItemSelected {
+  border-color: #075c77;
+  background: #e5f1f2;
+  box-shadow: 0 0 0 2px rgba(7, 92, 119, 0.16);
+}
+
+.trayIcon {
+  width: 56px;
+  height: 56px;
+  pointer-events: none;
+}
+
+.trayEmoji {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.trayLabel {
+  font-size: 0.78rem;
+}
+
+.trayThai {
+  color: #5a7571;
+  font-size: 0.68rem;
+}
+
+.secondaryButton,
+.nextButton {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #9bada5;
+  border-radius: 8px;
+  background: transparent;
+  color: #315c5b;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nextButton {
+  border-color: #1c6671;
+  background: #1c6671;
+  color: #fff;
+}
+
+.trayItem:focus-visible,
+.slot:focus-visible,
+.suitcase:focus-visible,
+.secondaryButton:focus-visible,
+.nextButton:focus-visible {
+  outline: 3px solid #a24a24;
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .gameLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .toolPanel {
+    width: min(100%, 560px);
+    box-sizing: border-box;
+    justify-self: center;
+  }
+
+  .trayGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .buddy {
+    width: min(100%, calc(44svh * 200 / 360), 220px);
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .trayIcon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .suitcaseSlot {
+    width: 54px;
+    height: 54px;
+  }
+}

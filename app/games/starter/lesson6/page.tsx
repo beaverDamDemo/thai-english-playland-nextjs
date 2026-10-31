@@ -1,7 +1,5 @@
-'use client';
-import Quiz from './Quiz';
-import StarterLessonPage from '../_components/StarterLessonPage';
+import FoodMarket from './FoodMarket';
 
 export default function Page() {
-  return <StarterLessonPage lessonNumber={6} Quiz={Quiz} />;
+  return <FoodMarket />;
 }

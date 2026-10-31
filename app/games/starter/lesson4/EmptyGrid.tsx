@@ -4,7 +4,7 @@ import Image from 'next/image';
 import MusicToggle from '../../../_components/MusicToggle';
 import UnlockToast from '../_components/UnlockToast';
 import Link from 'next/link';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
@@ -28,8 +28,8 @@ const LEVEL_GRID_SIZES = [5, 8, 8, 8];
 const START_CELL = 0;
 const ROUNDS_PER_LEVEL = 4;
 const ROUND_TIME_LIMIT_SECONDS = 10;
-const FLOW_STEP_DELAY_SECONDS = 0.55;
-const FLOW_ANIMATION_DURATION_SECONDS = 0.65;
+const FLOW_STEP_DELAY_SECONDS = 1.375;
+const FLOW_DURATION_SECONDS = 1.625;
 const PIPE_DRAG_TYPE = 'application/x-playland-pipe';
 const PIPE_SOURCE_TYPE = 'application/x-playland-pipe-source';
 const DIRECTIONS: Direction[] = ['north', 'east', 'south', 'west'];
@@ -185,12 +185,13 @@ function areExitsReachable(
   const reachable = new Set([START_CELL]);
   const queue = [START_CELL];
 
+  // Exits only accept water from the west and are dead ends; the start only opens east.
   for (let cursor = 0; cursor < queue.length; cursor++) {
     const cell = queue[cursor];
     const row = Math.floor(cell / gridSize);
     const column = cell % gridSize;
 
-    for (const direction of DIRECTIONS) {
+    for (const direction of cell === START_CELL ? ['east' as const] : DIRECTIONS) {
       const movement = MOVEMENT[direction];
       const nextRow = row + movement.row;
       const nextColumn = column + movement.column;
@@ -204,10 +205,13 @@ function areExitsReachable(
       }
 
       const nextCell = nextRow * gridSize + nextColumn;
-      if (!obstacleCells.has(nextCell) && !reachable.has(nextCell)) {
-        reachable.add(nextCell);
-        queue.push(nextCell);
+      if (obstacleCells.has(nextCell) || reachable.has(nextCell)) continue;
+      if (exitCells.includes(nextCell)) {
+        if (direction === 'east') reachable.add(nextCell);
+        continue;
       }
+      reachable.add(nextCell);
+      queue.push(nextCell);
     }
   }
 
@@ -291,6 +295,7 @@ function PipeArtwork({
   connected,
   flowing = false,
   flowDelaySeconds = 0,
+  flowDurationSeconds = 1.625,
   flowIncoming,
   flowOutgoing = [],
 }: {
@@ -299,6 +304,7 @@ function PipeArtwork({
   connected: boolean;
   flowing?: boolean;
   flowDelaySeconds?: number;
+  flowDurationSeconds?: number;
   flowIncoming?: Direction | null;
   flowOutgoing?: Direction[];
 }) {
@@ -309,17 +315,11 @@ function PipeArtwork({
     : piece
       ? getPipeConnections(piece)
       : [];
-  const gradientId = `pipe-gradient-${useId().replace(/:/g, '')}`;
   const colors = terminal
-    ? { rim: '#79452f', top: '#f4c18d', middle: '#bd754b', bottom: '#874b31' }
+    ? { rim: '#3f4448', fill: '#7d868c' }
     : connected
-      ? { rim: '#164c3c', top: '#c1ebcd', middle: '#4eae76', bottom: '#176c4a' }
-      : {
-          rim: '#263f3c',
-          top: '#d0dfd5',
-          middle: '#829d8f',
-          bottom: '#3d6255',
-        };
+      ? { rim: '#3f4448', fill: '#8f989e' }
+      : { rim: '#4a5055', fill: '#b4bbc0' };
   const path = connections
     .map((direction) => `M 50 50 L ${SVG_ENDPOINT[direction as Direction]}`)
     .join(' ');
@@ -330,39 +330,22 @@ function PipeArtwork({
       viewBox="0 0 100 100"
       aria-hidden="true"
     >
-      <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={colors.top} />
-          <stop offset="48%" stopColor={colors.middle} />
-          <stop offset="100%" stopColor={colors.bottom} />
-        </linearGradient>
-      </defs>
       <path
         d={path}
         fill="none"
         stroke={colors.rim}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="27"
+        strokeLinecap="butt"
+        strokeWidth="26"
       />
+      <rect x="37" y="37" width="26" height="26" fill={colors.rim} />
       <path
         d={path}
         fill="none"
-        stroke={`url(#${gradientId})`}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="20"
+        stroke={colors.fill}
+        strokeLinecap="butt"
+        strokeWidth="18"
       />
-      <path
-        d={path}
-        fill="none"
-        stroke="#fff"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="4"
-        opacity="0.48"
-        transform="translate(-2 -2)"
-      />
+      <rect x="41" y="41" width="18" height="18" fill={colors.fill} />
       {flowing &&
         (flowOutgoing.length > 0
           ? flowOutgoing.map((direction) => {
@@ -380,7 +363,10 @@ function PipeArtwork({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="9"
-                  style={{ animationDelay: `${flowDelaySeconds}s` }}
+                  style={{
+                    animationDelay: `${flowDelaySeconds}s`,
+                    animationDuration: `${flowDurationSeconds}s`,
+                  }}
                 />
               );
             })
@@ -395,23 +381,12 @@ function PipeArtwork({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="9"
-                  style={{ animationDelay: `${flowDelaySeconds}s` }}
+                  style={{
+                    animationDelay: `${flowDelaySeconds}s`,
+                    animationDuration: `${flowDurationSeconds}s`,
+                  }}
                 />
               ))}
-      {(piece || terminal) && (
-        <g>
-          <circle cx="50" cy="50" r="13" fill={colors.rim} />
-          <circle cx="50" cy="50" r="9.5" fill={`url(#${gradientId})`} />
-          <ellipse
-            cx="46"
-            cy="43"
-            rx="4.5"
-            ry="2.2"
-            fill="#fff"
-            opacity="0.5"
-          />
-        </g>
-      )}
     </svg>
   );
 }
@@ -453,12 +428,9 @@ function EmptyGridContent() {
   const wrongExit = exits.find(
     (exit) => !exit.isTarget && flow.steps[exit.cell] >= 0,
   );
-  const maxFlowStep = Math.max(0, ...flow.steps);
-  const flowStepDelaySeconds = Math.min(
-    FLOW_STEP_DELAY_SECONDS,
-    (ROUND_TIME_LIMIT_SECONDS - FLOW_ANIMATION_DURATION_SECONDS) /
-      (maxFlowStep + 1),
-  );
+  const flowSpeedFactor = routeComplete ? 0.5 : 1;
+  const flowStepDelaySeconds = FLOW_STEP_DELAY_SECONDS * flowSpeedFactor;
+  const flowDurationSeconds = FLOW_DURATION_SECONDS * flowSpeedFactor;
   const isLastRound = roundIndex === ROUNDS_PER_LEVEL - 1;
   const isLastLevel = levelIndex === ANIMAL_LEVELS.length - 1;
   const lessonComplete = routeComplete && isLastRound && isLastLevel;
@@ -629,26 +601,8 @@ function EmptyGridContent() {
                   ? `Correct! This is a ${current.animal}. · ใช่แล้ว!`
                   : wrongExit
                     ? 'That is not a match. Try another name. · ลองเลือกชื่ออื่น'
-                    : `Round ${roundIndex + 1} of ${ROUNDS_PER_LEVEL}: connect the picture to its name. Avoid the rocks; pipes cannot go there. · อย่าวางท่อตรงหิน`}
+                    : ''}
               </p>
-              <div className={styles.timer} aria-live="off">
-                <span>⏱</span>
-                <span>
-                  {!roundStarted
-                    ? `${ROUND_TIME_LIMIT_SECONDS}s to connect`
-                    : !flowStarted
-                      ? `Water starts in ${timeLeft}s`
-                      : routeComplete
-                      ? 'Route complete!'
-                      : `${timeLeft}s remaining`}
-                </span>
-                <progress
-                  className={styles.timerProgress}
-                  max={ROUND_TIME_LIMIT_SECONDS}
-                  value={roundStarted && !routeComplete ? timeLeft : ROUND_TIME_LIMIT_SECONDS}
-                  aria-label={`${roundStarted && !routeComplete ? timeLeft : ROUND_TIME_LIMIT_SECONDS} seconds`}
-                />
-              </div>
             </div>
 
             <div
@@ -704,6 +658,7 @@ function EmptyGridContent() {
                         connected={isConnected}
                         flowing={flowStarted && isConnected}
                         flowDelaySeconds={flowStep * flowStepDelaySeconds}
+                        flowDurationSeconds={flowDurationSeconds}
                         flowIncoming={flow.incoming[cellIndex]}
                         flowOutgoing={flow.outgoing[cellIndex]}
                       />
@@ -750,6 +705,7 @@ function EmptyGridContent() {
                         connected={isConnected}
                         flowing={flowStarted && isConnected}
                         flowDelaySeconds={flowStep * flowStepDelaySeconds}
+                        flowDurationSeconds={flowDurationSeconds}
                         flowIncoming={flow.incoming[cellIndex]}
                         flowOutgoing={flow.outgoing[cellIndex]}
                       />
@@ -787,7 +743,6 @@ function EmptyGridContent() {
                     }}
                   >
                     <PipeArtwork piece={tool.piece} connected={false} />
-                    <span>{tool.label}</span>
                   </button>
                 );
               })}

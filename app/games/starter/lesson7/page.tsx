@@ -1,7 +1,5 @@
-'use client';
-import Quiz from './Quiz';
-import StarterLessonPage from '../_components/StarterLessonPage';
+import MonsterBody from './MonsterBody';
 
 export default function Page() {
-  return <StarterLessonPage lessonNumber={7} Quiz={Quiz} />;
+  return <MonsterBody />;
 }

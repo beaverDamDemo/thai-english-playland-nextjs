@@ -1,0 +1,349 @@
+.page {
+  box-sizing: border-box;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #fbf4e4, #e6f1e4);
+  color: #202d31;
+}
+
+.headerTitle {
+  min-width: 0;
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  color: #fff;
+  font-size: clamp(1rem, 4.5vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lessonTag {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.workspace {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px 16px max(28px, env(safe-area-inset-bottom));
+}
+
+.gameLayout {
+  display: grid;
+  width: min(100%, 980px);
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: center;
+  gap: 22px;
+}
+
+.stageArea {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 12px;
+}
+
+.levels {
+  display: grid;
+  width: min(100%, 440px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 2px;
+  border: 2px solid rgba(60, 120, 70, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #3d6b45;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.levelNumber {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(60, 120, 70, 0.2);
+  font-size: 0.8rem;
+}
+
+.levelCurrent {
+  border-color: #3a8a4a;
+  background: #fff;
+}
+
+.levelDone {
+  border-color: #1d704b;
+  background: #e4f3ea;
+  color: #1d704b;
+}
+
+.levelDone .levelNumber {
+  background: #1d704b;
+  color: #fff;
+}
+
+.heading {
+  text-align: center;
+}
+
+.instruction {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  font-weight: 850;
+}
+
+.instructionThai {
+  margin: 0;
+  color: #3d6b45;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.status {
+  min-height: 1.4rem;
+  margin: 6px 0 0;
+  color: #1d704b;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.statusError {
+  color: #b4451f;
+}
+
+.basket {
+  display: grid;
+  width: min(100%, 380px);
+  justify-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.basketHandle {
+  width: 70%;
+  height: 34px;
+  border: 7px solid #8a5a2b;
+  border-bottom: 0;
+  border-radius: 40px 40px 0 0;
+}
+
+.basketBody {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 14px;
+  border: 4px solid #8a5a2b;
+  border-radius: 6px 6px 28px 28px;
+  background: repeating-linear-gradient(
+    90deg,
+    #d9a566 0,
+    #d9a566 14px,
+    #c8934f 14px,
+    #c8934f 18px
+  );
+}
+
+.basketSlot {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 2px dashed rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 1.9rem;
+}
+
+.basketReady .basketBody {
+  box-shadow: 0 0 0 4px rgba(58, 138, 74, 0.5);
+}
+
+.orderList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.orderList li {
+  padding: 4px 10px;
+  border: 1px solid #b7cdb9;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.orderList li span {
+  color: #5a7571;
+}
+
+.orderDone {
+  border-color: #1d704b;
+  background: #e4f3ea;
+  color: #1d704b;
+}
+
+.toolPanel {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(67, 91, 89, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 254, 250, 0.8);
+}
+
+.panelTitle {
+  margin: 0;
+  color: #3d6b45;
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.shelfGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.shelfItem {
+  display: flex;
+  min-width: 0;
+  min-height: 88px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 2px;
+  border: 1px solid #a7b9b1;
+  border-radius: 8px;
+  background: #fffefa;
+  color: #304745;
+  font: inherit;
+  font-weight: 800;
+  cursor: grab;
+  touch-action: manipulation;
+}
+
+.shelfItemSelected {
+  border-color: #2b7a3d;
+  background: #e8f5e9;
+  box-shadow: 0 0 0 2px rgba(43, 122, 61, 0.2);
+}
+
+.shelfEmoji {
+  font-size: 1.9rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.shelfLabel {
+  font-size: 0.75rem;
+}
+
+.shelfThai {
+  color: #5a7571;
+  font-size: 0.66rem;
+}
+
+.secondaryButton,
+.nextButton {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #9bada5;
+  border-radius: 8px;
+  background: transparent;
+  color: #315c5b;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nextButton {
+  border-color: #2b7a3d;
+  background: #2b7a3d;
+  color: #fff;
+}
+
+.shelfItem:focus-visible,
+.basket:focus-visible,
+.secondaryButton:focus-visible,
+.nextButton:focus-visible {
+  outline: 3px solid #a24a24;
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .gameLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .toolPanel {
+    width: min(100%, 560px);
+    box-sizing: border-box;
+    justify-self: center;
+  }
+
+  .shelfGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .shelfGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .basketSlot {
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+  }
+}

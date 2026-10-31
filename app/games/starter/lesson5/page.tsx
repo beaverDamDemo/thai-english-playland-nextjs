@@ -1,7 +1,5 @@
-'use client';
-import Quiz from './Quiz';
-import StarterLessonPage from '../_components/StarterLessonPage';
+import DressUpBuddy from './DressUpBuddy';
 
 export default function Page() {
-  return <StarterLessonPage lessonNumber={5} Quiz={Quiz} />;
+  return <DressUpBuddy />;
 }
