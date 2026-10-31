@@ -42,6 +42,7 @@ const COLORS: ColorName[] = [
   'cyan',
 ];
 const STORAGE_KEY = 'color-merge-garden-progress';
+const MAX_LEVEL = 4;
 
 type SavedProgress = {
   level: number;
@@ -81,7 +82,7 @@ function readSavedProgress(): SavedProgress | null {
       typeof level !== 'number' ||
       !Number.isInteger(level) ||
       level < 1 ||
-      level > 10000 ||
+      level > MAX_LEVEL ||
       !Array.isArray(matchedColors) ||
       !matchedColors.every(isColorName)
     ) {
@@ -186,6 +187,8 @@ function ColorMergeGardenContent() {
 
   const activeColors = activeColorsForLevel(level);
   const levelGoal = activeColors.length;
+  const isLastLevel = level === MAX_LEVEL;
+  const completedLevels = level - 1 + (levelComplete ? 1 : 0);
   const selectedTile = board.find((tile) => tile?.id === selectedId);
 
   useEffect(() => {
@@ -221,12 +224,12 @@ function ColorMergeGardenContent() {
   }, [level, matchedColors, progressLoaded]);
 
   useEffect(() => {
-    // Treat completing level 1 as finishing lesson 2 and unlock lesson 3.
-    if (!levelComplete || level !== 1 || hasSavedCompletionRef.current) return;
+    // Completing the last level finishes lesson 2 and unlocks lesson 3.
+    if (!levelComplete || !isLastLevel || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
 
     void saveProgressDelta('starter', { unlocked_lessons: 3 });
-  }, [level, levelComplete]);
+  }, [isLastLevel, levelComplete]);
 
   useEffect(() => {
     pingLessonOpen('starter');
@@ -333,16 +336,17 @@ function ColorMergeGardenContent() {
               <span lang="th">ระดับสวน</span>
             </span>
           </div>
-          <div className={styles.scoreLabel}>
-            <span>
-              MATCHED PAIRS
-              <br />
-              <span lang="th">คู่ที่จับได้แล้ว</span>
-            </span>
-            <strong>
-              {matchedColors.length}
-              <span> / {levelGoal}</span>
-            </strong>
+          <div
+            className={styles.levelDots}
+            role="img"
+            aria-label={`Levels completed: ${completedLevels} of ${MAX_LEVEL}`}
+          >
+            {Array.from({ length: MAX_LEVEL }, (_, index) => (
+              <span
+                key={index}
+                className={`${styles.levelDot} ${index < completedLevels ? styles.levelDotDone : ''} ${index === level - 1 ? styles.levelDotCurrent : ''}`}
+              />
+            ))}
           </div>
         </div>
 
@@ -408,19 +412,34 @@ function ColorMergeGardenContent() {
 
         {levelComplete ? (
           <div className={styles.completion} role="status">
-            <p>
-              Garden grown. You matched every color.
-              <br />
-              <span lang="th">สวนเติบโตแล้ว คุณจับคู่ครบทุกสี</span>
-            </p>
-            <button
-              className={styles.mergeButton}
-              type="button"
-              onClick={growGarden}
-            >
-              Grow the garden / <span lang="th">ทำให้สวนเติบโต</span>{' '}
-              <span aria-hidden="true">→</span>
-            </button>
+            {isLastLevel ? (
+              <>
+                <p>
+                  Lesson complete! You matched every color.
+                  <br />
+                  <span lang="th">จบบทเรียนแล้ว! คุณจับคู่ครบทุกสี</span>
+                </p>
+                <Link href="/games/starter" className={styles.mergeButton}>
+                  Back to lessons / <span lang="th">กลับไปหน้าบทเรียน</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <p>
+                  Garden grown. You matched every color.
+                  <br />
+                  <span lang="th">สวนเติบโตแล้ว คุณจับคู่ครบทุกสี</span>
+                </p>
+                <button
+                  className={styles.mergeButton}
+                  type="button"
+                  onClick={growGarden}
+                >
+                  Grow the garden / <span lang="th">ทำให้สวนเติบโต</span>{' '}
+                  <span aria-hidden="true">→</span>
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <div className={styles.actions}>
@@ -429,7 +448,8 @@ function ColorMergeGardenContent() {
               type="button"
               onClick={resetBoard}
             >
-              New board / <span lang="th">เริ่มกระดานใหม่</span>            </button>
+              New board / <span lang="th">เริ่มกระดานใหม่</span>
+            </button>
           </div>
         )}
       </section>

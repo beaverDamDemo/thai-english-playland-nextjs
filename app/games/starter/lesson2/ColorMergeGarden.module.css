@@ -65,8 +65,7 @@
   margin: 12px 2px 4px;
 }
 
-.levelLabel,
-.scoreLabel {
+.levelLabel {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -74,6 +73,33 @@
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.06em;
+}
+
+.levelDots {
+  display: flex;
+  gap: 8px;
+}
+
+.levelDot {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #8a998b;
+  border-radius: 50%;
+  background: transparent;
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.levelDotCurrent {
+  border-color: #2f7046;
+}
+
+.levelDotDone {
+  border-color: #2f7046;
+  background: #2f7046;
+  box-shadow: 0 0 8px rgba(47, 112, 70, 0.55);
 }
 
 .levelNumber {
@@ -85,25 +111,6 @@
   background: #2f7046;
   color: #fff;
   font-size: 0.82rem;
-}
-
-.scoreLabel {
-  display: grid;
-  justify-items: end;
-  gap: 2px;
-}
-
-.scoreLabel strong {
-  color: #2b5d3c;
-  font-size: 1.15rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
-}
-
-.scoreLabel strong span {
-  color: #8a998b;
-  font-size: 0.85rem;
-  font-weight: 600;
 }
 
 .selectionHint {
@@ -407,6 +414,13 @@
   font-weight: 800;
   cursor: pointer;
   touch-action: manipulation;
+}
+
+a.mergeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .mergeButton {
