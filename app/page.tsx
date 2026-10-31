@@ -284,7 +284,7 @@ export default function HomePage() {
         <h2 className={styles.progressTitle}>Your Progress</h2>
         <div className={styles.progressDisplay}>
           <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>� Starter</h3>
+            <h3 className={styles.progressBlockTitle}>🌱 Starter</h3>
             <div className={styles.progressRows}>
               {STARTER_TOTAL_LESSONS === 0 ? (
                 <div className={styles.progressRow}>
@@ -328,7 +328,7 @@ export default function HomePage() {
           </article>
 
           <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>�🌀 Maze</h3>
+            <h3 className={styles.progressBlockTitle}>🌀 Maze</h3>
             <div className={styles.progressRows}>
               <div className={styles.progressRow}>
                 <span className={styles.progressLabel}>Unlocked</span>
@@ -364,7 +364,7 @@ export default function HomePage() {
           </article>
 
           <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>� Casino</h3>
+            <h3 className={styles.progressBlockTitle}>🎰 Casino</h3>
             <div className={styles.progressRows}>
               <div className={styles.progressRow}>
                 <span className={styles.progressLabel}>Unlocked</span>

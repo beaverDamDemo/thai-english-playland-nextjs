@@ -1592,6 +1592,10 @@
   color: #9fb5e7;
 }
 
+:global([data-theme='dark']) .mazeCardMap {
+  filter: grayscale(0.25) brightness(0.8);
+}
+
 :global([data-theme='dark']) .mazeCard {
   background: linear-gradient(135deg, #2d5a47 0%, #1e3d30 100%);
 }
@@ -1709,7 +1713,6 @@
 .achievementLocked {
   background: rgba(240, 240, 245, 0.35);
   border: 2px dashed rgba(99, 110, 114, 0.3);
-  opacity: 0.6;
 }
 
 .achievementLocked .achievementIcon {
@@ -1824,6 +1827,14 @@
 
 :global([data-theme='dark']) .achievementLocked .achievementStatus {
   color: #7f8ca3;
+}
+
+:global([data-theme='dark']) .achievementLocked .achievementTitle {
+  color: #a9b6cc;
+}
+
+:global([data-theme='dark']) .achievementLocked .achievementDescription {
+  color: #8593ab;
 }
 
 :global([data-theme='dark']) .achievementLocked .achievementMark {
