@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import * as Phaser from 'phaser';
 import MazeHeader from './MazeHeader';
 import GameFooter from '@/app/_components/GameFooter';
+import UnlockToast from '@/app/games/starter/_components/UnlockToast';
 import dynamic from 'next/dynamic';
 import type { FC, MouseEvent } from 'react';
 import {
@@ -296,6 +297,9 @@ const MazePageComponent: FC<MazePageProps> = ({
           backgroundColor: '#f0f0f0',
         }}
       >
+        {gameMode === 'starter' && lessonNumber < totalLessons && (
+          <UnlockToast nextLesson={lessonNumber + 1} />
+        )}
         <div
           style={{
             transform: `scale(${scale})`,

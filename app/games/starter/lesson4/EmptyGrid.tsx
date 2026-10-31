@@ -1,7 +1,8 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 import MusicToggle from '../../../_components/MusicToggle';
+import UnlockToast from '../_components/UnlockToast';
 import Link from 'next/link';
 import { useEffect, useId, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
@@ -333,6 +334,7 @@ function EmptyGridContent() {
         <span className={styles.lessonTag}>LESSON 4</span>
         <MusicToggle />
       </header>
+      {routeComplete && <UnlockToast nextLesson={5} />}
 
       <section className={styles.workspace} aria-label="Pipe connection game">
         <div className={styles.gameLayout}>

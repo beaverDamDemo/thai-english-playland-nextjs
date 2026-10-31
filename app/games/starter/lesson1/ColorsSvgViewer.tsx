@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import MusicToggle from '../../../_components/MusicToggle';
+import UnlockToast from '../_components/UnlockToast';
 import type Snap from 'snapsvg-cjs';
 import { useThaiQuestion } from '@/app/games/maze/_components/useThaiQuestion';
 import styles from './ColorsSvgViewer.module.css';
@@ -279,6 +280,7 @@ export default function ColorsSvgViewer() {
         </div>
         <MusicToggle />
       </header>
+      {allRevealed && <UnlockToast nextLesson={2} />}
 
       <main className={styles.main}>
         <svg

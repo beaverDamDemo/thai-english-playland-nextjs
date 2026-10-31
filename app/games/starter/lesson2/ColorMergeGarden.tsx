@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import MusicToggle from '../../../_components/MusicToggle';
+import UnlockToast from '../_components/UnlockToast';
 import { getMusicEnabled } from '@/app/_lib/client/music';
 import { useEffect, useRef, useState } from 'react';
 import styles from './ColorMergeGarden.module.css';
@@ -329,6 +330,7 @@ function ColorMergeGardenContent() {
         </h1>
         <MusicToggle />
       </header>
+      {levelComplete && isLastLevel && <UnlockToast nextLesson={3} />}
 
       <section className={styles.game} aria-labelledby="game-title">
         <div className={styles.heading}>

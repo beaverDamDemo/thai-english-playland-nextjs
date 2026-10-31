@@ -1,7 +1,8 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 import MusicToggle from '../../../_components/MusicToggle';
+import UnlockToast from '../_components/UnlockToast';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
@@ -287,6 +288,7 @@ function NumberPathContent() {
         <span className={styles.stageTag}>STAGE {stage}</span>
         <MusicToggle />
       </header>
+      {stageComplete && stage === LAST_STAGE && <UnlockToast nextLesson={4} />}
 
       <section className={styles.game} aria-labelledby="number-path-title">
         <div className={styles.intro}>
