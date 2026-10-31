@@ -381,6 +381,7 @@ function ColorMergeGardenContent() {
                   key={index}
                   className={`${styles.cell} ${styles.emptyCell} ${styles.gardenCell} ${lastMatchedColor === tile.color ? styles.matchedCell : ''}`}
                   data-color={tile.color}
+                  data-level={level}
                   aria-hidden="true"
                 />
               );

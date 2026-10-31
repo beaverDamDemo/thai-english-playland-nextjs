@@ -207,6 +207,117 @@
   transform-origin: top center;
 }
 
+/* Levels 2-4 swap the two-leaf sprout for a flower, mushroom and butterfly. */
+.gardenCell[data-level='2']::before,
+.gardenCell[data-level='3']::before,
+.gardenCell[data-level='4']::before {
+  box-shadow: none;
+  transform: none;
+}
+
+.gardenCell[data-level='2']::after,
+.gardenCell[data-level='3']::after,
+.gardenCell[data-level='4']::after {
+  transform: none;
+}
+
+.gardenCell[data-level='2']::before {
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background:
+    radial-gradient(
+      ellipse 12% 12% at 50% 50%,
+      var(--garden-leaf-light) 0 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 12% 12% at 50% 22%,
+      var(--garden-leaf-light) 0 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 12% 12% at 36% 36%,
+      var(--garden-leaf-light) 0 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 12% 12% at 64% 36%,
+      var(--garden-leaf-light) 0 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 12% 12% at 50% 36%,
+      var(--garden-leaf) 0 98%,
+      transparent 100%
+    );
+}
+
+.gardenCell[data-level='2']::after {
+  top: 56%;
+  left: 49%;
+  width: 3px;
+  height: 28%;
+}
+
+.gardenCell[data-level='3']::before {
+  top: 26%;
+  left: 20%;
+  width: 60%;
+  height: 34%;
+  border-radius: 100% 100% 10% 10% / 100% 100% 18% 18%;
+  background:
+    radial-gradient(ellipse 9% 12% at 30% 50%, #fff 0 98%, transparent 100%),
+    radial-gradient(ellipse 8% 11% at 65% 38%, #fff 0 98%, transparent 100%),
+    var(--garden-leaf);
+}
+
+.gardenCell[data-level='3']::after {
+  top: 58%;
+  left: 40%;
+  width: 20%;
+  height: 26%;
+  border-radius: 0 0 40% 40%;
+  background: #f1e6d0;
+}
+
+.gardenCell[data-level='4']::before {
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background:
+    radial-gradient(
+      ellipse 20% 24% at 32% 36%,
+      var(--garden-leaf) 0 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 20% 24% at 68% 36%,
+      var(--garden-leaf) 0 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 14% 17% at 36% 62%,
+      var(--garden-leaf-light) 0 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 14% 17% at 64% 62%,
+      var(--garden-leaf-light) 0 98%,
+      transparent 100%
+    );
+}
+
+.gardenCell[data-level='4']::after {
+  top: 28%;
+  left: 48%;
+  width: 4%;
+  height: 46%;
+  border-radius: 999px;
+}
+
 .gardenCell[data-color='red'] {
   --garden-background: #f6c4c1;
   --garden-border: #c62828;
