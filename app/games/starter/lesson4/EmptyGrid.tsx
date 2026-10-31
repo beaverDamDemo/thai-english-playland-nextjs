@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import Image from 'next/image';
+import MusicToggle from '../../../_components/MusicToggle';
 import Link from 'next/link';
 import { useEffect, useId, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
@@ -330,6 +331,7 @@ function EmptyGridContent() {
         </Link>
         <h1 className={styles.headerTitle}>Pipe Connect</h1>
         <span className={styles.lessonTag}>LESSON 4</span>
+        <MusicToggle />
       </header>
 
       <section className={styles.workspace} aria-label="Pipe connection game">

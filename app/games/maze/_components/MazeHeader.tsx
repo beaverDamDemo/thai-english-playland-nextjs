@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './MazeHeader.module.css';
+import MusicToggle from '../../../_components/MusicToggle';
 
 export type HeaderGame = 'maze' | 'casino' | 'pattaya' | 'starter';
 
@@ -28,6 +29,7 @@ export default function MazeHeader({
           className={styles.homeLinkImg}
         />
       </Link>
+      <MusicToggle />
     </header>
   );
 }

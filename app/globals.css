@@ -253,7 +253,8 @@ body,
 
 .themeToggle,
 .fontToggle,
-.fontSizeToggle {
+.fontSizeToggle,
+.musicToggle {
   border: 1px solid color-mix(in srgb, var(--secondary) 32%, transparent);
   border-radius: 999px;
   width: 42px;
@@ -277,14 +278,16 @@ body,
 
 .themeToggle:hover,
 .fontToggle:hover,
-.fontSizeToggle:hover {
+.fontSizeToggle:hover,
+.musicToggle:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
 }
 
 .themeToggleIcon,
 .fontToggleIcon,
-.fontSizeToggleIcon {
+.fontSizeToggleIcon,
+.musicToggleIcon {
   transform: translateY(-1px);
 }
 

@@ -1,7 +1,8 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
+import MusicToggle from '../../../_components/MusicToggle';
 import { useEffect, useRef, useState } from 'react';
 import styles from './ColorMergeGarden.module.css';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
@@ -311,6 +312,7 @@ function ColorMergeGardenContent() {
         >
           Sound {soundEnabled ? 'on' : 'off'}
         </button>
+        <MusicToggle />
       </header>
 
       <section className={styles.game} aria-labelledby="game-title">
@@ -400,7 +402,7 @@ function ColorMergeGardenContent() {
               type="button"
               onClick={growGarden}
             >
-              Grow the garden <span aria-hidden="true">→</span>
+              Grow the garden <span aria-hidden="true">â†’</span>
             </button>
           </div>
         ) : (

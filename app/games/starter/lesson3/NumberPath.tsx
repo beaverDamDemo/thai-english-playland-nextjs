@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import Image from 'next/image';
+import MusicToggle from '../../../_components/MusicToggle';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
@@ -284,6 +285,7 @@ function NumberPathContent() {
           Number Path
         </h1>
         <span className={styles.stageTag}>STAGE {stage}</span>
+        <MusicToggle />
       </header>
 
       <section className={styles.game} aria-labelledby="number-path-title">
@@ -426,7 +428,7 @@ function NumberPathContent() {
                 type="button"
                 onClick={advanceStage}
               >
-                Next board <span aria-hidden="true">→</span>
+                Next board <span aria-hidden="true">â†’</span>
               </button>
             )}
           </div>

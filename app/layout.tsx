@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Fredoka, Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import AppFooter from './_components/AppFooter';
+import MusicPlayer from './_components/MusicPlayer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body className="antialiased">
         {children}
         <AppFooter />
+        <MusicPlayer />
       </body>
     </html>
   );

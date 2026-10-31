@@ -1,8 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import MusicToggle from '../../../_components/MusicToggle';
 import type Snap from 'snapsvg-cjs';
 import { useThaiQuestion } from '@/app/games/maze/_components/useThaiQuestion';
 import styles from './ColorsSvgViewer.module.css';
@@ -276,6 +277,7 @@ export default function ColorsSvgViewer() {
             <span key={id} className={`${styles.dot} ${i < revealedCount ? styles.dotDone : ''}`} />
           ))}
         </div>
+        <MusicToggle />
       </header>
 
       <main className={styles.main}>
@@ -300,11 +302,11 @@ export default function ColorsSvgViewer() {
 
       <section className={styles.quiz}>
         {groupOrder.length === 0 ? (
-          <p className={styles.hint}>Loading…</p>
+          <p className={styles.hint}>Loadingâ€¦</p>
         ) : allRevealed ? (
           <div className={styles.complete}>
-            <p>🎉 You revealed all the colors!</p>
-            <Link href="/games/starter" className={styles.doneBtn}>← Back to Starter Zone</Link>
+            <p>ðŸŽ‰ You revealed all the colors!</p>
+            <Link href="/games/starter" className={styles.doneBtn}>â† Back to Starter Zone</Link>
           </div>
         ) : (
           <>

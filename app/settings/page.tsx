@@ -5,6 +5,7 @@ import Link from 'next/link';
 import styles from './settings.module.css';
 import ThemeToggle from '../_components/ThemeToggle';
 import FontToggle from '../_components/FontToggle';
+import MusicToggle from '../_components/MusicToggle';
 import FontSizeToggle from '../_components/FontSizeToggle';
 import { lessonMapButtons as mazeLessonMapButtons } from '../games/maze/lessonMapConfig';
 import { lessonMapButtons as casinoLessonMapButtons } from '../games/casino/lessonMapConfig';
@@ -290,6 +291,10 @@ export default function SettingsPage() {
               <div className={styles.preferenceItem}>
                 <span className={styles.preferenceLabel}>Font Size</span>
                 <FontSizeToggle />
+              </div>
+              <div className={styles.preferenceItem}>
+                <span className={styles.preferenceLabel}>Music</span>
+                <MusicToggle />
               </div>
             </div>
           </section>
