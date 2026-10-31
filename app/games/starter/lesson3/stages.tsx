@@ -11,6 +11,8 @@ export type Stage = {
   numbers: NumberEntry[];
   // Indices into numbers, in the order they are asked; defaults to ascending.
   askOrder?: number[];
+  // Fully random order on every play; only for stages reached after a click.
+  randomize?: boolean;
   pieces: ReactElement[][];
 };
 
@@ -50,30 +52,30 @@ const TEENS: NumberEntry[] = [
   { value: 20, en: 'twenty', th: 'ยี่สิบ' },
 ];
 
-const TENS: NumberEntry[] = [
+const BIG_STEPS: NumberEntry[] = [
   { value: 10, en: 'ten', th: 'สิบ' },
   { value: 20, en: 'twenty', th: 'ยี่สิบ' },
   { value: 30, en: 'thirty', th: 'สามสิบ' },
   { value: 40, en: 'forty', th: 'สี่สิบ' },
   { value: 50, en: 'fifty', th: 'ห้าสิบ' },
-  { value: 60, en: 'sixty', th: 'หกสิบ' },
-  { value: 70, en: 'seventy', th: 'เจ็ดสิบ' },
-  { value: 80, en: 'eighty', th: 'แปดสิบ' },
-  { value: 90, en: 'ninety', th: 'เก้าสิบ' },
-  { value: 100, en: 'one hundred', th: 'หนึ่งร้อย' },
-];
-
-const HUNDREDS: NumberEntry[] = [
   { value: 100, en: 'one hundred', th: 'หนึ่งร้อย' },
   { value: 200, en: 'two hundred', th: 'สองร้อย' },
-  { value: 300, en: 'three hundred', th: 'สามร้อย' },
-  { value: 400, en: 'four hundred', th: 'สี่ร้อย' },
   { value: 500, en: 'five hundred', th: 'ห้าร้อย' },
-  { value: 600, en: 'six hundred', th: 'หกร้อย' },
-  { value: 700, en: 'seven hundred', th: 'เจ็ดร้อย' },
-  { value: 800, en: 'eight hundred', th: 'แปดร้อย' },
   { value: 900, en: 'nine hundred', th: 'เก้าร้อย' },
   { value: 1000, en: 'one thousand', th: 'หนึ่งพัน' },
+];
+
+const COMPOUNDS: NumberEntry[] = [
+  { value: 21, en: 'twenty-one', th: 'ยี่สิบเอ็ด' },
+  { value: 35, en: 'thirty-five', th: 'สามสิบห้า' },
+  { value: 48, en: 'forty-eight', th: 'สี่สิบแปด' },
+  { value: 67, en: 'sixty-seven', th: 'หกสิบเจ็ด' },
+  { value: 99, en: 'ninety-nine', th: 'เก้าสิบเก้า' },
+  { value: 125, en: 'one hundred twenty-five', th: 'หนึ่งร้อยยี่สิบห้า' },
+  { value: 340, en: 'three hundred forty', th: 'สามร้อยสี่สิบ' },
+  { value: 572, en: 'five hundred seventy-two', th: 'ห้าร้อยเจ็ดสิบสอง' },
+  { value: 806, en: 'eight hundred six', th: 'แปดร้อยหก' },
+  { value: 999, en: 'nine hundred ninety-nine', th: 'เก้าร้อยเก้าสิบเก้า' },
 ];
 
 // Each stage builds one object from 10 magnet pieces, placed bottom to top.
@@ -159,21 +161,24 @@ export const STAGES: Stage[] = [
     pieces: ROCKET,
   },
   {
-    title: 'Tens: 10 to 100',
-    titleTh: 'สิบ: 10 ถึง 100',
-    range: '10–100',
+    title: 'Tens, hundreds and a thousand',
+    titleTh: 'สิบ ร้อย และพัน',
+    range: '10–1000',
     object: 'Robot',
     objectTh: 'หุ่นยนต์',
-    numbers: TENS,
+    numbers: BIG_STEPS,
+    askOrder: [0, 1, 2, 3, 4, 6, 9, 5, 8, 7],
     pieces: ROBOT,
   },
   {
-    title: 'Hundreds: 100 to 1000',
-    titleTh: 'ร้อย: 100 ถึง 1000',
-    range: '100–1000',
+    title: 'Numbers in between',
+    titleTh: 'เลขที่อยู่ระหว่างกลาง',
+    range: '21–999',
     object: 'Castle',
     objectTh: 'ปราสาท',
-    numbers: HUNDREDS,
+    numbers: COMPOUNDS,
+    askOrder: [0, 1, 2, 3, 4, 7, 5, 9, 6, 8],
+    randomize: true,
     pieces: CASTLE,
   },
 ];

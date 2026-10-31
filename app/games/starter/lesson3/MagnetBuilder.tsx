@@ -14,13 +14,31 @@ import styles from './MagnetBuilder.module.css';
 const OPTION_COUNT = 4;
 const ADVANCE_DELAY_MS = 1100;
 
-// Deterministic so server and client render the same options.
-function questionIndex(stageIndex: number, round: number): number {
-  return STAGES[stageIndex].askOrder?.[round] ?? round;
+// Options are deterministic so server and client render the same markup.
+function questionIndex(
+  stageIndex: number,
+  round: number,
+  randomOrder: number[] | null,
+): number {
+  return randomOrder?.[round] ?? STAGES[stageIndex].askOrder?.[round] ?? round;
 }
-function buildOptions(stageIndex: number, round: number): NumberEntry[] {
+
+function shuffledOrder(length: number): number[] {
+  const order = Array.from({ length }, (_, index) => index);
+  for (let index = order.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
+  }
+  return order;
+}
+
+function buildOptions(
+  stageIndex: number,
+  round: number,
+  randomOrder: number[] | null,
+): NumberEntry[] {
   const { numbers } = STAGES[stageIndex];
-  const askIndex = questionIndex(stageIndex, round);
+  const askIndex = questionIndex(stageIndex, round, randomOrder);
   const options = [numbers[askIndex]];
   [3, 5, 7].forEach((offset) => {
     options.push(numbers[(askIndex + offset) % numbers.length]);
@@ -43,6 +61,7 @@ function speak(text: string): void {
 function MagnetBuilderContent() {
   const [stageIndex, setStageIndex] = useState(0);
   const [placed, setPlaced] = useState(0);
+  const [randomOrder, setRandomOrder] = useState<number[] | null>(null);
   const [locked, setLocked] = useState(false);
   const [wrongValues, setWrongValues] = useState<number[]>([]);
   const [shaking, setShaking] = useState<number | null>(null);
@@ -53,8 +72,11 @@ function MagnetBuilderContent() {
   const total = stage.numbers.length;
   const stageDone = placed >= total;
   const isLastStage = stageIndex === STAGES.length - 1;
-  const target = stage.numbers[questionIndex(stageIndex, Math.min(placed, total - 1))];
-  const options = stageDone ? [] : buildOptions(stageIndex, placed);
+  const target =
+    stage.numbers[
+      questionIndex(stageIndex, Math.min(placed, total - 1), randomOrder)
+    ];
+  const options = stageDone ? [] : buildOptions(stageIndex, placed, randomOrder);
 
   useEffect(() => {
     pingLessonOpen('starter');
@@ -89,14 +111,20 @@ function MagnetBuilderContent() {
   }
 
   function nextStage(): void {
-    setStageIndex((current) => current + 1);
+    const next = stageIndex + 1;
+    setRandomOrder(
+      STAGES[next].randomize ? shuffledOrder(STAGES[next].numbers.length) : null,
+    );
+    setStageIndex(next);
     setPlaced(0);
     setWrongValues([]);
     setLocked(false);
   }
 
   const justPlaced =
-    placed > 0 ? stage.numbers[questionIndex(stageIndex, placed - 1)] : null;
+    placed > 0
+      ? stage.numbers[questionIndex(stageIndex, placed - 1, randomOrder)]
+      : null;
 
   return (
     <main className={styles.page}>
