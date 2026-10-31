@@ -473,7 +473,18 @@ export default function HomePage() {
                     <span className={styles.achievementDescription}>
                       {def.description}
                     </span>
+                    <span className={styles.achievementStatus}>
+                      {isEarned && earned
+                        ? `Earned ${new Date(earned.earned_at).toLocaleDateString()}`
+                        : 'Not yet earned'}
+                    </span>
                   </div>
+                  <span
+                    className={styles.achievementMark}
+                    aria-hidden="true"
+                  >
+                    {isEarned ? '✓' : '🔒'}
+                  </span>
                 </div>
               );
             })}
