@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import MusicToggle from '../../../_components/MusicToggle';
+import { getMusicEnabled } from '@/app/_lib/client/music';
 import { useEffect, useRef, useState } from 'react';
 import styles from './ColorMergeGarden.module.css';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
@@ -45,7 +46,17 @@ const STORAGE_KEY = 'color-merge-garden-progress';
 type SavedProgress = {
   level: number;
   matchedColors: ColorName[];
-  soundEnabled: boolean;
+};
+
+type Message = { en: string; th: string };
+
+const MSG_RESTORED: Message = {
+  en: 'Progress restored. Keep matching.',
+  th: 'กู้คืนความคืบหน้าแล้ว จับคู่ต่อได้เลย',
+};
+const MSG_NEW_LEVEL: Message = {
+  en: 'Match each color word with its solid color tile.',
+  th: 'จับคู่คำศัพท์สีกับช่องสีที่ตรงกัน',
 };
 
 function activeColorsForLevel(level: number): ColorName[] {
@@ -85,18 +96,14 @@ function readSavedProgress(): SavedProgress | null {
       return null;
     }
 
-    return {
-      level,
-      matchedColors,
-      soundEnabled: saved.soundEnabled === true,
-    };
+    return { level, matchedColors };
   } catch {
     return null;
   }
 }
 
-function playMatchSound(soundEnabled: boolean, levelComplete: boolean): void {
-  if (!soundEnabled || typeof window === 'undefined') return;
+function playMatchSound(levelComplete: boolean): void {
+  if (!getMusicEnabled() ||  typeof window === 'undefined') return;
 
   try {
     const audioContext = new window.AudioContext();
@@ -173,9 +180,8 @@ function ColorMergeGardenContent() {
   const [lastMatchedColor, setLastMatchedColor] = useState<ColorName | null>(
     null,
   );
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<Message | null>(null);
   const [levelComplete, setLevelComplete] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const [progressLoaded, setProgressLoaded] = useState(false);
 
   const activeColors = activeColorsForLevel(level);
@@ -193,8 +199,7 @@ function ColorMergeGardenContent() {
         setBoard(createBoard(saved.level));
         setMatchedColors(saved.matchedColors);
         setLevelComplete(isComplete);
-        setSoundEnabled(saved.soundEnabled);
-        setMessage('Progress restored. Keep matching.');
+        setMessage(MSG_RESTORED);
       }
       setProgressLoaded(true);
     }, 0);
@@ -208,12 +213,12 @@ function ColorMergeGardenContent() {
     try {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ level, matchedColors, soundEnabled }),
+        JSON.stringify({ level, matchedColors }),
       );
     } catch {
       // Progress saving is best-effort when browser storage is unavailable.
     }
-  }, [level, matchedColors, progressLoaded, soundEnabled]);
+  }, [level, matchedColors, progressLoaded]);
 
   useEffect(() => {
     // Treat completing level 1 as finishing lesson 2 and unlock lesson 3.
@@ -254,7 +259,7 @@ function ColorMergeGardenContent() {
       setMatchedColors(nextMatchedColors);
       setLastMatchedColor(tile.color);
       setSelectedId(null);
-      playMatchSound(soundEnabled, isLevelComplete);
+      playMatchSound(isLevelComplete);
       if (isLevelComplete) {
         setLevelComplete(true);
         // setMessage('All color pairs matched!');
@@ -276,7 +281,7 @@ function ColorMergeGardenContent() {
     setSelectedId(null);
     setMatchedColors([]);
     setLastMatchedColor(null);
-    setMessage('Match each color word with its solid color tile.');
+    setMessage(MSG_NEW_LEVEL);
     setLevelComplete(false);
   }
 
@@ -285,7 +290,7 @@ function ColorMergeGardenContent() {
     setSelectedId(null);
     setMatchedColors([]);
     setLastMatchedColor(null);
-    setMessage('');
+    setMessage(null);
     setLevelComplete(false);
   }
 
@@ -303,15 +308,6 @@ function ColorMergeGardenContent() {
         <h1 className={styles.headerTitle} id="game-title">
           Color Merge Garden
         </h1>
-        <button
-          className={styles.soundToggle}
-          type="button"
-          aria-pressed={soundEnabled}
-          aria-label={soundEnabled ? 'Mute game sounds' : 'Enable game sounds'}
-          onClick={() => setSoundEnabled((enabled) => !enabled)}
-        >
-          Sound {soundEnabled ? 'on' : 'off'}
-        </button>
         <MusicToggle />
       </header>
 
@@ -321,6 +317,9 @@ function ColorMergeGardenContent() {
             Match each color word to its solid color tile. No penalty for a
             miss.
           </p>
+          <p className={styles.instructions} lang="th">
+            จับคู่คำศัพท์สีกับช่องสีที่ตรงกัน ถ้าจับผิดไม่เสียคะแนน
+          </p>
         </div>
 
         <div className={styles.scoreRow}>
@@ -328,10 +327,18 @@ function ColorMergeGardenContent() {
             <span className={styles.levelNumber}>
               {String(level).padStart(2, '0')}
             </span>
-            <span>GARDEN LEVEL</span>
+            <span>
+              GARDEN LEVEL
+              <br />
+              <span lang="th">ระดับสวน</span>
+            </span>
           </div>
           <div className={styles.scoreLabel}>
-            <span>MATCHED PAIRS</span>
+            <span>
+              MATCHED PAIRS
+              <br />
+              <span lang="th">คู่ที่จับได้แล้ว</span>
+            </span>
             <strong>
               {matchedColors.length}
               <span> / {levelGoal}</span>
@@ -340,7 +347,12 @@ function ColorMergeGardenContent() {
         </div>
 
         <p className={styles.selectionHint} aria-live="polite">
-          {message || `Find all ${levelGoal} color pairs to grow the garden.`}
+          {message?.en ??
+            `Find all ${levelGoal} color pairs to grow the garden.`}
+          <br />
+          <span lang="th">
+            {message?.th ?? `หาคู่สีให้ครบทั้ง ${levelGoal} คู่เพื่อทำให้สวนเติบโต`}
+          </span>
         </p>
 
         <div
@@ -396,13 +408,18 @@ function ColorMergeGardenContent() {
 
         {levelComplete ? (
           <div className={styles.completion} role="status">
-            <p>Garden grown. You matched every color.</p>
+            <p>
+              Garden grown. You matched every color.
+              <br />
+              <span lang="th">สวนเติบโตแล้ว คุณจับคู่ครบทุกสี</span>
+            </p>
             <button
               className={styles.mergeButton}
               type="button"
               onClick={growGarden}
             >
-              Grow the garden <span aria-hidden="true">â†’</span>
+              Grow the garden / <span lang="th">ทำให้สวนเติบโต</span>{' '}
+              <span aria-hidden="true">→</span>
             </button>
           </div>
         ) : (
@@ -412,8 +429,7 @@ function ColorMergeGardenContent() {
               type="button"
               onClick={resetBoard}
             >
-              New board
-            </button>
+              New board / <span lang="th">เริ่มกระดานใหม่</span>            </button>
           </div>
         )}
       </section>
