@@ -2,7 +2,7 @@ export type Food = {
   id: string;
   name: string;
   plural: string;
-  article: 'a' | 'an';
+  article: 'a' | 'an' | 'some';
   thai: string;
   emoji: string;
 };
@@ -11,21 +11,21 @@ export const FOODS: Record<string, Food> = {
   apple: { id: 'apple', name: 'apple', plural: 'apples', article: 'an', thai: 'แอปเปิล', emoji: '🍎' },
   banana: { id: 'banana', name: 'banana', plural: 'bananas', article: 'a', thai: 'กล้วย', emoji: '🍌' },
   orange: { id: 'orange', name: 'orange', plural: 'oranges', article: 'an', thai: 'ส้ม', emoji: '🍊' },
-  grapes: { id: 'grapes', name: 'grapes', plural: 'grapes', article: 'a', thai: 'องุ่น', emoji: '🍇' },
+  grapes: { id: 'grapes', name: 'grapes', plural: 'grapes', article: 'some', thai: 'องุ่น', emoji: '🍇' },
   strawberry: { id: 'strawberry', name: 'strawberry', plural: 'strawberries', article: 'a', thai: 'สตรอว์เบอร์รี', emoji: '🍓' },
   watermelon: { id: 'watermelon', name: 'watermelon', plural: 'watermelons', article: 'a', thai: 'แตงโม', emoji: '🍉' },
   carrot: { id: 'carrot', name: 'carrot', plural: 'carrots', article: 'a', thai: 'แครอท', emoji: '🥕' },
   tomato: { id: 'tomato', name: 'tomato', plural: 'tomatoes', article: 'a', thai: 'มะเขือเทศ', emoji: '🍅' },
-  corn: { id: 'corn', name: 'corn', plural: 'corn', article: 'a', thai: 'ข้าวโพด', emoji: '🌽' },
+  corn: { id: 'corn', name: 'corn', plural: 'corn', article: 'some', thai: 'ข้าวโพด', emoji: '🌽' },
   potato: { id: 'potato', name: 'potato', plural: 'potatoes', article: 'a', thai: 'มันฝรั่ง', emoji: '🥔' },
-  broccoli: { id: 'broccoli', name: 'broccoli', plural: 'broccoli', article: 'a', thai: 'บรอกโคลี', emoji: '🥦' },
-  milk: { id: 'milk', name: 'milk', plural: 'milk', article: 'a', thai: 'นม', emoji: '🥛' },
-  water: { id: 'water', name: 'water', plural: 'water', article: 'a', thai: 'น้ำ', emoji: '💧' },
-  juice: { id: 'juice', name: 'juice', plural: 'juice', article: 'a', thai: 'น้ำผลไม้', emoji: '🧃' },
-  tea: { id: 'tea', name: 'tea', plural: 'tea', article: 'a', thai: 'ชา', emoji: '🍵' },
-  bread: { id: 'bread', name: 'bread', plural: 'bread', article: 'a', thai: 'ขนมปัง', emoji: '🍞' },
+  broccoli: { id: 'broccoli', name: 'broccoli', plural: 'broccoli', article: 'some', thai: 'บรอกโคลี', emoji: '🥦' },
+  milk: { id: 'milk', name: 'milk', plural: 'milk', article: 'some', thai: 'นม', emoji: '🥛' },
+  water: { id: 'water', name: 'water', plural: 'water', article: 'some', thai: 'น้ำ', emoji: '💧' },
+  juice: { id: 'juice', name: 'juice', plural: 'juice', article: 'some', thai: 'น้ำผลไม้', emoji: '🧃' },
+  tea: { id: 'tea', name: 'tea', plural: 'tea', article: 'some', thai: 'ชา', emoji: '🍵' },
+  bread: { id: 'bread', name: 'bread', plural: 'bread', article: 'some', thai: 'ขนมปัง', emoji: '🍞' },
   egg: { id: 'egg', name: 'egg', plural: 'eggs', article: 'an', thai: 'ไข่', emoji: '🥚' },
-  rice: { id: 'rice', name: 'rice', plural: 'rice', article: 'a', thai: 'ข้าว', emoji: '🍚' },
+  rice: { id: 'rice', name: 'rice', plural: 'rice', article: 'some', thai: 'ข้าว', emoji: '🍚' },
 };
 
 export type OrderLine = { food: string; qty: number };
