@@ -27,6 +27,9 @@ const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const LEVEL_GRID_SIZES = [5, 8, 8, 8];
 const START_CELL = 0;
 const ROUNDS_PER_LEVEL = 4;
+const ROUND_TIME_LIMIT_SECONDS = 10;
+const FLOW_STEP_DELAY_SECONDS = 0.55;
+const FLOW_ANIMATION_DURATION_SECONDS = 0.65;
 const PIPE_DRAG_TYPE = 'application/x-playland-pipe';
 const PIPE_SOURCE_TYPE = 'application/x-playland-pipe-source';
 const DIRECTIONS: Direction[] = ['north', 'east', 'south', 'west'];
@@ -113,15 +116,20 @@ function parseDraggedPipe(value: string): PipePiece | null {
   return { kind, rotation };
 }
 
-function getConnectedCells(
+function getFlowSteps(
   pipes: Array<PipePiece | null>,
   exitCells: number[],
   obstacleCells: ReadonlySet<number>,
   gridSize: number,
-): boolean[] {
-  const connected = Array<boolean>(CELL_COUNT).fill(false);
+): { steps: number[]; incoming: Array<Direction | null>; outgoing: Direction[][] } {
+  const flowSteps = Array<number>(CELL_COUNT).fill(-1);
+  const incoming = Array<Direction | null>(CELL_COUNT).fill(null);
+  const outgoing: Direction[][] = Array.from(
+    { length: CELL_COUNT },
+    () => [],
+  );
   const queue = [START_CELL];
-  connected[START_CELL] = true;
+  flowSteps[START_CELL] = 0;
 
   const openingsOf = (cell: number): Direction[] =>
     obstacleCells.has(cell)
@@ -156,15 +164,17 @@ function getConnectedCells(
       if (
         !obstacleCells.has(nextCell) &&
         openingsOf(nextCell).includes(OPPOSITE[direction]) &&
-        !connected[nextCell]
+        flowSteps[nextCell] === -1
       ) {
-        connected[nextCell] = true;
+        flowSteps[nextCell] = flowSteps[current] + 1;
+        incoming[nextCell] = OPPOSITE[direction];
+        outgoing[current].push(direction);
         queue.push(nextCell);
       }
     }
   }
 
-  return connected;
+  return { steps: flowSteps, incoming, outgoing };
 }
 
 function areExitsReachable(
@@ -279,10 +289,18 @@ function PipeArtwork({
   piece,
   terminal,
   connected,
+  flowing = false,
+  flowDelaySeconds = 0,
+  flowIncoming,
+  flowOutgoing = [],
 }: {
   piece?: PipePiece;
   terminal?: 'start' | 'end';
   connected: boolean;
+  flowing?: boolean;
+  flowDelaySeconds?: number;
+  flowIncoming?: Direction | null;
+  flowOutgoing?: Direction[];
 }) {
   const connections = terminal
     ? terminal === 'start'
@@ -345,6 +363,41 @@ function PipeArtwork({
         opacity="0.48"
         transform="translate(-2 -2)"
       />
+      {flowing &&
+        (flowOutgoing.length > 0
+          ? flowOutgoing.map((direction) => {
+              const flowPath = flowIncoming
+                ? `M ${SVG_ENDPOINT[flowIncoming]} L 50 50 L ${SVG_ENDPOINT[direction]}`
+                : `M 50 50 L ${SVG_ENDPOINT[direction]}`;
+              return (
+                <path
+                  className={styles.flowingWater}
+                  d={flowPath}
+                  fill="none"
+                  key={direction}
+                  pathLength="100"
+                  stroke="#9cf6ff"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="9"
+                  style={{ animationDelay: `${flowDelaySeconds}s` }}
+                />
+              );
+            })
+          : terminal === 'end' &&
+              flowIncoming && (
+                <path
+                  className={styles.flowingWater}
+                  d={`M ${SVG_ENDPOINT[flowIncoming]} L 50 50`}
+                  fill="none"
+                  pathLength="100"
+                  stroke="#9cf6ff"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="9"
+                  style={{ animationDelay: `${flowDelaySeconds}s` }}
+                />
+              ))}
       {(piece || terminal) && (
         <g>
           <circle cx="50" cy="50" r="13" fill={colors.rim} />
@@ -367,6 +420,10 @@ function EmptyGridContent() {
   const hasSavedCompletionRef = useRef(false);
   const [levelIndex, setLevelIndex] = useState(0);
   const [roundIndex, setRoundIndex] = useState(0);
+  const [roundStarted, setRoundStarted] = useState(false);
+  const [flowStarted, setFlowStarted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(ROUND_TIME_LIMIT_SECONDS);
+  const [timedOut, setTimedOut] = useState(false);
   const [pipes, setPipes] = useState<Array<PipePiece | null>>(() =>
     Array(CELL_COUNT).fill(null),
   );
@@ -384,17 +441,23 @@ function EmptyGridContent() {
     gridSize,
     exitCells,
   );
-  const connectedCells = getConnectedCells(
+  const flow = getFlowSteps(
     pipes,
     exitCells,
     obstacleCells,
     gridSize,
   );
   const routeComplete = exits.some(
-    (exit) => exit.isTarget && connectedCells[exit.cell],
+    (exit) => exit.isTarget && flow.steps[exit.cell] >= 0,
   );
   const wrongExit = exits.find(
-    (exit) => !exit.isTarget && connectedCells[exit.cell],
+    (exit) => !exit.isTarget && flow.steps[exit.cell] >= 0,
+  );
+  const maxFlowStep = Math.max(0, ...flow.steps);
+  const flowStepDelaySeconds = Math.min(
+    FLOW_STEP_DELAY_SECONDS,
+    (ROUND_TIME_LIMIT_SECONDS - FLOW_ANIMATION_DURATION_SECONDS) /
+      (maxFlowStep + 1),
   );
   const isLastRound = roundIndex === ROUNDS_PER_LEVEL - 1;
   const isLastLevel = levelIndex === ANIMAL_LEVELS.length - 1;
@@ -408,6 +471,37 @@ function EmptyGridContent() {
 
     void saveProgressDelta('starter', { unlocked_lessons: 5 });
   }, [lessonComplete]);
+
+  useEffect(() => {
+    if (!roundStarted || (flowStarted && routeComplete)) return;
+
+    const timeoutId = window.setTimeout(() => {
+      if (timeLeft <= 1) {
+        if (!flowStarted) {
+          setFlowStarted(true);
+          setTimeLeft(ROUND_TIME_LIMIT_SECONDS);
+        } else {
+          setPipes(Array(CELL_COUNT).fill(null));
+          setRoundStarted(false);
+          setFlowStarted(false);
+          setTimeLeft(ROUND_TIME_LIMIT_SECONDS);
+          setTimedOut(true);
+        }
+        return;
+      }
+
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [flowStarted, roundStarted, routeComplete, timeLeft]);
+
+  useEffect(() => {
+    if (!timedOut) return;
+
+    const timeoutId = window.setTimeout(() => setTimedOut(false), 3000);
+    return () => window.clearTimeout(timeoutId);
+  }, [timedOut]);
 
   useEffect(() => {
     if (routeComplete) speak(current.animal);
@@ -425,10 +519,16 @@ function EmptyGridContent() {
       setRoundIndex((value) => value + 1);
     }
     setPipes(Array(CELL_COUNT).fill(null));
+    setRoundStarted(false);
+    setFlowStarted(false);
+    setTimeLeft(ROUND_TIME_LIMIT_SECONDS);
+    setTimedOut(false);
   }
 
   function placePipe(cellIndex: number, piece: PipePiece): void {
     if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
+    setRoundStarted(true);
+    setTimedOut(false);
     setPipes((current) => {
       const next = [...current];
       next[cellIndex] = piece;
@@ -450,6 +550,8 @@ function EmptyGridContent() {
     const sourceText = event.dataTransfer.getData(PIPE_SOURCE_TYPE);
     const sourceIndex = Number(sourceText);
     if (sourceText && Number.isInteger(sourceIndex)) {
+      setRoundStarted(true);
+      setTimedOut(false);
       setPipes((current) => {
         if (!current[sourceIndex]) return current;
         const next = [...current];
@@ -521,12 +623,32 @@ function EmptyGridContent() {
                 <span lang="th">คำไหนคือชื่อสัตว์ตัวนี้</span>
               </h2>
               <p className={styles.status} aria-live="polite">
-                {routeComplete
+                {timedOut
+                  ? 'Time is up! Try this animal again. · หมดเวลา ลองอีกครั้ง'
+                  : routeComplete
                   ? `Correct! This is a ${current.animal}. · ใช่แล้ว!`
                   : wrongExit
                     ? 'That is not a match. Try another name. · ลองเลือกชื่ออื่น'
                     : `Round ${roundIndex + 1} of ${ROUNDS_PER_LEVEL}: connect the picture to its name. Avoid the rocks; pipes cannot go there. · อย่าวางท่อตรงหิน`}
               </p>
+              <div className={styles.timer} aria-live="off">
+                <span>⏱</span>
+                <span>
+                  {!roundStarted
+                    ? `${ROUND_TIME_LIMIT_SECONDS}s to connect`
+                    : !flowStarted
+                      ? `Water starts in ${timeLeft}s`
+                      : routeComplete
+                      ? 'Route complete!'
+                      : `${timeLeft}s remaining`}
+                </span>
+                <progress
+                  className={styles.timerProgress}
+                  max={ROUND_TIME_LIMIT_SECONDS}
+                  value={roundStarted && !routeComplete ? timeLeft : ROUND_TIME_LIMIT_SECONDS}
+                  aria-label={`${roundStarted && !routeComplete ? timeLeft : ROUND_TIME_LIMIT_SECONDS} seconds`}
+                />
+              </div>
             </div>
 
             <div
@@ -545,7 +667,8 @@ function EmptyGridContent() {
                 const exit = exits.find((item) => item.cell === cellIndex);
                 const isObstacle = obstacleCells.has(cellIndex);
                 const pipe = pipes[cellIndex];
-                const isConnected = connectedCells[cellIndex];
+                const flowStep = flow.steps[cellIndex];
+                const isConnected = flowStep >= 0;
                 const row = Math.floor(cellIndex / gridSize) + 1;
                 const column = (cellIndex % gridSize) + 1;
 
@@ -579,6 +702,10 @@ function EmptyGridContent() {
                       <PipeArtwork
                         terminal={isStart ? 'start' : 'end'}
                         connected={isConnected}
+                        flowing={flowStarted && isConnected}
+                        flowDelaySeconds={flowStep * flowStepDelaySeconds}
+                        flowIncoming={flow.incoming[cellIndex]}
+                        flowOutgoing={flow.outgoing[cellIndex]}
                       />
                       {isStart ? (
                         <span className={styles.terminalEmoji}>
@@ -618,7 +745,14 @@ function EmptyGridContent() {
                     onDrop={(event) => handleCellDrop(event, cellIndex)}
                   >
                     {pipe ? (
-                      <PipeArtwork piece={pipe} connected={isConnected} />
+                      <PipeArtwork
+                        piece={pipe}
+                        connected={isConnected}
+                        flowing={flowStarted && isConnected}
+                        flowDelaySeconds={flowStep * flowStepDelaySeconds}
+                        flowIncoming={flow.incoming[cellIndex]}
+                        flowOutgoing={flow.outgoing[cellIndex]}
+                      />
                     ) : null}
                   </button>
                 );
