@@ -28,6 +28,70 @@
   padding: 0 0 max(18px, env(safe-area-inset-bottom));
 }
 
+/* Per-level scenery: a sky tile on top and a ground tile along the bottom. */
+.page[data-level] {
+  background-repeat: repeat-x, repeat-x, no-repeat;
+  background-position:
+    center bottom,
+    center top,
+    0 0;
+  background-size:
+    400px 240px,
+    400px 160px,
+    auto;
+}
+
+.page[data-level='1'],
+.page[data-level='4'] {
+  background-repeat: repeat-x, repeat-x, no-repeat, no-repeat;
+  background-position:
+    center bottom,
+    center top,
+    0 0,
+    0 0;
+  background-size:
+    400px 240px,
+    400px 160px,
+    auto,
+    auto;
+}
+
+.page[data-level='1'] {
+  background-image:
+    url('/assets/garden/ground-1.svg'), url('/assets/garden/sky-1.svg'),
+    radial-gradient(
+      circle at 88% 6%,
+      #fff7b8 0 30px,
+      rgba(255, 240, 150, 0.5) 31px 56px,
+      transparent 58px
+    ),
+    linear-gradient(#bfe6fb, #eaf6e2 80%);
+}
+
+.page[data-level='2'] {
+  background-image:
+    url('/assets/garden/ground-2.svg'), url('/assets/garden/sky-2.svg'),
+    linear-gradient(#fbd9ea, #fdf3e4 80%);
+}
+
+.page[data-level='3'] {
+  background-image:
+    url('/assets/garden/ground-3.svg'), url('/assets/garden/sky-3.svg'),
+    linear-gradient(#cfe9f2, #e4f2d6 80%);
+}
+
+.page[data-level='4'] {
+  background-image:
+    url('/assets/garden/ground-4.svg'), url('/assets/garden/sky-4.svg'),
+    radial-gradient(
+      circle at 14% 8%,
+      #fffdf0 0 22px,
+      rgba(255, 253, 240, 0.55) 23px 44px,
+      transparent 46px
+    ),
+    linear-gradient(#cdbdee, #ecc9dc 55%, #fbdcbc);
+}
+
 .headerTitle {
   min-width: 0;
   margin: 0;

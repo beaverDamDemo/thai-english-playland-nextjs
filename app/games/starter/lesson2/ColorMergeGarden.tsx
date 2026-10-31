@@ -314,7 +314,7 @@ function ColorMergeGardenContent() {
   }
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-level={level}>
       <header className={lessonHeaderStyles.header} data-game="starter">
         <Link href="/games/starter" className={lessonHeaderStyles.back}>
           <Image

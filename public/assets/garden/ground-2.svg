@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 400 240" width="400" height="240">
+  <defs>
+    <g id="fl">
+      <ellipse cx="0" cy="-7" rx="4" ry="6"/>
+      <ellipse cx="0" cy="-7" rx="4" ry="6" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-7" rx="4" ry="6" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-7" rx="4" ry="6" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-7" rx="4" ry="6" transform="rotate(288)"/>
+    </g>
+  </defs>
+  <path d="M0 150 Q100 105 200 150 T400 150 V240 H0Z" fill="#c9e8b0"/>
+  <path d="M0 185 Q100 150 200 185 T400 185 V240 H0Z" fill="#a9d98f"/>
+  <path d="M0 215 Q100 195 200 215 T400 215 V240 H0Z" fill="#86c46f"/>
+  <g stroke="#4a9a4f" stroke-width="2" stroke-linecap="round">
+    <path d="M40 200 V222"/><path d="M95 190 V214"/><path d="M150 205 V228"/><path d="M215 192 V216"/>
+    <path d="M270 206 V230"/><path d="M330 194 V218"/><path d="M375 208 V230"/>
+  </g>
+  <g fill="#f06292"><use xlink:href="#fl" x="40" y="198"/><use xlink:href="#fl" x="215" y="190"/></g>
+  <g fill="#ffca28"><use xlink:href="#fl" x="95" y="188"/><use xlink:href="#fl" x="270" y="204"/></g>
+  <g fill="#ba68c8"><use xlink:href="#fl" x="150" y="203"/><use xlink:href="#fl" x="375" y="206"/></g>
+  <g fill="#fff"><use xlink:href="#fl" x="330" y="192"/></g>
+  <g>
+    <circle cx="40" cy="198" r="3" fill="#ffeb3b"/><circle cx="95" cy="188" r="3" fill="#ef6c00"/>
+    <circle cx="150" cy="203" r="3" fill="#fff59d"/><circle cx="215" cy="190" r="3" fill="#ffeb3b"/>
+    <circle cx="270" cy="204" r="3" fill="#ef6c00"/><circle cx="330" cy="192" r="3" fill="#ffeb3b"/>
+    <circle cx="375" cy="206" r="3" fill="#fff59d"/>
+  </g>
+</svg>
