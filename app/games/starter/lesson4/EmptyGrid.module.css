@@ -5,17 +5,9 @@
   flex-direction: column;
   overflow-x: hidden;
   background:
-    radial-gradient(
-      ellipse at 8% 25%,
-      rgba(104, 190, 198, 0.2),
-      transparent 38%
-    ),
-    radial-gradient(
-      ellipse at 100% 88%,
-      rgba(255, 191, 91, 0.2),
-      transparent 40%
-    ),
-    #f3f7f3;
+    linear-gradient(180deg, rgba(247, 252, 253, 0.55), rgba(230, 242, 245, 0.2)),
+    url('/assets/pipes/pipes-tile.svg') 0 0 / 240px 240px repeat,
+    #e6f2f5;
   color: #202d31;
 }
 
@@ -90,10 +82,13 @@
 .grid {
   box-sizing: border-box;
   display: grid;
-  width: min(100%, min(72svh, 660px));
+  width: min(
+    100%,
+    min(calc(72svh * var(--grid-scale, 1)), calc(660px * var(--grid-scale, 1)))
+  );
   aspect-ratio: 1;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  grid-template-rows: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--grid-size, 8), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--grid-size, 8), minmax(0, 1fr));
   gap: clamp(2px, 0.6vw, 5px);
   padding: clamp(8px, 1.8vw, 12px);
   border: 2px solid #435b59;
@@ -113,6 +108,26 @@
   border: 1px solid #81938d;
   border-radius: 4px;
   background: #fffefa;
+}
+
+.obstacleCell {
+  border: 2px solid #53635f;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(61, 77, 71, 0.18) 0,
+      rgba(61, 77, 71, 0.18) 4px,
+      transparent 4px,
+      transparent 8px
+    ),
+    #aeb9b1;
+  box-shadow: inset 0 1px 3px rgba(30, 45, 40, 0.28);
+}
+
+.obstacleEmoji {
+  font-size: clamp(0.75rem, 3vw, 1.6rem);
+  line-height: 1;
+  pointer-events: none;
 }
 
 .emptyCell {
@@ -156,7 +171,7 @@
   bottom: 2px;
   left: 0;
   color: #6a4834;
-  font-size: clamp(0.34rem, 0.75vw, 0.5rem);
+  font-size: clamp(0.5rem, 1.5vw, 0.78rem);
   font-weight: 900;
   line-height: 1;
   text-align: center;
@@ -265,7 +280,10 @@
   }
 
   .grid {
-    width: min(100%, min(56svh, 560px));
+    width: min(
+      100%,
+      min(calc(56svh * var(--grid-scale, 1)), calc(560px * var(--grid-scale, 1)))
+    );
   }
 
   .toolPanel {
@@ -291,7 +309,10 @@
   }
 
   .grid {
-    width: min(100%, min(52svh, 500px));
+    width: min(
+      100%,
+      min(calc(52svh * var(--grid-scale, 1)), calc(500px * var(--grid-scale, 1)))
+    );
     border-radius: 10px;
   }
 
@@ -312,4 +333,102 @@
     width: 38px;
     height: 38px;
   }
+}
+
+.levels {
+  display: grid;
+  width: min(100%, 440px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 2px;
+  border: 2px solid rgba(14, 116, 144, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #3b6772;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.levelNumber {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(14, 116, 144, 0.2);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.levelCurrent {
+  border-color: #0e7490;
+  background: #fff;
+  box-shadow: 0 3px 0 #0b4a5e;
+  color: #0b4a5e;
+}
+
+.levelCurrent .levelNumber {
+  background: #0e7490;
+  color: #fff;
+}
+
+.levelDone {
+  border-color: #1d704b;
+  background: #e3f7ec;
+  color: #1d704b;
+}
+
+.levelDone .levelNumber {
+  background: #32875e;
+  color: #fff;
+}
+
+.terminalEmoji {
+  position: absolute;
+  top: 8%;
+  right: 0;
+  left: 0;
+  font-size: clamp(1.5rem, 6vw, 2.8rem);
+  line-height: 1;
+  text-align: center;
+  pointer-events: none;
+}
+
+.exitRight {
+  border-color: #1d704b;
+  background: #d7f3e2;
+  box-shadow: 0 0 0 3px rgba(50, 135, 94, 0.4);
+}
+
+.exitWrong {
+  border-color: #c2410c;
+  background: #fde7d9;
+}
+
+.nextButton {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1fa8c9, #0e7490);
+  box-shadow: 0 4px 0 #0b4a5e;
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
 }

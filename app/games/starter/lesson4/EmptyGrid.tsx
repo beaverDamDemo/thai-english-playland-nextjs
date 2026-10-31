@@ -9,6 +9,7 @@ import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './EmptyGrid.module.css';
+import { ANIMAL_LEVELS, EXIT_ROWS, type AnimalRound } from './animals';
 
 type Direction = 'north' | 'east' | 'south' | 'west';
 type PipeKind = 'straight' | 'cross' | 'corner';
@@ -23,8 +24,9 @@ type PipeTool = {
 
 const GRID_SIZE = 8;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
+const LEVEL_GRID_SIZES = [5, 8, 8, 8];
 const START_CELL = 0;
-const END_CELL = 3 * GRID_SIZE + GRID_SIZE - 1;
+const ROUNDS_PER_LEVEL = 4;
 const PIPE_DRAG_TYPE = 'application/x-playland-pipe';
 const PIPE_SOURCE_TYPE = 'application/x-playland-pipe-source';
 const DIRECTIONS: Direction[] = ['north', 'east', 'south', 'west'];
@@ -111,49 +113,49 @@ function parseDraggedPipe(value: string): PipePiece | null {
   return { kind, rotation };
 }
 
-function getConnectedCells(pipes: Array<PipePiece | null>): boolean[] {
+function getConnectedCells(
+  pipes: Array<PipePiece | null>,
+  exitCells: number[],
+  obstacleCells: ReadonlySet<number>,
+  gridSize: number,
+): boolean[] {
   const connected = Array<boolean>(CELL_COUNT).fill(false);
   const queue = [START_CELL];
   connected[START_CELL] = true;
 
+  const openingsOf = (cell: number): Direction[] =>
+    obstacleCells.has(cell)
+      ? []
+      : cell === START_CELL
+      ? ['east']
+      : exitCells.includes(cell)
+        ? ['west']
+        : pipes[cell]
+          ? getPipeConnections(pipes[cell])
+          : [];
+
   for (let cursor = 0; cursor < queue.length; cursor++) {
     const current = queue[cursor];
-    const row = Math.floor(current / GRID_SIZE);
-    const column = current % GRID_SIZE;
-    const openings: Direction[] =
-      current === START_CELL
-        ? ['east']
-        : current === END_CELL
-          ? ['west']
-          : pipes[current]
-            ? getPipeConnections(pipes[current])
-            : [];
+    const row = Math.floor(current / gridSize);
+    const column = current % gridSize;
 
-    for (const direction of openings) {
+    for (const direction of openingsOf(current)) {
       const movement = MOVEMENT[direction];
       const nextRow = row + movement.row;
       const nextColumn = column + movement.column;
       if (
         nextRow < 0 ||
-        nextRow >= GRID_SIZE ||
+        nextRow >= gridSize ||
         nextColumn < 0 ||
-        nextColumn >= GRID_SIZE
+        nextColumn >= gridSize
       ) {
         continue;
       }
 
-      const nextCell = nextRow * GRID_SIZE + nextColumn;
-      const neighborOpenings: Direction[] =
-        nextCell === START_CELL
-          ? ['east']
-          : nextCell === END_CELL
-            ? ['west']
-            : pipes[nextCell]
-              ? getPipeConnections(pipes[nextCell])
-              : [];
-
+      const nextCell = nextRow * gridSize + nextColumn;
       if (
-        neighborOpenings.includes(OPPOSITE[direction]) &&
+        !obstacleCells.has(nextCell) &&
+        openingsOf(nextCell).includes(OPPOSITE[direction]) &&
         !connected[nextCell]
       ) {
         connected[nextCell] = true;
@@ -163,6 +165,114 @@ function getConnectedCells(pipes: Array<PipePiece | null>): boolean[] {
   }
 
   return connected;
+}
+
+function areExitsReachable(
+  obstacleCells: ReadonlySet<number>,
+  exitCells: number[],
+  gridSize: number,
+): boolean {
+  const reachable = new Set([START_CELL]);
+  const queue = [START_CELL];
+
+  for (let cursor = 0; cursor < queue.length; cursor++) {
+    const cell = queue[cursor];
+    const row = Math.floor(cell / gridSize);
+    const column = cell % gridSize;
+
+    for (const direction of DIRECTIONS) {
+      const movement = MOVEMENT[direction];
+      const nextRow = row + movement.row;
+      const nextColumn = column + movement.column;
+      if (
+        nextRow < 0 ||
+        nextRow >= gridSize ||
+        nextColumn < 0 ||
+        nextColumn >= gridSize
+      ) {
+        continue;
+      }
+
+      const nextCell = nextRow * gridSize + nextColumn;
+      if (!obstacleCells.has(nextCell) && !reachable.has(nextCell)) {
+        reachable.add(nextCell);
+        queue.push(nextCell);
+      }
+    }
+  }
+
+  return exitCells.every((cell) => reachable.has(cell));
+}
+
+function getObstacleCells(
+  levelIndex: number,
+  roundIndex: number,
+  gridSize: number,
+  exitCells: number[],
+): Set<number> {
+  let seed = (levelIndex + 1) * 1009 + (roundIndex + 1) * 7919 + gridSize;
+  const random = (): number => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 0x100000000;
+  };
+  const candidates = Array.from(
+    { length: gridSize * gridSize },
+    (_, cell) => cell,
+  ).filter((cell) => cell !== START_CELL && !exitCells.includes(cell));
+
+  for (let index = candidates.length - 1; index > 0; index--) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [candidates[index], candidates[swapIndex]] = [
+      candidates[swapIndex],
+      candidates[index],
+    ];
+  }
+
+  const obstacles = new Set<number>();
+  const targetCount = Math.floor(gridSize * gridSize * 0.16);
+
+  for (const cell of candidates) {
+    obstacles.add(cell);
+    if (!areExitsReachable(obstacles, exitCells, gridSize)) {
+      obstacles.delete(cell);
+      continue;
+    }
+    if (obstacles.size === targetCount) break;
+  }
+
+  return obstacles;
+}
+
+function speak(text: string): void {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.85;
+  window.speechSynthesis.speak(utterance);
+}
+
+type Exit = { cell: number; round: AnimalRound; isTarget: boolean };
+
+// Target animal plus two choices from the same level, at fixed exits.
+function buildExits(
+  levelIndex: number,
+  roundIndex: number,
+  gridSize: number,
+): Exit[] {
+  const { rounds } = ANIMAL_LEVELS[levelIndex];
+  const rows = EXIT_ROWS[(roundIndex + levelIndex) % EXIT_ROWS.length].map(
+    (row) => Math.round((row * (gridSize - 1)) / 7),
+  );
+  const targetSlot = (roundIndex * 2 + levelIndex) % rows.length;
+  let distractor = 1;
+  return rows.map((row, slot) => {
+    const isTarget = slot === targetSlot;
+    const source = isTarget
+      ? rounds[roundIndex]
+      : rounds[(roundIndex + distractor++) % rounds.length];
+    return { cell: row * gridSize + gridSize - 1, round: source, isTarget };
+  });
 }
 
 function PipeArtwork({
@@ -255,28 +365,70 @@ function PipeArtwork({
 
 function EmptyGridContent() {
   const hasSavedCompletionRef = useRef(false);
+  const [levelIndex, setLevelIndex] = useState(0);
+  const [roundIndex, setRoundIndex] = useState(0);
   const [pipes, setPipes] = useState<Array<PipePiece | null>>(() =>
     Array(CELL_COUNT).fill(null),
   );
   const [selectedPipe, setSelectedPipe] = useState<PipePiece>(
     PIPE_TOOLS[0].piece,
   );
-  const connectedCells = getConnectedCells(pipes);
-  const routeComplete = connectedCells[END_CELL];
+  const level = ANIMAL_LEVELS[levelIndex];
+  const current = level.rounds[roundIndex];
+  const gridSize = LEVEL_GRID_SIZES[levelIndex];
+  const exits = buildExits(levelIndex, roundIndex, gridSize);
+  const exitCells = exits.map((exit) => exit.cell);
+  const obstacleCells = getObstacleCells(
+    levelIndex,
+    roundIndex,
+    gridSize,
+    exitCells,
+  );
+  const connectedCells = getConnectedCells(
+    pipes,
+    exitCells,
+    obstacleCells,
+    gridSize,
+  );
+  const routeComplete = exits.some(
+    (exit) => exit.isTarget && connectedCells[exit.cell],
+  );
+  const wrongExit = exits.find(
+    (exit) => !exit.isTarget && connectedCells[exit.cell],
+  );
+  const isLastRound = roundIndex === ROUNDS_PER_LEVEL - 1;
+  const isLastLevel = levelIndex === ANIMAL_LEVELS.length - 1;
+  const lessonComplete = routeComplete && isLastRound && isLastLevel;
+  const completedLevels =
+    levelIndex + (routeComplete && isLastRound ? 1 : 0);
 
   useEffect(() => {
-    if (!routeComplete || hasSavedCompletionRef.current) return;
+    if (!lessonComplete || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
 
     void saveProgressDelta('starter', { unlocked_lessons: 5 });
-  }, [routeComplete]);
+  }, [lessonComplete]);
+
+  useEffect(() => {
+    if (routeComplete) speak(current.animal);
+  }, [routeComplete, current.animal]);
 
   useEffect(() => {
     pingLessonOpen('starter');
   }, []);
 
+  function nextRound(): void {
+    if (isLastRound) {
+      setLevelIndex((value) => value + 1);
+      setRoundIndex(0);
+    } else {
+      setRoundIndex((value) => value + 1);
+    }
+    setPipes(Array(CELL_COUNT).fill(null));
+  }
+
   function placePipe(cellIndex: number, piece: PipePiece): void {
-    if (cellIndex === START_CELL || cellIndex === END_CELL) return;
+    if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
     setPipes((current) => {
       const next = [...current];
       next[cellIndex] = piece;
@@ -293,7 +445,7 @@ function EmptyGridContent() {
     cellIndex: number,
   ): void {
     event.preventDefault();
-    if (cellIndex === START_CELL || cellIndex === END_CELL) return;
+    if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
 
     const sourceText = event.dataTransfer.getData(PIPE_SOURCE_TYPE);
     const sourceIndex = Number(sourceText);
@@ -330,54 +482,113 @@ function EmptyGridContent() {
             height={34}
           />
         </Link>
-        <h1 className={styles.headerTitle}>Pipe Connect</h1>
-        <span className={styles.lessonTag}>LESSON 4</span>
+        <h1 className={styles.headerTitle}>Animal Pipes</h1>
+        <span className={styles.lessonTag}>
+          LEVEL {levelIndex + 1}/{ANIMAL_LEVELS.length}
+        </span>
         <MusicToggle />
       </header>
-      {routeComplete && <UnlockToast nextLesson={5} />}
+      {lessonComplete && <UnlockToast nextLesson={5} />}
 
-      <section className={styles.workspace} aria-label="Pipe connection game">
+      <section className={styles.workspace} aria-label="Animal pipe game">
         <div className={styles.gameLayout}>
           <div className={styles.boardArea}>
+            <ol
+              className={styles.levels}
+              aria-label={`Levels completed: ${completedLevels} of ${ANIMAL_LEVELS.length}`}
+            >
+              {ANIMAL_LEVELS.map((item, index) => {
+                const done = index < completedLevels;
+                const active = index === levelIndex && !done;
+                return (
+                  <li
+                    key={item.title}
+                    className={`${styles.level} ${done ? styles.levelDone : ''} ${active ? styles.levelCurrent : ''}`}
+                    aria-current={active ? 'step' : undefined}
+                  >
+                    <span className={styles.levelNumber}>
+                      {done ? '✓' : index + 1}
+                    </span>
+                    <span>{item.title}</span>
+                  </li>
+                );
+              })}
+            </ol>
+
             <div className={styles.boardHeading}>
-              <h2 className={styles.boardTitle}>Connect the route</h2>
+              <h2 className={styles.boardTitle}>
+                Which word names this animal? ·{' '}
+                <span lang="th">คำไหนคือชื่อสัตว์ตัวนี้</span>
+              </h2>
               <p className={styles.status} aria-live="polite">
                 {routeComplete
-                  ? 'The start now connects to the end.'
-                  : 'Build a route from START to END.'}
+                  ? `Correct! This is a ${current.animal}. · ใช่แล้ว!`
+                  : wrongExit
+                    ? 'That is not a match. Try another name. · ลองเลือกชื่ออื่น'
+                    : `Round ${roundIndex + 1} of ${ROUNDS_PER_LEVEL}: connect the picture to its name. Avoid the rocks; pipes cannot go there. · อย่าวางท่อตรงหิน`}
               </p>
             </div>
 
             <div
               className={styles.grid}
+              style={
+                {
+                  '--grid-size': gridSize,
+                  '--grid-scale': gridSize / GRID_SIZE,
+                } as React.CSSProperties
+              }
               role="group"
-              aria-label="8 by 8 pipe board"
+              aria-label={`${gridSize} by ${gridSize} pipe board`}
             >
-              {Array.from({ length: CELL_COUNT }, (_, cellIndex) => {
+              {Array.from({ length: gridSize * gridSize }, (_, cellIndex) => {
                 const isStart = cellIndex === START_CELL;
-                const isEnd = cellIndex === END_CELL;
+                const exit = exits.find((item) => item.cell === cellIndex);
+                const isObstacle = obstacleCells.has(cellIndex);
                 const pipe = pipes[cellIndex];
                 const isConnected = connectedCells[cellIndex];
-                const row = Math.floor(cellIndex / GRID_SIZE) + 1;
-                const column = (cellIndex % GRID_SIZE) + 1;
+                const row = Math.floor(cellIndex / gridSize) + 1;
+                const column = (cellIndex % gridSize) + 1;
 
-                if (isStart || isEnd) {
+                if (isObstacle) {
                   return (
                     <div
-                      className={`${styles.cell} ${styles.terminal} ${isStart ? styles.startTerminal : styles.endTerminal}`}
+                      className={`${styles.cell} ${styles.obstacleCell}`}
+                      key={cellIndex}
+                      role="img"
+                      aria-label="Rock obstacle. Pipes cannot be placed here."
+                    >
+                      <span className={styles.obstacleEmoji} aria-hidden="true">
+                        🪨
+                      </span>
+                    </div>
+                  );
+                }
+
+                if (isStart || exit) {
+                  return (
+                    <div
+                      className={`${styles.cell} ${styles.terminal} ${isStart ? styles.startTerminal : styles.endTerminal} ${exit && isConnected ? (exit.isTarget ? styles.exitRight : styles.exitWrong) : ''}`}
                       key={cellIndex}
                       role="img"
                       aria-label={
-                        isStart ? 'Start, opens right' : 'End, opens left'
+                        isStart
+                          ? `Picture of a ${current.animal}`
+                          : `Exit: ${exit?.round.animal}`
                       }
                     >
                       <PipeArtwork
                         terminal={isStart ? 'start' : 'end'}
                         connected={isConnected}
                       />
-                      <span className={styles.terminalLabel}>
-                        {isStart ? 'START' : 'END'}
-                      </span>
+                      {isStart ? (
+                        <span className={styles.terminalEmoji}>
+                          {current.animalEmoji}
+                        </span>
+                      ) : (
+                        <span className={styles.terminalLabel}>
+                          {exit?.round.animal}
+                        </span>
+                      )}
                     </div>
                   );
                 }
@@ -447,6 +658,29 @@ function EmptyGridContent() {
                 );
               })}
             </div>
+            <button
+              className={styles.clearButton}
+              type="button"
+              aria-label="Hear the animal's name"
+              onClick={() => speak(current.animal)}
+            >
+              🔊 Hear the word · ฟังคำศัพท์
+            </button>
+            {routeComplete && !lessonComplete ? (
+              <button
+                className={styles.nextButton}
+                type="button"
+                onClick={nextRound}
+              >
+                {isLastRound ? 'Next level' : 'Next animal'} ·{' '}
+                {isLastRound ? 'ด่านต่อไป' : 'สัตว์ตัวต่อไป'} →
+              </button>
+            ) : null}
+            {lessonComplete ? (
+              <Link href="/games/starter" className={styles.nextButton}>
+                All done! · กลับไปหน้าบทเรียน
+              </Link>
+            ) : null}
             <button
               className={styles.clearButton}
               type="button"
