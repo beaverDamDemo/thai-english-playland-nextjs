@@ -273,7 +273,16 @@ function NumberPathContent() {
 
   return (
     <main className={styles.page}>
-      <header className={lessonHeaderStyles.header} data-game="starter">
+      <header
+        className={lessonHeaderStyles.header}
+        data-game="starter"
+        style={
+          {
+            '--game-bg': '#0e7490',
+            '--game-bg-dark': '#0b4a5e',
+          } as React.CSSProperties
+        }
+      >
         <Link href="/games/starter" className={lessonHeaderStyles.back}>
           <Image
             src="/assets/tinified/back.png"
@@ -312,6 +321,13 @@ function NumberPathContent() {
           <span className={styles.counter}>
             {path.length} <span>/ {numbers.length}</span>
           </span>
+        </div>
+
+        <div className={styles.progressBar} aria-hidden="true">
+          <div
+            className={styles.progressFill}
+            style={{ width: `${(path.length / numbers.length) * 100}%` }}
+          />
         </div>
 
         <p className={styles.status} aria-live="polite">
@@ -430,7 +446,7 @@ function NumberPathContent() {
                 type="button"
                 onClick={advanceStage}
               >
-                Next board <span aria-hidden="true">â†’</span>
+                Next board <span aria-hidden="true">→</span>
               </button>
             )}
           </div>

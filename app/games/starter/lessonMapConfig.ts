@@ -39,8 +39,8 @@ export const lessonConfigs: LessonConfig[] = [
   },
   {
     num: 3,
-    color: "#ffef40",
-    colorDark: "#343536",
+    color: "#1fa8c9",
+    colorDark: "#0b5f78",
     title: "Number Path",
     tile: "/assets/tinified/tile-brlue-1.png",
     columns: 17,
