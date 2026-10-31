@@ -1,5 +1,5 @@
-import NumberPath from './NumberPath';
+import MagnetBuilder from './MagnetBuilder';
 
 export default function Page() {
-  return <NumberPath />;
+  return <MagnetBuilder />;
 }

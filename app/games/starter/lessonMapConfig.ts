@@ -41,7 +41,7 @@ export const lessonConfigs: LessonConfig[] = [
     num: 3,
     color: "#1fa8c9",
     colorDark: "#0b5f78",
-    title: "Number Path",
+    title: "Number Magnets",
     tile: "/assets/tinified/tile-brlue-1.png",
     columns: 17,
     left: 72,
