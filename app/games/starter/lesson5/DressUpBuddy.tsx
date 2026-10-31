@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import MusicToggle from '../../../_components/MusicToggle';
 import UnlockToast from '../_components/UnlockToast';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
-import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import ClothingIcon from './ClothingIcon';
 import styles from './DressUpBuddy.module.css';
@@ -136,6 +136,7 @@ function DressUpBuddyContent() {
 
     if (isDressUp) {
       if (parseClothingId(id).kind !== zone) {
+        recordAnswer('starter', false);
         setMessage({
           text: 'That goes somewhere else. · ใส่ผิดที่',
           ok: false,
@@ -147,6 +148,7 @@ function DressUpBuddyContent() {
     }
 
     if (!correctIds.includes(id)) {
+      recordAnswer('starter', false);
       setMessage({
         text: isDressUp
           ? 'Listen again. · ลองฟังอีกครั้ง'
@@ -157,6 +159,7 @@ function DressUpBuddyContent() {
     }
 
     const done = placed.length + 1 === correctIds.length;
+    recordAnswer('starter', true);
     setPlaced([...placed, id]);
     setSelectedId(null);
     setMessage(

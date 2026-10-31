@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import MusicToggle from '../../../_components/MusicToggle';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
-import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import Monster from './Monster';
 import styles from './MonsterBody.module.css';
@@ -99,6 +99,10 @@ function MonsterBodyContent() {
   }, [english]);
 
   useEffect(() => {
+    if (levelIndex === 1 && roundComplete) recordAnswer('starter', true);
+  }, [levelIndex, roundComplete]);
+
+  useEffect(() => {
     if (!lessonComplete || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
     void saveProgressDelta('starter', { unlocked_lessons: 7 });
@@ -113,9 +117,11 @@ function MonsterBodyContent() {
   function handleTouch(part: PartId): void {
     if (roundComplete) return;
     if (part !== touchRound[step]) {
+      recordAnswer('starter', false);
       setMessage({ text: 'Try again. · ลองอีกครั้ง', ok: false });
       return;
     }
+    recordAnswer('starter', true);
     setMessage(null);
     if (step + 1 === touchRound.length) {
       setStep(step + 1);
@@ -139,10 +145,12 @@ function MonsterBodyContent() {
   function handlePick(index: number): void {
     if (roundComplete) return;
     if (index === pickRound.answer) {
+      recordAnswer('starter', true);
       setPicked(index);
       setMessage(null);
       speak('Great job!');
     } else {
+      recordAnswer('starter', false);
       setMessage({ text: 'Count again. · นับอีกครั้ง', ok: false });
     }
   }

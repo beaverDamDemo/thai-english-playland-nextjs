@@ -8,7 +8,7 @@ import UnlockToast from '../_components/UnlockToast';
 import type Snap from 'snapsvg-cjs';
 import { useThaiQuestion } from '@/app/games/maze/_components/useThaiQuestion';
 import styles from './ColorsSvgViewer.module.css';
-import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 
 type SnapStatic = typeof Snap;
@@ -232,7 +232,7 @@ export default function ColorsSvgViewer() {
     if (locked || !groupOrder.length) return;
     const q = questions[qIndex % questions.length];
     const isCorrect = optionIndex === q.answer;
-
+    recordAnswer('starter', isCorrect);
     setSelectedOption(optionIndex);
     setLocked(true);
     setFeedback(isCorrect ? 'correct' : 'wrong');

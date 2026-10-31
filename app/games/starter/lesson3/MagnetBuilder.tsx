@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import MusicToggle from '../../../_components/MusicToggle';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
-import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import UnlockToast from '../_components/UnlockToast';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 import { STAGES, type NumberEntry } from './stages';
@@ -95,12 +95,14 @@ function MagnetBuilderContent() {
     if (locked || stageDone) return;
 
     if (value !== target.value) {
+      recordAnswer('starter', false);
       setWrongValues((current) => [...current, value]);
       setShaking(value);
       window.setTimeout(() => setShaking(null), 400);
       return;
     }
 
+    recordAnswer('starter', true);
     setLocked(true);
     setWrongValues([]);
     speak(target.en);

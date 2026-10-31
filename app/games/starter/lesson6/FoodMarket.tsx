@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import MusicToggle from '../../../_components/MusicToggle';
 import UnlockToast from '../_components/UnlockToast';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
-import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './FoodMarket.module.css';
 import {
@@ -80,14 +80,17 @@ function FoodMarketContent() {
     if (roundComplete) return;
     const line = round.order.find((item) => item.food === food);
     if (!line) {
+      recordAnswer('starter', false);
       setMessage({ text: 'Not in the order. · ไม่ได้สั่ง', ok: false });
       return;
     }
     if (countOf(food) >= line.qty) {
+      recordAnswer('starter', false);
       setMessage({ text: 'That is enough! · พอแล้ว', ok: false });
       return;
     }
 
+    recordAnswer('starter', true);
     const item = FOODS[food];
     const done = basket.length + 1 === totalWanted;
     setBasket([...basket, food]);

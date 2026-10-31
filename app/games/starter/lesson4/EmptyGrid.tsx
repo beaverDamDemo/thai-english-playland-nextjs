@@ -6,7 +6,7 @@ import UnlockToast from '../_components/UnlockToast';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
-import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './EmptyGrid.module.css';
 import { ANIMAL_LEVELS, EXIT_ROWS, type AnimalRound } from './animals';
@@ -445,6 +445,15 @@ function EmptyGridContent() {
   }, [lessonComplete]);
 
   useEffect(() => {
+    if (routeComplete) recordAnswer('starter', true);
+  }, [routeComplete]);
+
+  const hasWrongExit = Boolean(wrongExit);
+  useEffect(() => {
+    if (hasWrongExit) recordAnswer('starter', false);
+  }, [hasWrongExit]);
+
+  useEffect(() => {
     if (!roundStarted || (flowStarted && routeComplete)) return;
 
     const timeoutId = window.setTimeout(() => {
@@ -453,6 +462,7 @@ function EmptyGridContent() {
           setFlowStarted(true);
           setTimeLeft(ROUND_TIME_LIMIT_SECONDS);
         } else {
+          recordAnswer('starter', false);
           setPipes(Array(CELL_COUNT).fill(null));
           setRoundStarted(false);
           setFlowStarted(false);

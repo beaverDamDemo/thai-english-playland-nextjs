@@ -8,7 +8,7 @@ import { getMusicEnabled } from '@/app/_lib/client/music';
 import { useEffect, useRef, useState } from 'react';
 import styles from './ColorMergeGarden.module.css';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
-import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 
 type ColorName =
@@ -276,6 +276,7 @@ function ColorMergeGardenContent() {
     ) {
       const nextMatchedColors = [...matchedColors, tile.color];
       const isLevelComplete = nextMatchedColors.length === activeColors.length;
+      recordAnswer('starter', true);
       setMatchedColors(nextMatchedColors);
       setLastMatchedColor(tile.color);
       setSelectedId(null);
@@ -289,6 +290,7 @@ function ColorMergeGardenContent() {
         // );
       }
     } else {
+      recordAnswer('starter', false);
       setSelectedId(tile.id);
       // setMessage('Not a match. No penalty; try another pair.');
     }
