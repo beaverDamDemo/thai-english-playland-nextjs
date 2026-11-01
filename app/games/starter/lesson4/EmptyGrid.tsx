@@ -66,9 +66,9 @@ const PIPE_TOOLS: PipeTool[] = [
   },
   {
     id: 'corner-ne',
-    label: 'Corner N-E',
-    description: 'Corner pipe open north and east',
-    piece: { kind: 'corner', rotation: 0 },
+    label: 'Corner S-W',
+    description: 'Corner pipe open south and west',
+    piece: { kind: 'corner', rotation: 2 },
   },
 ];
 
