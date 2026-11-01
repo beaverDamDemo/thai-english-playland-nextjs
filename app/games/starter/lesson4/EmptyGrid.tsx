@@ -26,10 +26,10 @@ const GRID_SIZE = 8;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const LEVEL_GRID_SIZES = [5, 8, 8, 8];
 const START_CELL = 0;
-const ROUNDS_PER_LEVEL = 4;
+const FLOW_START_DELAY_SECONDS = 5;
 const ROUND_TIME_LIMIT_SECONDS = 10;
-const FLOW_STEP_DELAY_SECONDS = 1.375;
-const FLOW_DURATION_SECONDS = 1.625;
+const FLOW_DURATION_SECONDS = 3.575;
+const COMPLETE_FLOW_SPEEDUP = 6;
 const PIPE_DRAG_TYPE = 'application/x-playland-pipe';
 const PIPE_SOURCE_TYPE = 'application/x-playland-pipe-source';
 const DIRECTIONS: Direction[] = ['north', 'east', 'south', 'west'];
@@ -59,12 +59,6 @@ const PIPE_TOOLS: PipeTool[] = [
     piece: { kind: 'straight', rotation: 0 },
   },
   {
-    id: 'vertical',
-    label: 'Vertical',
-    description: 'Vertical straight pipe',
-    piece: { kind: 'straight', rotation: 1 },
-  },
-  {
     id: 'cross',
     label: 'Cross',
     description: 'Four-way cross pipe',
@@ -75,24 +69,6 @@ const PIPE_TOOLS: PipeTool[] = [
     label: 'Corner N-E',
     description: 'Corner pipe open north and east',
     piece: { kind: 'corner', rotation: 0 },
-  },
-  {
-    id: 'corner-es',
-    label: 'Corner E-S',
-    description: 'Corner pipe open east and south',
-    piece: { kind: 'corner', rotation: 1 },
-  },
-  {
-    id: 'corner-sw',
-    label: 'Corner S-W',
-    description: 'Corner pipe open south and west',
-    piece: { kind: 'corner', rotation: 2 },
-  },
-  {
-    id: 'corner-wn',
-    label: 'Corner W-N',
-    description: 'Corner pipe open west and north',
-    piece: { kind: 'corner', rotation: 3 },
   },
 ];
 
@@ -223,8 +199,10 @@ function getObstacleCells(
   roundIndex: number,
   gridSize: number,
   exitCells: number[],
+  layoutSeed: number,
 ): Set<number> {
-  let seed = (levelIndex + 1) * 1009 + (roundIndex + 1) * 7919 + gridSize;
+  let seed =
+    (levelIndex + 1) * 1009 + (roundIndex + 1) * 7919 + gridSize + layoutSeed;
   const random = (): number => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 0x100000000;
@@ -273,12 +251,13 @@ function buildExits(
   levelIndex: number,
   roundIndex: number,
   gridSize: number,
+  layoutSeed: number,
 ): Exit[] {
   const { rounds } = ANIMAL_LEVELS[levelIndex];
-  const rows = EXIT_ROWS[(roundIndex + levelIndex) % EXIT_ROWS.length].map(
-    (row) => Math.round((row * (gridSize - 1)) / 7),
-  );
-  const targetSlot = (roundIndex * 2 + levelIndex) % rows.length;
+  const rows = EXIT_ROWS[
+    (roundIndex + levelIndex + layoutSeed) % EXIT_ROWS.length
+  ].map((row) => Math.round((row * (gridSize - 1)) / 7));
+  const targetSlot = (roundIndex * 2 + levelIndex + layoutSeed) % rows.length;
   let distractor = 1;
   return rows.map((row, slot) => {
     const isTarget = slot === targetSlot;
@@ -397,8 +376,10 @@ function EmptyGridContent() {
   const [roundIndex, setRoundIndex] = useState(0);
   const [roundStarted, setRoundStarted] = useState(false);
   const [flowStarted, setFlowStarted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(ROUND_TIME_LIMIT_SECONDS);
+  const [timeLeft, setTimeLeft] = useState(FLOW_START_DELAY_SECONDS);
   const [timedOut, setTimedOut] = useState(false);
+  const [layoutSeed, setLayoutSeed] = useState(0);
+  const [waterArrived, setWaterArrived] = useState(false);
   const [pipes, setPipes] = useState<Array<PipePiece | null>>(() =>
     Array(CELL_COUNT).fill(null),
   );
@@ -408,13 +389,14 @@ function EmptyGridContent() {
   const level = ANIMAL_LEVELS[levelIndex];
   const current = level.rounds[roundIndex];
   const gridSize = LEVEL_GRID_SIZES[levelIndex];
-  const exits = buildExits(levelIndex, roundIndex, gridSize);
+  const exits = buildExits(levelIndex, roundIndex, gridSize, layoutSeed);
   const exitCells = exits.map((exit) => exit.cell);
   const obstacleCells = getObstacleCells(
     levelIndex,
     roundIndex,
     gridSize,
     exitCells,
+    layoutSeed,
   );
   const flow = getFlowSteps(
     pipes,
@@ -428,14 +410,34 @@ function EmptyGridContent() {
   const wrongExit = exits.find(
     (exit) => !exit.isTarget && flow.steps[exit.cell] >= 0,
   );
-  const flowSpeedFactor = routeComplete ? 0.5 : 1;
-  const flowStepDelaySeconds = FLOW_STEP_DELAY_SECONDS * flowSpeedFactor;
-  const flowDurationSeconds = FLOW_DURATION_SECONDS * flowSpeedFactor;
-  const isLastRound = roundIndex === ROUNDS_PER_LEVEL - 1;
+  const flowDurationSeconds = routeComplete
+    ? FLOW_DURATION_SECONDS / COMPLETE_FLOW_SPEEDUP
+    : FLOW_DURATION_SECONDS;
+  const waterFlowing = flowStarted || routeComplete;
+  const targetStep = Math.max(
+    0,
+    ...exits
+      .filter((exit) => exit.isTarget)
+      .map((exit) => flow.steps[exit.cell]),
+  );
+  const isLastRound = roundIndex === level.rounds.length - 1;
   const isLastLevel = levelIndex === ANIMAL_LEVELS.length - 1;
-  const lessonComplete = routeComplete && isLastRound && isLastLevel;
+  const lessonComplete = waterArrived && isLastRound && isLastLevel;
   const completedLevels =
     levelIndex + (routeComplete && isLastRound ? 1 : 0);
+
+  useEffect(() => {
+    if (!routeComplete) return;
+
+    const timeoutId = window.setTimeout(
+      () => setWaterArrived(true),
+      targetStep * flowDurationSeconds * 1000,
+    );
+    return () => {
+      window.clearTimeout(timeoutId);
+      setWaterArrived(false);
+    };
+  }, [routeComplete, targetStep, flowDurationSeconds]);
 
   useEffect(() => {
     if (!lessonComplete || hasSavedCompletionRef.current) return;
@@ -454,7 +456,7 @@ function EmptyGridContent() {
   }, [hasWrongExit]);
 
   useEffect(() => {
-    if (!roundStarted || (flowStarted && routeComplete)) return;
+    if (!roundStarted || routeComplete) return;
 
     const timeoutId = window.setTimeout(() => {
       if (timeLeft <= 1) {
@@ -466,7 +468,7 @@ function EmptyGridContent() {
           setPipes(Array(CELL_COUNT).fill(null));
           setRoundStarted(false);
           setFlowStarted(false);
-          setTimeLeft(ROUND_TIME_LIMIT_SECONDS);
+          setTimeLeft(FLOW_START_DELAY_SECONDS);
           setTimedOut(true);
         }
         return;
@@ -486,11 +488,17 @@ function EmptyGridContent() {
   }, [timedOut]);
 
   useEffect(() => {
-    if (routeComplete) speak(current.animal);
-  }, [routeComplete, current.animal]);
+    if (waterArrived) speak(current.animal);
+  }, [waterArrived, current.animal]);
 
   useEffect(() => {
     pingLessonOpen('starter');
+    // Random layout is picked after mount to avoid a hydration mismatch.
+    const timeoutId = window.setTimeout(
+      () => setLayoutSeed(Math.floor(Math.random() * 1000)),
+      0,
+    );
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   function nextRound(): void {
@@ -500,10 +508,11 @@ function EmptyGridContent() {
     } else {
       setRoundIndex((value) => value + 1);
     }
+    setLayoutSeed(Math.floor(Math.random() * 1000));
     setPipes(Array(CELL_COUNT).fill(null));
     setRoundStarted(false);
     setFlowStarted(false);
-    setTimeLeft(ROUND_TIME_LIMIT_SECONDS);
+    setTimeLeft(FLOW_START_DELAY_SECONDS);
     setTimedOut(false);
   }
 
@@ -519,11 +528,33 @@ function EmptyGridContent() {
   }
 
   function handleCellClick(cellIndex: number): void {
+    if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
+
+    if (pipes[cellIndex]?.kind === selectedPipe.kind) {
+      if (selectedPipe.kind !== 'cross') rotatePipe(cellIndex);
+      return;
+    }
+
     placePipe(cellIndex, selectedPipe);
   }
 
+  function rotatePipe(cellIndex: number): void {
+    setRoundStarted(true);
+    setTimedOut(false);
+    setPipes((current) => {
+      const next = [...current];
+      const pipe = next[cellIndex];
+      if (!pipe || pipe.kind === 'cross') return current;
+      next[cellIndex] = {
+        ...pipe,
+        rotation: (pipe.rotation + 1) % DIRECTIONS.length,
+      };
+      return next;
+    });
+  }
+
   function handleCellDrop(
-    event: React.DragEvent<HTMLButtonElement>,
+    event: React.DragEvent<HTMLDivElement>,
     cellIndex: number,
   ): void {
     event.preventDefault();
@@ -666,8 +697,8 @@ function EmptyGridContent() {
                       <PipeArtwork
                         terminal={isStart ? 'start' : 'end'}
                         connected={isConnected}
-                        flowing={flowStarted && isConnected}
-                        flowDelaySeconds={flowStep * flowStepDelaySeconds}
+                        flowing={waterFlowing && isConnected}
+                        flowDelaySeconds={flowStep * flowDurationSeconds}
                         flowDurationSeconds={flowDurationSeconds}
                         flowIncoming={flow.incoming[cellIndex]}
                         flowOutgoing={flow.outgoing[cellIndex]}
@@ -686,41 +717,71 @@ function EmptyGridContent() {
                 }
 
                 return (
-                  <button
-                    className={`${styles.cell} ${pipe ? styles.occupiedCell : styles.emptyCell} ${isConnected ? styles.connectedCell : ''}`}
-                    data-grid-cell={cellIndex}
+                  <div
+                    className={styles.pipeCell}
                     key={cellIndex}
-                    type="button"
-                    draggable={Boolean(pipe)}
-                    aria-label={`Row ${row}, column ${column}, ${pipe ? `${pipe.kind} pipe` : 'empty cell'}${isConnected ? ', connected to start' : ''}`}
-                    onClick={() => handleCellClick(cellIndex)}
-                    onDragStart={(event) => {
-                      if (!pipe) return;
-                      event.dataTransfer.setData(
-                        PIPE_DRAG_TYPE,
-                        `${pipe.kind}:${pipe.rotation}`,
-                      );
-                      event.dataTransfer.setData(
-                        PIPE_SOURCE_TYPE,
-                        String(cellIndex),
-                      );
-                      event.dataTransfer.effectAllowed = 'move';
-                    }}
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={(event) => handleCellDrop(event, cellIndex)}
                   >
-                    {pipe ? (
-                      <PipeArtwork
-                        piece={pipe}
-                        connected={isConnected}
-                        flowing={flowStarted && isConnected}
-                        flowDelaySeconds={flowStep * flowStepDelaySeconds}
-                        flowDurationSeconds={flowDurationSeconds}
-                        flowIncoming={flow.incoming[cellIndex]}
-                        flowOutgoing={flow.outgoing[cellIndex]}
-                      />
+                    <button
+                      className={`${styles.cell} ${pipe ? styles.occupiedCell : styles.emptyCell} ${isConnected ? styles.connectedCell : ''}`}
+                      data-grid-cell={cellIndex}
+                      type="button"
+                      draggable={Boolean(pipe)}
+                      aria-label={`Row ${row}, column ${column}, ${pipe ? `${pipe.kind} pipe${pipe.kind === 'cross' ? '' : pipe.kind === selectedPipe.kind ? '. Click to rotate clockwise' : '. Click to replace with selected pipe'}` : 'empty cell'}${isConnected ? ', connected to start' : ''}`}
+                      title={
+                        pipe && pipe.kind !== selectedPipe.kind
+                          ? 'Click to replace with selected pipe'
+                          : undefined
+                      }
+                      onClick={() => handleCellClick(cellIndex)}
+                      onDragStart={(event) => {
+                        if (!pipe) return;
+                        event.dataTransfer.setData(
+                          PIPE_DRAG_TYPE,
+                          `${pipe.kind}:${pipe.rotation}`,
+                        );
+                        event.dataTransfer.setData(
+                          PIPE_SOURCE_TYPE,
+                          String(cellIndex),
+                        );
+                        event.dataTransfer.effectAllowed = 'move';
+                      }}
+                    >
+                      {pipe ? (
+                        <PipeArtwork
+                          piece={pipe}
+                          connected={isConnected}
+                          flowing={waterFlowing && isConnected}
+                          flowDelaySeconds={flowStep * flowDurationSeconds}
+                          flowDurationSeconds={flowDurationSeconds}
+                          flowIncoming={flow.incoming[cellIndex]}
+                          flowOutgoing={flow.outgoing[cellIndex]}
+                        />
+                      ) : null}
+                    </button>
+                    {pipe && pipe.kind !== 'cross' ? (
+                      <button
+                        className={styles.rotateButton}
+                        type="button"
+                        draggable={false}
+                        aria-label={`Rotate ${pipe.kind} pipe clockwise`}
+                        title="Rotate pipe clockwise"
+                        onClick={() => rotatePipe(cellIndex)}
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path
+                            d="M20 7v5h-5M20 12a8 8 0 1 1-2.34-5.66L20 9"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2.5"
+                          />
+                        </svg>
+                      </button>
                     ) : null}
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -765,7 +826,7 @@ function EmptyGridContent() {
             >
               🔊 Hear the word · ฟังคำศัพท์
             </button>
-            {routeComplete && !lessonComplete ? (
+            {waterArrived && !lessonComplete ? (
               <button
                 className={styles.nextButton}
                 type="button"

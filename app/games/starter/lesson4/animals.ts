@@ -19,9 +19,8 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
     titleTh: 'ฟาร์ม',
     rounds: [
       { animal: 'cow', animalTh: 'วัว', animalEmoji: '🐄', food: 'grass', foodTh: 'หญ้า', foodEmoji: '🌿' },
-      { animal: 'hen', animalTh: 'ไก่', animalEmoji: '🐔', food: 'corn', foodTh: 'ข้าวโพด', foodEmoji: '🌽' },
+      { animal: 'chicken', animalTh: 'ไก่', animalEmoji: '🐔', food: 'corn', foodTh: 'ข้าวโพด', foodEmoji: '🌽' },
       { animal: 'pig', animalTh: 'หมู', animalEmoji: '🐖', food: 'apple', foodTh: 'แอปเปิล', foodEmoji: '🍎' },
-      { animal: 'duck', animalTh: 'เป็ด', animalEmoji: '🦆', food: 'water', foodTh: 'น้ำ', foodEmoji: '💧' },
     ],
   },
   {
