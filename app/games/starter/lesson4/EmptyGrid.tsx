@@ -381,6 +381,8 @@ function PipeArtwork({
 
 function EmptyGridContent() {
   const hasSavedCompletionRef = useRef(false);
+  // True right after a tool is picked, so the next click on a different pipe replaces it.
+  const toolJustChosenRef = useRef(false);
   const [levelIndex, setLevelIndex] = useState(0);
   const [roundIndex, setRoundIndex] = useState(0);
   const [roundStarted, setRoundStarted] = useState(false);
@@ -526,7 +528,8 @@ function EmptyGridContent() {
       setRoundIndex((value) => value + 1);
     }
     setLayoutSeed(Math.floor(Math.random() * 1000));
-    setWaterArrived(false);(Array(CELL_COUNT).fill(null));
+    setWaterArrived(false);
+    setPipes(Array(CELL_COUNT).fill(null));
     setRoundStarted(false);
     setFlowStarted(false);
     setTimeLeft(FLOW_START_DELAY_SECONDS);
@@ -535,6 +538,7 @@ function EmptyGridContent() {
 
   function placePipe(cellIndex: number, piece: PipePiece): void {
     if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
+    toolJustChosenRef.current = false;
     setRoundStarted(true);
     setTimedOut(false);
     setPipes((current) => {
@@ -547,8 +551,11 @@ function EmptyGridContent() {
   function handleCellClick(cellIndex: number): void {
     if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
 
-    if (pipes[cellIndex]?.kind === selectedPipe.kind) {
-      if (selectedPipe.kind !== 'cross') rotatePipe(cellIndex);
+    const existing = pipes[cellIndex];
+    const replaceRequested =
+      toolJustChosenRef.current && existing?.kind !== selectedPipe.kind;
+    if (existing && !replaceRequested) {
+      rotatePipe(cellIndex);
       return;
     }
 
@@ -556,6 +563,7 @@ function EmptyGridContent() {
   }
 
   function rotatePipe(cellIndex: number): void {
+    toolJustChosenRef.current = false;
     setRoundStarted(true);
     setTimedOut(false);
     setPipes((current) => {
@@ -748,10 +756,10 @@ function EmptyGridContent() {
                       data-grid-cell={cellIndex}
                       type="button"
                       draggable={Boolean(pipe)}
-                      aria-label={`Row ${row}, column ${column}, ${pipe ? `${pipe.kind} pipe${pipe.kind === 'cross' ? '' : pipe.kind === selectedPipe.kind ? '. Click to rotate clockwise' : '. Click to replace with selected pipe'}` : 'empty cell'}${isConnected ? ', connected to start' : ''}`}
+                      aria-label={`Row ${row}, column ${column}, ${pipe ? `${pipe.kind} pipe${pipe.kind === 'cross' ? '' : '. Click to rotate clockwise'}` : 'empty cell'}${isConnected ? ', connected to start' : ''}`}
                       title={
-                        pipe && pipe.kind !== selectedPipe.kind
-                          ? 'Click to replace with selected pipe'
+                        pipe && pipe.kind !== 'cross'
+                          ? 'Click to rotate clockwise'
                           : undefined
                       }
                       onClick={() => handleCellClick(cellIndex)}
@@ -822,8 +830,12 @@ function EmptyGridContent() {
                     aria-pressed={selected}
                     aria-label={tool.description}
                     title={tool.description}
-                    onClick={() => setSelectedPipe(tool.piece)}
+                    onClick={() => {
+                      toolJustChosenRef.current = true;
+                      setSelectedPipe(tool.piece);
+                    }}
                     onDragStart={(event) => {
+                      toolJustChosenRef.current = true;
                       setSelectedPipe(tool.piece);
                       event.dataTransfer.setData(
                         PIPE_DRAG_TYPE,
