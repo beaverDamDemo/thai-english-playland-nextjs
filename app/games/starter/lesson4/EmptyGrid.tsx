@@ -29,7 +29,7 @@ const START_CELL = 0;
 const FLOW_START_DELAY_SECONDS = 5;
 const ROUND_TIME_LIMIT_SECONDS = 10;
 const FLOW_DURATION_SECONDS = 3.575;
-const COMPLETE_FLOW_SPEEDUP = 6;
+const COMPLETE_FLOW_SPEEDUP = 10;
 const PIPE_DRAG_TYPE = 'application/x-playland-pipe';
 const PIPE_SOURCE_TYPE = 'application/x-playland-pipe-source';
 const DIRECTIONS: Direction[] = ['north', 'east', 'south', 'west'];
@@ -246,6 +246,15 @@ function speak(text: string): void {
 
 type Exit = { cell: number; round: AnimalRound; isTarget: boolean };
 
+function shuffledIndices(length: number): number[] {
+  const order = Array.from({ length }, (_, index) => index);
+  for (let index = length - 1; index > 0; index--) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
+  }
+  return order;
+}
+
 // Target animal plus two choices from the same level, at fixed exits.
 function buildExits(
   levelIndex: number,
@@ -379,6 +388,9 @@ function EmptyGridContent() {
   const [timeLeft, setTimeLeft] = useState(FLOW_START_DELAY_SECONDS);
   const [timedOut, setTimedOut] = useState(false);
   const [layoutSeed, setLayoutSeed] = useState(0);
+  const [animalOrder, setAnimalOrder] = useState(() =>
+    Array.from({ length: ANIMAL_LEVELS[0].rounds.length }, (_, index) => index),
+  );
   const [waterArrived, setWaterArrived] = useState(false);
   const [pipes, setPipes] = useState<Array<PipePiece | null>>(() =>
     Array(CELL_COUNT).fill(null),
@@ -387,9 +399,10 @@ function EmptyGridContent() {
     PIPE_TOOLS[0].piece,
   );
   const level = ANIMAL_LEVELS[levelIndex];
-  const current = level.rounds[roundIndex];
+  const animalIndex = animalOrder[roundIndex];
+  const current = level.rounds[animalIndex];
   const gridSize = LEVEL_GRID_SIZES[levelIndex];
-  const exits = buildExits(levelIndex, roundIndex, gridSize, layoutSeed);
+  const exits = buildExits(levelIndex, animalIndex, gridSize, layoutSeed);
   const exitCells = exits.map((exit) => exit.cell);
   const obstacleCells = getObstacleCells(
     levelIndex,
@@ -420,7 +433,7 @@ function EmptyGridContent() {
       .filter((exit) => exit.isTarget)
       .map((exit) => flow.steps[exit.cell]),
   );
-  const isLastRound = roundIndex === level.rounds.length - 1;
+  const isLastRound = roundIndex === (level.roundCount ?? level.rounds.length) - 1;
   const isLastLevel = levelIndex === ANIMAL_LEVELS.length - 1;
   const lessonComplete = waterArrived && isLastRound && isLastLevel;
   const completedLevels =
@@ -495,7 +508,10 @@ function EmptyGridContent() {
     pingLessonOpen('starter');
     // Random layout is picked after mount to avoid a hydration mismatch.
     const timeoutId = window.setTimeout(
-      () => setLayoutSeed(Math.floor(Math.random() * 1000)),
+      () => {
+        setLayoutSeed(Math.floor(Math.random() * 1000));
+        setAnimalOrder(shuffledIndices(ANIMAL_LEVELS[0].rounds.length));
+      },
       0,
     );
     return () => window.clearTimeout(timeoutId);
@@ -505,11 +521,12 @@ function EmptyGridContent() {
     if (isLastRound) {
       setLevelIndex((value) => value + 1);
       setRoundIndex(0);
+      setAnimalOrder(shuffledIndices(ANIMAL_LEVELS[levelIndex + 1].rounds.length));
     } else {
       setRoundIndex((value) => value + 1);
     }
     setLayoutSeed(Math.floor(Math.random() * 1000));
-    setPipes(Array(CELL_COUNT).fill(null));
+    setWaterArrived(false);(Array(CELL_COUNT).fill(null));
     setRoundStarted(false);
     setFlowStarted(false);
     setTimeLeft(FLOW_START_DELAY_SECONDS);
@@ -624,7 +641,10 @@ function EmptyGridContent() {
                     <span className={styles.levelNumber}>
                       {done ? '✓' : index + 1}
                     </span>
-                    <span>{item.title}</span>
+                    <span>
+                      {item.title} ·{' '}
+                      <span lang="th">{item.titleTh}</span>
+                    </span>
                   </li>
                 );
               })}
@@ -788,7 +808,6 @@ function EmptyGridContent() {
           </div>
 
           <aside className={styles.toolPanel} aria-label="Pipe pieces">
-            <h2 className={styles.panelTitle}>Pipe pieces</h2>
             <div className={styles.toolGrid}>
               {PIPE_TOOLS.map((tool) => {
                 const selected =

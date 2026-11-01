@@ -42,15 +42,15 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 20px 16px max(28px, env(safe-area-inset-bottom));
+  padding: 20px 6px max(28px, env(safe-area-inset-bottom));
 }
 
 .gameLayout {
   display: grid;
-  width: min(100%, 1080px);
-  grid-template-columns: minmax(0, 1fr) 240px;
+  width: min(100%, 1560px);
+  grid-template-columns: minmax(0, 1fr) 180px;
   align-items: center;
-  gap: 22px;
+  gap: 14px;
 }
 
 .boardArea {
@@ -82,10 +82,7 @@
 .grid {
   box-sizing: border-box;
   display: grid;
-  width: min(
-    100%,
-    min(calc(72svh * var(--grid-scale, 1)), calc(660px * var(--grid-scale, 1)))
-  );
+  width: min(100%, 1300px);
   aspect-ratio: 1;
   grid-template-columns: repeat(var(--grid-size, 8), minmax(0, 1fr));
   grid-template-rows: repeat(var(--grid-size, 8), minmax(0, 1fr));
@@ -219,7 +216,7 @@
   bottom: 2px;
   left: 0;
   color: #6a4834;
-  font-size: clamp(0.5rem, 1.5vw, 0.78rem);
+  font-size: clamp(0.75rem, 2.4vw, 1.3rem);
   font-weight: 900;
   line-height: 1;
   text-align: center;
@@ -358,10 +355,7 @@
   }
 
   .grid {
-    width: min(
-      100%,
-      min(calc(56svh * var(--grid-scale, 1)), calc(560px * var(--grid-scale, 1)))
-    );
+    width: 100%;
   }
 
   .toolPanel {
@@ -381,15 +375,12 @@
 
 @media (max-width: 480px) {
   .workspace {
-    padding-right: 10px;
-    padding-left: 10px;
+    padding-right: 6px;
+    padding-left: 6px;
   }
 
   .grid {
-    width: min(
-      100%,
-      min(calc(52svh * var(--grid-scale, 1)), calc(500px * var(--grid-scale, 1)))
-    );
+    width: 100%;
     border-radius: 10px;
   }
 
