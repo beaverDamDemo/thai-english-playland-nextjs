@@ -10,16 +10,16 @@ export type AnimalRound = {
 export type AnimalLevel = {
   title: string;
   titleTh: string;
-  // Rounds played per level; defaults to all animals.
-  roundCount?: number;
   rounds: AnimalRound[];
 };
+
+// Solved grids needed to finish a level.
+export const ROUNDS_PER_LEVEL = 1;
 
 export const ANIMAL_LEVELS: AnimalLevel[] = [
   {
     title: 'Farm',
     titleTh: 'ฟาร์ม',
-    roundCount: 2,
     rounds: [
       { animal: 'cow', animalTh: 'วัว', animalEmoji: '🐄', food: 'grass', foodTh: 'หญ้า', foodEmoji: '🌿' },
       { animal: 'chicken', animalTh: 'ไก่', animalEmoji: '🐔', food: 'corn', foodTh: 'ข้าวโพด', foodEmoji: '🌽' },

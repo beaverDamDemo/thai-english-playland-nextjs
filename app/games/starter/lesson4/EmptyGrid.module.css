@@ -64,13 +64,6 @@
   text-align: center;
 }
 
-.boardTitle {
-  margin: 0 0 4px;
-  color: #202d31;
-  font-size: 1.05rem;
-  font-weight: 850;
-}
-
 .status {
   min-height: 1.25rem;
   margin: 0;
@@ -426,6 +419,25 @@
   color: #3b6772;
   font-size: 0.7rem;
   font-weight: 800;
+}
+
+.levelButton {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.levelButton:focus-visible {
+  outline: 2px solid #a24a24;
+  outline-offset: 2px;
 }
 
 .levelNumber {

@@ -9,7 +9,7 @@ import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
 import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './EmptyGrid.module.css';
-import { ANIMAL_LEVELS, EXIT_ROWS, type AnimalRound } from './animals';
+import { ANIMAL_LEVELS, EXIT_ROWS, ROUNDS_PER_LEVEL, type AnimalRound } from './animals';
 
 type Direction = 'north' | 'east' | 'south' | 'west';
 type PipeKind = 'straight' | 'cross' | 'corner';
@@ -24,8 +24,9 @@ type PipeTool = {
 
 const GRID_SIZE = 8;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
-const LEVEL_GRID_SIZES = [5, 8, 8, 8];
+const LEVEL_GRID_SIZES = [5, 6, 7, 8];
 const START_CELL = 0;
+const FINISHED_LEVELS_KEY = 'playland.starter.lesson4.finishedLevelFlags';
 const FLOW_START_DELAY_SECONDS = 5;
 const ROUND_TIME_LIMIT_SECONDS = 10;
 const FLOW_DURATION_SECONDS = 3.575;
@@ -245,6 +246,10 @@ function speak(text: string): void {
 
 type Exit = { cell: number; round: AnimalRound; isTarget: boolean };
 
+function randomLayoutSeed(): number {
+  return Math.floor(Math.random() * 1000);
+}
+
 function shuffledIndices(length: number): number[] {
   const order = Array.from({ length }, (_, index) => index);
   for (let index = length - 1; index > 0; index--) {
@@ -393,6 +398,10 @@ function EmptyGridContent() {
     Array.from({ length: ANIMAL_LEVELS[0].rounds.length }, (_, index) => index),
   );
   const [waterArrived, setWaterArrived] = useState(false);
+  const [finishedLevels, setFinishedLevels] = useState<boolean[]>(() =>
+    ANIMAL_LEVELS.map(() => false),
+  );
+  const progressLoadedRef = useRef(false);
   const [pipes, setPipes] = useState<Array<PipePiece | null>>(() =>
     Array(CELL_COUNT).fill(null),
   );
@@ -434,24 +443,39 @@ function EmptyGridContent() {
       .filter((exit) => exit.isTarget)
       .map((exit) => flow.steps[exit.cell]),
   );
-  const isLastRound = roundIndex === (level.roundCount ?? level.rounds.length) - 1;
-  const isLastLevel = levelIndex === ANIMAL_LEVELS.length - 1;
-  const lessonComplete = waterArrived && isLastRound && isLastLevel;
-  const completedLevels =
-    levelIndex + (routeComplete && isLastRound ? 1 : 0);
+  const isLastRound = roundIndex === ROUNDS_PER_LEVEL - 1;
+  const lessonComplete =
+    waterArrived && isLastRound && finishedLevels.every(Boolean);
+  const completedLevels = finishedLevels.filter(Boolean).length;
 
   useEffect(() => {
     if (!routeComplete) return;
 
-    const timeoutId = window.setTimeout(
-      () => setWaterArrived(true),
-      targetStep * flowDurationSeconds * 1000,
-    );
+    const timeoutId = window.setTimeout(() => {
+      setWaterArrived(true);
+      if (isLastRound) {
+        setFinishedLevels((value) =>
+          value.map((done, index) => done || index === levelIndex),
+        );
+      }
+    }, targetStep * flowDurationSeconds * 1000);
     return () => {
       window.clearTimeout(timeoutId);
       setWaterArrived(false);
     };
-  }, [routeComplete, targetStep, flowDurationSeconds]);
+  }, [routeComplete, targetStep, flowDurationSeconds, isLastRound, levelIndex]);
+
+  useEffect(() => {
+    if (!progressLoadedRef.current) return;
+    try {
+      window.localStorage.setItem(
+        FINISHED_LEVELS_KEY,
+        JSON.stringify(finishedLevels),
+      );
+    } catch {
+      // Storage can be unavailable (private mode); progress just won't persist.
+    }
+  }, [finishedLevels]);
 
   useEffect(() => {
     if (!lessonComplete || hasSavedCompletionRef.current) return;
@@ -507,26 +531,46 @@ function EmptyGridContent() {
 
   useEffect(() => {
     pingLessonOpen('starter');
-    // Random layout is picked after mount to avoid a hydration mismatch.
-    const timeoutId = window.setTimeout(
-      () => {
-        setLayoutSeed(Math.floor(Math.random() * 1000));
-        setAnimalOrder(shuffledIndices(ANIMAL_LEVELS[0].rounds.length));
-      },
-      0,
-    );
+    // Saved progress and random layout are read after mount to avoid a hydration mismatch.
+    const timeoutId = window.setTimeout(() => {
+      let saved: unknown = null;
+      try {
+        saved = JSON.parse(
+          window.localStorage.getItem(FINISHED_LEVELS_KEY) ?? 'null',
+        );
+      } catch {
+        saved = null;
+      }
+      progressLoadedRef.current = true;
+      if (Array.isArray(saved)) {
+        setFinishedLevels(ANIMAL_LEVELS.map((_, index) => saved[index] === true));
+      }
+      setLayoutSeed(randomLayoutSeed());
+      setAnimalOrder(shuffledIndices(ANIMAL_LEVELS[0].rounds.length));
+    }, 0);
     return () => window.clearTimeout(timeoutId);
   }, []);
 
+  function startLevel(index: number): void {
+    setLevelIndex(index);
+    setRoundIndex(0);
+    setAnimalOrder(shuffledIndices(ANIMAL_LEVELS[index].rounds.length));
+    setLayoutSeed(randomLayoutSeed());
+    setWaterArrived(false);
+    setPipes(Array(CELL_COUNT).fill(null));
+    setRoundStarted(false);
+    setFlowStarted(false);
+    setTimeLeft(FLOW_START_DELAY_SECONDS);
+    setTimedOut(false);
+  }
+
   function nextRound(): void {
     if (isLastRound) {
-      setLevelIndex((value) => value + 1);
-      setRoundIndex(0);
-      setAnimalOrder(shuffledIndices(ANIMAL_LEVELS[levelIndex + 1].rounds.length));
-    } else {
-      setRoundIndex((value) => value + 1);
+      startLevel((levelIndex + 1) % ANIMAL_LEVELS.length);
+      return;
     }
-    setLayoutSeed(Math.floor(Math.random() * 1000));
+    setRoundIndex((value) => value + 1);
+    setLayoutSeed(randomLayoutSeed());
     setWaterArrived(false);
     setPipes(Array(CELL_COUNT).fill(null));
     setRoundStarted(false);
@@ -624,14 +668,10 @@ function EmptyGridContent() {
               aria-label={`Levels completed: ${completedLevels} of ${ANIMAL_LEVELS.length}`}
             >
               {ANIMAL_LEVELS.map((item, index) => {
-                const done = index < completedLevels;
-                const active = index === levelIndex && !done;
-                return (
-                  <li
-                    key={item.title}
-                    className={`${styles.level} ${done ? styles.levelDone : ''} ${active ? styles.levelCurrent : ''}`}
-                    aria-current={active ? 'step' : undefined}
-                  >
+                const done = finishedLevels[index];
+                const active = index === levelIndex;
+                const label = (
+                  <>
                     <span className={styles.levelNumber}>
                       {done ? '✓' : index + 1}
                     </span>
@@ -639,16 +679,31 @@ function EmptyGridContent() {
                       {item.title} ·{' '}
                       <span lang="th">{item.titleTh}</span>
                     </span>
+                  </>
+                );
+                return (
+                  <li
+                    key={item.title}
+                    className={`${styles.level} ${active ? styles.levelCurrent : done ? styles.levelDone : ''}`}
+                    aria-current={active ? 'step' : undefined}
+                  >
+                    {active ? (
+                      label
+                    ) : (
+                      <button
+                        className={styles.levelButton}
+                        type="button"
+                        onClick={() => startLevel(index)}
+                      >
+                        {label}
+                      </button>
+                    )}
                   </li>
                 );
               })}
             </ol>
 
             <div className={styles.boardHeading}>
-              <h2 className={styles.boardTitle}>
-                Which word names this animal? ·{' '}
-                <span lang="th">คำไหนคือชื่อสัตว์ตัวนี้</span>
-              </h2>
               <p className={styles.status} aria-live="polite">
                 {timedOut
                   ? 'Time is up! Try this animal again. · หมดเวลา ลองอีกครั้ง'
