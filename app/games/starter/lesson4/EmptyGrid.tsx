@@ -419,7 +419,10 @@ function getObstacleCells(
   }
 
   const obstacles = new Set<number>();
-  const targetCount = Math.floor(gridSize * gridSize * 0.16);
+  // Farm is the first level but gets a denser board; the reachability check keeps it solvable.
+  const targetCount = Math.floor(
+    gridSize * gridSize * (levelIndex === 0 ? 0.32 : 0.16),
+  );
 
   for (const cell of candidates) {
     obstacles.add(cell);
