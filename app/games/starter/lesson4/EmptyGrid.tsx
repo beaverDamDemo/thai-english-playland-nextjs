@@ -234,6 +234,160 @@ function areExitsReachable(
   return startCells.every(reachesAllExits);
 }
 
+type RoutedPath = { cells: number[]; headings: Direction[] };
+
+// BFS for one animal's route. Cells in `crossings` (the other route's straight
+// cells) may only be crossed straight and perpendicular, where a cross pipe goes.
+function findRoute(
+  from: number,
+  to: number,
+  obstacleCells: ReadonlySet<number>,
+  startCells: number[],
+  exitCells: number[],
+  gridSize: number,
+  directionOrder: Direction[],
+  crossings: ReadonlyMap<number, 'horizontal' | 'vertical'>,
+): RoutedPath | null {
+  const key = (cell: number, heading: Direction) =>
+    cell * 4 + DIRECTIONS.indexOf(heading);
+  const parent = new Map<number, number>();
+  const queue: Array<{ cell: number; heading: Direction }> = [
+    { cell: from, heading: 'east' },
+  ];
+  parent.set(key(from, 'east'), -1);
+
+  for (let cursor = 0; cursor < queue.length; cursor++) {
+    const { cell, heading } = queue[cursor];
+    const row = Math.floor(cell / gridSize);
+    const column = cell % gridSize;
+    const options: Direction[] =
+      cell === from ? ['east'] : crossings.has(cell) ? [heading] : directionOrder;
+
+    for (const direction of options) {
+      const nextRow = row + MOVEMENT[direction].row;
+      const nextColumn = column + MOVEMENT[direction].column;
+      if (
+        nextRow < 0 ||
+        nextRow >= gridSize ||
+        nextColumn < 0 ||
+        nextColumn >= gridSize
+      ) {
+        continue;
+      }
+      const next = nextRow * gridSize + nextColumn;
+      const stateKey = key(next, direction);
+      if (parent.has(stateKey) || obstacleCells.has(next)) continue;
+
+      if (next === to) {
+        if (direction !== 'east') continue;
+      } else if (startCells.includes(next) || exitCells.includes(next)) {
+        continue;
+      }
+      const crossing = crossings.get(next);
+      if (crossing) {
+        const horizontal = direction === 'east' || direction === 'west';
+        if (horizontal === (crossing === 'horizontal')) continue;
+      }
+
+      parent.set(stateKey, key(cell, heading));
+      if (next === to) {
+        const cells = [to];
+        const headings: Direction[] = [direction];
+        let walker = key(cell, heading);
+        while (walker !== -1) {
+          cells.unshift(Math.floor(walker / 4));
+          headings.unshift(DIRECTIONS[walker % 4]);
+          walker = parent.get(walker) ?? -1;
+        }
+        return { cells, headings };
+      }
+      queue.push({ cell: next, heading: direction });
+    }
+  }
+
+  return null;
+}
+
+// Two animals must reach their own names at the same time. Routes may only share
+// cells where one goes straight across the other (a cross pipe).
+function areRoutesSolvable(
+  obstacleCells: ReadonlySet<number>,
+  startCells: number[],
+  targets: number[],
+  exitCells: number[],
+  gridSize: number,
+): boolean {
+  for (const [first, second] of [
+    [0, 1],
+    [1, 0],
+  ]) {
+    for (let shift = 0; shift < DIRECTIONS.length; shift++) {
+      const order = [...DIRECTIONS.slice(shift), ...DIRECTIONS.slice(0, shift)];
+      const firstRoute = findRoute(
+        startCells[first],
+        targets[first],
+        obstacleCells,
+        startCells,
+        exitCells,
+        gridSize,
+        order,
+        new Map(),
+      );
+      if (!firstRoute) continue;
+
+      const straightCells = new Map<number, 'horizontal' | 'vertical'>();
+      const usedCells = new Set<number>();
+      firstRoute.cells.forEach((cell, index) => {
+        usedCells.add(cell);
+        const heading = firstRoute.headings[index];
+        if (
+          index > 0 &&
+          index < firstRoute.cells.length - 1 &&
+          heading === firstRoute.headings[index + 1]
+        ) {
+          straightCells.set(
+            cell,
+            heading === 'east' || heading === 'west' ? 'horizontal' : 'vertical',
+          );
+        }
+      });
+      // Cells where the first route turns are off limits to the second.
+      const blocked = new Set(obstacleCells);
+      usedCells.forEach((cell) => {
+        if (
+          !straightCells.has(cell) &&
+          cell !== startCells[first] &&
+          cell !== targets[first]
+        ) {
+          blocked.add(cell);
+        }
+      });
+
+      for (let secondShift = 0; secondShift < DIRECTIONS.length; secondShift++) {
+        const secondOrder = [
+          ...DIRECTIONS.slice(secondShift),
+          ...DIRECTIONS.slice(0, secondShift),
+        ];
+        if (
+          findRoute(
+            startCells[second],
+            targets[second],
+            blocked,
+            startCells,
+            exitCells,
+            gridSize,
+            secondOrder,
+            straightCells,
+          )
+        ) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 function getObstacleCells(
   levelIndex: number,
   roundIndex: number,
@@ -241,6 +395,7 @@ function getObstacleCells(
   startCells: number[],
   exitCells: number[],
   layoutSeed: number,
+  targets?: number[],
 ): Set<number> {
   let seed =
     (levelIndex + 1) * 1009 + (roundIndex + 1) * 7919 + gridSize + layoutSeed;
@@ -268,7 +423,11 @@ function getObstacleCells(
 
   for (const cell of candidates) {
     obstacles.add(cell);
-    if (!areExitsReachable(obstacles, startCells, exitCells, gridSize)) {
+    if (
+      !areExitsReachable(obstacles, startCells, exitCells, gridSize) ||
+      (targets &&
+        !areRoutesSolvable(obstacles, startCells, targets, exitCells, gridSize))
+    ) {
       obstacles.delete(cell);
       continue;
     }
@@ -525,6 +684,12 @@ function EmptyGridContent() {
     startCells,
     exitCells,
     layoutSeed,
+    level.dual
+      ? starts.map(
+          (_, startIndex) =>
+            exits.find((exit) => exit.owner === startIndex)?.cell ?? exitCells[0],
+        )
+      : undefined,
   );
   const flows = starts.map((start) =>
     getFlowSteps(
@@ -653,13 +818,9 @@ function EmptyGridContent() {
           setTimeLeft(1);
         } else {
           recordAnswer('starter', false);
+          // Keep the board visible for a moment; the reset effect below clears it.
           setTimedOut(true);
-          // A fresh layout; the countdown waits for the next first pipe.
-          setLayoutSeed(randomLayoutSeed());
-          setPipes(Array(CELL_COUNT).fill(null));
           setRoundStarted(false);
-          setFlowStarted(false);
-          setTimeLeft(buildSeconds(levelIndex));
         }
         return;
       }
@@ -669,6 +830,18 @@ function EmptyGridContent() {
 
     return () => window.clearTimeout(timeoutId);
   }, [flowStarted, roundStarted, routeComplete, timeLeft, levelIndex, tabVisible]);
+
+  useEffect(() => {
+    if (!timedOut) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setLayoutSeed(randomLayoutSeed());
+      setPipes(Array(CELL_COUNT).fill(null));
+      setFlowStarted(false);
+      setTimeLeft(buildSeconds(levelIndex));
+    }, 2500);
+    return () => window.clearTimeout(timeoutId);
+  }, [timedOut, levelIndex]);
 
   useEffect(() => {
     if (!timedOut) return;
@@ -732,6 +905,7 @@ function EmptyGridContent() {
   }
 
   function placePipe(cellIndex: number, piece: PipePiece): void {
+    if (timedOut) return;
     if (startCells.includes(cellIndex) || exitCells.includes(cellIndex)) return;
     toolJustChosenRef.current = false;
     setRoundStarted(true);
@@ -759,6 +933,7 @@ function EmptyGridContent() {
   }
 
   function rotatePipe(cellIndex: number): void {
+    if (timedOut) return;
     toolJustChosenRef.current = false;
     setRoundStarted(true);
     setTimedOut(false);
