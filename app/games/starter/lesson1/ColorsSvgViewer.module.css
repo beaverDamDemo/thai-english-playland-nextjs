@@ -127,6 +127,14 @@
   line-height: 1.4;
 }
 
+.questionIcon {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  margin-left: 0.25em;
+  vertical-align: middle;
+}
+
 .questionThai {
   margin: -0.45rem 0 0.75rem;
   color: #c4d4ff;
