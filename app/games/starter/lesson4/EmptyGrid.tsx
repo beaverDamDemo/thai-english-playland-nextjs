@@ -658,7 +658,6 @@ function EmptyGridContent() {
     Array.from({ length: ANIMAL_LEVELS[0].rounds.length }, (_, index) => index),
   );
   const [waterArrived, setWaterArrived] = useState(false);
-  const [debugOpen, setDebugOpen] = useState(true);
   const [finishedLevels, setFinishedLevels] = useState<boolean[]>(() =>
     ANIMAL_LEVELS.map(() => false),
   );
@@ -903,7 +902,7 @@ function EmptyGridContent() {
   }
 
   function placePipe(cellIndex: number, piece: PipePiece): void {
-    if (timedOut) return;
+    if (timedOut || routeComplete) return;
     if (startCells.includes(cellIndex) || exitCells.includes(cellIndex)) return;
     toolJustChosenRef.current = false;
     setRoundStarted(true);
@@ -931,7 +930,7 @@ function EmptyGridContent() {
   }
 
   function rotatePipe(cellIndex: number): void {
-    if (timedOut) return;
+    if (timedOut || routeComplete) return;
     toolJustChosenRef.current = false;
     setRoundStarted(true);
     setTimedOut(false);
@@ -960,6 +959,7 @@ function EmptyGridContent() {
   }
 
   function clearBoard(): void {
+    if (routeComplete) return;
     setPipes(Array(CELL_COUNT).fill(null));
     setRoundStarted(false);
     setFlowStarted(false);
@@ -1256,6 +1256,7 @@ function EmptyGridContent() {
             <button
               className={styles.clearButton}
               type="button"
+              disabled={routeComplete}
               onClick={clearBoard}
             >
               Clear board
@@ -1263,32 +1264,6 @@ function EmptyGridContent() {
           </aside>
         </div>
       </section>
-      <aside className={styles.debugOverlay} aria-label="Debug overlay">
-        <button
-          className={styles.debugToggle}
-          type="button"
-          onClick={() => setDebugOpen((value) => !value)}
-        >
-          🐞 Debug {debugOpen ? '–' : '+'}
-        </button>
-        {debugOpen ? (
-          <pre className={styles.debugText}>
-            {[
-              `pipes: ${pipes.filter(Boolean).length}`,
-              `started: ${roundStarted}  flowStarted: ${flowStarted}`,
-              `timeLeft: ${timeLeft}s  (${flowStarted ? 'water phase' : 'build phase'})`,
-              `flow/cell: ${flowDurationSeconds.toFixed(3)}s`,
-              ...flows.map(
-                (flow, i) =>
-                  `water ${i} (${starts[i].round.animal}): ${flow.steps.filter((s) => s >= 0).length} cells, reaches: ${exits.filter((e) => flow.steps[e.cell] >= 0).map((e) => e.round.animal).join(', ') || '-'}`,
-              ),
-              `routeComplete: ${routeComplete}  wrongExit: ${wrongExit?.round.animal ?? '-'}`,
-              `waterArrived: ${waterArrived}  timedOut: ${timedOut}`,
-              `finished: ${finishedLevels.map((d) => (d ? '✓' : '·')).join(' ')}`,
-            ].join('\n')}
-          </pre>
-        ) : null}
-      </aside>
     </main>
   );
 }

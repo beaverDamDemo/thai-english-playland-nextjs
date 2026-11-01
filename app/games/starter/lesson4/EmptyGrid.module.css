@@ -9,6 +9,7 @@
     url('/assets/pipes/pipes-tile.svg') 0 0 / 240px 240px repeat,
     #e6f2f5;
   color: #202d31;
+  --water: #ff9f1c;
 }
 
 .headerTitle {
@@ -36,6 +37,7 @@
 }
 
 .farmTheme {
+  --water: #9b2fff;
   background:
     linear-gradient(180deg, rgba(150, 205, 120, 0.7), rgba(120, 185, 90, 0.55)),
     url('/assets/pipes/pipes-tile.svg') 0 0 / 240px 240px repeat,
@@ -54,6 +56,7 @@
 }
 
 .wildTheme {
+  --water: #1e7dff;
   background:
     linear-gradient(180deg, rgba(196, 150, 100, 0.7), rgba(170, 120, 75, 0.55)),
     url('/assets/pipes/pipes-tile.svg') 0 0 / 240px 240px repeat,
@@ -72,6 +75,7 @@
 }
 
 .petsTheme {
+  --water: #00c4d4;
   background:
     linear-gradient(180deg, rgba(247, 170, 190, 0.65), rgba(250, 190, 170, 0.5)),
     url('/assets/pipes/pipes-tile.svg') 0 0 / 240px 240px repeat,
@@ -289,6 +293,7 @@
 }
 
 .flowingWater {
+  stroke: var(--water);
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
   animation: waterFill 2.75s linear both;
@@ -397,6 +402,11 @@
   border-color: #9bada5;
   background: transparent;
   color: #315c5b;
+}
+
+.clearButton:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .toolButton:focus-visible,
@@ -609,38 +619,6 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-}
-
-.debugOverlay {
-  position: fixed;
-  right: 8px;
-  bottom: 8px;
-  z-index: 50;
-  max-width: min(92vw, 420px);
-  font-family: ui-monospace, monospace;
-  font-size: 0.7rem;
-}
-
-.debugToggle {
-  display: block;
-  margin-left: auto;
-  padding: 4px 8px;
-  border: 1px solid #555;
-  border-radius: 8px;
-  background: rgba(20, 20, 20, 0.85);
-  color: #fff;
-  font: inherit;
-  cursor: pointer;
-}
-
-.debugText {
-  margin: 4px 0 0;
-  padding: 8px;
-  border-radius: 8px;
-  background: rgba(20, 20, 20, 0.85);
-  color: #b6f5c8;
-  white-space: pre-wrap;
-  pointer-events: none;
 }
 
 .countdown {
