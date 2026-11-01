@@ -629,10 +629,10 @@
 
 .terminalEmoji {
   position: absolute;
-  top: 8%;
+  top: 4%;
   right: 0;
   left: 0;
-  font-size: clamp(1.5rem, 6vw, 2.8rem);
+  font-size: clamp(1.8rem, 7.2vw, 3.36rem);
   line-height: 1;
   text-align: center;
   pointer-events: none;

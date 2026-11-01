@@ -37,11 +37,13 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
     title: 'Pets',
     titleTh: 'สัตว์เลี้ยง',
     obstacle: { name: 'Sofa', emoji: '🛋️' },
+    dual: true,
     rounds: [
-      { animal: 'dog', animalTh: 'หมา', animalEmoji: '🐕', food: 'bone', foodTh: 'กระดูก', foodEmoji: '🦴' },
+      { animal: 'dog', animalTh: 'หมา', animalEmoji: '🐶', food: 'bone', foodTh: 'กระดูก', foodEmoji: '🦴' },
       { animal: 'cat', animalTh: 'แมว', animalEmoji: '🐈', food: 'fish', foodTh: 'ปลา', foodEmoji: '🐟' },
       { animal: 'rabbit', animalTh: 'กระต่าย', animalEmoji: '🐇', food: 'carrot', foodTh: 'แครอท', foodEmoji: '🥕' },
       { animal: 'bird', animalTh: 'นก', animalEmoji: '🐦', food: 'seeds', foodTh: 'เมล็ดพืช', foodEmoji: '🌻' },
+      { animal: 'horse', animalTh: 'ม้า', animalEmoji: '🐴', food: 'apple', foodTh: 'แอปเปิล', foodEmoji: '🍎' },
     ],
   },
   {
@@ -60,6 +62,7 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
     title: 'Sea',
     titleTh: 'ทะเล',
     obstacle: { name: 'Wave', emoji: '🌊' },
+    dual: true,
     rounds: [
       { animal: 'penguin', animalTh: 'เพนกวิน', animalEmoji: '🐧', food: 'fish', foodTh: 'ปลา', foodEmoji: '🐟' },
       { animal: 'dolphin', animalTh: 'โลมา', animalEmoji: '🐬', food: 'squid', foodTh: 'ปลาหมึก', foodEmoji: '🦑' },

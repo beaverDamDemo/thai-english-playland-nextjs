@@ -24,7 +24,7 @@ type PipeTool = {
 
 const GRID_SIZE = 8;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
-const LEVEL_GRID_SIZES = [5, 6, 7, 8];
+const LEVEL_GRID_SIZES = [5, 6, 7, 7];
 const FINISHED_LEVELS_KEY = 'playland.starter.lesson4.finishedLevelFlags';
 // Building time before the water starts, and the time the water then has; more for two-animal levels.
 const FLOW_START_DELAY_SECONDS = 5;
@@ -968,7 +968,7 @@ function EmptyGridContent() {
 
   return (
     <main
-      className={`${styles.page} ${levelIndex === 0 ? styles.farmTheme : ''} ${levelIndex === 1 ? styles.petsTheme : ''} ${level.dual ? styles.wildTheme : ''}`}
+      className={`${styles.page} ${levelIndex === 0 ? styles.farmTheme : ''} ${levelIndex === 1 ? styles.petsTheme : ''} ${levelIndex === 2 ? styles.wildTheme : ''}`}
     >
       <header className={lessonHeaderStyles.header} data-game="starter">
         <Link href="/games/starter" className={lessonHeaderStyles.back}>
