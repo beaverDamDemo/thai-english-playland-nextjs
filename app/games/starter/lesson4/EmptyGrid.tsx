@@ -1067,7 +1067,7 @@ function EmptyGridContent() {
             </div>
 
             <div
-              className={styles.grid}
+              className={`${styles.grid} ${routeComplete ? styles.solved : ''}`}
               style={
                 {
                   '--grid-size': gridSize,
@@ -1089,14 +1089,21 @@ function EmptyGridContent() {
                   exit !== undefined &&
                   exit.owner !== null &&
                   flows[exit.owner].steps[cellIndex] >= 0;
+                // Once solved, every cell off the finished route falls away.
+                const falling = routeComplete && !isConnected ? styles.falling : '';
+                const fallStyle = {
+                  '--fall-delay': `${0.4 + ((cellIndex * 37) % 10) * 0.07}s`,
+                  '--fall-spin': `${(((cellIndex * 53) % 9) - 4) * 9}deg`,
+                } as React.CSSProperties;
                 const row = Math.floor(cellIndex / gridSize) + 1;
                 const column = (cellIndex % gridSize) + 1;
 
                 if (isObstacle) {
                   return (
                     <div
-                      className={`${styles.cell} ${styles.obstacleCell}`}
+                      className={`${styles.cell} ${styles.obstacleCell} ${falling}`}
                       key={cellIndex}
+                      style={fallStyle}
                       role="img"
                       aria-label={`${level.obstacle.name} obstacle. Pipes cannot be placed here.`}
                     >
@@ -1110,8 +1117,8 @@ function EmptyGridContent() {
                 if (isStart || exit) {
                   return (
                     <div
-                      className={`${styles.cell} ${styles.terminal} ${isStart ? styles.startTerminal : styles.endTerminal}                       ${exit && isConnected ? (exitMatched ? styles.exitRight : styles.exitWrong) : ''}`}
-                                            key={cellIndex}
+                      className={`${styles.cell} ${styles.terminal} ${isStart ? styles.startTerminal : styles.endTerminal}                       ${exit && isConnected ? (exitMatched ? styles.exitRight :                       styles.exitWrong) : ''} ${falling}`}
+                                            style={fallStyle}                                            key={cellIndex}
                                             role="img"
                                             aria-label={
                                               start
@@ -1141,8 +1148,9 @@ function EmptyGridContent() {
 
                 return (
                   <div
-                    className={styles.pipeCell}
+                    className={`${styles.pipeCell} ${falling}`}
                     key={cellIndex}
+                    style={fallStyle}
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={(event) => handleCellDrop(event, cellIndex)}
                   >

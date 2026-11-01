@@ -3,7 +3,7 @@
   display: flex;
   min-height: 100svh;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow: hidden;
   background:
     linear-gradient(180deg, rgba(247, 252, 253, 0.55), rgba(230, 242, 245, 0.2)),
     url('/assets/pipes/pipes-tile.svg') 0 0 / 240px 240px repeat,
@@ -158,6 +158,52 @@
   background: #fffefa;
   /* Overlap the neighbour's border so adjacent cells share one 1px line. */
   margin: 0 -1px -1px 0;
+}
+
+/* Level solved: the board and unused cells drop away, leaving the route. */
+.grid {
+  transition:
+    background-color 0.8s ease 0.4s,
+    border-color 0.8s ease 0.4s,
+    box-shadow 0.8s ease 0.4s;
+}
+
+.grid.solved {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.solved .connectedCell,
+.solved .terminal {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.solved .rotateButton {
+  display: none;
+}
+
+.solved .falling {
+  z-index: 2;
+  pointer-events: none;
+  animation: tileFall 1.3s cubic-bezier(0.5, 0, 0.9, 0.5) var(--fall-delay, 0s)
+    forwards;
+}
+
+@keyframes tileFall {
+  to {
+    opacity: 0;
+    transform: translateY(70vh) rotate(var(--fall-spin, 20deg));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solved .falling {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 .emptyCell:hover,
