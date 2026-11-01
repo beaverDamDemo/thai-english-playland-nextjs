@@ -31,7 +31,6 @@ const ROUND_TIME_LIMIT_SECONDS = 10;
 const FLOW_DURATION_SECONDS = 3.575;
 const COMPLETE_FLOW_SPEEDUP = 10;
 const PIPE_DRAG_TYPE = 'application/x-playland-pipe';
-const PIPE_SOURCE_TYPE = 'application/x-playland-pipe-source';
 const DIRECTIONS: Direction[] = ['north', 'east', 'south', 'west'];
 const OPPOSITE: Record<Direction, Direction> = {
   north: 'south',
@@ -585,22 +584,6 @@ function EmptyGridContent() {
     event.preventDefault();
     if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
 
-    const sourceText = event.dataTransfer.getData(PIPE_SOURCE_TYPE);
-    const sourceIndex = Number(sourceText);
-    if (sourceText && Number.isInteger(sourceIndex)) {
-      setRoundStarted(true);
-      setTimedOut(false);
-      setPipes((current) => {
-        if (!current[sourceIndex]) return current;
-        const next = [...current];
-        const movingPipe = next[sourceIndex];
-        next[sourceIndex] = null;
-        next[cellIndex] = movingPipe;
-        return next;
-      });
-      return;
-    }
-
     const droppedPipe = parseDraggedPipe(
       event.dataTransfer.getData(PIPE_DRAG_TYPE),
     );
@@ -609,6 +592,9 @@ function EmptyGridContent() {
 
   function clearBoard(): void {
     setPipes(Array(CELL_COUNT).fill(null));
+    setRoundStarted(false);
+    setFlowStarted(false);
+    setTimeLeft(FLOW_START_DELAY_SECONDS);
   }
 
   return (
@@ -755,7 +741,7 @@ function EmptyGridContent() {
                       className={`${styles.cell} ${pipe ? styles.occupiedCell : styles.emptyCell} ${isConnected ? styles.connectedCell : ''}`}
                       data-grid-cell={cellIndex}
                       type="button"
-                      draggable={Boolean(pipe)}
+                      draggable={false}
                       aria-label={`Row ${row}, column ${column}, ${pipe ? `${pipe.kind} pipe${pipe.kind === 'cross' ? '' : '. Click to rotate clockwise'}` : 'empty cell'}${isConnected ? ', connected to start' : ''}`}
                       title={
                         pipe && pipe.kind !== 'cross'
@@ -763,18 +749,6 @@ function EmptyGridContent() {
                           : undefined
                       }
                       onClick={() => handleCellClick(cellIndex)}
-                      onDragStart={(event) => {
-                        if (!pipe) return;
-                        event.dataTransfer.setData(
-                          PIPE_DRAG_TYPE,
-                          `${pipe.kind}:${pipe.rotation}`,
-                        );
-                        event.dataTransfer.setData(
-                          PIPE_SOURCE_TYPE,
-                          String(cellIndex),
-                        );
-                        event.dataTransfer.effectAllowed = 'move';
-                      }}
                     >
                       {pipe ? (
                         <PipeArtwork

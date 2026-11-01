@@ -140,7 +140,9 @@
 }
 
 .occupiedCell {
-  cursor: grab;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
   border-width: 0;
   border-radius: 0;
 }
@@ -187,7 +189,7 @@
 }
 
 .occupiedCell:active {
-  cursor: grabbing;
+  cursor: pointer;
 }
 
 .connectedCell {
