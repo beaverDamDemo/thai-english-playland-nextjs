@@ -28,6 +28,7 @@ const LEVEL_GRID_SIZES = [5, 6, 7, 8];
 const FINISHED_LEVELS_KEY = 'playland.starter.lesson4.finishedLevelFlags';
 // Building time before the water starts, and the time the water then has; more for two-animal levels.
 const FLOW_START_DELAY_SECONDS = 5;
+const FARM_BUILD_SECONDS = 10;
 const ROUND_TIME_LIMIT_SECONDS = 10;
 const DUAL_TIME_MULTIPLIER = 3;
 // Two-animal levels flow at half speed.
@@ -35,6 +36,12 @@ const DUAL_FLOW_SLOWDOWN = 2;
 
 function timeScale(levelIndex: number): number {
   return ANIMAL_LEVELS[levelIndex].dual ? DUAL_TIME_MULTIPLIER : 1;
+}
+
+function buildSeconds(levelIndex: number): number {
+  return levelIndex === 0
+    ? FARM_BUILD_SECONDS
+    : FLOW_START_DELAY_SECONDS * timeScale(levelIndex);
 }
 const FLOW_DURATION_SECONDS = 3.575;
 const COMPLETE_FLOW_SPEEDUP = 10;
@@ -479,14 +486,13 @@ function EmptyGridContent() {
   const lastRotationRef = useRef<Partial<Record<PipeKind, number>>>({});
   const waterStartedAtRef = useRef(0);
   const waterEndSecondsRef = useRef(0);
-  const hasPipesRef = useRef(false);
   const [tabVisible, setTabVisible] = useState(true);
   const [levelIndex, setLevelIndex] = useState(0);
   const [roundIndex, setRoundIndex] = useState(0);
-  // The countdown runs from the moment a board appears, not from the first pipe.
-  const [roundStarted, setRoundStarted] = useState(true);
+  // The countdown starts at the first pipe placed or rotated.
+  const [roundStarted, setRoundStarted] = useState(false);
   const [flowStarted, setFlowStarted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(FLOW_START_DELAY_SECONDS);
+  const [timeLeft, setTimeLeft] = useState(buildSeconds(0));
   const [timedOut, setTimedOut] = useState(false);
   const [layoutSeed, setLayoutSeed] = useState(0);
   const [animalOrder, setAnimalOrder] = useState(() =>
@@ -618,7 +624,6 @@ function EmptyGridContent() {
   }, [hasWrongExit]);
 
   useEffect(() => {
-    hasPipesRef.current = pipes.some(Boolean);
     waterEndSecondsRef.current =
       Math.max(0, ...flows.flatMap((flow) => flow.steps)) * flowDurationSeconds;
   });
@@ -647,15 +652,14 @@ function EmptyGridContent() {
           // Water is still advancing along the pipes, so don't reset yet.
           setTimeLeft(1);
         } else {
-          // An untouched board is only restarted; it is not a wrong answer.
-          if (hasPipesRef.current) {
-            recordAnswer('starter', false);
-            setTimedOut(true);
-          }
+          recordAnswer('starter', false);
+          setTimedOut(true);
+          // A fresh layout; the countdown waits for the next first pipe.
+          setLayoutSeed(randomLayoutSeed());
           setPipes(Array(CELL_COUNT).fill(null));
-          setRoundStarted(true);
+          setRoundStarted(false);
           setFlowStarted(false);
-          setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(levelIndex));
+          setTimeLeft(buildSeconds(levelIndex));
         }
         return;
       }
@@ -706,9 +710,9 @@ function EmptyGridContent() {
     setLayoutSeed(randomLayoutSeed());
     setWaterArrived(false);
     setPipes(Array(CELL_COUNT).fill(null));
-    setRoundStarted(true);
+    setRoundStarted(false);
     setFlowStarted(false);
-    setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(index));
+    setTimeLeft(buildSeconds(index));
     setTimedOut(false);
   }
 
@@ -721,9 +725,9 @@ function EmptyGridContent() {
     setLayoutSeed(randomLayoutSeed());
     setWaterArrived(false);
     setPipes(Array(CELL_COUNT).fill(null));
-    setRoundStarted(true);
+    setRoundStarted(false);
     setFlowStarted(false);
-    setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(levelIndex));
+    setTimeLeft(buildSeconds(levelIndex));
     setTimedOut(false);
   }
 
@@ -784,9 +788,9 @@ function EmptyGridContent() {
 
   function clearBoard(): void {
     setPipes(Array(CELL_COUNT).fill(null));
-    setRoundStarted(true);
+    setRoundStarted(false);
     setFlowStarted(false);
-    setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(levelIndex));
+    setTimeLeft(buildSeconds(levelIndex));
   }
 
   return (
@@ -865,30 +869,17 @@ function EmptyGridContent() {
                       ? 'Connect each animal to its own name. · ต่อสัตว์แต่ละตัวไปที่ชื่อของมัน'
                       : ''}
               </p>
-              {!routeComplete ? (
+              {!routeComplete && !flowStarted ? (
                 <p className={styles.countdown} aria-live="off">
-                  {flowStarted ? (
-                    <>
-                      💧 Water is flowing ·{' '}
-                      <span className={timeLeft < 8 ? styles.countdownUrgent : undefined}>
-                        {timeLeft}s
-                      </span>{' '}
-                      left
-                    </>
-                  )
-                    : (
-                        <>
-                          ⏳ Water starts in{' '}
-                          <span className={timeLeft < 7 ? styles.countdownUrgent : undefined}>
-                            {timeLeft}s
-                          </span>{' '}
-                          · น้ำจะไหลใน{' '}
-                          <span className={timeLeft < 7 ? styles.countdownUrgent : undefined}>
-                            {timeLeft}
-                          </span>{' '}
-                          วินาที
-                        </>
-                      )}
+                  ⏳ Water starts in{' '}
+                  <span className={timeLeft < 7 ? styles.countdownUrgent : undefined}>
+                    {timeLeft}s
+                  </span>{' '}
+                  · น้ำจะไหลใน{' '}
+                  <span className={timeLeft < 7 ? styles.countdownUrgent : undefined}>
+                    {timeLeft}
+                  </span>{' '}
+                  วินาที
                 </p>
               ) : null}
             </div>
@@ -1101,9 +1092,7 @@ function EmptyGridContent() {
         {debugOpen ? (
           <pre className={styles.debugText}>
             {[
-              `grid: ${gridSize}x${gridSize}  seed: ${layoutSeed}`,
-              `round: ${roundIndex + 1}/${ROUNDS_PER_LEVEL}  animalIdx: ${animalIndex}`,
-              `pipes: ${pipes.filter(Boolean).length}  rocks: ${obstacleCells.size}`,
+              `pipes: ${pipes.filter(Boolean).length}`,
               `started: ${roundStarted}  flowStarted: ${flowStarted}`,
               `timeLeft: ${timeLeft}s  (${flowStarted ? 'water phase' : 'build phase'})`,
               `flow/cell: ${flowDurationSeconds.toFixed(3)}s`,
