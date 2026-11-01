@@ -10,6 +10,8 @@ export type AnimalRound = {
 export type AnimalLevel = {
   title: string;
   titleTh: string;
+  // The blocking piece shown on cells where pipes cannot be placed.
+  obstacle: { name: string; emoji: string };
   rounds: AnimalRound[];
   // Two animals start on the left; each must reach its own name.
   dual?: boolean;
@@ -22,6 +24,7 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
   {
     title: 'Farm',
     titleTh: 'ฟาร์ม',
+    obstacle: { name: 'Tree', emoji: '🌳' },
     rounds: [
       { animal: 'cow', animalTh: 'วัว', animalEmoji: '🐄', food: 'grass', foodTh: 'หญ้า', foodEmoji: '🌿' },
       { animal: 'chicken', animalTh: 'ไก่', animalEmoji: '🐔', food: 'corn', foodTh: 'ข้าวโพด', foodEmoji: '🌽' },
@@ -33,6 +36,7 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
   {
     title: 'Pets',
     titleTh: 'สัตว์เลี้ยง',
+    obstacle: { name: 'Sofa', emoji: '🛋️' },
     rounds: [
       { animal: 'dog', animalTh: 'หมา', animalEmoji: '🐕', food: 'bone', foodTh: 'กระดูก', foodEmoji: '🦴' },
       { animal: 'cat', animalTh: 'แมว', animalEmoji: '🐈', food: 'fish', foodTh: 'ปลา', foodEmoji: '🐟' },
@@ -43,6 +47,7 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
   {
     title: 'Wild',
     titleTh: 'สัตว์ป่า',
+    obstacle: { name: 'Rock', emoji: '🪨' },
     dual: true,
     rounds: [
       { animal: 'monkey', animalTh: 'ลิง', animalEmoji: '🐒', food: 'banana', foodTh: 'กล้วย', foodEmoji: '🍌' },
@@ -54,6 +59,7 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
   {
     title: 'Sea',
     titleTh: 'ทะเล',
+    obstacle: { name: 'Wave', emoji: '🌊' },
     rounds: [
       { animal: 'penguin', animalTh: 'เพนกวิน', animalEmoji: '🐧', food: 'fish', foodTh: 'ปลา', foodEmoji: '🐟' },
       { animal: 'dolphin', animalTh: 'โลมา', animalEmoji: '🐬', food: 'squid', foodTh: 'ปลาหมึก', foodEmoji: '🦑' },

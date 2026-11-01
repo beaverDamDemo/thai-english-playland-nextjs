@@ -479,6 +479,8 @@ function EmptyGridContent() {
   const lastRotationRef = useRef<Partial<Record<PipeKind, number>>>({});
   const waterStartedAtRef = useRef(0);
   const waterEndSecondsRef = useRef(0);
+  const hasPipesRef = useRef(false);
+  const [tabVisible, setTabVisible] = useState(true);
   const [levelIndex, setLevelIndex] = useState(0);
   const [roundIndex, setRoundIndex] = useState(0);
   // The countdown runs from the moment a board appears, not from the first pipe.
@@ -616,14 +618,23 @@ function EmptyGridContent() {
   }, [hasWrongExit]);
 
   useEffect(() => {
+    hasPipesRef.current = pipes.some(Boolean);
     waterEndSecondsRef.current =
       Math.max(0, ...flows.flatMap((flow) => flow.steps)) * flowDurationSeconds;
   });
+
+  // The countdown pauses while the tab is hidden.
+  useEffect(() => {
+    const onVisibility = () => setTabVisible(!document.hidden);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, []);
 
   useEffect(() => {
     if (!roundStarted || routeComplete) return;
 
     const timeoutId = window.setTimeout(() => {
+      if (!tabVisible) return;
       if (timeLeft <= 1) {
         if (!flowStarted) {
           waterStartedAtRef.current = Date.now();
@@ -636,12 +647,15 @@ function EmptyGridContent() {
           // Water is still advancing along the pipes, so don't reset yet.
           setTimeLeft(1);
         } else {
-          recordAnswer('starter', false);
+          // An untouched board is only restarted; it is not a wrong answer.
+          if (hasPipesRef.current) {
+            recordAnswer('starter', false);
+            setTimedOut(true);
+          }
           setPipes(Array(CELL_COUNT).fill(null));
           setRoundStarted(true);
           setFlowStarted(false);
           setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(levelIndex));
-          setTimedOut(true);
         }
         return;
       }
@@ -650,7 +664,7 @@ function EmptyGridContent() {
     }, 1000);
 
     return () => window.clearTimeout(timeoutId);
-  }, [flowStarted, roundStarted, routeComplete, timeLeft, levelIndex]);
+  }, [flowStarted, roundStarted, routeComplete, timeLeft, levelIndex, tabVisible]);
 
   useEffect(() => {
     if (!timedOut) return;
@@ -776,7 +790,9 @@ function EmptyGridContent() {
   }
 
   return (
-    <main className={styles.page}>
+    <main
+      className={`${styles.page} ${levelIndex === 0 ? styles.farmTheme : ''} ${levelIndex === 1 ? styles.petsTheme : ''} ${level.dual ? styles.wildTheme : ''}`}
+    >
       <header className={lessonHeaderStyles.header} data-game="starter">
         <Link href="/games/starter" className={lessonHeaderStyles.back}>
           <Image
@@ -818,7 +834,7 @@ function EmptyGridContent() {
                 return (
                   <li
                     key={item.title}
-                    className={`${styles.level} ${active ? styles.levelCurrent : done ? styles.levelDone : ''}`}
+                    className={`${styles.level} ${[styles.tabFarm, styles.tabPets, styles.tabWild, styles.tabSea][index]} ${active ? styles.levelCurrent : done ? styles.levelDone : ''}`}
                     aria-current={active ? 'step' : undefined}
                   >
                     {active ? (
@@ -851,8 +867,15 @@ function EmptyGridContent() {
               </p>
               {!routeComplete ? (
                 <p className={styles.countdown} aria-live="off">
-                  {flowStarted
-                    ? `💧 Water is flowing · ${timeLeft}s left`
+                  {flowStarted ? (
+                    <>
+                      💧 Water is flowing ·{' '}
+                      <span className={timeLeft < 8 ? styles.countdownUrgent : undefined}>
+                        {timeLeft}s
+                      </span>{' '}
+                      left
+                    </>
+                  )
                     : (
                         <>
                           ⏳ Water starts in{' '}
@@ -902,10 +925,10 @@ function EmptyGridContent() {
                       className={`${styles.cell} ${styles.obstacleCell}`}
                       key={cellIndex}
                       role="img"
-                      aria-label="Rock obstacle. Pipes cannot be placed here."
+                      aria-label={`${level.obstacle.name} obstacle. Pipes cannot be placed here.`}
                     >
                       <span className={styles.obstacleEmoji} aria-hidden="true">
-                        🪨
+                        {level.obstacle.emoji}
                       </span>
                     </div>
                   );
