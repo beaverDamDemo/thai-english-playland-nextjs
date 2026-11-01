@@ -831,23 +831,21 @@ function EmptyGridContent() {
     return () => window.clearTimeout(timeoutId);
   }, [flowStarted, roundStarted, routeComplete, timeLeft, levelIndex, tabVisible]);
 
+  function startFreshBoard(): void {
+    setTimedOut(false);
+    setLayoutSeed(randomLayoutSeed());
+    setPipes(Array(CELL_COUNT).fill(null));
+    setFlowStarted(false);
+    setTimeLeft(buildSeconds(levelIndex));
+  }
+
+  // The child gets time to look at the board; it resets on the button or after a pause.
   useEffect(() => {
     if (!timedOut) return;
 
-    const timeoutId = window.setTimeout(() => {
-      setLayoutSeed(randomLayoutSeed());
-      setPipes(Array(CELL_COUNT).fill(null));
-      setFlowStarted(false);
-      setTimeLeft(buildSeconds(levelIndex));
-    }, 2500);
+    const timeoutId = window.setTimeout(startFreshBoard, 10000);
     return () => window.clearTimeout(timeoutId);
-  }, [timedOut, levelIndex]);
-
-  useEffect(() => {
-    if (!timedOut) return;
-
-    const timeoutId = window.setTimeout(() => setTimedOut(false), 3000);
-    return () => window.clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timedOut]);
 
   useEffect(() => {
@@ -1035,7 +1033,7 @@ function EmptyGridContent() {
             <div className={styles.boardHeading}>
               <p className={styles.status} aria-live="polite">
                 {timedOut
-                  ? 'Time is up! Try this animal again. · หมดเวลา ลองอีกครั้ง'
+                  ? 'Time is up! Do not worry, try again. · หมดเวลาแล้ว ไม่เป็นไร ลองอีกครั้งนะ'
                   : routeComplete
                   ? `Correct! ${starts.length > 1 ? `These are a ${starts[0].round.animal} and a ${starts[1].round.animal}` : `This is a ${animalNames}`}. · ใช่แล้ว!`
                   : wrongExit
@@ -1044,6 +1042,15 @@ function EmptyGridContent() {
                       ? 'Connect each animal to its own name. · ต่อสัตว์แต่ละตัวไปที่ชื่อของมัน'
                       : ''}
               </p>
+              {timedOut ? (
+                <button
+                  type="button"
+                  className={styles.tryAgain}
+                  onClick={startFreshBoard}
+                >
+                  🔄 Try again · ลองอีกครั้ง
+                </button>
+              ) : null}
               {!routeComplete && !flowStarted ? (
                 <p className={styles.countdown} aria-live="off">
                   ⏳ Water starts in{' '}
