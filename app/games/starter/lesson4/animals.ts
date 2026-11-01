@@ -11,6 +11,8 @@ export type AnimalLevel = {
   title: string;
   titleTh: string;
   rounds: AnimalRound[];
+  // Two animals start on the left; each must reach its own name.
+  dual?: boolean;
 };
 
 // Solved grids needed to finish a level.
@@ -41,6 +43,7 @@ export const ANIMAL_LEVELS: AnimalLevel[] = [
   {
     title: 'Wild',
     titleTh: 'สัตว์ป่า',
+    dual: true,
     rounds: [
       { animal: 'monkey', animalTh: 'ลิง', animalEmoji: '🐒', food: 'banana', foodTh: 'กล้วย', foodEmoji: '🍌' },
       { animal: 'bear', animalTh: 'หมี', animalEmoji: '🐻', food: 'honey', foodTh: 'น้ำผึ้ง', foodEmoji: '🍯' },

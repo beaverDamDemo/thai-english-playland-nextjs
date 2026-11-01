@@ -25,10 +25,17 @@ type PipeTool = {
 const GRID_SIZE = 8;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const LEVEL_GRID_SIZES = [5, 6, 7, 8];
-const START_CELL = 0;
 const FINISHED_LEVELS_KEY = 'playland.starter.lesson4.finishedLevelFlags';
+// Building time before the water starts, and the time the water then has; more for two-animal levels.
 const FLOW_START_DELAY_SECONDS = 5;
 const ROUND_TIME_LIMIT_SECONDS = 10;
+const DUAL_TIME_MULTIPLIER = 3;
+// Two-animal levels flow at half speed.
+const DUAL_FLOW_SLOWDOWN = 2;
+
+function timeScale(levelIndex: number): number {
+  return ANIMAL_LEVELS[levelIndex].dual ? DUAL_TIME_MULTIPLIER : 1;
+}
 const FLOW_DURATION_SECONDS = 3.575;
 const COMPLETE_FLOW_SPEEDUP = 10;
 const PIPE_DRAG_TYPE = 'application/x-playland-pipe';
@@ -92,25 +99,34 @@ function parseDraggedPipe(value: string): PipePiece | null {
   return { kind, rotation };
 }
 
+type FlowResult = {
+  steps: number[];
+  incoming: Array<Direction | null>;
+  outgoing: Direction[][];
+};
+
 function getFlowSteps(
   pipes: Array<PipePiece | null>,
+  startCell: number,
+  startCells: number[],
   exitCells: number[],
   obstacleCells: ReadonlySet<number>,
   gridSize: number,
-): { steps: number[]; incoming: Array<Direction | null>; outgoing: Direction[][] } {
+  crossPassesStraight: boolean,
+): FlowResult {
   const flowSteps = Array<number>(CELL_COUNT).fill(-1);
   const incoming = Array<Direction | null>(CELL_COUNT).fill(null);
   const outgoing: Direction[][] = Array.from(
     { length: CELL_COUNT },
     () => [],
   );
-  const queue = [START_CELL];
-  flowSteps[START_CELL] = 0;
+  const queue = [startCell];
+  flowSteps[startCell] = 0;
 
   const openingsOf = (cell: number): Direction[] =>
     obstacleCells.has(cell)
       ? []
-      : cell === START_CELL
+      : startCells.includes(cell)
       ? ['east']
       : exitCells.includes(cell)
         ? ['west']
@@ -122,8 +138,13 @@ function getFlowSteps(
     const current = queue[cursor];
     const row = Math.floor(current / gridSize);
     const column = current % gridSize;
+    const entered = incoming[current];
+    const leaving =
+      crossPassesStraight && entered && pipes[current]?.kind === 'cross'
+        ? [OPPOSITE[entered]]
+        : openingsOf(current);
 
-    for (const direction of openingsOf(current)) {
+    for (const direction of leaving) {
       const movement = MOVEMENT[direction];
       const nextRow = row + movement.row;
       const nextColumn = column + movement.column;
@@ -139,6 +160,7 @@ function getFlowSteps(
       const nextCell = nextRow * gridSize + nextColumn;
       if (
         !obstacleCells.has(nextCell) &&
+        !startCells.includes(nextCell) &&
         openingsOf(nextCell).includes(OPPOSITE[direction]) &&
         flowSteps[nextCell] === -1
       ) {
@@ -155,49 +177,61 @@ function getFlowSteps(
 
 function areExitsReachable(
   obstacleCells: ReadonlySet<number>,
+  startCells: number[],
   exitCells: number[],
   gridSize: number,
 ): boolean {
-  const reachable = new Set([START_CELL]);
-  const queue = [START_CELL];
+  // Exits only accept water from the west and are dead ends; starts only open east.
+  const reachesAllExits = (start: number): boolean => {
+    const reachable = new Set([start]);
+    const queue = [start];
 
-  // Exits only accept water from the west and are dead ends; the start only opens east.
-  for (let cursor = 0; cursor < queue.length; cursor++) {
-    const cell = queue[cursor];
-    const row = Math.floor(cell / gridSize);
-    const column = cell % gridSize;
+    for (let cursor = 0; cursor < queue.length; cursor++) {
+      const cell = queue[cursor];
+      const row = Math.floor(cell / gridSize);
+      const column = cell % gridSize;
 
-    for (const direction of cell === START_CELL ? ['east' as const] : DIRECTIONS) {
-      const movement = MOVEMENT[direction];
-      const nextRow = row + movement.row;
-      const nextColumn = column + movement.column;
-      if (
-        nextRow < 0 ||
-        nextRow >= gridSize ||
-        nextColumn < 0 ||
-        nextColumn >= gridSize
-      ) {
-        continue;
+      for (const direction of cell === start ? ['east' as const] : DIRECTIONS) {
+        const movement = MOVEMENT[direction];
+        const nextRow = row + movement.row;
+        const nextColumn = column + movement.column;
+        if (
+          nextRow < 0 ||
+          nextRow >= gridSize ||
+          nextColumn < 0 ||
+          nextColumn >= gridSize
+        ) {
+          continue;
+        }
+
+        const nextCell = nextRow * gridSize + nextColumn;
+        if (
+          obstacleCells.has(nextCell) ||
+          reachable.has(nextCell) ||
+          startCells.includes(nextCell)
+        ) {
+          continue;
+        }
+        if (exitCells.includes(nextCell)) {
+          if (direction === 'east') reachable.add(nextCell);
+          continue;
+        }
+        reachable.add(nextCell);
+        queue.push(nextCell);
       }
-
-      const nextCell = nextRow * gridSize + nextColumn;
-      if (obstacleCells.has(nextCell) || reachable.has(nextCell)) continue;
-      if (exitCells.includes(nextCell)) {
-        if (direction === 'east') reachable.add(nextCell);
-        continue;
-      }
-      reachable.add(nextCell);
-      queue.push(nextCell);
     }
-  }
 
-  return exitCells.every((cell) => reachable.has(cell));
+    return exitCells.every((cell) => reachable.has(cell));
+  };
+
+  return startCells.every(reachesAllExits);
 }
 
 function getObstacleCells(
   levelIndex: number,
   roundIndex: number,
   gridSize: number,
+  startCells: number[],
   exitCells: number[],
   layoutSeed: number,
 ): Set<number> {
@@ -210,7 +244,9 @@ function getObstacleCells(
   const candidates = Array.from(
     { length: gridSize * gridSize },
     (_, cell) => cell,
-  ).filter((cell) => cell !== START_CELL && !exitCells.includes(cell));
+  ).filter(
+    (cell) => !startCells.includes(cell) && !exitCells.includes(cell),
+  );
 
   for (let index = candidates.length - 1; index > 0; index--) {
     const swapIndex = Math.floor(random() * (index + 1));
@@ -225,7 +261,7 @@ function getObstacleCells(
 
   for (const cell of candidates) {
     obstacles.add(cell);
-    if (!areExitsReachable(obstacles, exitCells, gridSize)) {
+    if (!areExitsReachable(obstacles, startCells, exitCells, gridSize)) {
       obstacles.delete(cell);
       continue;
     }
@@ -244,7 +280,9 @@ function speak(text: string): void {
   window.speechSynthesis.speak(utterance);
 }
 
-type Exit = { cell: number; round: AnimalRound; isTarget: boolean };
+// `owner` is the index of the start whose animal this name matches (null = decoy).
+type Exit = { cell: number; round: AnimalRound; owner: number | null };
+type Start = { cell: number; round: AnimalRound };
 
 function randomLayoutSeed(): number {
   return Math.floor(Math.random() * 1000);
@@ -259,17 +297,57 @@ function shuffledIndices(length: number): number[] {
   return order;
 }
 
-// Target animal plus two choices from the same level, at fixed exits.
+const SLOT_ORDERS = [
+  [0, 1, 2],
+  [0, 2, 1],
+  [1, 0, 2],
+  [1, 2, 0],
+  [2, 0, 1],
+  [2, 1, 0],
+];
+
+// Animals on the left: one normally, two on dual levels (the second is the next in the list).
+function buildStarts(
+  levelIndex: number,
+  animalIndex: number,
+  gridSize: number,
+): Start[] {
+  const { rounds, dual } = ANIMAL_LEVELS[levelIndex];
+  const starts: Start[] = [{ cell: 0, round: rounds[animalIndex] }];
+  if (dual) {
+    starts.push({
+      cell: (gridSize - 1) * gridSize,
+      round: rounds[(animalIndex + 1) % rounds.length],
+    });
+  }
+  return starts;
+}
+
+// Names on the right at fixed rows: each start's own name plus a decoy.
 function buildExits(
   levelIndex: number,
   roundIndex: number,
   gridSize: number,
   layoutSeed: number,
 ): Exit[] {
-  const { rounds } = ANIMAL_LEVELS[levelIndex];
+  const { rounds, dual } = ANIMAL_LEVELS[levelIndex];
   const rows = EXIT_ROWS[
     (roundIndex + levelIndex + layoutSeed) % EXIT_ROWS.length
   ].map((row) => Math.round((row * (gridSize - 1)) / 7));
+
+  if (dual) {
+    const slots: Array<{ round: AnimalRound; owner: number | null }> = [
+      { round: rounds[roundIndex], owner: 0 },
+      { round: rounds[(roundIndex + 1) % rounds.length], owner: 1 },
+      { round: rounds[(roundIndex + 2) % rounds.length], owner: null },
+    ];
+    const order = SLOT_ORDERS[layoutSeed % SLOT_ORDERS.length];
+    return rows.map((row, slot) => ({
+      cell: row * gridSize + gridSize - 1,
+      ...slots[order[slot]],
+    }));
+  }
+
   const targetSlot = (roundIndex * 2 + levelIndex + layoutSeed) % rows.length;
   let distractor = 1;
   return rows.map((row, slot) => {
@@ -277,28 +355,34 @@ function buildExits(
     const source = isTarget
       ? rounds[roundIndex]
       : rounds[(roundIndex + distractor++) % rounds.length];
-    return { cell: row * gridSize + gridSize - 1, round: source, isTarget };
+    return {
+      cell: row * gridSize + gridSize - 1,
+      round: source,
+      owner: isTarget ? 0 : null,
+    };
   });
 }
+
+type CellFlow = {
+  incoming: Direction | null;
+  outgoing: Direction[];
+  delaySeconds: number;
+};
 
 function PipeArtwork({
   piece,
   terminal,
   connected,
   flowing = false,
-  flowDelaySeconds = 0,
   flowDurationSeconds = 1.625,
-  flowIncoming,
-  flowOutgoing = [],
+  flows = [],
 }: {
   piece?: PipePiece;
   terminal?: 'start' | 'end';
   connected: boolean;
   flowing?: boolean;
-  flowDelaySeconds?: number;
   flowDurationSeconds?: number;
-  flowIncoming?: Direction | null;
-  flowOutgoing?: Direction[];
+  flows?: CellFlow[];
 }) {
   const connections = terminal
     ? terminal === 'start'
@@ -339,46 +423,50 @@ function PipeArtwork({
       />
       <rect x="41" y="41" width="18" height="18" fill={colors.fill} />
       {flowing &&
-        (flowOutgoing.length > 0
-          ? flowOutgoing.map((direction) => {
-              const flowPath = flowIncoming
-                ? `M ${SVG_ENDPOINT[flowIncoming]} L 50 50 L ${SVG_ENDPOINT[direction]}`
+        flows.flatMap((flow, flowIndex) => {
+          const style = {
+            animationDelay: `${flow.delaySeconds}s`,
+            animationDuration: `${flowDurationSeconds}s`,
+          };
+          if (flow.outgoing.length > 0) {
+            return flow.outgoing.map((direction) => {
+              const flowPath = flow.incoming
+                ? `M ${SVG_ENDPOINT[flow.incoming]} L 50 50 L ${SVG_ENDPOINT[direction]}`
                 : `M 50 50 L ${SVG_ENDPOINT[direction]}`;
               return (
                 <path
                   className={styles.flowingWater}
                   d={flowPath}
                   fill="none"
-                  key={direction}
+                  key={`${flowIndex}-${direction}`}
                   pathLength="100"
                   stroke="#9cf6ff"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="9"
-                  style={{
-                    animationDelay: `${flowDelaySeconds}s`,
-                    animationDuration: `${flowDurationSeconds}s`,
-                  }}
+                  style={style}
                 />
               );
-            })
-          : terminal === 'end' &&
-              flowIncoming && (
-                <path
-                  className={styles.flowingWater}
-                  d={`M ${SVG_ENDPOINT[flowIncoming]} L 50 50`}
-                  fill="none"
-                  pathLength="100"
-                  stroke="#9cf6ff"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="9"
-                  style={{
-                    animationDelay: `${flowDelaySeconds}s`,
-                    animationDuration: `${flowDurationSeconds}s`,
-                  }}
-                />
-              ))}
+            });
+          }
+          if (terminal === 'end' && flow.incoming) {
+            return [
+              <path
+                className={styles.flowingWater}
+                d={`M ${SVG_ENDPOINT[flow.incoming]} L 50 50`}
+                fill="none"
+                key={`${flowIndex}-end`}
+                pathLength="100"
+                stroke="#9cf6ff"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="9"
+                style={style}
+              />,
+            ];
+          }
+          return [];
+        })}
     </svg>
   );
 }
@@ -387,9 +475,14 @@ function EmptyGridContent() {
   const hasSavedCompletionRef = useRef(false);
   // True right after a tool is picked, so the next click on a different pipe replaces it.
   const toolJustChosenRef = useRef(false);
+  // Last rotation the user gave each pipe kind; new pipes of that kind start with it.
+  const lastRotationRef = useRef<Partial<Record<PipeKind, number>>>({});
+  const waterStartedAtRef = useRef(0);
+  const waterEndSecondsRef = useRef(0);
   const [levelIndex, setLevelIndex] = useState(0);
   const [roundIndex, setRoundIndex] = useState(0);
-  const [roundStarted, setRoundStarted] = useState(false);
+  // The countdown runs from the moment a board appears, not from the first pipe.
+  const [roundStarted, setRoundStarted] = useState(true);
   const [flowStarted, setFlowStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(FLOW_START_DELAY_SECONDS);
   const [timedOut, setTimedOut] = useState(false);
@@ -398,6 +491,7 @@ function EmptyGridContent() {
     Array.from({ length: ANIMAL_LEVELS[0].rounds.length }, (_, index) => index),
   );
   const [waterArrived, setWaterArrived] = useState(false);
+  const [debugOpen, setDebugOpen] = useState(true);
   const [finishedLevels, setFinishedLevels] = useState<boolean[]>(() =>
     ANIMAL_LEVELS.map(() => false),
   );
@@ -410,39 +504,67 @@ function EmptyGridContent() {
   );
   const level = ANIMAL_LEVELS[levelIndex];
   const animalIndex = animalOrder[roundIndex];
-  const current = level.rounds[animalIndex];
   const gridSize = LEVEL_GRID_SIZES[levelIndex];
+  const starts = buildStarts(levelIndex, animalIndex, gridSize);
+  const startCells = starts.map((start) => start.cell);
+  const animalNames = starts.map((start) => start.round.animal).join(' and ');
   const exits = buildExits(levelIndex, animalIndex, gridSize, layoutSeed);
   const exitCells = exits.map((exit) => exit.cell);
   const obstacleCells = getObstacleCells(
     levelIndex,
     roundIndex,
     gridSize,
+    startCells,
     exitCells,
     layoutSeed,
   );
-  const flow = getFlowSteps(
-    pipes,
-    exitCells,
-    obstacleCells,
-    gridSize,
+  const flows = starts.map((start) =>
+    getFlowSteps(
+      pipes,
+      start.cell,
+      startCells,
+      exitCells,
+      obstacleCells,
+      gridSize,
+      Boolean(level.dual),
+    ),
   );
-  const routeComplete = exits.some(
-    (exit) => exit.isTarget && flow.steps[exit.cell] >= 0,
+  const routeComplete = starts.every((_, startIndex) =>
+    exits.some(
+      (exit) =>
+        exit.owner === startIndex && flows[startIndex].steps[exit.cell] >= 0,
+    ),
   );
-  const wrongExit = exits.find(
-    (exit) => !exit.isTarget && flow.steps[exit.cell] >= 0,
+  const wrongExit = exits.find((exit) =>
+    flows.some(
+      (flow, startIndex) =>
+        exit.owner !== startIndex && flow.steps[exit.cell] >= 0,
+    ),
   );
   const flowDurationSeconds = routeComplete
     ? FLOW_DURATION_SECONDS / COMPLETE_FLOW_SPEEDUP
-    : FLOW_DURATION_SECONDS;
+    : FLOW_DURATION_SECONDS * (level.dual ? DUAL_FLOW_SLOWDOWN : 1);
   const waterFlowing = flowStarted || routeComplete;
   const targetStep = Math.max(
     0,
-    ...exits
-      .filter((exit) => exit.isTarget)
-      .map((exit) => flow.steps[exit.cell]),
+    ...exits.map((exit) =>
+      exit.owner === null ? 0 : flows[exit.owner].steps[exit.cell],
+    ),
   );
+
+  function cellFlows(cell: number): CellFlow[] {
+    return flows.flatMap((flow) =>
+      flow.steps[cell] >= 0
+        ? [
+            {
+              incoming: flow.incoming[cell],
+              outgoing: flow.outgoing[cell],
+              delaySeconds: flow.steps[cell] * flowDurationSeconds,
+            },
+          ]
+        : [],
+    );
+  }
   const isLastRound = roundIndex === ROUNDS_PER_LEVEL - 1;
   const lessonComplete =
     waterArrived && isLastRound && finishedLevels.every(Boolean);
@@ -494,19 +616,31 @@ function EmptyGridContent() {
   }, [hasWrongExit]);
 
   useEffect(() => {
+    waterEndSecondsRef.current =
+      Math.max(0, ...flows.flatMap((flow) => flow.steps)) * flowDurationSeconds;
+  });
+
+  useEffect(() => {
     if (!roundStarted || routeComplete) return;
 
     const timeoutId = window.setTimeout(() => {
       if (timeLeft <= 1) {
         if (!flowStarted) {
+          waterStartedAtRef.current = Date.now();
           setFlowStarted(true);
-          setTimeLeft(ROUND_TIME_LIMIT_SECONDS);
+          setTimeLeft(ROUND_TIME_LIMIT_SECONDS * timeScale(levelIndex));
+        } else if (
+          (Date.now() - waterStartedAtRef.current) / 1000 <
+          waterEndSecondsRef.current
+        ) {
+          // Water is still advancing along the pipes, so don't reset yet.
+          setTimeLeft(1);
         } else {
           recordAnswer('starter', false);
           setPipes(Array(CELL_COUNT).fill(null));
-          setRoundStarted(false);
+          setRoundStarted(true);
           setFlowStarted(false);
-          setTimeLeft(FLOW_START_DELAY_SECONDS);
+          setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(levelIndex));
           setTimedOut(true);
         }
         return;
@@ -516,7 +650,7 @@ function EmptyGridContent() {
     }, 1000);
 
     return () => window.clearTimeout(timeoutId);
-  }, [flowStarted, roundStarted, routeComplete, timeLeft]);
+  }, [flowStarted, roundStarted, routeComplete, timeLeft, levelIndex]);
 
   useEffect(() => {
     if (!timedOut) return;
@@ -526,8 +660,8 @@ function EmptyGridContent() {
   }, [timedOut]);
 
   useEffect(() => {
-    if (waterArrived) speak(current.animal);
-  }, [waterArrived, current.animal]);
+    if (waterArrived) speak(animalNames);
+  }, [waterArrived, animalNames]);
 
   useEffect(() => {
     pingLessonOpen('starter');
@@ -558,9 +692,9 @@ function EmptyGridContent() {
     setLayoutSeed(randomLayoutSeed());
     setWaterArrived(false);
     setPipes(Array(CELL_COUNT).fill(null));
-    setRoundStarted(false);
+    setRoundStarted(true);
     setFlowStarted(false);
-    setTimeLeft(FLOW_START_DELAY_SECONDS);
+    setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(index));
     setTimedOut(false);
   }
 
@@ -573,26 +707,27 @@ function EmptyGridContent() {
     setLayoutSeed(randomLayoutSeed());
     setWaterArrived(false);
     setPipes(Array(CELL_COUNT).fill(null));
-    setRoundStarted(false);
+    setRoundStarted(true);
     setFlowStarted(false);
-    setTimeLeft(FLOW_START_DELAY_SECONDS);
+    setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(levelIndex));
     setTimedOut(false);
   }
 
   function placePipe(cellIndex: number, piece: PipePiece): void {
-    if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
+    if (startCells.includes(cellIndex) || exitCells.includes(cellIndex)) return;
     toolJustChosenRef.current = false;
     setRoundStarted(true);
     setTimedOut(false);
+    const rotation = lastRotationRef.current[piece.kind] ?? piece.rotation;
     setPipes((current) => {
       const next = [...current];
-      next[cellIndex] = piece;
+      next[cellIndex] = { ...piece, rotation };
       return next;
     });
   }
 
   function handleCellClick(cellIndex: number): void {
-    if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
+    if (startCells.includes(cellIndex) || exitCells.includes(cellIndex)) return;
 
     const existing = pipes[cellIndex];
     const replaceRequested =
@@ -613,10 +748,9 @@ function EmptyGridContent() {
       const next = [...current];
       const pipe = next[cellIndex];
       if (!pipe || pipe.kind === 'cross') return current;
-      next[cellIndex] = {
-        ...pipe,
-        rotation: (pipe.rotation + 1) % DIRECTIONS.length,
-      };
+      const rotation = (pipe.rotation + 1) % DIRECTIONS.length;
+      lastRotationRef.current[pipe.kind] = rotation;
+      next[cellIndex] = { ...pipe, rotation };
       return next;
     });
   }
@@ -626,7 +760,7 @@ function EmptyGridContent() {
     cellIndex: number,
   ): void {
     event.preventDefault();
-    if (cellIndex === START_CELL || exitCells.includes(cellIndex)) return;
+    if (startCells.includes(cellIndex) || exitCells.includes(cellIndex)) return;
 
     const droppedPipe = parseDraggedPipe(
       event.dataTransfer.getData(PIPE_DRAG_TYPE),
@@ -636,9 +770,9 @@ function EmptyGridContent() {
 
   function clearBoard(): void {
     setPipes(Array(CELL_COUNT).fill(null));
-    setRoundStarted(false);
+    setRoundStarted(true);
     setFlowStarted(false);
-    setTimeLeft(FLOW_START_DELAY_SECONDS);
+    setTimeLeft(FLOW_START_DELAY_SECONDS * timeScale(levelIndex));
   }
 
   return (
@@ -708,11 +842,32 @@ function EmptyGridContent() {
                 {timedOut
                   ? 'Time is up! Try this animal again. · หมดเวลา ลองอีกครั้ง'
                   : routeComplete
-                  ? `Correct! This is a ${current.animal}. · ใช่แล้ว!`
+                  ? `Correct! ${starts.length > 1 ? `These are a ${starts[0].round.animal} and a ${starts[1].round.animal}` : `This is a ${animalNames}`}. · ใช่แล้ว!`
                   : wrongExit
                     ? 'That is not a match. Try another name. · ลองเลือกชื่ออื่น'
-                    : ''}
+                    : level.dual
+                      ? 'Connect each animal to its own name. · ต่อสัตว์แต่ละตัวไปที่ชื่อของมัน'
+                      : ''}
               </p>
+              {!routeComplete ? (
+                <p className={styles.countdown} aria-live="off">
+                  {flowStarted
+                    ? `💧 Water is flowing · ${timeLeft}s left`
+                    : (
+                        <>
+                          ⏳ Water starts in{' '}
+                          <span className={timeLeft < 7 ? styles.countdownUrgent : undefined}>
+                            {timeLeft}s
+                          </span>{' '}
+                          · น้ำจะไหลใน{' '}
+                          <span className={timeLeft < 7 ? styles.countdownUrgent : undefined}>
+                            {timeLeft}
+                          </span>{' '}
+                          วินาที
+                        </>
+                      )}
+                </p>
+              ) : null}
             </div>
 
             <div
@@ -727,12 +882,17 @@ function EmptyGridContent() {
               aria-label={`${gridSize} by ${gridSize} pipe board`}
             >
               {Array.from({ length: gridSize * gridSize }, (_, cellIndex) => {
-                const isStart = cellIndex === START_CELL;
+                const start = starts.find((item) => item.cell === cellIndex);
+                const isStart = Boolean(start);
                 const exit = exits.find((item) => item.cell === cellIndex);
                 const isObstacle = obstacleCells.has(cellIndex);
                 const pipe = pipes[cellIndex];
-                const flowStep = flow.steps[cellIndex];
-                const isConnected = flowStep >= 0;
+                const cellFlowList = cellFlows(cellIndex);
+                const isConnected = cellFlowList.length > 0;
+                const exitMatched =
+                  exit !== undefined &&
+                  exit.owner !== null &&
+                  flows[exit.owner].steps[cellIndex] >= 0;
                 const row = Math.floor(cellIndex / gridSize) + 1;
                 const column = (cellIndex % gridSize) + 1;
 
@@ -754,28 +914,26 @@ function EmptyGridContent() {
                 if (isStart || exit) {
                   return (
                     <div
-                      className={`${styles.cell} ${styles.terminal} ${isStart ? styles.startTerminal : styles.endTerminal} ${exit && isConnected ? (exit.isTarget ? styles.exitRight : styles.exitWrong) : ''}`}
-                      key={cellIndex}
-                      role="img"
-                      aria-label={
-                        isStart
-                          ? `Picture of a ${current.animal}`
-                          : `Exit: ${exit?.round.animal}`
-                      }
-                    >
-                      <PipeArtwork
-                        terminal={isStart ? 'start' : 'end'}
-                        connected={isConnected}
-                        flowing={waterFlowing && isConnected}
-                        flowDelaySeconds={flowStep * flowDurationSeconds}
-                        flowDurationSeconds={flowDurationSeconds}
-                        flowIncoming={flow.incoming[cellIndex]}
-                        flowOutgoing={flow.outgoing[cellIndex]}
-                      />
-                      {isStart ? (
-                        <span className={styles.terminalEmoji}>
-                          {current.animalEmoji}
-                        </span>
+                      className={`${styles.cell} ${styles.terminal} ${isStart ? styles.startTerminal : styles.endTerminal}                       ${exit && isConnected ? (exitMatched ? styles.exitRight : styles.exitWrong) : ''}`}
+                                            key={cellIndex}
+                                            role="img"
+                                            aria-label={
+                                              start
+                                                ? `Picture of a ${start.round.animal}`
+                                                : `Exit: ${exit?.round.animal}`
+                                            }
+                                          >
+                                            <PipeArtwork
+                                              terminal={isStart ? 'start' : 'end'}
+                                              connected={isConnected}
+                                              flowing={waterFlowing && isConnected}
+                                              flowDurationSeconds={flowDurationSeconds}
+                                              flows={cellFlowList}
+                                            />
+                                            {start ? (
+                                              <span className={styles.terminalEmoji}>
+                                                {start.round.animalEmoji}
+                                              </span>
                       ) : (
                         <span className={styles.terminalLabel}>
                           {exit?.round.animal}
@@ -810,10 +968,8 @@ function EmptyGridContent() {
                           piece={pipe}
                           connected={isConnected}
                           flowing={waterFlowing && isConnected}
-                          flowDelaySeconds={flowStep * flowDurationSeconds}
                           flowDurationSeconds={flowDurationSeconds}
-                          flowIncoming={flow.incoming[cellIndex]}
-                          flowOutgoing={flow.outgoing[cellIndex]}
+                          flows={cellFlowList}
                         />
                       ) : null}
                     </button>
@@ -882,7 +1038,7 @@ function EmptyGridContent() {
               className={styles.clearButton}
               type="button"
               aria-label="Hear the animal's name"
-              onClick={() => speak(current.animal)}
+              onClick={() => speak(animalNames)}
             >
               🔊 Hear the word · ฟังคำศัพท์
             </button>
@@ -911,6 +1067,34 @@ function EmptyGridContent() {
           </aside>
         </div>
       </section>
+      <aside className={styles.debugOverlay} aria-label="Debug overlay">
+        <button
+          className={styles.debugToggle}
+          type="button"
+          onClick={() => setDebugOpen((value) => !value)}
+        >
+          🐞 Debug {debugOpen ? '–' : '+'}
+        </button>
+        {debugOpen ? (
+          <pre className={styles.debugText}>
+            {[
+              `grid: ${gridSize}x${gridSize}  seed: ${layoutSeed}`,
+              `round: ${roundIndex + 1}/${ROUNDS_PER_LEVEL}  animalIdx: ${animalIndex}`,
+              `pipes: ${pipes.filter(Boolean).length}  rocks: ${obstacleCells.size}`,
+              `started: ${roundStarted}  flowStarted: ${flowStarted}`,
+              `timeLeft: ${timeLeft}s  (${flowStarted ? 'water phase' : 'build phase'})`,
+              `flow/cell: ${flowDurationSeconds.toFixed(3)}s`,
+              ...flows.map(
+                (flow, i) =>
+                  `water ${i} (${starts[i].round.animal}): ${flow.steps.filter((s) => s >= 0).length} cells, reaches: ${exits.filter((e) => flow.steps[e.cell] >= 0).map((e) => e.round.animal).join(', ') || '-'}`,
+              ),
+              `routeComplete: ${routeComplete}  wrongExit: ${wrongExit?.round.animal ?? '-'}`,
+              `waterArrived: ${waterArrived}  timedOut: ${timedOut}`,
+              `finished: ${finishedLevels.map((d) => (d ? '✓' : '·')).join(' ')}`,
+            ].join('\n')}
+          </pre>
+        ) : null}
+      </aside>
     </main>
   );
 }

@@ -544,3 +544,47 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+.debugOverlay {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  z-index: 50;
+  max-width: min(92vw, 420px);
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+}
+
+.debugToggle {
+  display: block;
+  margin-left: auto;
+  padding: 4px 8px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: rgba(20, 20, 20, 0.85);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.debugText {
+  margin: 4px 0 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(20, 20, 20, 0.85);
+  color: #b6f5c8;
+  white-space: pre-wrap;
+  pointer-events: none;
+}
+
+.countdown {
+  margin: 4px 0 0;
+  color: #0b4a5e;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.countdownUrgent {
+  color: #d92121;
+}
