@@ -435,6 +435,37 @@
   cursor: pointer;
 }
 
+.level:has(.levelButton) {
+  background: #fff;
+  border-color: #0e7490;
+  color: #0e4f63;
+  box-shadow: 0 3px 0 rgba(14, 116, 144, 0.45);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.level:has(.levelButton):hover {
+  background: #e6f7fb;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 rgba(14, 116, 144, 0.45);
+}
+
+.level:has(.levelButton):active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(14, 116, 144, 0.45);
+}
+
+.level.levelDone:has(.levelButton) {
+  border-color: #1d704b;
+  background: #e3f7ec;
+  color: #1d704b;
+  box-shadow: 0 3px 0 rgba(29, 112, 75, 0.45);
+}
+
+.level.levelDone:has(.levelButton):hover {
+  background: #d0f0df;
+}
+
 .levelButton:focus-visible {
   outline: 2px solid #a24a24;
   outline-offset: 2px;
