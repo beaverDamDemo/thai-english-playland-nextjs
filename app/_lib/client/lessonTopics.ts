@@ -16,7 +16,7 @@ const topicsByArea: Record<LessonArea, string[]> = {
   ],
   pattaya: [
     'tank shooting - answer questions to earn shots, destroy tanks to win',
-    'match-3 icon board - practice questions, then swap icons to match and score',
+    'match-3 icon board - answer questions to earn moves, combo matches to reach 500 points',
     'naval battle - fire torpedoes at the ship carrying the correct answer',
     'match-3 candy board - answer questions to earn moves and score multipliers, reach 500 points to win',
   ],

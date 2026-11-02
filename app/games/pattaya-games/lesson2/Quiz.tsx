@@ -1,7 +1,8 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
-import styles from './Lesson2.module.css';
 import quizStyles from '../../maze/_components/QuizButtons.module.css';
 
 export type Challenge = {
@@ -15,7 +16,6 @@ const THEME_COLOR = '#a81903';
 type QuizProps = {
   challenge: Challenge;
   step: number;
-  total: number;
   selectedIndex: number | null;
   feedbackIcon: '✓' | '✗' | null;
   onAnswer: (challenge: Challenge, pickedIndex: number) => void;
@@ -24,14 +24,42 @@ type QuizProps = {
 export default function Quiz({
   challenge,
   step,
-  total,
   selectedIndex,
   feedbackIcon,
   onAnswer,
 }: QuizProps) {
   const thaiQuestion = useThaiQuestion(challenge.prompt);
+  const answeredCorrectly =
+    selectedIndex !== null && selectedIndex === challenge.answer;
+  const blankMatch = challenge.prompt.match(/_{2,}/);
+  let promptNode: ReactNode = challenge.prompt;
+  if (answeredCorrectly && blankMatch && blankMatch.index !== undefined) {
+    const start = blankMatch.index;
+    promptNode = (
+      <>
+        {challenge.prompt.slice(0, start)}
+        <span
+          style={{
+            color: '#2e7d32',
+            fontStyle: 'italic',
+            textDecoration: 'underline',
+            textUnderlineOffset: '4px',
+            background: 'rgba(76, 175, 80, 0.15)',
+            borderRadius: '4px',
+            padding: '0 4px',
+          }}
+        >
+          {challenge.options[challenge.answer]}
+        </span>
+        {challenge.prompt.slice(start + blankMatch[0].length)}
+      </>
+    );
+  }
   return (
-    <article className={styles.card} style={{ position: 'relative' }}>
+    <div
+      className={quizStyles.questionSlide}
+      style={{ padding: '0', position: 'relative' }}
+    >
       {feedbackIcon && (
         <div
           style={{
@@ -42,7 +70,7 @@ export default function Quiz({
             fontSize: '80px',
             fontWeight: 'bold',
             zIndex: 2000,
-            animation: 'feedbackFadeOut 0.3s ease-out forwards',
+            animation: `feedbackFadeOut ${feedbackIcon === '✓' ? '1s' : '0.3s'} ease-out forwards`,
             color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
             textShadow: '0 2px 8px rgba(0,0,0,0.3)',
             pointerEvents: 'none',
@@ -57,44 +85,33 @@ export default function Quiz({
           100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
         }
       `}</style>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '6px',
-        }}
-      >
+      <div style={{ marginBottom: '10px' }}>
         <p
           style={{
-            margin: 0,
+            margin: '0 0 8px',
             fontWeight: 'bold',
-            fontSize: '14px',
+            fontSize: '13px',
             color: '#666',
           }}
         >
-          Question {step + 1} of {total}
+          Question {step + 1}
         </p>
-        <div className={quizStyles.progressTrack}>
-          <div
-            className={quizStyles.progressFill}
+        <h2 className={quizStyles.englishPrompt}>{promptNode}</h2>
+        <p className={quizStyles.thaiPrompt}>{thaiQuestion || '\u00a0'}</p>
+        {answeredCorrectly && (
+          <p
             style={{
-              backgroundColor: THEME_COLOR,
-              width: `${(step / total) * 100}%`,
+              margin: '6px 0 0',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              color: '#2e7d32',
             }}
-          />
-        </div>
+          >
+            ✓ Correct! +moves unlocked
+          </p>
+        )}
       </div>
-      <h2 className={quizStyles.englishPrompt}>{challenge.prompt}</h2>
-      <p className={quizStyles.thaiPrompt}>{thaiQuestion || '\u00a0'}</p>
-      <div
-        style={{
-          display: 'flex',
-          gap: '10px',
-          flexDirection: 'column',
-          marginTop: '10px',
-        }}
-      >
+      <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         {challenge.options.map((option, idx) => (
           <button
             key={`${option}-${idx}`}
@@ -123,6 +140,6 @@ export default function Quiz({
           </button>
         ))}
       </div>
-    </article>
+    </div>
   );
 }
