@@ -14,7 +14,6 @@ const THEME_COLOR = '#305b0f';
 type QuizProps = {
   challenge: Challenge;
   step: number;
-  total: number;
   selectedIndex: number | null;
   feedbackIcon: '✓' | '✗' | null;
   onAnswer: (challenge: Challenge, pickedIndex: number) => void;
@@ -23,7 +22,6 @@ type QuizProps = {
 export default function Quiz({
   challenge,
   step,
-  total,
   selectedIndex,
   feedbackIcon,
   onAnswer,
@@ -59,35 +57,17 @@ export default function Quiz({
           100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
         }
       `}</style>
-      <div style={{ marginBottom: '20px' }}>
-        <div
+      <div style={{ marginBottom: '10px' }}>
+        <p
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '25px',
+            margin: '0 0 8px',
+            fontWeight: 'bold',
+            fontSize: '13px',
+            color: '#666',
           }}
         >
-          <p
-            style={{
-              margin: 0,
-              fontWeight: 'bold',
-              fontSize: '14px',
-              color: '#666',
-            }}
-          >
-            Question {step + 1} of {total}
-          </p>
-          <div className={quizStyles.progressTrack}>
-            <div
-              className={quizStyles.progressFill}
-              style={{
-                backgroundColor: THEME_COLOR,
-                width: `${(step / total) * 100}%`,
-              }}
-            />
-          </div>
-        </div>
+          Question {step + 1}
+        </p>
         <h2 className={quizStyles.englishPrompt}>{challenge.prompt}</h2>
         <p className={quizStyles.thaiPrompt}>{thaiQuestion || '\u00a0'}</p>
       </div>

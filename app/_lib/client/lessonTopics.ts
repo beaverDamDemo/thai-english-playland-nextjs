@@ -15,7 +15,7 @@ const topicsByArea: Record<LessonArea, string[]> = {
     'cashier - exchange chips by answering questions',
   ],
   pattaya: [
-    'match-3 candy board - practice questions, then swap candies to match and score',
+    'match-3 candy board - answer questions to earn moves and score multipliers, reach 500 points to win',
     'match-3 icon board - practice questions, then swap icons to match and score',
     'tank shooting - answer questions to earn shots, destroy tanks to win',
     'naval battle - fire torpedoes at the ship carrying the correct answer',

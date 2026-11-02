@@ -1,4 +1,20 @@
 .page {
+  --pg-bg-a: #dcefc8;
+  --pg-bg-b: #8fc268;
+  --pg-bg-c: #305b0f;
+  --pg-panel: #f1f8e6;
+  --pg-ink: #1b2a10;
+  --pg-accent: #305b0f;
+  --pg-accent-2: #4d7f1d;
+  --pg-card-bg: #ffffff;
+  --pg-card-border: rgba(48, 91, 15, 0.25);
+  --pg-stat-bg: #ffffff;
+  --pg-stat-border: rgba(48, 91, 15, 0.3);
+  --pg-progress-track: rgba(48, 91, 15, 0.2);
+  --pg-board-bg: rgba(48, 91, 15, 0.22);
+  --pg-tile-border: rgba(48, 91, 15, 0.3);
+  --pg-tile-shadow: rgba(27, 42, 16, 0.25);
+  --pg-footer-link-bg: #305b0f;
   min-height: 100vh;
   padding: 12px;
   color: var(--pg-ink);
@@ -96,7 +112,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #f97316, #ea580c, #0369a1);
+  background: linear-gradient(90deg, #a3d977, #4d7f1d, #305b0f);
   transition: width 280ms ease;
 }
 
@@ -311,9 +327,97 @@
 
 .swapHint {
   margin-top: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+  min-height: 2.4em;
   font-size: clamp(0.75rem, 1.6vw, 0.85rem);
   opacity: 0.92;
+  text-align: center;
+}
+
+.goalBar {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+}
+
+.goalChip,
+.goalChipBad {
+  background: var(--pg-stat-bg);
+  border: 2px solid var(--pg-stat-border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.goalChipBad {
+  border-color: #ef4444;
+}
+
+.goalChipWarn {
+  border-color: #ef4444;
+  animation: movesWarn 0.9s ease-in-out infinite;
+}
+
+.goalChipHot {
+  border-color: #305b0f;
+  background: #d9f0bd;
+}
+
+@keyframes movesWarn {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.playGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.playGrid > * {
+  flex: 1 1 300px;
+  min-width: 0;
+}
+
+.questionCard {
+  background: #fff;
+  color: #111827;
+  padding: 14px;
+  border-radius: 12px;
+  max-width: 520px;
+  box-sizing: border-box;
+  border: 3px solid #305b0f;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.questionHint {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  color: #305b0f;
+  font-weight: 700;
+}
+
+.stars {
+  font-size: 2rem;
+  margin: 4px 0 10px;
+  text-align: center;
+}
+
+.unlockBanner {
+  margin: 10px 0 0;
+  font-weight: 800;
+  color: var(--pg-good);
   text-align: center;
 }
 

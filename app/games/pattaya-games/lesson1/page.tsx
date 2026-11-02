@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   recordAnswer,
   resetStreak,
@@ -14,11 +14,21 @@ import styles from './Lesson1.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type Challenge } from './Quiz';
 
-type Phase = 'practice' | 'play' | 'apply' | 'done';
+type Phase = 'play' | 'done';
 
 const BOARD_SIZE = 6;
+const TARGET_SCORE = 500; // points needed to finish the level
+const MIN_CORRECT = 3; // correct answers needed to finish the level
+const START_MOVES = 10;
+const MOVES_PER_CORRECT = 2;
+const STREAK_BONUS_EVERY = 3; // every Nth correct answer in a row gives +1 move
+
+function streakMultiplier(streak: number): number {
+  if (streak >= 6) return 3;
+  if (streak >= 3) return 2;
+  return 1;
+}
 const CANDIES = ['🍒', '🍋', '🍇', '🍉', '🍍', '🥥'];
-const LESSONS_MIN_PASS = 3;
 
 const practiceChallenges: Challenge[] = [
   {
@@ -75,6 +85,8 @@ const applyChallenges: Challenge[] = [
     answer: 2,
   },
 ];
+
+const QUESTIONS: Challenge[] = [...practiceChallenges, ...applyChallenges];
 
 function randomCandy() {
   return CANDIES[Math.floor(Math.random() * CANDIES.length)];
@@ -167,11 +179,13 @@ function detectMatches(board: string[][]): Set<string> {
 function clearAutoMatches(input: string[][]) {
   const board = cloneBoard(input);
   let totalCleared = 0;
+  let chains = 0;
 
   while (true) {
     const matches = detectMatches(board);
-    if (matches.size === 0) return { board, cleared: totalCleared };
+    if (matches.size === 0) return { board, cleared: totalCleared, chains };
 
+    chains += 1;
     totalCleared += matches.size;
     matches.forEach((key) => {
       const [r, c] = key.split('-').map(Number);
@@ -192,21 +206,21 @@ function clearAutoMatches(input: string[][]) {
 }
 
 function PattayaLesson1PageContent() {
-  const [phase, setPhase] = useState<Phase>('practice');
-  const [practiceStep, setPracticeStep] = useState(0);
-  const [applyStep, setApplyStep] = useState(0);
+  const [phase, setPhase] = useState<Phase>('play');
+  const [qIndex, setQIndex] = useState(0);
   const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [attemptRecorded, setAttemptRecorded] = useState(false);
 
   const [learningCorrect, setLearningCorrect] = useState(0);
   const [learningWrong, setLearningWrong] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [stars, setStars] = useState(0);
 
   const [board, setBoard] = useState<string[][]>(() => makeBoard());
   const [selectedTile, setSelectedTile] = useState<[number, number] | null>(
     null,
   );
-  const [movesLeft, setMovesLeft] = useState(8);
+  const [movesLeft, setMovesLeft] = useState(START_MOVES);
   const [playPoints, setPlayPoints] = useState(0);
   const [playActionText, setPlayActionText] = useState(
     'Match 3+ candies to earn points!',
@@ -215,28 +229,19 @@ function PattayaLesson1PageContent() {
   const [cascadingTiles, setCascadingTiles] = useState<Set<string>>(new Set());
   const [swappingTiles, setSwappingTiles] = useState<Set<string>>(new Set());
 
-  const totalLearningTasks = practiceChallenges.length + applyChallenges.length;
-  const progressPercent = useMemo(() => {
-    const learningUnits = practiceStep + applyStep + (phase === 'done' ? 1 : 0);
-    const totalUnits = totalLearningTasks + 1 + (phase === 'done' ? 1 : 0);
-    return Math.min(100, Math.round((learningUnits / totalUnits) * 100));
-  }, [practiceStep, applyStep, phase, totalLearningTasks]);
+  const multiplier = streakMultiplier(streak);
+  const progressPercent = Math.min(
+    100,
+    Math.round((playPoints / TARGET_SCORE) * 100),
+  );
 
-  function recordAttemptIfNeeded() {
-    if (attemptRecorded) return;
-    setAttemptRecorded(true);
-  }
-
-  function persistProgress() {
-    const earnedMoves = Math.max(1, Math.floor(playPoints / 120));
-    const passed = learningCorrect >= LESSONS_MIN_PASS;
-
+  function persistProgress(points: number) {
     void saveProgressDelta('pattaya', {
       correct_answers: learningCorrect,
       wrong_answers: learningWrong,
       quiz_attempts: learningCorrect + learningWrong,
-      total_moves_earned: earnedMoves,
-      unlocked_lessons: passed ? 2 : undefined,
+      total_moves_earned: Math.max(1, Math.floor(points / 120)),
+      unlocked_lessons: 2,
     });
   }
 
@@ -245,15 +250,54 @@ function PattayaLesson1PageContent() {
     pingLessonOpen('pattaya');
   }, []);
 
+  // Finish the level once the score goal and the minimum correct answers are met
+  useEffect(() => {
+    if (phase !== 'play') return;
+    if (playPoints < TARGET_SCORE || learningCorrect < MIN_CORRECT) return;
+    if (
+      animatingTiles.size > 0 ||
+      cascadingTiles.size > 0 ||
+      swappingTiles.size > 0
+    )
+      return;
+
+    const id = window.setTimeout(() => {
+      setStars(learningWrong <= 1 ? 3 : learningWrong <= 4 ? 2 : 1);
+      persistProgress(playPoints);
+      if (learningWrong === 0) reportPerfectLesson();
+      setPhase('done');
+    }, 600);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    phase,
+    playPoints,
+    learningCorrect,
+    animatingTiles,
+    cascadingTiles,
+    swappingTiles,
+  ]);
+
   function handleChallengeAnswer(challenge: Challenge, pickedIndex: number) {
     if (selectedIndex !== null) return;
     const isCorrect = pickedIndex === challenge.answer;
     recordAnswer(isCorrect);
-    recordAttemptIfNeeded();
+
     if (isCorrect) {
+      const nextStreak = streak + 1;
+      const bonus = nextStreak % STREAK_BONUS_EVERY === 0 ? 1 : 0;
+      const earned = MOVES_PER_CORRECT + bonus;
       setLearningCorrect((v) => v + 1);
+      setStreak(nextStreak);
+      setMovesLeft((v) => v + earned);
+      setPlayActionText(
+        `Correct! +${earned} moves${bonus ? ' (streak bonus!)' : ''}`,
+      );
     } else {
       setLearningWrong((v) => v + 1);
+      setStreak(0);
+      setMovesLeft((v) => Math.max(0, v - 1));
+      setPlayActionText('Wrong answer: -1 move and your streak is reset.');
     }
     setFeedbackIcon(isCorrect ? '✓' : '✗');
     setSelectedIndex(pickedIndex);
@@ -262,31 +306,7 @@ function PattayaLesson1PageContent() {
       () => {
         setFeedbackIcon(null);
         setSelectedIndex(null);
-        if (phase === 'practice') {
-          const next = practiceStep + 1;
-          if (next >= practiceChallenges.length) {
-            setPhase('play');
-            return;
-          }
-          setPracticeStep(next);
-          return;
-        }
-
-        if (phase === 'apply') {
-          const next = applyStep + 1;
-          if (next >= applyChallenges.length) {
-            persistProgress();
-            if (
-              learningCorrect ===
-              practiceChallenges.length + applyChallenges.length
-            ) {
-              reportPerfectLesson();
-            }
-            setPhase('done');
-            return;
-          }
-          setApplyStep(next);
-        }
+        setQIndex((v) => v + 1);
       },
       isCorrect ? 300 : 800,
     );
@@ -320,6 +340,7 @@ function PattayaLesson1PageContent() {
 
     // Step 1: commit swap to board and show swap animation
     setBoard(draft);
+    setMovesLeft((v) => Math.max(0, v - 1));
     setSwappingTiles(new Set([`${fr}-${fc}`, `${tr}-${tc}`]));
     setPlayActionText('Swapping...');
 
@@ -330,11 +351,11 @@ function PattayaLesson1PageContent() {
       const resolved = clearAutoMatches(draft);
       const needsReshuffle = !hasAvailableMove(resolved.board);
       const boardAfterResolve = needsReshuffle ? makeBoard() : resolved.board;
-      const gained = resolved.cleared * 10;
-      const nextMoves = movesLeft - 1;
+      const chainBonus = Math.max(0, resolved.chains - 1) * 25;
+      const gained = resolved.cleared * 10 * multiplier + chainBonus;
 
       setAnimatingTiles(found);
-      setPlayActionText(`Matched ${found.size} blocks!`);
+      setPlayActionText(`Matched ${found.size} candies!`);
 
       // Animate matched tiles then cascade
       window.setTimeout(() => {
@@ -352,21 +373,17 @@ function PattayaLesson1PageContent() {
       }, 620);
 
       window.setTimeout(() => {
-        setMovesLeft(nextMoves);
         setPlayPoints((v) => v + gained);
+        const extras = [
+          multiplier > 1 ? `x${multiplier} streak` : '',
+          resolved.chains > 1 ? `${resolved.chains}x chain!` : '',
+          needsReshuffle ? 'board reshuffled' : '',
+        ].filter(Boolean);
         setPlayActionText(
-          needsReshuffle
-            ? `Great! +${gained} points. ${nextMoves} moves left. Board reshuffled.`
-            : `Great! +${gained} points. ${nextMoves} moves left.`,
+          `+${gained} points${extras.length ? ` (${extras.join(', ')})` : ''}`,
         );
         setCascadingTiles(new Set());
         setSelectedTile(null);
-
-        if (nextMoves === 0) {
-          window.setTimeout(() => {
-            setPhase('apply');
-          }, 450);
-        }
       }, 920);
     }, 280);
   }
@@ -387,8 +404,7 @@ function PattayaLesson1PageContent() {
     attemptSwap(selectedTile, [r, c]);
   }
 
-  const currentPractice = practiceChallenges[practiceStep];
-  const currentApply = applyChallenges[applyStep];
+  const currentQuestion = QUESTIONS[qIndex % QUESTIONS.length];
   const totalSessionScore = learningCorrect * 100 + playPoints;
 
   return (
@@ -406,117 +422,107 @@ function PattayaLesson1PageContent() {
             </div>
           </div>
 
-          {phase === 'practice' && (
-            <div
-              style={{
-                backgroundColor: 'white',
-                padding: '35px',
-                borderRadius: '16px',
-                width: '100%',
-                maxWidth: '520px',
-                margin: '0 auto',
-                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
-                border: '3px solid #305b0f',
-                boxSizing: 'border-box',
-              }}
-            >
-              <Quiz
-                challenge={currentPractice}
-                step={practiceStep}
-                total={practiceChallenges.length}
-                selectedIndex={selectedIndex}
-                feedbackIcon={feedbackIcon}
-                onAnswer={handleChallengeAnswer}
-              />
-            </div>
-          )}
-
           {phase === 'play' && (
-            <article className={styles.card}>
-              <span className={styles.phaseBadge}>PLAY</span>
-              <h2 className={styles.prompt}>
-                Match 3+ candies in 8 moves ({movesLeft} moves left)
-              </h2>
-              <div className={styles.boardWrap}>
-                <div className={styles.board}>
-                  {board.map((row, r) =>
-                    row.map((tile, c) => {
-                      const isSelected =
-                        selectedTile?.[0] === r && selectedTile?.[1] === c;
-                      const tileKey = `${r}-${c}`;
-                      const isMatched = animatingTiles.has(tileKey);
-                      const isCascading = cascadingTiles.has(tileKey);
-                      const isSwapping = swappingTiles.has(tileKey);
-                      return (
-                        <button
-                          key={tileKey}
-                          type="button"
-                          className={`${styles.tile} ${
-                            isSelected ? styles.selectedTile : ''
-                          } ${isMatched ? styles.tileMatched : ''} ${
-                            isCascading ? styles.tileCascade : ''
-                          } ${isSwapping ? styles.tileSwap : ''}`}
-                          onClick={() => onTileClick(r, c)}
-                          disabled={isMatched || isCascading || isSwapping}
-                        >
-                          {tile}
-                        </button>
-                      );
-                    }),
-                  )}
-                </div>
-                <p className={styles.swapHint}>{playActionText}</p>
-                <button
-                  type="button"
-                  className={styles.secondaryButton}
-                  onClick={() => {
-                    setBoard(makeBoard());
-                    setSelectedTile(null);
-                    setPlayActionText('Board refreshed. Keep matching.');
-                  }}
-                  disabled={movesLeft === 0}
+            <>
+              <div className={styles.goalBar}>
+                <span className={styles.goalChip} title="Score goal">
+                  ⭐ {Math.min(playPoints, TARGET_SCORE)}/{TARGET_SCORE}
+                </span>
+                <span className={styles.goalChip} title="Correct answers needed">
+                  ✅ {Math.min(learningCorrect, MIN_CORRECT)}/{MIN_CORRECT}
+                </span>
+                <span className={styles.goalChipBad} title="Wrong answers">
+                  ❌ {learningWrong}
+                </span>
+                <span
+                  className={`${styles.goalChip} ${movesLeft <= 2 ? styles.goalChipWarn : ''}`}
+                  title="Moves left"
                 >
-                  Shuffle Board
-                </button>
+                  👆 {movesLeft}
+                </span>
+                <span
+                  className={`${styles.goalChip} ${multiplier > 1 ? styles.goalChipHot : ''}`}
+                  title="Answer streak and score multiplier"
+                >
+                  🔥 {streak} · x{multiplier}
+                </span>
               </div>
-            </article>
-          )}
 
-          {phase === 'apply' && (
-            <div
-              style={{
-                backgroundColor: 'white',
-                padding: '35px',
-                borderRadius: '16px',
-                width: '100%',
-                maxWidth: '520px',
-                margin: '0 auto',
-                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
-                border: '3px solid #305b0f',
-                boxSizing: 'border-box',
-              }}
-            >
-              <Quiz
-                challenge={currentApply}
-                step={applyStep}
-                total={applyChallenges.length}
-                selectedIndex={selectedIndex}
-                feedbackIcon={feedbackIcon}
-                onAnswer={handleChallengeAnswer}
-              />
-            </div>
+              <div className={styles.playGrid}>
+                <article className={styles.card}>
+                  <div className={styles.boardWrap}>
+                    <div className={styles.board}>
+                      {board.map((row, r) =>
+                        row.map((tile, c) => {
+                          const isSelected =
+                            selectedTile?.[0] === r && selectedTile?.[1] === c;
+                          const tileKey = `${r}-${c}`;
+                          const isMatched = animatingTiles.has(tileKey);
+                          const isCascading = cascadingTiles.has(tileKey);
+                          const isSwapping = swappingTiles.has(tileKey);
+                          return (
+                            <button
+                              key={tileKey}
+                              type="button"
+                              className={`${styles.tile} ${
+                                isSelected ? styles.selectedTile : ''
+                              } ${isMatched ? styles.tileMatched : ''} ${
+                                isCascading ? styles.tileCascade : ''
+                              } ${isSwapping ? styles.tileSwap : ''}`}
+                              onClick={() => onTileClick(r, c)}
+                              disabled={
+                                movesLeft === 0 ||
+                                isMatched ||
+                                isCascading ||
+                                isSwapping
+                              }
+                            >
+                              {tile}
+                            </button>
+                          );
+                        }),
+                      )}
+                    </div>
+                    <p className={styles.swapHint}>
+                      {movesLeft === 0
+                        ? 'Out of moves! Answer a question to get more.'
+                        : playActionText}
+                    </p>
+                  </div>
+                </article>
+
+                <div className={styles.questionCard}>
+                  <p className={styles.questionHint}>
+                    Answer correctly: +{MOVES_PER_CORRECT} moves. Every{' '}
+                    {STREAK_BONUS_EVERY} in a row: +1 move and a higher score
+                    multiplier.
+                  </p>
+                  <Quiz
+                    challenge={currentQuestion}
+                    step={qIndex}
+                    selectedIndex={selectedIndex}
+                    feedbackIcon={feedbackIcon}
+                    onAnswer={handleChallengeAnswer}
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           {phase === 'done' && (
             <article className={styles.card}>
               <span className={styles.phaseBadge}>COMPLETE</span>
               <h2 className={styles.prompt}>Lesson 1 Complete</h2>
+              <p className={styles.stars}>
+                {'⭐'.repeat(stars)}
+                {'☆'.repeat(3 - stars)}
+              </p>
               <p className={styles.help}>
-                Learning accuracy: {learningCorrect}/
-                {practiceChallenges.length + applyChallenges.length}
+                Correct answers: {learningCorrect} · Wrong: {learningWrong}
               </p>
               <p className={styles.help}>Play points: {playPoints}</p>
               <p className={styles.help}>Total score: {totalSessionScore}</p>
+              <p className={styles.unlockBanner}>🔓 Lesson 2 unlocked!</p>
               <div className={styles.footerButtons}>
                 <Link href="/games/pattaya-games" className={styles.footerLink}>
                   <Image
