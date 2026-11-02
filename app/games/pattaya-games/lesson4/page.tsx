@@ -1,8 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import {
   recordAnswer,
   resetStreak,
@@ -10,1134 +10,621 @@ import {
 } from '@/app/_lib/client/quizStreak';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
-import MazeHeader from '../../maze/_components/MazeHeader';
-import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
 import styles from './Lesson4.module.css';
+import MazeHeader from '../../maze/_components/MazeHeader';
+import Quiz, { type Challenge } from './Quiz';
 
-const TOTAL_QUESTIONS = 8;
-const MAX_HP = 3;
-const PASS_SCORE = 5;
+type Phase = 'play' | 'done';
 
-type Question = {
-  q: string;
-  options: string[];
-  answer: number;
+const BOARD_SIZE = 6;
+const TARGET_SCORE = 500; // points needed to finish the level
+const MIN_CORRECT = 3; // correct answers needed to finish the level
+const START_MOVES = 0; // moves are earned only by answering correctly
+const MOVES_PER_CORRECT = 3;
+const STREAK_BONUS_EVERY = 3; // every Nth correct answer in a row gives +1 move
+const COMBO_WINDOW_MS = 4000; // time to make the next match and keep the combo
+const COMBO_MAX_BONUS = 2; // extra score multiplier gained from the combo
+
+function streakMultiplier(streak: number): number {
+  if (streak >= 6) return 3;
+  if (streak >= 3) return 2;
+  return 1;
+}
+const CANDIES = ['🍒', '🍋', '🍇', '🍉', '🍍', '🥥'];
+
+const CANDY_GLOW: Record<string, string> = {
+  '🍒': '#e11d48',
+  '🍋': '#facc15',
+  '🍇': '#9333ea',
+  '🍉': '#22c55e',
+  '🍍': '#f59e0b',
+  '🥥': '#a8a29e',
 };
 
-const QUESTIONS: Question[] = [
+const practiceChallenges: Challenge[] = [
   {
-    q: 'The captain _____ the order yesterday.',
-    options: ['gave', 'gives', 'giving', 'given'],
-    answer: 0,
+    prompt: 'She is _______ to music right now.',
+    options: ['listen', 'listens', 'listening', 'listened'],
+    answer: 2,
   },
   {
-    q: 'Our fleet _____ across the Pacific in 1942.',
-    options: ['sailed', 'sails', 'sailing', 'sail'],
-    answer: 0,
+    prompt: 'I want _______ a movie tonight.',
+    options: ['watching', 'watch', 'watches', 'to watching'],
+    answer: 1,
   },
   {
-    q: 'The torpedo _____ the enemy hull.',
-    options: ['struck', 'strike', 'striking', 'strikes'],
-    answer: 0,
+    prompt: 'They enjoy _______ on the beach.',
+    options: ['walk', 'walked', 'to walk', 'walking'],
+    answer: 3,
   },
   {
-    q: 'Sailors _____ trained for many months.',
-    options: ['were', 'was', 'is', 'are being'],
-    answer: 0,
+    prompt: 'He seems _______ today.',
+    options: ['tiring', 'tire', 'tired', 'to tiring'],
+    answer: 2,
   },
   {
-    q: 'The destroyer _____ at full speed now.',
-    options: ['is moving', 'move', 'moved', 'moves'],
-    answer: 0,
-  },
-  {
-    q: 'The submarine _____ beneath the waves.',
-    options: ['hid', 'hides', 'hide', 'hidden'],
-    answer: 0,
-  },
-  {
-    q: 'They _____ a message to headquarters.',
-    options: ['sent', 'send', 'sending', 'sends'],
-    answer: 0,
-  },
-  {
-    q: 'The convoy _____ safely across the Atlantic.',
-    options: ['arrived', 'arrives', 'arriving', 'arrive'],
-    answer: 0,
-  },
-  {
-    q: 'Enemy planes _____ spotted on the horizon.',
-    options: ['were', 'was', 'is', 'be'],
-    answer: 0,
-  },
-  {
-    q: 'The admiral _____ a brave decision.',
-    options: ['made', 'makes', 'making', 'make'],
-    answer: 0,
-  },
-  {
-    q: 'The crew _____ the deck every morning.',
-    options: ['cleaned', 'cleans', 'cleaning', 'clean'],
-    answer: 0,
-  },
-  {
-    q: 'We _____ the harbor at dawn.',
-    options: ['left', 'leave', 'leaving', 'leaves'],
-    answer: 0,
-  },
-  {
-    q: 'The ship _____ in the storm.',
-    options: ['rocked', 'rocks', 'rocking', 'rock'],
-    answer: 0,
-  },
-  {
-    q: 'My friend _____ in the navy.',
-    options: ['served', 'serves', 'serving', 'serve'],
-    answer: 0,
-  },
-  {
-    q: 'The radar _____ an object nearby.',
-    options: ['detected', 'detects', 'detecting', 'detect'],
-    answer: 0,
-  },
-  {
-    q: 'They _____ the enemy ship.',
-    options: ['chased', 'chase', 'chasing', 'chases'],
-    answer: 0,
-  },
-  {
-    q: 'The waves _____ against the hull.',
-    options: ['crashed', 'crash', 'crashing', 'crashes'],
-    answer: 0,
-  },
-  {
-    q: 'He _____ the wheel carefully.',
-    options: ['steered', 'steers', 'steering', 'steer'],
-    answer: 0,
-  },
-  {
-    q: 'The sailors _____ their uniforms.',
-    options: ['wore', 'wear', 'wearing', 'wears'],
-    answer: 0,
-  },
-  {
-    q: 'We _____ the island yesterday.',
-    options: ['visited', 'visit', 'visiting', 'visits'],
-    answer: 0,
-  },
-  {
-    q: 'The engine _____ loudly.',
-    options: ['roared', 'roars', 'roaring', 'roar'],
-    answer: 0,
-  },
-  {
-    q: 'She _____ to the captain.',
-    options: ['spoke', 'speaks', 'speaking', 'speak'],
-    answer: 0,
-  },
-  {
-    q: 'The flag _____ in the wind.',
-    options: ['waved', 'waves', 'waving', 'wave'],
-    answer: 0,
-  },
-  {
-    q: 'They _____ the supplies.',
-    options: ['loaded', 'load', 'loading', 'loads'],
-    answer: 0,
-  },
-  {
-    q: 'The boat _____ slowly.',
-    options: ['moved', 'moves', 'moving', 'move'],
-    answer: 0,
-  },
-  {
-    q: 'I _____ the map.',
-    options: ['checked', 'check', 'checking', 'checks'],
-    answer: 0,
-  },
-  {
-    q: 'The sailors _____ hard work.',
-    options: ['did', 'do', 'doing', 'does'],
-    answer: 0,
-  },
-  {
-    q: 'We _____ the port.',
-    options: ['entered', 'enter', 'entering', 'enters'],
-    answer: 0,
-  },
-  {
-    q: 'The ship _____ on time.',
-    options: ['departed', 'departs', 'departing', 'depart'],
-    answer: 0,
-  },
-  {
-    q: 'They _____ the rescue mission.',
-    options: ['completed', 'complete', 'completing', 'completes'],
-    answer: 0,
-  },
-  {
-    q: 'The captain _____ the crew.',
-    options: ['led', 'leads', 'leading', 'lead'],
-    answer: 0,
-  },
-  {
-    q: 'We _____ at sea.',
-    options: ['sailed', 'sail', 'sailing', 'sails'],
-    answer: 0,
-  },
-  {
-    q: 'The sun _____ over the ocean.',
-    options: ['rose', 'rises', 'rising', 'rise'],
-    answer: 0,
-  },
-  {
-    q: 'He _____ the anchor.',
-    options: ['dropped', 'drops', 'dropping', 'drop'],
-    answer: 0,
-  },
-  {
-    q: 'The birds _____ around the ship.',
-    options: ['flew', 'fly', 'flying', 'flies'],
-    answer: 0,
-  },
-  {
-    q: 'They _____ the cargo.',
-    options: ['unloaded', 'unload', 'unloading', 'unloads'],
-    answer: 0,
-  },
-  {
-    q: 'The water _____ cold.',
-    options: ['felt', 'feels', 'feeling', 'feel'],
-    answer: 0,
-  },
-  {
-    q: 'Our ship _____ heavy fire last night.',
-    options: ['took', 'takes', 'taking', 'take'],
-    answer: 0,
+    prompt: 'We are _______ for the bus.',
+    options: ['wait', 'waited', 'waits', 'waiting'],
+    answer: 3,
   },
 ];
 
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-type Ship = {
-  id: number;
-  label: string;
-  isCorrect: boolean;
-  // x in % of arena width (center of ship)
-  x: number;
-  // y in % of arena height (sea band ~45-90%)
-  y: number;
-  // speed in % per second
-  vx: number;
-  exploding: boolean;
-  flagColor: string;
-  fadingOut: boolean;
-  fadingIn: boolean;
-  questionIndex: number;
-  scaleX: number; // 1 for right, -1 for left (horizontal flip)
-};
-
-type Effect = {
-  id: number;
-  type: 'explosion' | 'splash';
-  x: number;
-  y: number;
-};
-
-type Torpedo = {
-  id: number;
-  // start position (player ship muzzle, in %)
-  startX: number;
-  startY: number;
-  // current position (in %)
-  x: number;
-  y: number;
-  // target position
-  targetX: number;
-  targetY: number;
-  shipId: number;
-};
-
-const SHIP_LANES = [50, 62, 74, 86]; // y% positions in arena (sea band)
-
-const FLAG_COLORS = [
-  '#ff6b6b', // red
-  '#4ecdc4', // teal
-  '#ffe66d', // yellow
-  '#95e1d3', // mint
-  '#f38181', // coral
-  '#aa96da', // purple
-  '#fcbad3', // pink
-  '#a8d8ea', // sky blue
+const applyChallenges: Challenge[] = [
+  {
+    prompt: 'I need _______ my English skills. (It is necessary for me.)',
+    options: ['improving', 'improve', 'improved', 'to improving'],
+    answer: 1,
+  },
+  {
+    prompt: 'She avoided _______ to him after the argument.',
+    options: ['talk', 'to talk', 'talked', 'talking'],
+    answer: 3,
+  },
+  {
+    prompt: 'He decided _______ a new job.',
+    options: ['finding', 'find', 'to find', 'finded'],
+    answer: 2,
+  },
+  {
+    prompt: 'Look! The children are _______ in the park.',
+    options: ['play', 'played', 'plays', 'playing'],
+    answer: 3,
+  },
+  {
+    prompt: 'My hobby is _______ old maps.',
+    options: ['collect', 'to collect', 'collecting', 'collected'],
+    answer: 2,
+  },
 ];
 
-function spawnShipsForQuestion(q: Question, questionIndex: number): Ship[] {
-  // Build an indexed copy then shuffle so each option becomes a ship
-  const items = q.options.map((opt, i) => ({ opt, isCorrect: i === q.answer }));
-  const shuffled = shuffle(items);
-  // Assign each ship a lane (shuffled), starting offscreen-ish positions
-  const lanes = shuffle([...SHIP_LANES]);
-  const flagColor = FLAG_COLORS[questionIndex % FLAG_COLORS.length];
-  return shuffled.map((item, i) => {
-    // Direction: alternate so ships travel both ways for visual variety
-    const dir = i % 2 === 0 ? -1 : 1;
-    const startX =
-      dir === 1 ? -10 + Math.random() * 10 : 110 - Math.random() * 10;
-    return {
-      id: Date.now() + i + Math.floor(Math.random() * 1000),
-      label: item.opt,
-      isCorrect: item.isCorrect,
-      x: startX,
-      y: lanes[i] ?? 50 + i * 12,
-      vx: dir * (4 + Math.random() * 3), // 4-7% per second
-      exploding: false,
-      flagColor,
-      fadingOut: false,
-      fadingIn: true,
-      questionIndex,
-      scaleX: dir === 1 ? 1 : -1,
-    };
-  });
+const QUESTIONS: Challenge[] = [...practiceChallenges, ...applyChallenges];
+
+function randomCandy() {
+  return CANDIES[Math.floor(Math.random() * CANDIES.length)];
 }
 
-function PattayaLesson4Content() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const timestamp = searchParams.get('t');
-  const [questions, setQuestions] = useState<Question[]>(QUESTIONS);
-  const [qIndex, setQIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [hp, setHp] = useState(MAX_HP);
-  const [ships, setShips] = useState<Ship[]>([]);
-  const shipsRef = useRef<Ship[]>([]);
-  const [effects, setEffects] = useState<Effect[]>([]);
-  const [torpedoes, setTorpedoes] = useState<Torpedo[]>([]);
-  const torpedoesRef = useRef<Torpedo[]>([]);
-  const [phase, setPhase] = useState<'play' | 'done'>('play');
-  const [savedProgress, setSavedProgress] = useState(false);
-  const [totalCorrect, setTotalCorrect] = useState(0);
-  const [totalWrong, setTotalWrong] = useState(0);
-  const arenaRef = useRef<HTMLDivElement>(null);
-  const animRef = useRef<number | null>(null);
-  const lastTimeRef = useRef<number | null>(null);
-  const effectIdRef = useRef(0);
-  const torpedoIdRef = useRef(0);
-  const lockedRef = useRef(false); // prevent double-tap during torpedo travel
+function hasAvailableMove(board: string[][]) {
+  for (let r = 0; r < BOARD_SIZE; r += 1) {
+    for (let c = 0; c < BOARD_SIZE; c += 1) {
+      const candidates: Array<[number, number]> = [];
+      if (r + 1 < BOARD_SIZE) candidates.push([r + 1, c]);
+      if (c + 1 < BOARD_SIZE) candidates.push([r, c + 1]);
 
-  const currentQ = questions[qIndex];
-  const thaiQ = useThaiQuestion(currentQ?.q ?? '');
-
-  const handlePlayAgain = useCallback(() => {
-    router.push(`/games/pattaya-games/lesson4?t=${Date.now()}`);
-  }, [router]);
-
-  // Shuffle questions on client only to avoid hydration mismatch
-  useEffect(() => {
-    setTimeout(() => {
-      setQuestions(shuffle(QUESTIONS).slice(0, TOTAL_QUESTIONS));
-      resetStreak();
-      pingLessonOpen('pattaya');
-    }, 0);
-  }, []);
-
-  // Reset game when timestamp changes (play again button)
-  useEffect(() => {
-    if (timestamp) {
-      setTimeout(() => {
-        setQIndex(0);
-        setScore(0);
-        setHp(MAX_HP);
-        setShips([]);
-        shipsRef.current = [];
-        setEffects([]);
-        setTorpedoes([]);
-        torpedoesRef.current = [];
-        setPhase('play');
-        setSavedProgress(false);
-        setTotalCorrect(0);
-        setTotalWrong(0);
-        lockedRef.current = false;
-      }, 0);
-    }
-  }, [timestamp]);
-
-  // Spawn ships when question changes
-  useEffect(() => {
-    if (phase !== 'play' || !currentQ) return;
-    // On first question, clear ships. On subsequent questions, keep old ships navigating
-    const isFirstQuestion = qIndex === 0;
-    setTimeout(() => {
-      const fresh = spawnShipsForQuestion(currentQ, qIndex);
-      shipsRef.current = isFirstQuestion
-        ? fresh
-        : [...shipsRef.current, ...fresh];
-      setShips([...shipsRef.current]);
-      lockedRef.current = false;
-      // Remove fadingIn state after animation
-      setTimeout(() => {
-        shipsRef.current = shipsRef.current.map((s) => ({
-          ...s,
-          fadingIn: false,
-        }));
-        setShips([...shipsRef.current]);
-      }, 500);
-    }, 300);
-  }, [qIndex, phase, currentQ]);
-
-  // Animation loop: move ships + torpedoes
-  useEffect(() => {
-    if (phase !== 'play') return;
-
-    function tick(time: number) {
-      if (lastTimeRef.current === null) lastTimeRef.current = time;
-      const dt = Math.min(time - lastTimeRef.current, 100) / 1000;
-      lastTimeRef.current = time;
-
-      // Move ships (bounce current question ships at edges, remove previous question ships when off-screen)
-      const nextShips = shipsRef.current
-        .map((s) => {
-          if (s.exploding) return s;
-          let nx = s.x + s.vx * dt;
-          let nvx = s.vx;
-          let nscaleX = s.scaleX;
-
-          // Bounce current question ships at edges
-          if (s.questionIndex === qIndex) {
-            if (nx > 115) {
-              nx = 115;
-              nvx = -Math.abs(s.vx);
-              nscaleX = -1;
-            } else if (nx < -15) {
-              nx = -15;
-              nvx = Math.abs(s.vx);
-              nscaleX = 1;
-            }
-          }
-          return { ...s, x: nx, vx: nvx, scaleX: nscaleX };
-        })
-        .filter((s) => {
-          // Always keep current question ships
-          if (s.questionIndex === qIndex) return true;
-          // Remove previous question ships when off-screen
-          return s.x > -20 && s.x < 120;
-        });
-      shipsRef.current = nextShips;
-      setShips([...nextShips]);
-
-      // Move torpedoes toward target
-      const TORP_SPEED = 90; // % per second
-      const nextTorps: Torpedo[] = [];
-      for (const t of torpedoesRef.current) {
-        const dx = t.targetX - t.x;
-        const dy = t.targetY - t.y;
-        const dist = Math.hypot(dx, dy);
-        const step = TORP_SPEED * dt;
-        if (dist <= step) {
-          // arrived — handled by setTimeout that fired with the torpedo
-          continue;
+      for (const [nr, nc] of candidates) {
+        const draft = cloneBoard(board);
+        const temp = draft[r][c];
+        draft[r][c] = draft[nr][nc];
+        draft[nr][nc] = temp;
+        if (detectMatches(draft).size > 0) {
+          return true;
         }
-        nextTorps.push({
-          ...t,
-          x: t.x + (dx / dist) * step,
-          y: t.y + (dy / dist) * step,
-        });
       }
-      torpedoesRef.current = nextTorps;
-      setTorpedoes([...nextTorps]);
-
-      animRef.current = requestAnimationFrame(tick);
     }
+  }
 
-    animRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-      lastTimeRef.current = null;
-    };
-  }, [phase, qIndex]);
+  return false;
+}
 
-  const spawnEffect = useCallback(
-    (type: Effect['type'], x: number, y: number) => {
-      const id = effectIdRef.current++;
-      setEffects((prev) => [...prev, { id, type, x, y }]);
-      window.setTimeout(() => {
-        setEffects((prev) => prev.filter((e) => e.id !== id));
-      }, 700);
+function makeBoard() {
+  // Keep trying until we get a clean board with at least one valid move.
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const board: string[][] = Array.from({ length: BOARD_SIZE }, () =>
+      Array.from({ length: BOARD_SIZE }, () => randomCandy()),
+    );
+    const cleaned = clearAutoMatches(board).board;
+    if (hasAvailableMove(cleaned)) {
+      return cleaned;
+    }
+  }
+
+  // Fallback safety path.
+  return clearAutoMatches(
+    Array.from({ length: BOARD_SIZE }, () =>
+      Array.from({ length: BOARD_SIZE }, () => randomCandy()),
+    ),
+  ).board;
+}
+
+// Deterministic board for the first render so server and client HTML match;
+// the random board is swapped in after mount.
+function makeStaticBoard() {
+  return Array.from({ length: BOARD_SIZE }, (_, r) =>
+    Array.from(
+      { length: BOARD_SIZE },
+      (_, c) => CANDIES[(r + c * 2) % CANDIES.length],
+    ),
+  );
+}
+
+function cloneBoard(board: string[][]) {
+  return board.map((row) => [...row]);
+}
+
+function areAdjacent(a: [number, number], b: [number, number]) {
+  const dr = Math.abs(a[0] - b[0]);
+  const dc = Math.abs(a[1] - b[1]);
+  return dr + dc === 1;
+}
+
+function detectMatches(board: string[][]): Set<string> {
+  const matched = new Set<string>();
+
+  for (let r = 0; r < BOARD_SIZE; r += 1) {
+    let c = 0;
+    while (c < BOARD_SIZE) {
+      const value = board[r][c];
+      let end = c + 1;
+      while (end < BOARD_SIZE && board[r][end] === value) end += 1;
+      if (value && end - c >= 3) {
+        for (let k = c; k < end; k += 1) matched.add(`${r}-${k}`);
+      }
+      c = end;
+    }
+  }
+
+  for (let c = 0; c < BOARD_SIZE; c += 1) {
+    let r = 0;
+    while (r < BOARD_SIZE) {
+      const value = board[r][c];
+      let end = r + 1;
+      while (end < BOARD_SIZE && board[end][c] === value) end += 1;
+      if (value && end - r >= 3) {
+        for (let k = r; k < end; k += 1) matched.add(`${k}-${c}`);
+      }
+      r = end;
+    }
+  }
+
+  return matched;
+}
+
+function clearAutoMatches(input: string[][]) {
+  const board = cloneBoard(input);
+  let totalCleared = 0;
+  let chains = 0;
+
+  while (true) {
+    const matches = detectMatches(board);
+    if (matches.size === 0) return { board, cleared: totalCleared, chains };
+
+    chains += 1;
+    totalCleared += matches.size;
+    matches.forEach((key) => {
+      const [r, c] = key.split('-').map(Number);
+      board[r][c] = '';
+    });
+
+    for (let c = 0; c < BOARD_SIZE; c += 1) {
+      const column: string[] = [];
+      for (let r = BOARD_SIZE - 1; r >= 0; r -= 1) {
+        if (board[r][c]) column.push(board[r][c]);
+      }
+
+      for (let r = BOARD_SIZE - 1, idx = 0; r >= 0; r -= 1, idx += 1) {
+        board[r][c] = idx < column.length ? column[idx] : randomCandy();
+      }
+    }
+  }
+}
+
+function PattayaLesson4PageContent() {
+  const [phase, setPhase] = useState<Phase>('play');
+  const [qIndex, setQIndex] = useState(0);
+  const [feedbackIcon, setFeedbackIcon] = useState<'✓' | '✗' | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const [learningCorrect, setLearningCorrect] = useState(0);
+  const [learningWrong, setLearningWrong] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [stars, setStars] = useState(0);
+
+  const [board, setBoard] = useState<string[][]>(() => makeStaticBoard());
+  const [selectedTile, setSelectedTile] = useState<[number, number] | null>(
+    null,
+  );
+  const [movesLeft, setMovesLeft] = useState(START_MOVES);
+  const [playPoints, setPlayPoints] = useState(0);
+  const [playActionText, setPlayActionText] = useState(
+    '🔒 Answer a question correctly to unlock moves!',
+  );
+  const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
+  const [cascadingTiles, setCascadingTiles] = useState<Set<string>>(new Set());
+  const [swappingTiles, setSwappingTiles] = useState<Set<string>>(new Set());
+  const [combo, setCombo] = useState(0);
+  const [comboKey, setComboKey] = useState(0);
+  const comboRef = useRef(0);
+  const comboTimerRef = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (comboTimerRef.current !== null)
+        window.clearTimeout(comboTimerRef.current);
     },
     [],
   );
 
-  const handleShipTap = useCallback(
-    (ship: Ship) => {
-      if (lockedRef.current || phase !== 'play' || ship.exploding) return;
-      lockedRef.current = true;
+  function startComboWindow(next: number) {
+    comboRef.current = next;
+    setCombo(next);
+    setComboKey((k) => k + 1);
+    if (comboTimerRef.current !== null)
+      window.clearTimeout(comboTimerRef.current);
+    comboTimerRef.current = window.setTimeout(() => {
+      comboRef.current = 0;
+      setCombo(0);
+    }, COMBO_WINDOW_MS);
+  }
 
-      // Fire torpedo from player ship (bottom center) to ship position
-      const tid = torpedoIdRef.current++;
-      const torp: Torpedo = {
-        id: tid,
-        startX: 50,
-        startY: 95,
-        x: 50,
-        y: 95,
-        targetX: ship.x,
-        targetY: ship.y + 8, // Aim at center of lower half of ship
-        shipId: ship.id,
-      };
-      torpedoesRef.current = [...torpedoesRef.current, torp];
-      setTorpedoes([...torpedoesRef.current]);
-
-      // Calculate flight time based on distance
-      const dx = ship.x - 50;
-      const dy = ship.y + 8 - 95; // Use targetY for distance calculation
-      const dist = Math.hypot(dx, dy);
-      const flightMs = (dist / 90) * 1000; // 90% per second
-
-      window.setTimeout(() => {
-        // Remove torpedo
-        torpedoesRef.current = torpedoesRef.current.filter((t) => t.id !== tid);
-        setTorpedoes([...torpedoesRef.current]);
-
-        // Resolve hit using current ship position
-        const liveShip = shipsRef.current.find((s) => s.id === ship.id);
-        const hitX = liveShip?.x ?? ship.x;
-        const hitY = (liveShip?.y ?? ship.y) + 8; // Match torpedo targetY offset
-
-        if (ship.isCorrect) {
-          recordAnswer(true);
-          setTotalCorrect((v) => v + 1);
-          setScore((v) => v + 1);
-          spawnEffect('explosion', hitX, hitY);
-          // Mark ship exploding, keep other ships navigating
-          shipsRef.current = shipsRef.current.map((s) =>
-            s.id === ship.id ? { ...s, exploding: true } : s,
-          );
-          setShips([...shipsRef.current]);
-
-          window.setTimeout(() => {
-            // Move to next question or finish
-            if (qIndex + 1 >= questions.length) {
-              setPhase('done');
-            } else {
-              setQIndex((v) => v + 1);
-            }
-          }, 700);
-        } else {
-          recordAnswer(false);
-          setTotalWrong((v) => v + 1);
-          spawnEffect('splash', hitX, hitY);
-          setHp((v) => {
-            const next = v - 1;
-            if (next <= 0) {
-              window.setTimeout(() => setPhase('done'), 400);
-            }
-            return next;
-          });
-          // Allow another shot
-          window.setTimeout(() => {
-            lockedRef.current = false;
-          }, 300);
-        }
-      }, flightMs);
-    },
-    [phase, qIndex, questions.length, spawnEffect],
+  const multiplier = streakMultiplier(streak);
+  const progressPercent = Math.min(
+    100,
+    Math.round((playPoints / TARGET_SCORE) * 100),
   );
 
-  // Persist progress on done
+  function persistProgress(points: number) {
+    void saveProgressDelta('pattaya', {
+      correct_answers: learningCorrect,
+      wrong_answers: learningWrong,
+      quiz_attempts: learningCorrect + learningWrong,
+      total_moves_earned: Math.max(1, Math.floor(points / 120)),
+      unlocked_lessons: 5,
+    });
+  }
+
   useEffect(() => {
-    if (phase !== 'done' || savedProgress) return;
-    setTimeout(() => {
-      setSavedProgress(true);
-      const passed = score >= PASS_SCORE;
-      if (totalWrong === 0 && totalCorrect > 0) reportPerfectLesson();
+    resetStreak();
+    pingLessonOpen('pattaya');
+    setBoard(makeBoard());
+  }, []);
 
-      void saveProgressDelta('pattaya', {
-        correct_answers: totalCorrect,
-        wrong_answers: totalWrong,
-        quiz_attempts: totalCorrect + totalWrong,
-        total_moves_earned: score,
-        unlocked_lessons: passed ? 5 : undefined,
-      });
-    }, 0);
-  }, [phase, savedProgress, score, totalCorrect, totalWrong]);
+  // Finish the level once the score goal and the minimum correct answers are met
+  useEffect(() => {
+    if (phase !== 'play') return;
+    if (playPoints < TARGET_SCORE || learningCorrect < MIN_CORRECT) return;
+    if (
+      animatingTiles.size > 0 ||
+      cascadingTiles.size > 0 ||
+      swappingTiles.size > 0
+    )
+      return;
 
-  if (phase === 'done') {
-    const passed = score >= PASS_SCORE;
-    return (
-      <div className={styles.page}>
-        <div className={styles.container}>
-          <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
-          <div className={styles.endPanel}>
-            <h2 className={styles.endTitle}>
-              {passed ? 'Mission Accomplished!' : 'Mission Failed'}
-            </h2>
-            <p className={styles.endText}>
-              You sank {score} / {questions.length} enemy ships.
-            </p>
-            <p className={styles.endText}>
-              {passed
-                ? 'Lesson 5 unlocked!'
-                : `Sink at least ${PASS_SCORE} ships to advance.`}
-            </p>
-            <div className={styles.btnRow}>
-              <button onClick={handlePlayAgain} className={styles.btn}>
-                Play again
-              </button>
-              <Link
-                href="/games/pattaya-games"
-                className={`${styles.btn} ${styles.btnSecondary}`}
-              >
-                Back to map
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+    const id = window.setTimeout(() => {
+      setStars(learningWrong <= 1 ? 3 : learningWrong <= 4 ? 2 : 1);
+      persistProgress(playPoints);
+      if (learningWrong === 0) reportPerfectLesson();
+      setPhase('done');
+    }, 600);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    phase,
+    playPoints,
+    learningCorrect,
+    animatingTiles,
+    cascadingTiles,
+    swappingTiles,
+  ]);
+
+  function handleChallengeAnswer(challenge: Challenge, pickedIndex: number) {
+    if (selectedIndex !== null) return;
+    const isCorrect = pickedIndex === challenge.answer;
+    recordAnswer(isCorrect);
+
+    if (isCorrect) {
+      const nextStreak = streak + 1;
+      const bonus = nextStreak % STREAK_BONUS_EVERY === 0 ? 1 : 0;
+      const earned = MOVES_PER_CORRECT + bonus;
+      setLearningCorrect((v) => v + 1);
+      setStreak(nextStreak);
+      setMovesLeft((v) => v + earned);
+      setPlayActionText(
+        `Correct! +${earned} moves${bonus ? ' (streak bonus!)' : ''}`,
+      );
+    } else {
+      setLearningWrong((v) => v + 1);
+      setStreak(0);
+      setMovesLeft((v) => Math.max(0, v - 1));
+      setPlayActionText('Wrong answer: -1 move and your streak is reset.');
+    }
+    setFeedbackIcon(isCorrect ? '✓' : '✗');
+    setSelectedIndex(pickedIndex);
+
+    window.setTimeout(
+      () => {
+        setFeedbackIcon(null);
+        setSelectedIndex(null);
+        setQIndex((v) => v + 1);
+      },
+      isCorrect ? 1200 : 800,
     );
   }
 
+  function attemptSwap(from: [number, number], to: [number, number]) {
+    if (
+      !areAdjacent(from, to) ||
+      movesLeft <= 0 ||
+      animatingTiles.size > 0 ||
+      cascadingTiles.size > 0 ||
+      swappingTiles.size > 0
+    ) {
+      setPlayActionText('Pick neighboring candies only.');
+      return;
+    }
+
+    const draft = cloneBoard(board);
+    const [fr, fc] = from;
+    const [tr, tc] = to;
+    const temp = draft[fr][fc];
+    draft[fr][fc] = draft[tr][tc];
+    draft[tr][tc] = temp;
+
+    const found = detectMatches(draft);
+    if (found.size === 0) {
+      setPlayActionText('No match from that move. Try a different swap.');
+      setSelectedTile(null);
+      return;
+    }
+
+    // Step 1: commit swap to board and show swap animation
+    setBoard(draft);
+    setMovesLeft((v) => Math.max(0, v - 1));
+    setSwappingTiles(new Set([`${fr}-${fc}`, `${tr}-${tc}`]));
+    setPlayActionText('Swapping...');
+
+    window.setTimeout(() => {
+      // Step 2: swap animation done — start match flash
+      setSwappingTiles(new Set());
+
+      const resolved = clearAutoMatches(draft);
+      const needsReshuffle = !hasAvailableMove(resolved.board);
+      const boardAfterResolve = needsReshuffle ? makeBoard() : resolved.board;
+      const chainBonus = Math.max(0, resolved.chains - 1) * 25;
+      const nextCombo = comboRef.current + 1;
+      const comboBonus = Math.min(COMBO_MAX_BONUS, nextCombo - 1);
+      const gained =
+        resolved.cleared * 10 * (multiplier + comboBonus) + chainBonus;
+
+      setAnimatingTiles(found);
+      setPlayActionText(`Matched ${found.size} candies!`);
+
+      // Animate matched tiles then cascade
+      window.setTimeout(() => {
+        setBoard(boardAfterResolve);
+        const cascading = new Set<string>();
+        for (let c = 0; c < BOARD_SIZE; c += 1) {
+          for (let r = BOARD_SIZE - 1; r >= 0; r -= 1) {
+            if (boardAfterResolve[r][c]) {
+              cascading.add(`${r}-${c}`);
+            }
+          }
+        }
+        setCascadingTiles(cascading);
+        setAnimatingTiles(new Set());
+      }, 620);
+
+      window.setTimeout(() => {
+        setPlayPoints((v) => v + gained);
+        startComboWindow(nextCombo);
+        const extras = [
+          multiplier > 1 ? `x${multiplier} streak` : '',
+          comboBonus > 0 ? `+${comboBonus} combo` : '',
+          resolved.chains > 1 ? `${resolved.chains}x chain!` : '',
+          needsReshuffle ? 'board reshuffled' : '',
+        ].filter(Boolean);
+        setPlayActionText(
+          `+${gained} points${extras.length ? ` (${extras.join(', ')})` : ''}`,
+        );
+        setCascadingTiles(new Set());
+        setSelectedTile(null);
+      }, 920);
+    }, 280);
+  }
+
+  function onTileClick(r: number, c: number) {
+    if (phase !== 'play') return;
+    if (
+      animatingTiles.size > 0 ||
+      cascadingTiles.size > 0 ||
+      swappingTiles.size > 0
+    )
+      return;
+    if (!selectedTile) {
+      setSelectedTile([r, c]);
+      setPlayActionText('Select a second tile to swap.');
+      return;
+    }
+    attemptSwap(selectedTile, [r, c]);
+  }
+
+  const currentQuestion = QUESTIONS[qIndex % QUESTIONS.length];
+  const totalSessionScore = learningCorrect * 100 + playPoints;
+
   return (
-    <div className={styles.page}>
+    <main className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
+        <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
 
-        <div className={styles.hud}>
-          <span className={styles.chip}>
-            Q {qIndex + 1}/{questions.length}
-          </span>
-          <span className={styles.chipGood}>🎯 {score}</span>
-          <span className={styles.chipBad}>
-            {'❤️'.repeat(hp)}
-            {'🤍'.repeat(MAX_HP - hp)}
-          </span>
-        </div>
-
-        <div ref={arenaRef} className={styles.arena}>
-          <div className={styles.questionPanel}>
-            <p className={styles.questionText}>{currentQ?.q}</p>
-            {thaiQ && thaiQ !== currentQ?.q && (
-              <p className={styles.questionThai}>{thaiQ}</p>
-            )}
-          </div>
-
-          <div className={styles.sky}>
-            <div
-              className={styles.cloud}
-              style={{ left: '15%', top: '15%', width: 60, height: 18 }}
-            />
-            <div
-              className={styles.cloud}
-              style={{ left: '60%', top: '8%', width: 80, height: 22 }}
-            />
-            <div
-              className={styles.cloud}
-              style={{ left: '80%', top: '22%', width: 50, height: 14 }}
-            />
-          </div>
-          <div className={styles.sea}>
-            <div className={styles.wave} style={{ top: '20%' }} />
-            <div className={styles.wave} style={{ top: '45%' }} />
-            <div className={styles.wave} style={{ top: '70%' }} />
-            <div className={styles.wave} style={{ top: '90%' }} />
-          </div>
-
-          {/* Enemy ships */}
-          {ships.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              className={`${styles.ship} ${
-                s.exploding ? styles.shipExploding : ''
-              } ${s.fadingIn ? styles.shipFadingIn : ''} ${
-                s.fadingOut ? styles.shipFadingOut : ''
-              }`}
-              style={{
-                left: `${s.x}%`,
-                top: `${s.y}%`,
-                transform: `translate(-50%, -50%) scaleX(${s.scaleX})`,
-              }}
-              onClick={() => handleShipTap(s)}
-              disabled={s.exploding || s.fadingOut}
-              aria-label={`Enemy ship ${s.label}`}
-            >
-              <span
-                className={styles.shipLabel}
-                style={{ transform: `scaleX(${s.scaleX})` }}
-              >
-                {s.label}
-              </span>
-              <svg
-                className={styles.shipHull}
-                viewBox="-10 0 100 38"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Wake effect behind ship */}
-                <ellipse
-                  cx="45"
-                  cy="34"
-                  rx="35"
-                  ry="4"
-                  fill="rgba(255,255,255,0.15)"
-                />
-                {/* Main hull with pointed bow */}
-                <polygon
-                  points="-10,28 4,20 86,20 80,32 10,32"
-                  fill="#4a3a2a"
-                  stroke="#2a1a0a"
-                  strokeWidth="1"
-                />
-                {/* Hull plating lines */}
-                <line
-                  x1="2"
-                  y1="24"
-                  x2="80"
-                  y2="24"
-                  stroke="#3a2a1a"
-                  strokeWidth="0.5"
-                />
-                <line
-                  x1="6"
-                  y1="28"
-                  x2="78"
-                  y2="28"
-                  stroke="#3a2a1a"
-                  strokeWidth="0.5"
-                />
-                {/* Deck */}
-                <rect x="8" y="18" width="74" height="4" fill="#5a4a3a" />
-                <rect x="8" y="18" width="74" height="1" fill="#6a5a4a" />
-                {/* Superstructure/bridge */}
-                <rect
-                  x="28"
-                  y="12"
-                  width="34"
-                  height="8"
-                  fill="#3a3a3a"
-                  stroke="#2a2a2a"
-                  strokeWidth="0.5"
-                />
-                <rect x="30" y="10" width="30" height="4" fill="#4a4a4a" />
-                {/* Bridge windows */}
-                <rect x="32" y="13" width="4" height="3" fill="#7ab8d8" />
-                <rect x="38" y="13" width="4" height="3" fill="#7ab8d8" />
-                <rect x="44" y="13" width="4" height="3" fill="#7ab8d8" />
-                <rect x="50" y="13" width="4" height="3" fill="#7ab8d8" />
-                {/* Bridge roof */}
-                <polygon points="28,12 62,12 58,10 32,10" fill="#3a3a3a" />
-                {/* Forward funnel */}
-                <rect x="22" y="6" width="6" height="12" fill="#2a2a2a" />
-                <rect x="21" y="5" width="8" height="2" fill="#3a3a3a" />
-                {/* Funnel smoke */}
-                <ellipse
-                  cx="25"
-                  cy="4"
-                  rx="8"
-                  ry="3"
-                  fill="#5a5a5a"
-                  opacity="0.4"
-                />
-                <ellipse
-                  cx="27"
-                  cy="2"
-                  rx="6"
-                  ry="2"
-                  fill="#6a6a6a"
-                  opacity="0.3"
-                />
-                {/* Aft funnel */}
-                <rect x="62" y="6" width="6" height="12" fill="#2a2a2a" />
-                <rect x="61" y="5" width="8" height="2" fill="#3a3a3a" />
-                {/* Funnel smoke */}
-                <ellipse
-                  cx="65"
-                  cy="4"
-                  rx="8"
-                  ry="3"
-                  fill="#5a5a5a"
-                  opacity="0.4"
-                />
-                <ellipse
-                  cx="67"
-                  cy="2"
-                  rx="6"
-                  ry="2"
-                  fill="#6a6a6a"
-                  opacity="0.3"
-                />
-                {/* Forward turret */}
-                <circle
-                  cx="18"
-                  cy="15"
-                  r="5"
-                  fill="#3a3a3a"
-                  stroke="#2a2a2a"
-                  strokeWidth="0.5"
-                />
-                <rect x="14" y="14" width="8" height="3" fill="#2a2a2a" />
-                <rect x="16" y="11" width="10" height="2" fill="#2a2a2a" />
-                {/* Aft turret */}
-                <circle
-                  cx="72"
-                  cy="15"
-                  r="5"
-                  fill="#3a3a3a"
-                  stroke="#2a2a2a"
-                  strokeWidth="0.5"
-                />
-                <rect x="68" y="14" width="8" height="3" fill="#2a2a2a" />
-                <rect x="64" y="11" width="10" height="2" fill="#2a2a2a" />
-                {/* Mast */}
-                <line
-                  x1="45"
-                  y1="12"
-                  x2="45"
-                  y2="2"
-                  stroke="#2a1a0a"
-                  strokeWidth="1"
-                />
-                {/* Antenna */}
-                <line
-                  x1="45"
-                  y1="2"
-                  x2="50"
-                  y2="0"
-                  stroke="#2a1a0a"
-                  strokeWidth="0.5"
-                />
-                <circle cx="50" cy="0" r="1" fill="#3a3a3a" />
-                {/* Stern flag */}
-                <line
-                  x1="12"
-                  y1="18"
-                  x2="12"
-                  y2="8"
-                  stroke="#2a1a0a"
-                  strokeWidth="0.5"
-                />
-                <polygon points="12,8 5,10 12,12" fill={s.flagColor} />
-                {/* Bow detail - pointed prow with shadow */}
-                <polygon points="-10,28 4,20 8,22 4,30 -6,30" fill="#3a2a1a" />
-                {/* Bow wave / spray */}
-                <path
-                  d="M -14,30 Q -8,26 0,28 Q -4,32 -14,30 Z"
-                  fill="rgba(255,255,255,0.55)"
-                />
-                <ellipse
-                  cx="-10"
-                  cy="31"
-                  rx="6"
-                  ry="1.4"
-                  fill="rgba(255,255,255,0.4)"
-                />
-                {/* Waterline highlight */}
-                <line
-                  x1="4"
-                  y1="32"
-                  x2="86"
-                  y2="32"
-                  stroke="#7ab8d8"
-                  strokeWidth="0.5"
-                  opacity="0.4"
-                />
-              </svg>
-            </button>
-          ))}
-
-          {/* Torpedoes in flight */}
-          {torpedoes.map((t) => (
-            <div
-              key={t.id}
-              className={styles.torpedo}
-              style={{ left: `${t.x}%`, top: `${t.y}%` }}
-            />
-          ))}
-
-          {/* Effects */}
-          {effects.map((e) =>
-            e.type === 'explosion' ? (
-              <svg
-                key={e.id}
-                className={styles.explosion}
-                style={{ left: `${e.x}%`, top: `${e.y}%` }}
-                viewBox="0 0 90 90"
-              >
-                <circle cx="45" cy="45" r="40" fill="#ff8a3a" opacity="0.8" />
-                <circle cx="45" cy="45" r="28" fill="#ffd166" opacity="0.9" />
-                <circle cx="45" cy="45" r="14" fill="#fff" />
-              </svg>
-            ) : (
+        <section className={styles.panel}>
+          <div className={styles.progress}>
+            <div className={styles.progressTrack}>
               <div
-                key={e.id}
-                className={styles.splash}
-                style={{ left: `${e.x}%`, top: `${e.y}%` }}
+                className={styles.progressFill}
+                style={{ width: `${progressPercent}%` }}
               />
-            ),
+            </div>
+          </div>
+
+          {phase === 'play' && (
+            <>
+              <div className={styles.goalBar}>
+                <span className={styles.goalChip} title="Score goal">
+                  ⭐ {Math.min(playPoints, TARGET_SCORE)}/{TARGET_SCORE}
+                </span>
+                <span className={styles.goalChip} title="Correct answers needed">
+                  ✅ {Math.min(learningCorrect, MIN_CORRECT)}/{MIN_CORRECT}
+                </span>
+                <span className={styles.goalChipBad} title="Wrong answers">
+                  ❌ {learningWrong}
+                </span>
+                <span
+                  className={`${styles.goalChip} ${movesLeft <= 2 ? styles.goalChipWarn : ''}`}
+                  title="Moves left"
+                >
+                  👆 {movesLeft}
+                </span>
+                <span
+                  className={`${styles.goalChip} ${multiplier > 1 ? styles.goalChipHot : ''}`}
+                  title="Answer streak and score multiplier"
+                >
+                  🔥 {streak} · x{multiplier}
+                </span>
+              </div>
+
+              <div
+                className={`${styles.comboWrap} ${combo > 0 ? styles.comboOn : ''}`}
+                title="Match again before the bar runs out to build a combo"
+              >
+                <span className={styles.comboLabel}>
+                  {combo > 0 ? `⚡ Combo x${combo}` : '⚡ Combo'}
+                </span>
+                <div className={styles.comboTrack}>
+                  {combo > 0 && (
+                    <div
+                      key={comboKey}
+                      className={styles.comboFill}
+                      style={{ animationDuration: `${COMBO_WINDOW_MS}ms` }}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className={styles.playGrid}>
+                <article className={styles.card}>
+                  <div className={styles.boardWrap}>
+                    <div
+                      className={`${styles.board} ${
+                        movesLeft === 0 ? styles.boardLocked : ''
+                      }`}
+                    >
+                      {board.map((row, r) =>
+                        row.map((tile, c) => {
+                          const isSelected =
+                            selectedTile?.[0] === r && selectedTile?.[1] === c;
+                          const tileKey = `${r}-${c}`;
+                          const isMatched = animatingTiles.has(tileKey);
+                          const isCascading = cascadingTiles.has(tileKey);
+                          const isSwapping = swappingTiles.has(tileKey);
+                          return (
+                            <button
+                              key={tileKey}
+                              type="button"
+                              className={`${styles.tile} ${
+                                isSelected ? styles.selectedTile : ''
+                              } ${isMatched ? styles.tileMatched : ''} ${
+                                isCascading ? styles.tileCascade : ''
+                              } ${isSwapping ? styles.tileSwap : ''}`}
+                              onClick={() => onTileClick(r, c)}
+                              style={
+                                {
+                                  '--glow': CANDY_GLOW[tile] ?? '#f97316',
+                                } as React.CSSProperties
+                              }
+                              disabled={
+                                movesLeft === 0 ||
+                                isMatched ||
+                                isCascading ||
+                                isSwapping
+                              }
+                            >
+                              {tile}
+                            </button>
+                          );
+                        }),
+                      )}
+                    </div>
+                    <p className={styles.swapHint}>
+                      {movesLeft === 0
+                        ? '🔒 Board locked. Answer a question correctly to earn moves!'
+                        : playActionText}
+                    </p>
+                  </div>
+                </article>
+
+                <div className={styles.questionCard}>
+                  <p className={styles.questionHint}>
+                    Answer correctly: +{MOVES_PER_CORRECT} moves. Every{' '}
+                    {STREAK_BONUS_EVERY} in a row: +1 move and a higher score
+                    multiplier.
+                  </p>
+                  <Quiz
+                    challenge={currentQuestion}
+                    step={qIndex}
+                    selectedIndex={selectedIndex}
+                    feedbackIcon={feedbackIcon}
+                    onAnswer={handleChallengeAnswer}
+                  />
+                </div>
+              </div>
+            </>
           )}
 
-          {/* Player destroyer at bottom */}
-          <svg
-            className={styles.playerShip}
-            viewBox="0 0 120 54"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {/* Wake effect */}
-            <ellipse
-              cx="60"
-              cy="52"
-              rx="50"
-              ry="3"
-              fill="rgba(255,255,255,0.2)"
-            />
-            {/* Main hull */}
-            <polygon
-              points="6,28 114,28 106,48 14,48"
-              fill="#3a4a5a"
-              stroke="#1a2a3a"
-              strokeWidth="1"
-            />
-            {/* Hull plating lines */}
-            <line
-              x1="14"
-              y1="34"
-              x2="106"
-              y2="34"
-              stroke="#2a3a4a"
-              strokeWidth="0.5"
-            />
-            <line
-              x1="16"
-              y1="40"
-              x2="104"
-              y2="40"
-              stroke="#2a3a4a"
-              strokeWidth="0.5"
-            />
-            <line
-              x1="18"
-              y1="44"
-              x2="102"
-              y2="44"
-              stroke="#2a3a4a"
-              strokeWidth="0.5"
-            />
-            {/* Deck */}
-            <rect x="10" y="26" width="100" height="4" fill="#4a5a6a" />
-            <rect x="10" y="26" width="100" height="1" fill="#5a6a7a" />
-            {/* Bow flare */}
-            <polygon points="6,28 14,28 14,48 6,42" fill="#2a3a4a" />
-            {/* Superstructure/bridge */}
-            <rect
-              x="38"
-              y="16"
-              width="44"
-              height="12"
-              fill="#2a2a3a"
-              stroke="#1a1a2a"
-              strokeWidth="0.5"
-            />
-            <rect x="40" y="14" width="40" height="4" fill="#3a3a4a" />
-            {/* Bridge windows */}
-            <rect x="42" y="17" width="5" height="4" fill="#8ac8e8" />
-            <rect x="50" y="17" width="5" height="4" fill="#8ac8e8" />
-            <rect x="58" y="17" width="5" height="4" fill="#8ac8e8" />
-            <rect x="66" y="17" width="5" height="4" fill="#8ac8e8" />
-            <rect x="74" y="17" width="5" height="4" fill="#8ac8e8" />
-            {/* Bridge roof */}
-            <polygon points="38,16 82,16 78,14 42,14" fill="#2a2a3a" />
-            {/* Bridge detail */}
-            <rect x="45" y="20" width="30" height="2" fill="#1a1a2a" />
-            {/* Forward funnel */}
-            <rect x="28" y="8" width="8" height="18" fill="#1a1a2a" />
-            <rect x="26" y="6" width="12" height="3" fill="#2a2a3a" />
-            {/* Funnel top band */}
-            <rect x="27" y="7" width="10" height="1" fill="#3a3a4a" />
-            {/* Funnel smoke */}
-            <ellipse
-              cx="32"
-              cy="5"
-              rx="10"
-              ry="4"
-              fill="#5a5a6a"
-              opacity="0.35"
-            />
-            <ellipse
-              cx="35"
-              cy="2"
-              rx="8"
-              ry="3"
-              fill="#6a6a7a"
-              opacity="0.25"
-            />
-            {/* Aft funnel */}
-            <rect x="84" y="8" width="8" height="18" fill="#1a1a2a" />
-            <rect x="82" y="6" width="12" height="3" fill="#2a2a3a" />
-            {/* Funnel top band */}
-            <rect x="83" y="7" width="10" height="1" fill="#3a3a4a" />
-            {/* Funnel smoke */}
-            <ellipse
-              cx="88"
-              cy="5"
-              rx="10"
-              ry="4"
-              fill="#5a5a6a"
-              opacity="0.35"
-            />
-            <ellipse
-              cx="91"
-              cy="2"
-              rx="8"
-              ry="3"
-              fill="#6a6a7a"
-              opacity="0.25"
-            />
-            {/* Forward turret (main) */}
-            <circle
-              cx="24"
-              cy="20"
-              r="7"
-              fill="#1a1a2a"
-              stroke="#0a0a1a"
-              strokeWidth="0.5"
-            />
-            <rect x="16" y="18" width="16" height="4" fill="#0a0a1a" />
-            <rect x="18" y="14" width="14" height="3" fill="#0a0a1a" />
-            {/* Forward secondary turret */}
-            <circle
-              cx="38"
-              cy="22"
-              r="4"
-              fill="#1a1a2a"
-              stroke="#0a0a1a"
-              strokeWidth="0.5"
-            />
-            <rect x="34" y="20" width="8" height="2" fill="#0a0a1a" />
-            <rect x="35" y="17" width="8" height="2" fill="#0a0a1a" />
-            {/* Aft turret (main) */}
-            <circle
-              cx="96"
-              cy="20"
-              r="7"
-              fill="#1a1a2a"
-              stroke="#0a0a1a"
-              strokeWidth="0.5"
-            />
-            <rect x="88" y="18" width="16" height="4" fill="#0a0a1a" />
-            <rect x="88" y="14" width="14" height="3" fill="#0a0a1a" />
-            {/* Aft secondary turret */}
-            <circle
-              cx="82"
-              cy="22"
-              r="4"
-              fill="#1a1a2a"
-              stroke="#0a0a1a"
-              strokeWidth="0.5"
-            />
-            <rect x="78" y="20" width="8" height="2" fill="#0a0a1a" />
-            <rect x="77" y="17" width="8" height="2" fill="#0a0a1a" />
-            {/* Main mast */}
-            <line
-              x1="60"
-              y1="16"
-              x2="60"
-              y2="2"
-              stroke="#1a2a3a"
-              strokeWidth="1.5"
-            />
-            {/* Mast top platform */}
-            <rect x="56" y="2" width="8" height="2" fill="#2a3a4a" />
-            {/* Radar antenna */}
-            <ellipse cx="60" cy="1" rx="6" ry="1" fill="#1a1a2a" />
-            <line
-              x1="54"
-              y1="1"
-              x2="66"
-              y2="1"
-              stroke="#2a2a3a"
-              strokeWidth="0.5"
-            />
-            {/* Forward mast */}
-            <line
-              x1="30"
-              y1="16"
-              x2="30"
-              y2="4"
-              stroke="#1a2a3a"
-              strokeWidth="1"
-            />
-            <rect x="28" y="3" width="4" height="2" fill="#2a3a4a" />
-            {/* Aft mast */}
-            <line
-              x1="90"
-              y1="16"
-              x2="90"
-              y2="4"
-              stroke="#1a2a3a"
-              strokeWidth="1"
-            />
-            <rect x="88" y="3" width="4" height="2" fill="#2a3a4a" />
-            {/* Flag staff */}
-            <line
-              x1="60"
-              y1="14"
-              x2="60"
-              y2="0"
-              stroke="#1a2a3a"
-              strokeWidth="0.8"
-            />
-            {/* Naval ensign */}
-            <polygon points="60,0 70,3 60,6" fill="#3366cc" />
-            <rect x="60" y="2" width="10" height="2" fill="#cc3333" />
-            {/* Deck detail - cargo hatches */}
-            <rect x="20" y="24" width="12" height="2" fill="#3a4a5a" rx="1" />
-            <rect x="36" y="24" width="12" height="2" fill="#3a4a5a" rx="1" />
-            <rect x="52" y="24" width="16" height="2" fill="#3a4a5a" rx="1" />
-            <rect x="72" y="24" width="12" height="2" fill="#3a4a5a" rx="1" />
-            {/* Anchor */}
-            <polygon points="12,28 16,28 16,32 12,32" fill="#4a5a6a" />
-            <line
-              x1="14"
-              y1="28"
-              x2="14"
-              y2="34"
-              stroke="#3a4a5a"
-              strokeWidth="1"
-            />
-            <circle
-              cx="14"
-              cy="35"
-              r="1.5"
-              fill="none"
-              stroke="#3a4a5a"
-              strokeWidth="0.8"
-            />
-            {/* Waterline highlight */}
-            <line
-              x1="6"
-              y1="48"
-              x2="114"
-              y2="48"
-              stroke="#8ac8e8"
-              strokeWidth="0.5"
-              opacity="0.5"
-            />
-          </svg>
-        </div>
+          {phase === 'done' && (
+            <article className={styles.card}>
+              <span className={styles.phaseBadge}>COMPLETE</span>
+              <h2 className={styles.prompt}>Lesson 4 Complete</h2>
+              <p className={styles.stars}>
+                {'⭐'.repeat(stars)}
+                {'☆'.repeat(3 - stars)}
+              </p>
+              <p className={styles.help}>
+                Correct answers: {learningCorrect} · Wrong: {learningWrong}
+              </p>
+              <p className={styles.help}>Play points: {playPoints}</p>
+              <p className={styles.help}>Total score: {totalSessionScore}</p>
+              <p className={styles.unlockBanner}>🔓 Lesson 5 unlocked!</p>
+              <div className={styles.footerButtons}>
+                <Link href="/games/pattaya-games" className={styles.footerLink}>
+                  <Image
+                    src="/assets/tinified/back.png"
+                    alt="Return to Map"
+                    width={28}
+                    height={28}
+                  />
+                  Return
+                </Link>
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={() => window.location.reload()}
+                >
+                  Replay Lesson
+                </button>
+              </div>
+            </article>
+          )}
+        </section>
       </div>
-    </div>
-  );
-}
-
-function PattayaLesson4PageContent() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <PattayaLesson4Content />
-    </Suspense>
+    </main>
   );
 }
 

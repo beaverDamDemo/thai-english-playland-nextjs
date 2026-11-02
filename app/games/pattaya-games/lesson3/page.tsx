@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   recordAnswer,
   resetStreak,
@@ -9,84 +10,210 @@ import {
 } from '@/app/_lib/client/quizStreak';
 import { pingLessonOpen, saveProgressDelta } from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
-import styles from './Lesson3.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
-import Quiz, { type VerbEntry, type QuizQuestion } from './Quiz';
+import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
+import styles from './Lesson3.module.css';
 
-const ROUND_SIZE = 4;
+const TOTAL_QUESTIONS = 8;
+const MAX_HP = 3;
+const PASS_SCORE = 5;
 
-const VERBS: VerbEntry[] = [
+type Question = {
+  q: string;
+  options: string[];
+  answer: number;
+};
+
+const QUESTIONS: Question[] = [
   {
-    base: 'Bring',
-    past: 'Brought',
-    participle: 'Brought',
-    distractors: ['Brang', 'Bringed', 'Brung', 'Broughten'],
+    q: 'The captain _____ the order yesterday.',
+    options: ['gave', 'gives', 'giving', 'given'],
+    answer: 0,
   },
   {
-    base: 'Buy',
-    past: 'Bought',
-    participle: 'Bought',
-    distractors: ['Buyed', 'Buied', 'Boughten', 'Bayed'],
+    q: 'Our fleet _____ across the Pacific in 1942.',
+    options: ['sailed', 'sails', 'sailing', 'sail'],
+    answer: 0,
   },
   {
-    base: 'Come',
-    past: 'Came',
-    participle: 'Come',
-    distractors: ['Comed', 'Camed', 'Comen', 'Cumen'],
+    q: 'The torpedo _____ the enemy hull.',
+    options: ['struck', 'strike', 'striking', 'strikes'],
+    answer: 0,
   },
   {
-    base: 'Drink',
-    past: 'Drank',
-    participle: 'Drunk',
-    distractors: ['Drinked', 'Dranken', 'Drinken', 'Dronk'],
+    q: 'Sailors _____ trained for many months.',
+    options: ['were', 'was', 'is', 'are being'],
+    answer: 0,
   },
   {
-    base: 'Give',
-    past: 'Gave',
-    participle: 'Given',
-    distractors: ['Gived', 'Gaven', 'Givven', 'Gaved'],
+    q: 'The destroyer _____ at full speed now.',
+    options: ['is moving', 'move', 'moved', 'moves'],
+    answer: 0,
   },
   {
-    base: 'Go',
-    past: 'Went',
-    participle: 'Gone',
-    distractors: ['Goed', 'Wented', 'Goned', 'Wenten'],
+    q: 'The submarine _____ beneath the waves.',
+    options: ['hid', 'hides', 'hide', 'hidden'],
+    answer: 0,
   },
   {
-    base: 'Make',
-    past: 'Made',
-    participle: 'Made',
-    distractors: ['Maked', 'Maden', 'Mayed', 'Mode'],
+    q: 'They _____ a message to headquarters.',
+    options: ['sent', 'send', 'sending', 'sends'],
+    answer: 0,
   },
   {
-    base: 'Run',
-    past: 'Ran',
-    participle: 'Run',
-    distractors: ['Runned', 'Rann', 'Ren', 'Runed'],
+    q: 'The convoy _____ safely across the Atlantic.',
+    options: ['arrived', 'arrives', 'arriving', 'arrive'],
+    answer: 0,
   },
   {
-    base: 'Say',
-    past: 'Said',
-    participle: 'Said',
-    distractors: ['Sayed', 'Sayd', 'Saided', 'Sed'],
+    q: 'Enemy planes _____ spotted on the horizon.',
+    options: ['were', 'was', 'is', 'be'],
+    answer: 0,
   },
   {
-    base: 'Sleep',
-    past: 'Slept',
-    participle: 'Slept',
-    distractors: ['Sleeped', 'Slepted', 'Slep', 'Sleepen'],
+    q: 'The admiral _____ a brave decision.',
+    options: ['made', 'makes', 'making', 'make'],
+    answer: 0,
   },
   {
-    base: 'Take',
-    past: 'Took',
-    participle: 'Taken',
-    distractors: ['Taked', 'Tooken', 'Tooked', 'Taen'],
+    q: 'The crew _____ the deck every morning.',
+    options: ['cleaned', 'cleans', 'cleaning', 'clean'],
+    answer: 0,
   },
   {
-    base: 'Think',
-    past: 'Thought',
-    participle: 'Thought',
-    distractors: ['Thinked', 'Thunk', 'Thoughten', 'Thinken'],
+    q: 'We _____ the harbor at dawn.',
+    options: ['left', 'leave', 'leaving', 'leaves'],
+    answer: 0,
+  },
+  {
+    q: 'The ship _____ in the storm.',
+    options: ['rocked', 'rocks', 'rocking', 'rock'],
+    answer: 0,
+  },
+  {
+    q: 'My friend _____ in the navy.',
+    options: ['served', 'serves', 'serving', 'serve'],
+    answer: 0,
+  },
+  {
+    q: 'The radar _____ an object nearby.',
+    options: ['detected', 'detects', 'detecting', 'detect'],
+    answer: 0,
+  },
+  {
+    q: 'They _____ the enemy ship.',
+    options: ['chased', 'chase', 'chasing', 'chases'],
+    answer: 0,
+  },
+  {
+    q: 'The waves _____ against the hull.',
+    options: ['crashed', 'crash', 'crashing', 'crashes'],
+    answer: 0,
+  },
+  {
+    q: 'He _____ the wheel carefully.',
+    options: ['steered', 'steers', 'steering', 'steer'],
+    answer: 0,
+  },
+  {
+    q: 'The sailors _____ their uniforms.',
+    options: ['wore', 'wear', 'wearing', 'wears'],
+    answer: 0,
+  },
+  {
+    q: 'We _____ the island yesterday.',
+    options: ['visited', 'visit', 'visiting', 'visits'],
+    answer: 0,
+  },
+  {
+    q: 'The engine _____ loudly.',
+    options: ['roared', 'roars', 'roaring', 'roar'],
+    answer: 0,
+  },
+  {
+    q: 'She _____ to the captain.',
+    options: ['spoke', 'speaks', 'speaking', 'speak'],
+    answer: 0,
+  },
+  {
+    q: 'The flag _____ in the wind.',
+    options: ['waved', 'waves', 'waving', 'wave'],
+    answer: 0,
+  },
+  {
+    q: 'They _____ the supplies.',
+    options: ['loaded', 'load', 'loading', 'loads'],
+    answer: 0,
+  },
+  {
+    q: 'The boat _____ slowly.',
+    options: ['moved', 'moves', 'moving', 'move'],
+    answer: 0,
+  },
+  {
+    q: 'I _____ the map.',
+    options: ['checked', 'check', 'checking', 'checks'],
+    answer: 0,
+  },
+  {
+    q: 'The sailors _____ hard work.',
+    options: ['did', 'do', 'doing', 'does'],
+    answer: 0,
+  },
+  {
+    q: 'We _____ the port.',
+    options: ['entered', 'enter', 'entering', 'enters'],
+    answer: 0,
+  },
+  {
+    q: 'The ship _____ on time.',
+    options: ['departed', 'departs', 'departing', 'depart'],
+    answer: 0,
+  },
+  {
+    q: 'They _____ the rescue mission.',
+    options: ['completed', 'complete', 'completing', 'completes'],
+    answer: 0,
+  },
+  {
+    q: 'The captain _____ the crew.',
+    options: ['led', 'leads', 'leading', 'lead'],
+    answer: 0,
+  },
+  {
+    q: 'We _____ at sea.',
+    options: ['sailed', 'sail', 'sailing', 'sails'],
+    answer: 0,
+  },
+  {
+    q: 'The sun _____ over the ocean.',
+    options: ['rose', 'rises', 'rising', 'rise'],
+    answer: 0,
+  },
+  {
+    q: 'He _____ the anchor.',
+    options: ['dropped', 'drops', 'dropping', 'drop'],
+    answer: 0,
+  },
+  {
+    q: 'The birds _____ around the ship.',
+    options: ['flew', 'fly', 'flying', 'flies'],
+    answer: 0,
+  },
+  {
+    q: 'They _____ the cargo.',
+    options: ['unloaded', 'unload', 'unloading', 'unloads'],
+    answer: 0,
+  },
+  {
+    q: 'The water _____ cold.',
+    options: ['felt', 'feels', 'feeling', 'feel'],
+    answer: 0,
+  },
+  {
+    q: 'Our ship _____ heavy fire last night.',
+    options: ['took', 'takes', 'taking', 'take'],
+    answer: 0,
   },
 ];
 
@@ -99,487 +226,231 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function makeDisractors(verb: VerbEntry, correct: string): string[] {
-  const lowerCorrect = correct.toLowerCase();
-  const pool: string[] = [];
+type Ship = {
+  id: number;
+  label: string;
+  isCorrect: boolean;
+  // x in % of arena width (center of ship)
+  x: number;
+  // y in % of arena height (sea band ~45-90%)
+  y: number;
+  // speed in % per second
+  vx: number;
+  exploding: boolean;
+  flagColor: string;
+  fadingOut: boolean;
+  fadingIn: boolean;
+  questionIndex: number;
+  scaleX: number; // 1 for right, -1 for left (horizontal flip)
+};
 
-  // The other form (past vs participle) is a strong, realistic distractor
-  // when it differs from the correct answer.
-  const otherForm = correct === verb.past ? verb.participle : verb.past;
-  if (otherForm.toLowerCase() !== lowerCorrect) {
-    pool.push(otherForm);
-  }
+type Effect = {
+  id: number;
+  type: 'explosion' | 'splash';
+  x: number;
+  y: number;
+};
 
-  // Per-verb hand-crafted plausible wrong forms (regularized, alt vowels, etc.).
-  if (verb.distractors) {
-    for (const d of verb.distractors) {
-      if (d.toLowerCase() !== lowerCorrect && !pool.includes(d)) {
-        pool.push(d);
-      }
-    }
-  }
+type Torpedo = {
+  id: number;
+  // start position (player ship muzzle, in %)
+  startX: number;
+  startY: number;
+  // current position (in %)
+  x: number;
+  y: number;
+  // target position
+  targetX: number;
+  targetY: number;
+  shipId: number;
+};
 
-  // Shuffle and take 3. If we somehow have fewer than 3 candidates, fall
-  // back to past/participle forms from other verbs.
-  const picked = shuffle(pool).slice(0, 3);
-  if (picked.length < 3) {
-    const fallback = VERBS.flatMap((v) => [v.past, v.participle]).filter(
-      (w) =>
-        w.toLowerCase() !== lowerCorrect &&
-        !picked.some((p) => p.toLowerCase() === w.toLowerCase()),
-    );
-    for (const w of shuffle(fallback)) {
-      if (picked.length >= 3) break;
-      picked.push(w);
-    }
-  }
-  return picked;
-}
+const SHIP_LANES = [50, 62, 74, 86]; // y% positions in arena (sea band)
 
-function buildRound(): QuizQuestion[] {
-  const selected = shuffle(VERBS).slice(0, ROUND_SIZE);
-  return selected.map((verb) => {
-    const askPast = Math.random() < 0.5;
-    const correct = askPast ? verb.past : verb.participle;
-    const distractors = makeDisractors(verb, correct);
-    const options = shuffle([correct, ...distractors]);
-    return { verb, askPast, correctAnswer: correct, options };
+const FLAG_COLORS = [
+  '#ff6b6b', // red
+  '#4ecdc4', // teal
+  '#ffe66d', // yellow
+  '#95e1d3', // mint
+  '#f38181', // coral
+  '#aa96da', // purple
+  '#fcbad3', // pink
+  '#a8d8ea', // sky blue
+];
+
+function spawnShipsForQuestion(q: Question, questionIndex: number): Ship[] {
+  // Build an indexed copy then shuffle so each option becomes a ship
+  const items = q.options.map((opt, i) => ({ opt, isCorrect: i === q.answer }));
+  const shuffled = shuffle(items);
+  // Assign each ship a lane (shuffled), starting offscreen-ish positions
+  const lanes = shuffle([...SHIP_LANES]);
+  const flagColor = FLAG_COLORS[questionIndex % FLAG_COLORS.length];
+  return shuffled.map((item, i) => {
+    // Direction: alternate so ships travel both ways for visual variety
+    const dir = i % 2 === 0 ? -1 : 1;
+    const startX =
+      dir === 1 ? -10 + Math.random() * 10 : 110 - Math.random() * 10;
+    return {
+      id: Date.now() + i + Math.floor(Math.random() * 1000),
+      label: item.opt,
+      isCorrect: item.isCorrect,
+      x: startX,
+      y: lanes[i] ?? 50 + i * 12,
+      vx: dir * (4 + Math.random() * 3), // 4-7% per second
+      exploding: false,
+      flagColor,
+      fadingOut: false,
+      fadingIn: true,
+      questionIndex,
+      scaleX: dir === 1 ? 1 : -1,
+    };
   });
 }
 
-type Phase = 'battle' | 'done';
-
-const TANKS_TO_WIN = 2;
-const STREAK_BONUS_EVERY = 3; // every Nth correct answer in a row grants a bonus shot
-const BASE_TANK_SPEED = 2.5; // % of arena width per second
-const SPEED_PER_KILL = 1.5;
-
-// Ballistics constants
-const MV = 600; // muzzle velocity m/s
-const G = 9.81; // gravity m/s²
-const DRAG = 0.08; // drag coefficient s⁻¹ (intentionally high for visible effect)
-const MIN_DIST = 800; // metres
-const MAX_DIST = 1800; // metres
-
-// Arena layout (% of arena height)
-const HORIZON_PCT = 48; // where the ground meets sky visually
-const GROUND_PCT = 65; // where the tank tracks sit at minimum distance
-
-// Tank apparent width at reference distance (% of arena width)
-const TANK_W_REF = 8; // % at 800 m
-const DIST_REF = 800;
-
-function tankWidthPct(dist: number) {
-  return (TANK_W_REF * DIST_REF) / dist;
-}
-
-// ── Single source of truth for tank geometry ──
-// X values are in % of arena WIDTH (matches tankX, mouseX).
-// Y values are in % of arena HEIGHT (matches mouseY, shell sy, GROUND_PCT).
-//
-// The tank's SVG has aspect ratio 160:80 = 2:1, so rendered height in pixels
-// = rendered width in pixels × 0.5. To convert that to % of arena HEIGHT we
-// need the arena's aspect ratio (width/height). Pass it in via `arenaAspect`.
-//
-// Inside the SVG, the last 4/80 = 0.05 of height is empty space below the tracks,
-// so the tracks (visual ground contact) sit at GROUND_PCT, and the SVG's visual
-// bottom edge sits trackGap% (in arena-height units) below that.
-function getTankBounds(tankX: number, tankDist: number, arenaAspect: number) {
-  const width = tankWidthPct(tankDist); // % of arena width
-  // Convert visual height from %-of-arena-width → %-of-arena-height
-  const height = width * 0.5 * arenaAspect;
-  const trackGap = width * 0.025 * arenaAspect;
-  const bottom = GROUND_PCT + trackGap; // bottom edge of tank div from top of arena (%-of-height)
-  const top = bottom - height;
-  const left = tankX - width / 2;
-  const right = tankX + width / 2;
-  return {
-    left,
-    right,
-    top,
-    bottom,
-    centerX: tankX,
-    centerY: (top + bottom) / 2,
-    width,
-    height,
-  };
-}
-
-// The tank sits on the ground. Further tanks appear closer to the horizon.
-function tankYPct(dist: number) {
-  // linear interpolation: 800m → GROUND_PCT, 1800m → HORIZON_PCT+2
-  const t = (dist - MIN_DIST) / (MAX_DIST - MIN_DIST);
-  return GROUND_PCT - t * (GROUND_PCT - HORIZON_PCT - 2);
-}
-
-// Shell always fires flat — elevation compensation is done visually via the ruler marks.
-// The user places the correct range mark on the target; the crosshair fires horizontally.
-function aimAngle(): number {
-  return 0;
-}
-
-type Shell = {
-  id: number;
-  // world-space launch state
-  dist: number; // range to target in metres
-  v0x: number; // horizontal speed m/s
-  v0y: number; // vertical speed m/s (up = positive)
-  t: number; // elapsed time seconds
-  // screen-space start (for rendering)
-  startXPct: number;
-  startYPct: number;
-  // current screen pos
-  screenX: number;
-  screenY: number;
-  hit: boolean | null; // null = in flight
-  tankXAtFire: number; // tank X% when fired
-  tankDist: number; // tank distance when fired
-  opacity: number; // for fading out when flying over wall
-  fadingOverWall: boolean; // true when shell is flying over wall and fading
-};
-
-type HitEffect = { id: number; x: number; y: number };
-
-function PattayaLesson3PageContent() {
-  const [phase, setPhase] = useState<Phase>('battle');
-
-  const [round, setRound] = useState<QuizQuestion[]>([]);
+function PattayaLesson3Content() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const timestamp = searchParams.get('t');
+  const [questions, setQuestions] = useState<Question[]>(QUESTIONS);
   const [qIndex, setQIndex] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
-  const [streak, setStreak] = useState(0);
-  const [bonusFlash, setBonusFlash] = useState(false);
+  const [score, setScore] = useState(0);
+  const [hp, setHp] = useState(MAX_HP);
+  const [ships, setShips] = useState<Ship[]>([]);
+  const shipsRef = useRef<Ship[]>([]);
+  const [effects, setEffects] = useState<Effect[]>([]);
+  const [torpedoes, setTorpedoes] = useState<Torpedo[]>([]);
+  const torpedoesRef = useRef<Torpedo[]>([]);
+  const [phase, setPhase] = useState<'play' | 'done'>('play');
+  const [savedProgress, setSavedProgress] = useState(false);
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [totalWrong, setTotalWrong] = useState(0);
-  const [roundsDone, setRoundsDone] = useState(0);
-  const [shotsEarned, setShotsEarned] = useState(0);
-
-  // Generate round client-side only to avoid hydration mismatch
-  // (buildRound uses Math.random which would differ between server and client)
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setRound(buildRound());
-  }, []);
-
-  const [shotsLeft, setShotsLeft] = useState(0);
-  const [mouseX, setMouseX] = useState(50);
-  const [mouseY, setMouseY] = useState(50);
-  const [tankX, setTankX] = useState(20); // % across arena
-  const [tankDir, setTankDir] = useState(1);
-  const [tankDistDisplay, setTankDistDisplay] = useState(MIN_DIST);
-  const tankDirRef = useRef(1);
-  const tankXRef = useRef(20);
-  const tankDistRef = useRef(MIN_DIST);
-  const [tankHits, setTankHits] = useState(0);
-  const tankHitsRef = useRef(0);
-  const [shells, setShells] = useState<Shell[]>([]);
-  const shellsRef = useRef<Shell[]>([]);
-  const [hitEffects, setHitEffects] = useState<HitEffect[]>([]);
-  const [impactFlashes, setImpactFlashes] = useState<
-    { id: number; x: number; y: number; type: 'tank' | 'wall' | 'ground' }[]
-  >([]);
-  const [tankFlash, setTankFlash] = useState(false);
-  const [firing, setFiring] = useState(false);
-  const [muzzleSmoke, setMuzzleSmoke] = useState(false);
-  const shellIdRef = useRef(0);
-  const hitIdRef = useRef(0);
   const arenaRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);
-  const mouseXRef = useRef(50);
-  const mouseYRef = useRef(50);
-  // Arena aspect ratio (width / height) — needed for tank height calculations
-  const arenaAspectRef = useRef(2.375);
+  const effectIdRef = useRef(0);
+  const torpedoIdRef = useRef(0);
+  const lockedRef = useRef(false); // prevent double-tap during torpedo travel
 
+  const currentQ = questions[qIndex];
+  const thaiQ = useThaiQuestion(currentQ?.q ?? '');
+
+  const handlePlayAgain = useCallback(() => {
+    router.push(`/games/pattaya-games/lesson3?t=${Date.now()}`);
+  }, [router]);
+
+  // Shuffle questions on client only to avoid hydration mismatch
   useEffect(() => {
-    const updateAspect = () => {
-      const el = arenaRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      if (rect.height > 0) {
-        arenaAspectRef.current = rect.width / rect.height;
-      }
-    };
-    updateAspect();
-    window.addEventListener('resize', updateAspect);
-    return () => window.removeEventListener('resize', updateAspect);
+    setTimeout(() => {
+      setQuestions(shuffle(QUESTIONS).slice(0, TOTAL_QUESTIONS));
+      resetStreak();
+      pingLessonOpen('pattaya');
+    }, 0);
   }, []);
 
-  const [savedProgress, setSavedProgress] = useState(false);
-
+  // Reset game when timestamp changes (play again button)
   useEffect(() => {
-    resetStreak();
-    pingLessonOpen('pattaya');
-  }, []);
-
-  function handleAnswer(optionIndex: number) {
-    if (selected !== null) return;
-    const q = round[qIndex];
-    const isCorrect = q.options[optionIndex] === q.correctAnswer;
-    recordAnswer(isCorrect);
-    setSelected(optionIndex);
-    setFeedback(isCorrect ? 'correct' : 'wrong');
-    if (isCorrect) {
-      const nextStreak = streak + 1;
-      const bonus = nextStreak % STREAK_BONUS_EVERY === 0 ? 1 : 0;
-      setStreak(nextStreak);
-      setTotalCorrect((v) => v + 1);
-      setShotsEarned((v) => v + 1 + bonus);
-      setShotsLeft((v) => v + 1 + bonus);
-      if (bonus) {
-        setBonusFlash(true);
-        window.setTimeout(() => setBonusFlash(false), 1500);
-      }
-    } else {
-      setStreak(0);
-      setTotalWrong((v) => v + 1);
-    }
-
-    window.setTimeout(() => {
-      setSelected(null);
-      setFeedback(null);
-      if (qIndex + 1 < round.length) {
-        setQIndex((v) => v + 1);
-      } else {
-        setRoundsDone((v) => v + 1);
-        setRound(buildRound());
+    if (timestamp) {
+      setTimeout(() => {
         setQIndex(0);
-      }
-    }, 700);
-  }
-
-  // Finish the mission once enough tanks are destroyed
-  useEffect(() => {
-    if (phase !== 'battle' || tankHits < TANKS_TO_WIN) return;
-    const id = window.setTimeout(() => {
-      setPhase('done');
-      persistProgress(tankHits);
-    }, 1200);
-    return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tankHits, phase]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = arenaRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const mx = ((e.clientX - rect.left) / rect.width) * 100;
-    const my = ((e.clientY - rect.top) / rect.height) * 100;
-    setMouseX(mx);
-    setMouseY(my);
-    mouseXRef.current = mx;
-    mouseYRef.current = my;
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const rect = arenaRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const touch = e.touches[0];
-    const mx = ((touch.clientX - rect.left) / rect.width) * 100;
-    const my = ((touch.clientY - rect.top) / rect.height) * 100;
-    setMouseX(mx);
-    setMouseY(my);
-    mouseXRef.current = mx;
-    mouseYRef.current = my;
-  }, []);
-
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      const rect = arenaRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const touch = e.touches[0];
-      const mx = ((touch.clientX - rect.left) / rect.width) * 100;
-      const my = ((touch.clientY - rect.top) / rect.height) * 100;
-      setMouseX(mx);
-      setMouseY(my);
-      mouseXRef.current = mx;
-      mouseYRef.current = my;
-    },
-    [],
-  );
-
-  // Main animation loop: moves tank + advances shells
-  useEffect(() => {
-    if (phase !== 'battle') return;
-
-    // Randomize tank distance once on first shoot session
-    if (tankDistRef.current === MIN_DIST) {
-      tankDistRef.current = MIN_DIST + Math.random() * (MAX_DIST - MIN_DIST);
-      setTankDistDisplay(tankDistRef.current);
+        setScore(0);
+        setHp(MAX_HP);
+        setShips([]);
+        shipsRef.current = [];
+        setEffects([]);
+        setTorpedoes([]);
+        torpedoesRef.current = [];
+        setPhase('play');
+        setSavedProgress(false);
+        setTotalCorrect(0);
+        setTotalWrong(0);
+        lockedRef.current = false;
+      }, 0);
     }
+  }, [timestamp]);
+
+  // Spawn ships when question changes
+  useEffect(() => {
+    if (phase !== 'play' || !currentQ) return;
+    // On first question, clear ships. On subsequent questions, keep old ships navigating
+    const isFirstQuestion = qIndex === 0;
+    setTimeout(() => {
+      const fresh = spawnShipsForQuestion(currentQ, qIndex);
+      shipsRef.current = isFirstQuestion
+        ? fresh
+        : [...shipsRef.current, ...fresh];
+      setShips([...shipsRef.current]);
+      lockedRef.current = false;
+      // Remove fadingIn state after animation
+      setTimeout(() => {
+        shipsRef.current = shipsRef.current.map((s) => ({
+          ...s,
+          fadingIn: false,
+        }));
+        setShips([...shipsRef.current]);
+      }, 500);
+    }, 300);
+  }, [qIndex, phase, currentQ]);
+
+  // Animation loop: move ships + torpedoes
+  useEffect(() => {
+    if (phase !== 'play') return;
 
     function tick(time: number) {
       if (lastTimeRef.current === null) lastTimeRef.current = time;
-      const dt = Math.min(time - lastTimeRef.current, 100) / 1000; // seconds
+      const dt = Math.min(time - lastTimeRef.current, 100) / 1000;
       lastTimeRef.current = time;
 
-      // ── Move tank ──
-      const speed = BASE_TANK_SPEED + SPEED_PER_KILL * tankHitsRef.current;
-      let nx = tankXRef.current + speed * dt * tankDirRef.current;
-      let dir = tankDirRef.current;
-      if (nx > 88) {
-        nx = 88;
-        dir = -1;
-      }
-      if (nx < 5) {
-        nx = 5;
-        dir = 1;
-      }
-      tankXRef.current = nx;
-      tankDirRef.current = dir;
-      setTankX(nx);
-      setTankDir(dir);
+      // Move ships (bounce current question ships at edges, remove previous question ships when off-screen)
+      const nextShips = shipsRef.current
+        .map((s) => {
+          if (s.exploding) return s;
+          let nx = s.x + s.vx * dt;
+          let nvx = s.vx;
+          let nscaleX = s.scaleX;
 
-      // Debug info (positions are computed at render time via getTankBounds)
-
-      // ── Advance shells ──
-      const nextShells = shellsRef.current
-        .map((s): Shell => {
-          if (s.hit !== null) return s; // already resolved
-          const t2 = s.t + dt;
-
-          // ── World-space ballistics with drag ──
-          // Horizontal: v_x(t) = v0x·e^(-k·t)  →  x(t) = v0x/k · (1 - e^(-k·t))
-          const ekt = Math.exp(-DRAG * t2);
-          const worldX = (s.v0x / DRAG) * (1 - ekt);
-
-          // ── Screen X: shell travels straight — no horizontal drift on screen ──
-          const sx = s.startXPct;
-
-          // ── Screen Y: always falls downward from aim point ──
-          // Treat v0y=0 for screen: shell starts at crosshair and only drops due to gravity+drag.
-          // y(t) = (g/k)/k · (1 - e^(-k·t)) - g·t/k  [with v0y=0, simplifies to pure drop]
-          const M_PER_PCT = 1.5; // 1% screen height = 1.5 m — exaggerated for clear visibility
-          const gravDrop = (G / DRAG / DRAG) * (1 - ekt) - (G * t2) / DRAG; // always negative (downward)
-          const sy = s.startYPct + -gravDrop / M_PER_PCT; // -gravDrop is positive → increases Y → falls down
-
-          // Impact detection: shell reached or passed the target distance
-          if (worldX >= s.dist) {
-            // ── Use getTankBounds as single source of truth ──
-            // Both bounds and sy are in % from TOP of arena (0=top, 100=bottom).
-            const bounds = getTankBounds(
-              s.tankXAtFire,
-              s.tankDist,
-              arenaAspectRef.current,
-            );
-            const lateralMissPct = Math.abs(s.tankXAtFire - s.startXPct);
-            const isHit =
-              sy >= bounds.top &&
-              sy <= bounds.bottom &&
-              lateralMissPct < bounds.width / 2;
-
-            console.log('[HIT?]', {
-              dist: s.dist.toFixed(1),
-              sy: sy.toFixed(2),
-              tankTop: bounds.top.toFixed(2),
-              tankBot: bounds.bottom.toFixed(2),
-              tankLeft: bounds.left.toFixed(2),
-              tankRight: bounds.right.toFixed(2),
-              shellX: s.startXPct.toFixed(2),
-              lateralMiss: lateralMissPct.toFixed(2),
-              lateralThreshold: (bounds.width / 2).toFixed(2),
-              isHit,
-            });
-
-            const spawnFlash = (
-              x: number,
-              y: number,
-              type: 'tank' | 'wall' | 'ground',
-            ) => {
-              const fid = hitIdRef.current++;
-              setImpactFlashes((prev) => [...prev, { id: fid, x, y, type }]);
-              window.setTimeout(
-                () =>
-                  setImpactFlashes((prev) => prev.filter((f) => f.id !== fid)),
-                800,
-              );
-            };
-
-            if (isHit) {
-              tankHitsRef.current += 1;
-              setTankHits((v) => v + 1);
-              // Bring in a fresh (faster) tank at a new range after the explosion
-              window.setTimeout(() => {
-                tankDistRef.current =
-                  MIN_DIST + Math.random() * (MAX_DIST - MIN_DIST);
-                setTankDistDisplay(tankDistRef.current);
-                tankXRef.current = 10 + Math.random() * 75;
-                tankDirRef.current = Math.random() < 0.5 ? 1 : -1;
-              }, 700);
-              const hid = hitIdRef.current++;
-              setHitEffects((prev) => [
-                ...prev,
-                { id: hid, x: tankXRef.current, y: GROUND_PCT - 5 },
-              ]);
-              window.setTimeout(
-                () => setHitEffects((prev) => prev.filter((h) => h.id !== hid)),
-                900,
-              );
-              // Tank hit flashes at shell's screen position (which landed on the tank)
-              spawnFlash(sx, sy, 'tank');
-              spawnFlash(sx - 1.5, sy - 2, 'tank');
-              spawnFlash(sx + 1, sy + 1, 'tank');
-              setTankFlash(true);
-              window.setTimeout(() => setTankFlash(false), 400);
-              return {
-                ...s,
-                t: t2,
-                screenX: sx,
-                screenY: sy,
-                hit: isHit,
-                opacity: 1,
-                fadingOverWall: false,
-              };
+          // Bounce current question ships at edges
+          if (s.questionIndex === qIndex) {
+            if (nx > 115) {
+              nx = 115;
+              nvx = -Math.abs(s.vx);
+              nscaleX = -1;
+            } else if (nx < -15) {
+              nx = -15;
+              nvx = Math.abs(s.vx);
+              nscaleX = 1;
             }
-            // Note: Explosion effects (spawnFlash) are only shown for tank hits, not for wall/ground misses
-            // Check if shell flew over the wall (above wall top when passing target)
-            const wallHeightPct = (180 / 1600) * 100; // SVG aspect ratio
-            const wallTop = GROUND_PCT - wallHeightPct;
-            const flewOverWall = sy < wallTop;
-            return {
-              ...s,
-              t: t2,
-              screenX: sx,
-              screenY: sy,
-              hit: isHit,
-              opacity: flewOverWall ? 1 : 1,
-              fadingOverWall: flewOverWall,
-            };
           }
-
-          // Shell still in flight - check if it's fading over wall
-          if (s.fadingOverWall) {
-            const newOpacity = Math.max(0, s.opacity - dt * 1.5); // fade over ~0.67 seconds
-            if (newOpacity <= 0) {
-              // Shell fully faded, mark as resolved (hit=false means missed)
-              return {
-                ...s,
-                t: t2,
-                screenX: sx,
-                screenY: sy,
-                hit: false,
-                opacity: 0,
-                fadingOverWall: true,
-              };
-            }
-            return {
-              ...s,
-              t: t2,
-              screenX: sx,
-              screenY: sy,
-              opacity: newOpacity,
-            };
-          }
-          return { ...s, t: t2, screenX: sx, screenY: sy };
+          return { ...s, x: nx, vx: nvx, scaleX: nscaleX };
         })
-        .filter(
-          (s) =>
-            s.hit === null || (s.hit !== null && s.t < s.dist / s.v0x + 0.5),
-        );
+        .filter((s) => {
+          // Always keep current question ships
+          if (s.questionIndex === qIndex) return true;
+          // Remove previous question ships when off-screen
+          return s.x > -20 && s.x < 120;
+        });
+      shipsRef.current = nextShips;
+      setShips([...nextShips]);
 
-      shellsRef.current = nextShells;
-      setShells([...nextShells]);
+      // Move torpedoes toward target
+      const TORP_SPEED = 90; // % per second
+      const nextTorps: Torpedo[] = [];
+      for (const t of torpedoesRef.current) {
+        const dx = t.targetX - t.x;
+        const dy = t.targetY - t.y;
+        const dist = Math.hypot(dx, dy);
+        const step = TORP_SPEED * dt;
+        if (dist <= step) {
+          // arrived — handled by setTimeout that fired with the torpedo
+          continue;
+        }
+        nextTorps.push({
+          ...t,
+          x: t.x + (dx / dist) * step,
+          y: t.y + (dy / dist) * step,
+        });
+      }
+      torpedoesRef.current = nextTorps;
+      setTorpedoes([...nextTorps]);
 
       animRef.current = requestAnimationFrame(tick);
     }
@@ -589,760 +460,143 @@ function PattayaLesson3PageContent() {
       if (animRef.current) cancelAnimationFrame(animRef.current);
       lastTimeRef.current = null;
     };
-  }, [phase]);
+  }, [phase, qIndex]);
 
-  function fireShot() {
-    if (shotsLeft <= 0) return;
-    const arena = arenaRef.current;
-    if (!arena) return;
+  const spawnEffect = useCallback(
+    (type: Effect['type'], x: number, y: number) => {
+      const id = effectIdRef.current++;
+      setEffects((prev) => [...prev, { id, type, x, y }]);
+      window.setTimeout(() => {
+        setEffects((prev) => prev.filter((e) => e.id !== id));
+      }, 700);
+    },
+    [],
+  );
 
-    const my = mouseYRef.current;
+  const handleShipTap = useCallback(
+    (ship: Ship) => {
+      if (lockedRef.current || phase !== 'play' || ship.exploding) return;
+      lockedRef.current = true;
 
-    // Elevation angle from aim position
-    const theta = aimAngle();
-    const v0x = MV * Math.cos(theta);
-    const v0y = MV * Math.sin(theta);
+      // Fire torpedo from player ship (bottom center) to ship position
+      const tid = torpedoIdRef.current++;
+      const torp: Torpedo = {
+        id: tid,
+        startX: 50,
+        startY: 95,
+        x: 50,
+        y: 95,
+        targetX: ship.x,
+        targetY: ship.y + 8, // Aim at center of lower half of ship
+        shipId: ship.id,
+      };
+      torpedoesRef.current = [...torpedoesRef.current, torp];
+      setTorpedoes([...torpedoesRef.current]);
 
-    const dist = tankDistRef.current;
-    const id = shellIdRef.current++;
+      // Calculate flight time based on distance
+      const dx = ship.x - 50;
+      const dy = ship.y + 8 - 95; // Use targetY for distance calculation
+      const dist = Math.hypot(dx, dy);
+      const flightMs = (dist / 90) * 1000; // 90% per second
 
-    const mx = mouseXRef.current;
+      window.setTimeout(() => {
+        // Remove torpedo
+        torpedoesRef.current = torpedoesRef.current.filter((t) => t.id !== tid);
+        setTorpedoes([...torpedoesRef.current]);
 
-    const newShell: Shell = {
-      id,
-      dist,
-      v0x,
-      v0y,
-      t: 0,
-      startXPct: mx, // fired from crosshair X
-      startYPct: my, // fired from crosshair Y
-      screenX: mx,
-      screenY: my,
-      hit: null,
-      tankXAtFire: tankXRef.current,
-      tankDist: dist,
-      opacity: 1,
-      fadingOverWall: false,
-    };
+        // Resolve hit using current ship position
+        const liveShip = shipsRef.current.find((s) => s.id === ship.id);
+        const hitX = liveShip?.x ?? ship.x;
+        const hitY = (liveShip?.y ?? ship.y) + 8; // Match torpedo targetY offset
 
-    shellsRef.current = [...shellsRef.current, newShell];
-    setShells([...shellsRef.current]);
+        if (ship.isCorrect) {
+          recordAnswer(true);
+          setTotalCorrect((v) => v + 1);
+          setScore((v) => v + 1);
+          spawnEffect('explosion', hitX, hitY);
+          // Mark ship exploding, keep other ships navigating
+          shipsRef.current = shipsRef.current.map((s) =>
+            s.id === ship.id ? { ...s, exploding: true } : s,
+          );
+          setShips([...shipsRef.current]);
 
-    // Muzzle blast effects
-    setFiring(true);
-    setMuzzleSmoke(true);
-    window.setTimeout(() => setFiring(false), 120);
-    window.setTimeout(() => setMuzzleSmoke(false), 600);
+          window.setTimeout(() => {
+            // Move to next question or finish
+            if (qIndex + 1 >= questions.length) {
+              setPhase('done');
+            } else {
+              setQIndex((v) => v + 1);
+            }
+          }, 700);
+        } else {
+          recordAnswer(false);
+          setTotalWrong((v) => v + 1);
+          spawnEffect('splash', hitX, hitY);
+          setHp((v) => {
+            const next = v - 1;
+            if (next <= 0) {
+              window.setTimeout(() => setPhase('done'), 400);
+            }
+            return next;
+          });
+          // Allow another shot
+          window.setTimeout(() => {
+            lockedRef.current = false;
+          }, 300);
+        }
+      }, flightMs);
+    },
+    [phase, qIndex, questions.length, spawnEffect],
+  );
 
-    setShotsLeft((v) => v - 1);
+  // Persist progress on done
+  useEffect(() => {
+    if (phase !== 'done' || savedProgress) return;
+    setTimeout(() => {
+      setSavedProgress(true);
+      const passed = score >= PASS_SCORE;
+      if (totalWrong === 0 && totalCorrect > 0) reportPerfectLesson();
 
-    // Auto-clean shell after it resolves (flight time + buffer)
-    const flightMs = (dist / v0x) * 1000 + 600;
-    window.setTimeout(() => {
-      shellsRef.current = shellsRef.current.filter((s) => s.id !== id);
-      setShells([...shellsRef.current]);
-    }, flightMs);
+      void saveProgressDelta('pattaya', {
+        correct_answers: totalCorrect,
+        wrong_answers: totalWrong,
+        quiz_attempts: totalCorrect + totalWrong,
+        total_moves_earned: score,
+        unlocked_lessons: passed ? 4 : undefined,
+      });
+    }, 0);
+  }, [phase, savedProgress, score, totalCorrect, totalWrong]);
 
-  }
-
-  function persistProgress(hits: number) {
-    if (savedProgress) return;
-    setSavedProgress(true);
-    const passed = hits >= TANKS_TO_WIN;
-
-    if (totalWrong === 0 && totalCorrect > 0) {
-      reportPerfectLesson();
-    }
-
-    void saveProgressDelta('pattaya', {
-      correct_answers: totalCorrect,
-      wrong_answers: totalWrong,
-      quiz_attempts: totalCorrect + totalWrong,
-      total_moves_earned: hits,
-      unlocked_lessons: passed ? 4 : undefined,
-    });
-  }
-
-  if (phase === 'battle') {
-    const q = round[qIndex];
+  if (phase === 'done') {
+    const passed = score >= PASS_SCORE;
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
-
-          <div className={styles.scoreBar}>
-            <span className={styles.scoreChip} title="Correct answers">
-              ✅ {totalCorrect}
-            </span>
-            <span className={styles.scoreChipBad} title="Wrong answers">
-              ❌ {totalWrong}
-            </span>
-            <span
-              className={`${styles.scoreChip} ${shotsLeft > 0 ? styles.shotsReady : ''}`}
-              title="Shots available"
-            >
-              🎯 {shotsLeft}
-            </span>
-            <span className={styles.scoreChip} title="Tanks destroyed">
-              💥 {Math.min(tankHits, TANKS_TO_WIN)}/{TANKS_TO_WIN}
-            </span>
-            <span className={styles.scoreChip} title="Streak">
-              🔥 {streak}/{STREAK_BONUS_EVERY}
-              {bonusFlash && ' +1🎯'}
-            </span>
-          </div>
-
-          <div
-            ref={arenaRef}
-            className={styles.arena}
-            onMouseMove={handleMouseMove}
-            onTouchMove={handleTouchMove}
-            onTouchStart={handleTouchStart}
-            onClick={fireShot}
-          >
-            {/* Sky with clouds */}
-            <svg
-              className={styles.skySvg}
-              viewBox="0 0 600 195"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#2a6db5" />
-                  <stop offset="100%" stopColor="#87ceeb" />
-                </linearGradient>
-              </defs>
-              <rect width="600" height="195" fill="url(#skyGrad)" />
-              {/* Cloud 1 */}
-              <g opacity="0.92">
-                <ellipse cx="120" cy="55" rx="48" ry="22" fill="#fff" />
-                <ellipse cx="90" cy="62" rx="32" ry="18" fill="#fff" />
-                <ellipse cx="150" cy="63" rx="30" ry="16" fill="#fff" />
-                <ellipse cx="120" cy="68" rx="50" ry="14" fill="#f5f5f5" />
-              </g>
-              {/* Cloud 2 */}
-              <g opacity="0.88">
-                <ellipse cx="430" cy="38" rx="55" ry="20" fill="#fff" />
-                <ellipse cx="400" cy="46" rx="36" ry="16" fill="#fff" />
-                <ellipse cx="462" cy="47" rx="34" ry="15" fill="#fff" />
-                <ellipse cx="430" cy="51" rx="58" ry="13" fill="#f0f0f0" />
-              </g>
-            </svg>
-            <div className={styles.ground} />
-
-            {/* Decorative wall — full width, fixed vertical position */}
-            <div
-              className={styles.wall}
-              style={{
-                left: 0,
-                bottom: `${100 - tankYPct(MIN_DIST)}%`,
-                width: '100%',
-              }}
-            >
-              <svg
-                viewBox="0 0 1600 180"
-                xmlns="http://www.w3.org/2000/svg"
-                width="100%"
-                preserveAspectRatio="none"
+          <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
+          <div className={styles.endPanel}>
+            <h2 className={styles.endTitle}>
+              {passed ? 'Mission Accomplished!' : 'Mission Failed'}
+            </h2>
+            <p className={styles.endText}>
+              You sank {score} / {questions.length} enemy ships.
+            </p>
+            <p className={styles.endText}>
+              {passed
+                ? 'Lesson 4 unlocked!'
+                : `Sink at least ${PASS_SCORE} ships to advance.`}
+            </p>
+            <div className={styles.btnRow}>
+              <button onClick={handlePlayAgain} className={styles.btn}>
+                Play again
+              </button>
+              <Link
+                href="/games/pattaya-games"
+                className={`${styles.btn} ${styles.btnSecondary}`}
               >
-                {/* Wall background */}
-                <rect x="0" y="0" width="1600" height="180" fill="#b89e7a" />
-                {/* Uniform brick pattern — 18 rows × 80 cols covering full height */}
-                {Array.from({ length: 18 }, (_, row) =>
-                  Array.from({ length: 80 }, (_, col) => (
-                    <rect
-                      key={`${row}-${col}`}
-                      x={col * 20 + (row % 2) * 10}
-                      y={row * 10}
-                      width="19"
-                      height="9"
-                      rx="0.5"
-                      fill={row % 2 === col % 2 ? '#c4aa87' : '#a08860'}
-                      stroke="#7a6848"
-                      strokeWidth="0.4"
-                    />
-                  )),
-                )}
-                {/* Moss/vine accents */}
-                {[80, 200, 380, 560, 740, 900, 1060, 1220, 1400, 1520].map(
-                  (x, i) => (
-                    <rect
-                      key={i}
-                      x={x}
-                      y="62"
-                      width="4"
-                      height={18 + (i % 5) * 8}
-                      rx="2"
-                      fill="#4a6a30"
-                      opacity="0.35"
-                    />
-                  ),
-                )}
-                <rect
-                  x="0"
-                  y="172"
-                  width="1600"
-                  height="8"
-                  fill="#3a2a18"
-                  opacity="0.5"
-                  rx="2"
-                />
-              </svg>
-            </div>
-
-            <div
-              className={styles.tank}
-              style={{
-                // NOTE: width% is relative to arena WIDTH but bottom% is relative to arena HEIGHT.
-                // We use `left` + `bottom` (not `top`+`height`) so the SVG auto-sizes to its
-                // natural aspect ratio (160×80) using the width. This keeps the tank sitting
-                // exactly on the grass line regardless of arena aspect ratio.
-                left: `${tankX}%`,
-                bottom: `${100 - GROUND_PCT - tankWidthPct(tankDistDisplay) * 0.025}%`,
-                width: `${tankWidthPct(tankDistDisplay)}%`,
-                transform: `translateX(-50%) scaleX(${tankDir === -1 ? -1 : 1})`,
-              }}
-            >
-              {/* Tiger I SVG */}
-              <svg
-                viewBox="0 0 160 80"
-                xmlns="http://www.w3.org/2000/svg"
-                className={styles.tankSvg}
-              >
-                {/* === TRACKS === */}
-                <rect
-                  x="4"
-                  y="54"
-                  width="152"
-                  height="22"
-                  rx="11"
-                  ry="11"
-                  fill="#2a2a18"
-                  stroke="#444430"
-                  strokeWidth="1.5"
-                />
-                {/* track links */}
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
-                  <rect
-                    key={i}
-                    x={8 + i * 12}
-                    y="55"
-                    width="10"
-                    height="20"
-                    rx="3"
-                    fill="none"
-                    stroke="#555540"
-                    strokeWidth="1"
-                  />
-                ))}
-                {/* road wheels */}
-                {[18, 38, 58, 78, 98, 118, 138].map((cx, i) => (
-                  <g key={i}>
-                    <circle
-                      cx={cx}
-                      cy="65"
-                      r="9"
-                      fill="#3a3a22"
-                      stroke="#555540"
-                      strokeWidth="1.5"
-                    />
-                    <circle
-                      cx={cx}
-                      cy="65"
-                      r="4"
-                      fill="#2a2a18"
-                      stroke="#666650"
-                      strokeWidth="1"
-                    />
-                    <circle cx={cx} cy="65" r="1.5" fill="#888870" />
-                  </g>
-                ))}
-                {/* drive sprocket (front) */}
-                <circle
-                  cx="148"
-                  cy="63"
-                  r="8"
-                  fill="#3a3a22"
-                  stroke="#555540"
-                  strokeWidth="1.5"
-                />
-                {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                  <rect
-                    key={i}
-                    x="145"
-                    y="55"
-                    width="6"
-                    height="4"
-                    rx="1"
-                    fill="#555540"
-                    transform={`rotate(${angle} 148 63)`}
-                  />
-                ))}
-                {/* idler wheel (rear) */}
-                <circle
-                  cx="12"
-                  cy="63"
-                  r="8"
-                  fill="#3a3a22"
-                  stroke="#555540"
-                  strokeWidth="1.5"
-                />
-                <circle
-                  cx="12"
-                  cy="63"
-                  r="3.5"
-                  fill="#2a2a18"
-                  stroke="#666650"
-                  strokeWidth="1"
-                />
-
-                {/* === HULL LOWER === */}
-                <polygon
-                  points="10,54 150,54 155,42 5,42"
-                  fill="#4a4a2e"
-                  stroke="#333322"
-                  strokeWidth="1"
-                />
-
-                {/* === HULL UPPER === */}
-                {/* front glacis plate */}
-                <polygon
-                  points="130,42 155,42 155,28 132,28"
-                  fill="#565638"
-                  stroke="#333322"
-                  strokeWidth="1"
-                />
-                {/* rear plate */}
-                <polygon
-                  points="5,42 10,42 10,30 5,30"
-                  fill="#4e4e30"
-                  stroke="#333322"
-                  strokeWidth="1"
-                />
-                {/* main hull top */}
-                <rect
-                  x="10"
-                  y="28"
-                  width="122"
-                  height="14"
-                  fill="#525234"
-                  stroke="#333322"
-                  strokeWidth="1"
-                />
-                {/* hull side skirts / Schürzen hints */}
-                <rect
-                  x="8"
-                  y="44"
-                  width="144"
-                  height="8"
-                  rx="1"
-                  fill="#3e3e26"
-                  stroke="#2a2a18"
-                  strokeWidth="0.8"
-                />
-
-                {/* === TURRET === */}
-                {/* turret base ring */}
-                <rect
-                  x="44"
-                  y="24"
-                  width="72"
-                  height="4"
-                  rx="2"
-                  fill="#3a3a22"
-                  stroke="#333322"
-                  strokeWidth="0.8"
-                />
-                {/* turret body — boxy Tiger shape */}
-                <polygon
-                  points="48,6 112,6 118,10 118,28 42,28 42,10"
-                  fill="#4e4e30"
-                  stroke="#333322"
-                  strokeWidth="1.2"
-                />
-                {/* turret front angled plate */}
-                <polygon
-                  points="112,6 118,10 118,28 112,28"
-                  fill="#5a5a38"
-                  stroke="#333322"
-                  strokeWidth="1"
-                />
-                {/* turret rear */}
-                <polygon
-                  points="48,6 42,10 42,28 48,28"
-                  fill="#464628"
-                  stroke="#333322"
-                  strokeWidth="1"
-                />
-                {/* commander's cupola */}
-                <ellipse
-                  cx="68"
-                  cy="6"
-                  rx="10"
-                  ry="5"
-                  fill="#424226"
-                  stroke="#333322"
-                  strokeWidth="1"
-                />
-                <ellipse
-                  cx="68"
-                  cy="4"
-                  rx="7"
-                  ry="3"
-                  fill="#3a3a20"
-                  stroke="#444430"
-                  strokeWidth="0.8"
-                />
-                {/* cupola vision ports */}
-                {[-4, -1, 2, 5].map((dx, i) => (
-                  <rect
-                    key={i}
-                    x={65 + dx}
-                    y="2"
-                    width="2"
-                    height="3"
-                    rx="0.5"
-                    fill="#222216"
-                    stroke="#555540"
-                    strokeWidth="0.5"
-                  />
-                ))}
-
-                {/* === GUN (88mm KwK 36) === */}
-                {/* mantlet */}
-                <ellipse
-                  cx="118"
-                  cy="18"
-                  rx="9"
-                  ry="10"
-                  fill="#3e3e26"
-                  stroke="#2e2e1a"
-                  strokeWidth="1.2"
-                />
-                {/* barrel — long and thin, Tiger 88mm */}
-                <rect
-                  x="118"
-                  y="15.5"
-                  width="38"
-                  height="5"
-                  rx="2"
-                  fill="#2e2e1a"
-                  stroke="#222210"
-                  strokeWidth="0.8"
-                />
-                {/* muzzle brake */}
-                <rect
-                  x="154"
-                  y="13"
-                  width="6"
-                  height="10"
-                  rx="2"
-                  fill="#252515"
-                  stroke="#222210"
-                  strokeWidth="0.8"
-                />
-                <line
-                  x1="155"
-                  y1="13"
-                  x2="155"
-                  y2="23"
-                  stroke="#333322"
-                  strokeWidth="0.6"
-                />
-                <line
-                  x1="157"
-                  y1="13"
-                  x2="157"
-                  y2="23"
-                  stroke="#333322"
-                  strokeWidth="0.6"
-                />
-                <line
-                  x1="159"
-                  y1="14"
-                  x2="159"
-                  y2="22"
-                  stroke="#333322"
-                  strokeWidth="0.6"
-                />
-
-                {/* === DETAILS === */}
-                {/* exhaust / engine deck vents */}
-                {[0, 1, 2].map((i) => (
-                  <rect
-                    key={i}
-                    x={14 + i * 8}
-                    y="30"
-                    width="6"
-                    height="3"
-                    rx="1"
-                    fill="#2e2e1a"
-                    stroke="#444430"
-                    strokeWidth="0.6"
-                  />
-                ))}
-                {/* tow cable hooks */}
-                <circle
-                  cx="18"
-                  cy="44"
-                  r="2.5"
-                  fill="none"
-                  stroke="#666650"
-                  strokeWidth="1.2"
-                />
-                <circle
-                  cx="142"
-                  cy="44"
-                  r="2.5"
-                  fill="none"
-                  stroke="#666650"
-                  strokeWidth="1.2"
-                />
-                {/* antenna mount */}
-                <rect
-                  x="22"
-                  y="6"
-                  width="2"
-                  height="18"
-                  rx="1"
-                  fill="#5a5a38"
-                  stroke="#333322"
-                  strokeWidth="0.5"
-                />
-                {/* hull MG port */}
-                <rect
-                  x="128"
-                  y="32"
-                  width="6"
-                  height="4"
-                  rx="1"
-                  fill="#2a2a18"
-                  stroke="#444430"
-                  strokeWidth="0.8"
-                />
-                <circle cx="131" cy="34" r="1.5" fill="#1a1a10" />
-
-                {/* === ZIMMERIT / texture lines === */}
-                {[32, 36, 40].map((y) => (
-                  <line
-                    key={y}
-                    x1="12"
-                    y1={y}
-                    x2="128"
-                    y2={y}
-                    stroke="#3a3a24"
-                    strokeWidth="0.4"
-                    strokeDasharray="4,3"
-                  />
-                ))}
-              </svg>
-            </div>
-
-            {hitEffects.map((h) => (
-              <div
-                key={h.id}
-                className={styles.explosion}
-                style={{ left: `${h.x}%`, top: `${h.y}%` }}
-              >
-                💥
-              </div>
-            ))}
-
-            {shells.map(
-              (s) =>
-                s.hit === null && (
-                  <div
-                    key={s.id}
-                    className={styles.shellDot}
-                    style={{
-                      left: `${s.screenX}%`,
-                      top: `${s.screenY}%`,
-                      opacity: s.opacity,
-                    }}
-                  />
-                ),
-            )}
-
-            {/* Tank hit screen flash */}
-            {tankFlash && <div className={styles.tankHitFlash} />}
-
-            {/* Impact flash effects */}
-            {impactFlashes.map((f) => (
-              <div
-                key={f.id}
-                className={styles.impactFlash}
-                data-type={f.type}
-                style={{ left: `${f.x}%`, top: `${f.y}%` }}
-              />
-            ))}
-
-            {/* Muzzle smoke puff */}
-            {muzzleSmoke && (
-              <div
-                className={styles.muzzleSmoke}
-                style={{
-                  left: `${mouseX}%`,
-                  top: `${mouseY}%`,
-                }}
-              />
-            )}
-
-            {/* War Thunder style scope overlay — full arena, vignette + reticle */}
-            <svg
-              className={`${styles.scope}${firing ? ` ${styles.scopeKick}` : ''}`}
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                {/* Radial gradient centred on mouse: clear → dark fog → solid black */}
-                <radialGradient
-                  id="scopeVignette"
-                  cx={mouseX}
-                  cy={mouseY}
-                  r="72"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop offset="0%" stopColor="black" stopOpacity="0" />
-                  <stop offset="82%" stopColor="black" stopOpacity="0" />
-                  <stop offset="92%" stopColor="black" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="black" stopOpacity="0.9" />
-                </radialGradient>
-              </defs>
-
-              {/* Vignette fill over whole arena */}
-              <rect
-                x="0"
-                y="0"
-                width="100"
-                height="100"
-                fill="url(#scopeVignette)"
-              />
-
-              {/* ── Reticle group — coordinates in viewBox (0–100) units ── */}
-              {/* Horizontal line - standard width */}
-              <g stroke="#000000" strokeWidth="0.5" opacity="0.95">
-                <line x1="0" y1={mouseY} x2="100" y2={mouseY} />
-              </g>
-              {/* Vertical line - narrower */}
-              <g stroke="#000000" strokeWidth="0.25" opacity="0.95">
-                <line x1={mouseX} y1="0" x2={mouseX} y2="100" />
-              </g>
-
-              {/*
-                Range ladder — physically calibrated to actual ballistics:
-                MV=600 m/s, DRAG=0.08 s⁻¹, M_PER_PCT=1.5
-                Flat shot drop at each range (screen % below aim point):
-                  800m  → ~5.3%
-                  1000m → ~9.8%
-                  1200m → ~14.5%
-                  1400m → ~20%
-                Each mark shows "aim this far above target to hit at that range"
-              */}
-              <g stroke="#000000" strokeWidth="0.45" opacity="0.9">
-                {/* Major ticks — uniform length 4, labels all at same X */}
-                {[
-                  { dy: 6.26, label: '800' },
-                  { dy: 9.98, label: '1000' },
-                  { dy: 14.67, label: '1200' },
-                  { dy: 20.38, label: '1400' },
-                  { dy: 27.2, label: '1600' },
-                  { dy: 35.19, label: '1800' },
-                  { dy: 44.44, label: '2000' },
-                  { dy: 55.04, label: '2200' },
-                ].map(({ dy, label }, i) => (
-                  <g key={i}>
-                    <line
-                      x1={mouseX + 6}
-                      y1={mouseY + dy}
-                      x2={mouseX + 11}
-                      y2={mouseY + dy}
-                    />
-                    <text
-                      x={mouseX + 12}
-                      y={mouseY + dy + 1.0}
-                      fill="#000000"
-                      fontSize="2.2"
-                      fontFamily="monospace"
-                      fontWeight="bold"
-                      strokeWidth="0"
-                    >
-                      {label}
-                    </text>
-                  </g>
-                ))}
-
-                {/* Minor ticks at 900/1100/1300/1500/1700/1900/2100m — no label */}
-                {[8.0, 12.2, 17.39, 23.65, 31.04, 39.65, 49.57].map((dy, i) => (
-                  <line
-                    key={i}
-                    x1={mouseX + 6}
-                    y1={mouseY + dy}
-                    x2={mouseX + 9}
-                    y2={mouseY + dy}
-                  />
-                ))}
-              </g>
-
-              {/* Horizontal ticks on center vertical line — even 100m marks (wider, both sides) */}
-              <g stroke="#000000" strokeWidth="0.45" opacity="0.9">
-                {[6.26, 9.98, 14.67, 20.38, 27.2, 35.19, 44.44, 55.04].map(
-                  (dy, i) => (
-                    <line
-                      key={i}
-                      x1={mouseX - 1.2}
-                      y1={mouseY + dy}
-                      x2={mouseX + 1.2}
-                      y2={mouseY + dy}
-                    />
-                  ),
-                )}
-              </g>
-              {/* Horizontal ticks on center vertical line — odd 100m marks (narrower, both sides) */}
-              <g stroke="#000000" strokeWidth="0.35" opacity="0.9">
-                {[8.0, 12.2, 17.39, 23.65, 31.04, 39.65, 49.57].map((dy, i) => (
-                  <line
-                    key={i}
-                    x1={mouseX - 1}
-                    y1={mouseY + dy}
-                    x2={mouseX + 1}
-                    y2={mouseY + dy}
-                  />
-                ))}
-              </g>
-            </svg>
-
-            <div className={styles.shotCounter}>
-              {Array.from({ length: shotsLeft }).map((_, i) => (
-                <span key={i} className={styles.shotDot}>
-                  ●
-                </span>
-              ))}
+                Back to map
+              </Link>
             </div>
           </div>
-
-          <p className={styles.arenaHint}>
-            {shotsLeft > 0
-              ? 'Click the arena to fire!'
-              : 'Out of shots - answer correctly to reload!'}{' '}
-            Destroy {TANKS_TO_WIN} tanks to win.
-          </p>
-
-          {q ? (
-            <Quiz
-              question={q}
-              selected={selected}
-              feedback={feedback}
-              shotsEarned={shotsEarned}
-              verbs={VERBS}
-              onAnswer={handleAnswer}
-            />
-          ) : (
-            <div className={styles.panel}>
-              <p className={styles.prompt}>Loading quiz…</p>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -1351,63 +605,539 @@ function PattayaLesson3PageContent() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.doneCard}>
-          <h1 className={styles.doneTitle}>Well done! 🎖️</h1>
-          <p className={styles.doneStat}>
-            Correct answers: <strong>{totalCorrect}</strong>
-          </p>
-          <p className={styles.doneStat}>
-            Wrong answers: <strong>{totalWrong}</strong>
-          </p>
-          <p className={styles.doneStat}>
-            Rounds completed: <strong>{roundsDone}</strong>
-          </p>
-          <p className={styles.doneStat}>
-            Shots fired: <strong>{shotsEarned}</strong>
-          </p>
-          <p className={styles.doneStat}>
-            Tank hits: <strong>{tankHits}</strong>
-          </p>
-          {tankHits >= TANKS_TO_WIN && (
-            <p className={styles.doneUnlock}>🔓 Lesson 4 unlocked!</p>
-          )}
-          <div className={styles.doneActions}>
-            <Link href="/games/pattaya-games" className={styles.doneLink}>
-              ← Back to map
-            </Link>
-            <button
-              className={styles.doneRetry}
-              onClick={() => {
-                setPhase('battle');
-                setRound(buildRound());
-                setQIndex(0);
-                setStreak(0);
-                tankHitsRef.current = 0;
-                tankXRef.current = 20;
-                setTotalCorrect(0);
-                setTotalWrong(0);
-                setRoundsDone(0);
-                setShotsEarned(0);
-                setShotsLeft(0);
-                setTankHits(0);
-                tankDistRef.current = MIN_DIST; // reset so next shoot session re-randomizes
-                setTankDistDisplay(MIN_DIST);
-                setShells([]);
-                shellsRef.current = [];
-                setHitEffects([]);
-                setImpactFlashes([]);
-                setTankFlash(false);
-                setFiring(false);
-                setMuzzleSmoke(false);
-                setSavedProgress(false);
-              }}
-            >
-              Try again
-            </button>
+        <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
+
+        <div className={styles.hud}>
+          <span className={styles.chip}>
+            Q {qIndex + 1}/{questions.length}
+          </span>
+          <span className={styles.chipGood}>🎯 {score}</span>
+          <span className={styles.chipBad}>
+            {'❤️'.repeat(hp)}
+            {'🤍'.repeat(MAX_HP - hp)}
+          </span>
+        </div>
+
+        <div ref={arenaRef} className={styles.arena}>
+          <div className={styles.questionPanel}>
+            <p className={styles.questionText}>{currentQ?.q}</p>
+            {thaiQ && thaiQ !== currentQ?.q && (
+              <p className={styles.questionThai}>{thaiQ}</p>
+            )}
           </div>
+
+          <div className={styles.sky}>
+            <div
+              className={styles.cloud}
+              style={{ left: '15%', top: '15%', width: 60, height: 18 }}
+            />
+            <div
+              className={styles.cloud}
+              style={{ left: '60%', top: '8%', width: 80, height: 22 }}
+            />
+            <div
+              className={styles.cloud}
+              style={{ left: '80%', top: '22%', width: 50, height: 14 }}
+            />
+          </div>
+          <div className={styles.sea}>
+            <div className={styles.wave} style={{ top: '20%' }} />
+            <div className={styles.wave} style={{ top: '45%' }} />
+            <div className={styles.wave} style={{ top: '70%' }} />
+            <div className={styles.wave} style={{ top: '90%' }} />
+          </div>
+
+          {/* Enemy ships */}
+          {ships.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className={`${styles.ship} ${
+                s.exploding ? styles.shipExploding : ''
+              } ${s.fadingIn ? styles.shipFadingIn : ''} ${
+                s.fadingOut ? styles.shipFadingOut : ''
+              }`}
+              style={{
+                left: `${s.x}%`,
+                top: `${s.y}%`,
+                transform: `translate(-50%, -50%) scaleX(${s.scaleX})`,
+              }}
+              onClick={() => handleShipTap(s)}
+              disabled={s.exploding || s.fadingOut}
+              aria-label={`Enemy ship ${s.label}`}
+            >
+              <span
+                className={styles.shipLabel}
+                style={{ transform: `scaleX(${s.scaleX})` }}
+              >
+                {s.label}
+              </span>
+              <svg
+                className={styles.shipHull}
+                viewBox="-10 0 100 38"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Wake effect behind ship */}
+                <ellipse
+                  cx="45"
+                  cy="34"
+                  rx="35"
+                  ry="4"
+                  fill="rgba(255,255,255,0.15)"
+                />
+                {/* Main hull with pointed bow */}
+                <polygon
+                  points="-10,28 4,20 86,20 80,32 10,32"
+                  fill="#4a3a2a"
+                  stroke="#2a1a0a"
+                  strokeWidth="1"
+                />
+                {/* Hull plating lines */}
+                <line
+                  x1="2"
+                  y1="24"
+                  x2="80"
+                  y2="24"
+                  stroke="#3a2a1a"
+                  strokeWidth="0.5"
+                />
+                <line
+                  x1="6"
+                  y1="28"
+                  x2="78"
+                  y2="28"
+                  stroke="#3a2a1a"
+                  strokeWidth="0.5"
+                />
+                {/* Deck */}
+                <rect x="8" y="18" width="74" height="4" fill="#5a4a3a" />
+                <rect x="8" y="18" width="74" height="1" fill="#6a5a4a" />
+                {/* Superstructure/bridge */}
+                <rect
+                  x="28"
+                  y="12"
+                  width="34"
+                  height="8"
+                  fill="#3a3a3a"
+                  stroke="#2a2a2a"
+                  strokeWidth="0.5"
+                />
+                <rect x="30" y="10" width="30" height="4" fill="#4a4a4a" />
+                {/* Bridge windows */}
+                <rect x="32" y="13" width="4" height="3" fill="#7ab8d8" />
+                <rect x="38" y="13" width="4" height="3" fill="#7ab8d8" />
+                <rect x="44" y="13" width="4" height="3" fill="#7ab8d8" />
+                <rect x="50" y="13" width="4" height="3" fill="#7ab8d8" />
+                {/* Bridge roof */}
+                <polygon points="28,12 62,12 58,10 32,10" fill="#3a3a3a" />
+                {/* Forward funnel */}
+                <rect x="22" y="6" width="6" height="12" fill="#2a2a2a" />
+                <rect x="21" y="5" width="8" height="2" fill="#3a3a3a" />
+                {/* Funnel smoke */}
+                <ellipse
+                  cx="25"
+                  cy="4"
+                  rx="8"
+                  ry="3"
+                  fill="#5a5a5a"
+                  opacity="0.4"
+                />
+                <ellipse
+                  cx="27"
+                  cy="2"
+                  rx="6"
+                  ry="2"
+                  fill="#6a6a6a"
+                  opacity="0.3"
+                />
+                {/* Aft funnel */}
+                <rect x="62" y="6" width="6" height="12" fill="#2a2a2a" />
+                <rect x="61" y="5" width="8" height="2" fill="#3a3a3a" />
+                {/* Funnel smoke */}
+                <ellipse
+                  cx="65"
+                  cy="4"
+                  rx="8"
+                  ry="3"
+                  fill="#5a5a5a"
+                  opacity="0.4"
+                />
+                <ellipse
+                  cx="67"
+                  cy="2"
+                  rx="6"
+                  ry="2"
+                  fill="#6a6a6a"
+                  opacity="0.3"
+                />
+                {/* Forward turret */}
+                <circle
+                  cx="18"
+                  cy="15"
+                  r="5"
+                  fill="#3a3a3a"
+                  stroke="#2a2a2a"
+                  strokeWidth="0.5"
+                />
+                <rect x="14" y="14" width="8" height="3" fill="#2a2a2a" />
+                <rect x="16" y="11" width="10" height="2" fill="#2a2a2a" />
+                {/* Aft turret */}
+                <circle
+                  cx="72"
+                  cy="15"
+                  r="5"
+                  fill="#3a3a3a"
+                  stroke="#2a2a2a"
+                  strokeWidth="0.5"
+                />
+                <rect x="68" y="14" width="8" height="3" fill="#2a2a2a" />
+                <rect x="64" y="11" width="10" height="2" fill="#2a2a2a" />
+                {/* Mast */}
+                <line
+                  x1="45"
+                  y1="12"
+                  x2="45"
+                  y2="2"
+                  stroke="#2a1a0a"
+                  strokeWidth="1"
+                />
+                {/* Antenna */}
+                <line
+                  x1="45"
+                  y1="2"
+                  x2="50"
+                  y2="0"
+                  stroke="#2a1a0a"
+                  strokeWidth="0.5"
+                />
+                <circle cx="50" cy="0" r="1" fill="#3a3a3a" />
+                {/* Stern flag */}
+                <line
+                  x1="12"
+                  y1="18"
+                  x2="12"
+                  y2="8"
+                  stroke="#2a1a0a"
+                  strokeWidth="0.5"
+                />
+                <polygon points="12,8 5,10 12,12" fill={s.flagColor} />
+                {/* Bow detail - pointed prow with shadow */}
+                <polygon points="-10,28 4,20 8,22 4,30 -6,30" fill="#3a2a1a" />
+                {/* Bow wave / spray */}
+                <path
+                  d="M -14,30 Q -8,26 0,28 Q -4,32 -14,30 Z"
+                  fill="rgba(255,255,255,0.55)"
+                />
+                <ellipse
+                  cx="-10"
+                  cy="31"
+                  rx="6"
+                  ry="1.4"
+                  fill="rgba(255,255,255,0.4)"
+                />
+                {/* Waterline highlight */}
+                <line
+                  x1="4"
+                  y1="32"
+                  x2="86"
+                  y2="32"
+                  stroke="#7ab8d8"
+                  strokeWidth="0.5"
+                  opacity="0.4"
+                />
+              </svg>
+            </button>
+          ))}
+
+          {/* Torpedoes in flight */}
+          {torpedoes.map((t) => (
+            <div
+              key={t.id}
+              className={styles.torpedo}
+              style={{ left: `${t.x}%`, top: `${t.y}%` }}
+            />
+          ))}
+
+          {/* Effects */}
+          {effects.map((e) =>
+            e.type === 'explosion' ? (
+              <svg
+                key={e.id}
+                className={styles.explosion}
+                style={{ left: `${e.x}%`, top: `${e.y}%` }}
+                viewBox="0 0 90 90"
+              >
+                <circle cx="45" cy="45" r="40" fill="#ff8a3a" opacity="0.8" />
+                <circle cx="45" cy="45" r="28" fill="#ffd166" opacity="0.9" />
+                <circle cx="45" cy="45" r="14" fill="#fff" />
+              </svg>
+            ) : (
+              <div
+                key={e.id}
+                className={styles.splash}
+                style={{ left: `${e.x}%`, top: `${e.y}%` }}
+              />
+            ),
+          )}
+
+          {/* Player destroyer at bottom */}
+          <svg
+            className={styles.playerShip}
+            viewBox="0 0 120 54"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Wake effect */}
+            <ellipse
+              cx="60"
+              cy="52"
+              rx="50"
+              ry="3"
+              fill="rgba(255,255,255,0.2)"
+            />
+            {/* Main hull */}
+            <polygon
+              points="6,28 114,28 106,48 14,48"
+              fill="#3a4a5a"
+              stroke="#1a2a3a"
+              strokeWidth="1"
+            />
+            {/* Hull plating lines */}
+            <line
+              x1="14"
+              y1="34"
+              x2="106"
+              y2="34"
+              stroke="#2a3a4a"
+              strokeWidth="0.5"
+            />
+            <line
+              x1="16"
+              y1="40"
+              x2="104"
+              y2="40"
+              stroke="#2a3a4a"
+              strokeWidth="0.5"
+            />
+            <line
+              x1="18"
+              y1="44"
+              x2="102"
+              y2="44"
+              stroke="#2a3a4a"
+              strokeWidth="0.5"
+            />
+            {/* Deck */}
+            <rect x="10" y="26" width="100" height="4" fill="#4a5a6a" />
+            <rect x="10" y="26" width="100" height="1" fill="#5a6a7a" />
+            {/* Bow flare */}
+            <polygon points="6,28 14,28 14,48 6,42" fill="#2a3a4a" />
+            {/* Superstructure/bridge */}
+            <rect
+              x="38"
+              y="16"
+              width="44"
+              height="12"
+              fill="#2a2a3a"
+              stroke="#1a1a2a"
+              strokeWidth="0.5"
+            />
+            <rect x="40" y="14" width="40" height="4" fill="#3a3a4a" />
+            {/* Bridge windows */}
+            <rect x="42" y="17" width="5" height="4" fill="#8ac8e8" />
+            <rect x="50" y="17" width="5" height="4" fill="#8ac8e8" />
+            <rect x="58" y="17" width="5" height="4" fill="#8ac8e8" />
+            <rect x="66" y="17" width="5" height="4" fill="#8ac8e8" />
+            <rect x="74" y="17" width="5" height="4" fill="#8ac8e8" />
+            {/* Bridge roof */}
+            <polygon points="38,16 82,16 78,14 42,14" fill="#2a2a3a" />
+            {/* Bridge detail */}
+            <rect x="45" y="20" width="30" height="2" fill="#1a1a2a" />
+            {/* Forward funnel */}
+            <rect x="28" y="8" width="8" height="18" fill="#1a1a2a" />
+            <rect x="26" y="6" width="12" height="3" fill="#2a2a3a" />
+            {/* Funnel top band */}
+            <rect x="27" y="7" width="10" height="1" fill="#3a3a4a" />
+            {/* Funnel smoke */}
+            <ellipse
+              cx="32"
+              cy="5"
+              rx="10"
+              ry="4"
+              fill="#5a5a6a"
+              opacity="0.35"
+            />
+            <ellipse
+              cx="35"
+              cy="2"
+              rx="8"
+              ry="3"
+              fill="#6a6a7a"
+              opacity="0.25"
+            />
+            {/* Aft funnel */}
+            <rect x="84" y="8" width="8" height="18" fill="#1a1a2a" />
+            <rect x="82" y="6" width="12" height="3" fill="#2a2a3a" />
+            {/* Funnel top band */}
+            <rect x="83" y="7" width="10" height="1" fill="#3a3a4a" />
+            {/* Funnel smoke */}
+            <ellipse
+              cx="88"
+              cy="5"
+              rx="10"
+              ry="4"
+              fill="#5a5a6a"
+              opacity="0.35"
+            />
+            <ellipse
+              cx="91"
+              cy="2"
+              rx="8"
+              ry="3"
+              fill="#6a6a7a"
+              opacity="0.25"
+            />
+            {/* Forward turret (main) */}
+            <circle
+              cx="24"
+              cy="20"
+              r="7"
+              fill="#1a1a2a"
+              stroke="#0a0a1a"
+              strokeWidth="0.5"
+            />
+            <rect x="16" y="18" width="16" height="4" fill="#0a0a1a" />
+            <rect x="18" y="14" width="14" height="3" fill="#0a0a1a" />
+            {/* Forward secondary turret */}
+            <circle
+              cx="38"
+              cy="22"
+              r="4"
+              fill="#1a1a2a"
+              stroke="#0a0a1a"
+              strokeWidth="0.5"
+            />
+            <rect x="34" y="20" width="8" height="2" fill="#0a0a1a" />
+            <rect x="35" y="17" width="8" height="2" fill="#0a0a1a" />
+            {/* Aft turret (main) */}
+            <circle
+              cx="96"
+              cy="20"
+              r="7"
+              fill="#1a1a2a"
+              stroke="#0a0a1a"
+              strokeWidth="0.5"
+            />
+            <rect x="88" y="18" width="16" height="4" fill="#0a0a1a" />
+            <rect x="88" y="14" width="14" height="3" fill="#0a0a1a" />
+            {/* Aft secondary turret */}
+            <circle
+              cx="82"
+              cy="22"
+              r="4"
+              fill="#1a1a2a"
+              stroke="#0a0a1a"
+              strokeWidth="0.5"
+            />
+            <rect x="78" y="20" width="8" height="2" fill="#0a0a1a" />
+            <rect x="77" y="17" width="8" height="2" fill="#0a0a1a" />
+            {/* Main mast */}
+            <line
+              x1="60"
+              y1="16"
+              x2="60"
+              y2="2"
+              stroke="#1a2a3a"
+              strokeWidth="1.5"
+            />
+            {/* Mast top platform */}
+            <rect x="56" y="2" width="8" height="2" fill="#2a3a4a" />
+            {/* Radar antenna */}
+            <ellipse cx="60" cy="1" rx="6" ry="1" fill="#1a1a2a" />
+            <line
+              x1="54"
+              y1="1"
+              x2="66"
+              y2="1"
+              stroke="#2a2a3a"
+              strokeWidth="0.5"
+            />
+            {/* Forward mast */}
+            <line
+              x1="30"
+              y1="16"
+              x2="30"
+              y2="4"
+              stroke="#1a2a3a"
+              strokeWidth="1"
+            />
+            <rect x="28" y="3" width="4" height="2" fill="#2a3a4a" />
+            {/* Aft mast */}
+            <line
+              x1="90"
+              y1="16"
+              x2="90"
+              y2="4"
+              stroke="#1a2a3a"
+              strokeWidth="1"
+            />
+            <rect x="88" y="3" width="4" height="2" fill="#2a3a4a" />
+            {/* Flag staff */}
+            <line
+              x1="60"
+              y1="14"
+              x2="60"
+              y2="0"
+              stroke="#1a2a3a"
+              strokeWidth="0.8"
+            />
+            {/* Naval ensign */}
+            <polygon points="60,0 70,3 60,6" fill="#3366cc" />
+            <rect x="60" y="2" width="10" height="2" fill="#cc3333" />
+            {/* Deck detail - cargo hatches */}
+            <rect x="20" y="24" width="12" height="2" fill="#3a4a5a" rx="1" />
+            <rect x="36" y="24" width="12" height="2" fill="#3a4a5a" rx="1" />
+            <rect x="52" y="24" width="16" height="2" fill="#3a4a5a" rx="1" />
+            <rect x="72" y="24" width="12" height="2" fill="#3a4a5a" rx="1" />
+            {/* Anchor */}
+            <polygon points="12,28 16,28 16,32 12,32" fill="#4a5a6a" />
+            <line
+              x1="14"
+              y1="28"
+              x2="14"
+              y2="34"
+              stroke="#3a4a5a"
+              strokeWidth="1"
+            />
+            <circle
+              cx="14"
+              cy="35"
+              r="1.5"
+              fill="none"
+              stroke="#3a4a5a"
+              strokeWidth="0.8"
+            />
+            {/* Waterline highlight */}
+            <line
+              x1="6"
+              y1="48"
+              x2="114"
+              y2="48"
+              stroke="#8ac8e8"
+              strokeWidth="0.5"
+              opacity="0.5"
+            />
+          </svg>
         </div>
       </div>
     </div>
+  );
+}
+
+function PattayaLesson3PageContent() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PattayaLesson3Content />
+    </Suspense>
   );
 }
 

@@ -1,145 +1,154 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
 import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
-import quizStyles from '../../maze/_components/QuizButtons.module.css';
+import styles from './Lesson1.module.css';
 
-export type Challenge = {
-  prompt: string;
-  options: string[];
-  answer: number;
+export type VerbEntry = {
+  base: string;
+  past: string;
+  participle: string;
+  distractors?: string[];
 };
 
-const THEME_COLOR = '#305b0f';
+export type QuizQuestion = {
+  verb: VerbEntry;
+  askPast: boolean;
+  correctAnswer: string;
+  options: string[];
+};
 
 type QuizProps = {
-  challenge: Challenge;
-  step: number;
-  selectedIndex: number | null;
-  feedbackIcon: '✓' | '✗' | null;
-  onAnswer: (challenge: Challenge, pickedIndex: number) => void;
+  question: QuizQuestion;
+  selected: number | null;
+  feedback: 'correct' | 'wrong' | null;
+  shotsEarned: number;
+  verbs: VerbEntry[];
+  onAnswer: (optionIndex: number) => void;
+  onSkipToShoot?: () => void;
 };
 
 export default function Quiz({
-  challenge,
-  step,
-  selectedIndex,
-  feedbackIcon,
+  question,
+  selected,
+  feedback,
+  shotsEarned,
+  verbs,
   onAnswer,
+  onSkipToShoot,
 }: QuizProps) {
-  const thaiQuestion = useThaiQuestion(challenge.prompt);
-  const answeredCorrectly =
-    selectedIndex !== null && selectedIndex === challenge.answer;
-  const blankMatch = challenge.prompt.match(/_{2,}/);
-  let promptNode: ReactNode = challenge.prompt;
-  if (answeredCorrectly && blankMatch && blankMatch.index !== undefined) {
-    const start = blankMatch.index;
-    promptNode = (
-      <>
-        {challenge.prompt.slice(0, start)}
-        <span
-          style={{
-            color: '#2e7d32',
-            fontStyle: 'italic',
-            textDecoration: 'underline',
-            textUnderlineOffset: '4px',
-            background: 'rgba(76, 175, 80, 0.15)',
-            borderRadius: '4px',
-            padding: '0 4px',
-          }}
-        >
-          {challenge.options[challenge.answer]}
-        </span>
-        {challenge.prompt.slice(start + blankMatch[0].length)}
-      </>
-    );
-  }
+  const label = question.askPast ? 'past simple' : 'past participle';
+  const questionText = `What is the ${label} of ${question.verb.base.toLowerCase()}?`;
+  const thaiQuestion = useThaiQuestion(questionText);
+
   return (
-    <div
-      className={quizStyles.questionSlide}
-      style={{ padding: '0', position: 'relative' }}
-    >
-      {feedbackIcon && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            fontSize: '80px',
-            fontWeight: 'bold',
-            zIndex: 2000,
-            animation: `feedbackFadeOut ${feedbackIcon === '✓' ? '1s' : '0.3s'} ease-out forwards`,
-            color: feedbackIcon === '✓' ? '#4CAF50' : '#F44336',
-            textShadow: '0 2px 8px rgba(0,0,0,0.3)',
-            pointerEvents: 'none',
-          }}
-        >
-          {feedbackIcon}
+    <>
+      <div className={styles.panel}>
+        <div className={styles.verbTable}>
+          <div className={styles.verbRow}>
+            <span className={styles.verbLabel}>Base</span>
+            <span className={styles.verbBase}>{question.verb.base}</span>
+          </div>
+          <div className={styles.verbRow}>
+            <span className={styles.verbLabel}>Past simple</span>
+            <span
+              className={question.askPast ? styles.verbBlank : styles.verbKnown}
+            >
+              {question.askPast ? '______?' : question.verb.past}
+            </span>
+          </div>
+          <div className={styles.verbRow}>
+            <span className={styles.verbLabel}>Past participle</span>
+            <span
+              className={
+                !question.askPast ? styles.verbBlank : styles.verbKnown
+              }
+            >
+              {!question.askPast ? '______?' : question.verb.participle}
+            </span>
+          </div>
         </div>
-      )}
-      <style>{`
-        @keyframes feedbackFadeOut {
-          0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
-        }
-      `}</style>
-      <div style={{ marginBottom: '10px' }}>
-        <p
-          style={{
-            margin: '0 0 8px',
-            fontWeight: 'bold',
-            fontSize: '13px',
-            color: '#666',
-          }}
-        >
-          Question {step + 1}
+
+        <p className={styles.prompt}>
+          What is the <strong>{label}</strong> of{' '}
+          <strong>{question.verb.base.toLowerCase()}</strong>?
         </p>
-        <h2 className={quizStyles.englishPrompt}>{promptNode}</h2>
-        <p className={quizStyles.thaiPrompt}>{thaiQuestion || '\u00a0'}</p>
-        {answeredCorrectly && (
+        {thaiQuestion && thaiQuestion !== questionText && (
           <p
             style={{
-              margin: '6px 0 0',
-              fontWeight: 'bold',
+              margin: '0 0 8px 0',
               fontSize: '14px',
-              color: '#2e7d32',
+              fontWeight: '400',
+              color: '#666',
+              fontStyle: 'italic',
             }}
           >
-            ✓ Correct! +moves unlocked
+            ({thaiQuestion})
           </p>
         )}
+
+        <div className={styles.optionGrid}>
+          {question.options.map((opt, i) => {
+            let cls = styles.optionButton;
+            if (selected !== null) {
+              if (opt === question.correctAnswer) cls = styles.optionCorrect;
+              else if (i === selected) cls = styles.optionWrong;
+            }
+            return (
+              <button
+                key={i}
+                className={cls}
+                onClick={() => onAnswer(i)}
+                disabled={selected !== null}
+              >
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+
+        <p
+          className={
+            feedback === 'correct' ? styles.feedbackGood : styles.feedbackBad
+          }
+          style={{ opacity: feedback ? 1 : 0, minHeight: '24px' }}
+        >
+          {feedback === 'correct'
+            ? '✓ Correct! +1 shot'
+            : feedback === 'wrong'
+              ? `✗ The answer is: ${question.correctAnswer}`
+              : '\u00a0'}
+        </p>
       </div>
-      <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
-        {challenge.options.map((option, idx) => (
-          <button
-            key={`${option}-${idx}`}
-            type="button"
-            className={`${quizStyles.quizOptionButton} ${
-              selectedIndex !== null && idx === challenge.answer
-                ? quizStyles.quizOptionCorrectFlash
-                : ''
-            }`}
-            style={{
-              backgroundColor:
-                selectedIndex === null
-                  ? THEME_COLOR
-                  : idx === challenge.answer
-                    ? '#4CAF50'
-                    : THEME_COLOR,
-              fontStyle:
-                selectedIndex !== null && idx === challenge.answer
-                  ? 'italic'
-                  : undefined,
-            }}
-            onClick={() => onAnswer(challenge, idx)}
-            disabled={selectedIndex !== null}
-          >
-            {option}
+
+      <div className={styles.refCard}>
+        <p className={styles.refTitle}>Reference</p>
+        <table className={styles.refTable}>
+          <thead>
+            <tr>
+              <th>Base</th>
+              <th>Past Simple</th>
+              <th>Past Participle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {verbs.map((v) => (
+              <tr key={v.base}>
+                <td>{v.base}</td>
+                <td>{v.past}</td>
+                <td>{v.participle}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {shotsEarned > 0 && onSkipToShoot && (
+        <div className={styles.skipWrap}>
+          <button className={styles.skipButton} onClick={onSkipToShoot}>
+            Go shoot ({shotsEarned} shots ready) →
           </button>
-        ))}
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }
