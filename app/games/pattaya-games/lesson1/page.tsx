@@ -30,6 +30,15 @@ function streakMultiplier(streak: number): number {
 }
 const CANDIES = ['🍒', '🍋', '🍇', '🍉', '🍍', '🥥'];
 
+const CANDY_GLOW: Record<string, string> = {
+  '🍒': '#e11d48',
+  '🍋': '#facc15',
+  '🍇': '#9333ea',
+  '🍉': '#22c55e',
+  '🍍': '#f59e0b',
+  '🥥': '#a8a29e',
+};
+
 const practiceChallenges: Challenge[] = [
   {
     prompt: 'She is _______ to music right now.',
@@ -470,6 +479,11 @@ function PattayaLesson1PageContent() {
                                 isCascading ? styles.tileCascade : ''
                               } ${isSwapping ? styles.tileSwap : ''}`}
                               onClick={() => onTileClick(r, c)}
+                              style={
+                                {
+                                  '--glow': CANDY_GLOW[tile] ?? '#f97316',
+                                } as React.CSSProperties
+                              }
                               disabled={
                                 movesLeft === 0 ||
                                 isMatched ||

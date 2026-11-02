@@ -271,13 +271,14 @@
   z-index: 2;
   box-shadow:
     0 0 0 2px #ffffff,
-    0 0 12px rgba(249, 115, 22, 0.95),
-    0 0 24px rgba(234, 88, 12, 0.7);
+    0 0 12px var(--glow, #f97316),
+    0 0 24px var(--glow, #f97316);
   animation: matchFlashPop 620ms ease-out forwards;
 }
 
 .tileCascade {
   animation: cascade 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--glow, #f97316) 60%, transparent);
 }
 
 @keyframes matchFlashPop {
@@ -289,17 +290,17 @@
   35% {
     transform: scale(1.08);
     opacity: 1;
-    background: #fff7ed;
+    background: color-mix(in srgb, var(--glow, #f97316) 12%, white);
   }
   65% {
     transform: scale(1.2);
     opacity: 1;
-    background: #ffedd5;
+    background: color-mix(in srgb, var(--glow, #f97316) 28%, white);
   }
   100% {
     transform: scale(0.2);
     opacity: 0;
-    background: #fed7aa;
+    background: color-mix(in srgb, var(--glow, #f97316) 50%, white);
   }
 }
 
