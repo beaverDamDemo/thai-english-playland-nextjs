@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../../styles/map.module.css';
 import GameFooter from '@/app/_components/GameFooter';
 import { lessonMapButtons } from './lessonMapConfig';
+import { logLessonTopics } from '@/app/_lib/client/lessonTopics';
 
 const MAP_ASPECT_RATIO = 1024 / 1536;
 const PATTAYA_MAP_IMAGE_CACHE_BUSTER = '20260327-1';
@@ -22,6 +23,10 @@ export default function PattayaGamesScreenPage() {
   const [highlightedLesson, setHighlightedLesson] = useState<number | null>(
     null,
   );
+
+  useEffect(() => {
+    logLessonTopics('pattaya');
+  }, []);
 
   useEffect(() => {
     fetch('/api/progress')

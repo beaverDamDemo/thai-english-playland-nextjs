@@ -6,6 +6,7 @@ import styles from '../../../styles/map.module.css';
 import GameFooter from '@/app/_components/GameFooter';
 import { useEffect, useState } from 'react';
 import { lessonMapButtons } from './lessonMapConfig';
+import { logLessonTopics } from '@/app/_lib/client/lessonTopics';
 
 const MAP_ASPECT_RATIO = 1024 / 1536;
 const CASINO_MAP_IMAGE_CACHE_BUSTER = '20260326-1';
@@ -21,6 +22,10 @@ export default function CasinoScreenPage() {
   const [highlightedLesson, setHighlightedLesson] = useState<number | null>(
     null,
   );
+
+  useEffect(() => {
+    logLessonTopics('casino');
+  }, []);
 
   useEffect(() => {
     fetch('/api/progress')

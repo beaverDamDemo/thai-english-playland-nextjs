@@ -6,6 +6,7 @@ import styles from '../../../styles/map.module.css';
 import GameFooter from '@/app/_components/GameFooter';
 import { useEffect, useState } from 'react';
 import { lessonMapButtons } from './lessonMapConfig';
+import { logLessonTopics } from '@/app/_lib/client/lessonTopics';
 
 const MAP_ASPECT_RATIO = 3 / 4;
 const TOTAL_LESSONS = lessonMapButtons.length;
@@ -17,6 +18,10 @@ export default function StarterLearnersZonePage() {
   const [quizAttempts, setQuizAttempts] = useState(0);
   const [totalMovesEarned, setTotalMovesEarned] = useState(0);
   const [highlightedLesson, setHighlightedLesson] = useState<number | null>(null);
+
+  useEffect(() => {
+    logLessonTopics('starter');
+  }, []);
 
   useEffect(() => {
     fetch('/api/progress')

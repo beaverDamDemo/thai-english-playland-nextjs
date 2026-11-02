@@ -6,6 +6,7 @@ import styles from '../../../styles/map.module.css';
 import GameFooter from '@/app/_components/GameFooter';
 import { useState, useEffect } from 'react';
 import { lessonMapButtons } from './lessonMapConfig';
+import { logLessonTopics } from '@/app/_lib/client/lessonTopics';
 
 const MAP_ASPECT_RATIO = 1024 / 1536;
 const MAP_IMAGE_CACHE_BUSTER = '20260321-1';
@@ -21,6 +22,10 @@ export default function MazeScreenPage() {
   const [highlightedLesson, setHighlightedLesson] = useState<number | null>(
     null,
   );
+
+  useEffect(() => {
+    logLessonTopics('maze');
+  }, []);
 
   useEffect(() => {
     fetch('/api/progress')
