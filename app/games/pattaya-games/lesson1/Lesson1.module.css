@@ -32,7 +32,20 @@
     linear-gradient(135deg, var(--pg-bg-a), var(--pg-bg-b) 42%, var(--pg-bg-c));
 }
 
+.page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='none' stroke='%23305b0f' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M30 40 Q38 18 52 12 M62 42 Q60 22 52 12'/%3E%3Ccircle cx='30' cy='46' r='9' fill='%23305b0f'/%3E%3Ccircle cx='62' cy='48' r='9' fill='%23305b0f'/%3E%3Cellipse cx='126' cy='38' rx='18' ry='12' fill='%23305b0f' transform='rotate(-25 126 38)'/%3E%3Cpath d='M20 130 a30 30 0 0 0 60 0 z' fill='%23305b0f'/%3E%3Cpath d='M130 120 q16 -22 34 -6 q-12 22 -34 6 z' fill='%23305b0f'/%3E%3Cg%3E%3Ccircle cx='100' cy='100' r='5' fill='%23305b0f'/%3E%3Ccircle cx='110' cy='100' r='5' fill='%23305b0f'/%3E%3Ccircle cx='105' cy='109' r='5' fill='%23305b0f'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
 .container {
+  position: relative;
+  z-index: 1;
   max-width: 980px;
   margin: 0 auto;
 }

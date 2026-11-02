@@ -317,7 +317,7 @@ function PattayaLesson1PageContent() {
         setSelectedIndex(null);
         setQIndex((v) => v + 1);
       },
-      isCorrect ? 300 : 800,
+      isCorrect ? 1200 : 800,
     );
   }
 
