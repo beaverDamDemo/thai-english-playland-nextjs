@@ -75,7 +75,7 @@ export default function Quiz({
         {thaiQuestion && thaiQuestion !== questionText && (
           <p
             style={{
-              margin: '5px 0 15px 0',
+              margin: '0 0 8px 0',
               fontSize: '14px',
               fontWeight: '400',
               color: '#666',

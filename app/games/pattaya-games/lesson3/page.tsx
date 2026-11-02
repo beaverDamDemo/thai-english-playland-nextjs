@@ -147,7 +147,12 @@ function buildRound(): QuizQuestion[] {
   });
 }
 
-type Phase = 'quiz' | 'shoot' | 'done';
+type Phase = 'battle' | 'done';
+
+const TANKS_TO_WIN = 2;
+const STREAK_BONUS_EVERY = 3; // every Nth correct answer in a row grants a bonus shot
+const BASE_TANK_SPEED = 2.5; // % of arena width per second
+const SPEED_PER_KILL = 1.5;
 
 // Ballistics constants
 const MV = 600; // muzzle velocity m/s
@@ -236,13 +241,14 @@ type Shell = {
 type HitEffect = { id: number; x: number; y: number };
 
 function PattayaLesson3PageContent() {
-  const [phase, setPhase] = useState<Phase>('quiz');
+  const [phase, setPhase] = useState<Phase>('battle');
 
   const [round, setRound] = useState<QuizQuestion[]>([]);
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
-  const [roundCorrect, setRoundCorrect] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [bonusFlash, setBonusFlash] = useState(false);
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [totalWrong, setTotalWrong] = useState(0);
   const [roundsDone, setRoundsDone] = useState(0);
@@ -265,6 +271,7 @@ function PattayaLesson3PageContent() {
   const tankXRef = useRef(20);
   const tankDistRef = useRef(MIN_DIST);
   const [tankHits, setTankHits] = useState(0);
+  const tankHitsRef = useRef(0);
   const [shells, setShells] = useState<Shell[]>([]);
   const shellsRef = useRef<Shell[]>([]);
   const [hitEffects, setHitEffects] = useState<HitEffect[]>([]);
@@ -313,9 +320,18 @@ function PattayaLesson3PageContent() {
     setSelected(optionIndex);
     setFeedback(isCorrect ? 'correct' : 'wrong');
     if (isCorrect) {
-      setRoundCorrect((v) => v + 1);
+      const nextStreak = streak + 1;
+      const bonus = nextStreak % STREAK_BONUS_EVERY === 0 ? 1 : 0;
+      setStreak(nextStreak);
       setTotalCorrect((v) => v + 1);
+      setShotsEarned((v) => v + 1 + bonus);
+      setShotsLeft((v) => v + 1 + bonus);
+      if (bonus) {
+        setBonusFlash(true);
+        window.setTimeout(() => setBonusFlash(false), 1500);
+      }
     } else {
+      setStreak(0);
       setTotalWrong((v) => v + 1);
     }
 
@@ -325,30 +341,23 @@ function PattayaLesson3PageContent() {
       if (qIndex + 1 < round.length) {
         setQIndex((v) => v + 1);
       } else {
-        finishRound(isCorrect ? roundCorrect + 1 : roundCorrect);
+        setRoundsDone((v) => v + 1);
+        setRound(buildRound());
+        setQIndex(0);
       }
-    }, 900);
+    }, 700);
   }
 
-  function finishRound(correctThisRound: number) {
-    const newTotal = shotsEarned + correctThisRound;
-    setShotsEarned(newTotal);
-    setRoundsDone((v) => v + 1);
-
-    if (correctThisRound === 0) {
-      setShotsLeft(newTotal);
-      setPhase('shoot');
-    } else {
-      setRound(buildRound());
-      setQIndex(0);
-      setRoundCorrect(0);
-    }
-  }
-
-  function skipToShoot() {
-    setShotsLeft(shotsEarned);
-    setPhase('shoot');
-  }
+  // Finish the mission once enough tanks are destroyed
+  useEffect(() => {
+    if (phase !== 'battle' || tankHits < TANKS_TO_WIN) return;
+    const id = window.setTimeout(() => {
+      setPhase('done');
+      persistProgress(tankHits);
+    }, 1200);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tankHits, phase]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = arenaRef.current?.getBoundingClientRect();
@@ -392,7 +401,7 @@ function PattayaLesson3PageContent() {
 
   // Main animation loop: moves tank + advances shells
   useEffect(() => {
-    if (phase !== 'shoot') return;
+    if (phase !== 'battle') return;
 
     // Randomize tank distance once on first shoot session
     if (tankDistRef.current === MIN_DIST) {
@@ -400,16 +409,14 @@ function PattayaLesson3PageContent() {
       setTankDistDisplay(tankDistRef.current);
     }
 
-    // Tank lateral speed in % of arena width per second
-    const TANK_PCT_SPEED = 1.2; // % per second
-
     function tick(time: number) {
       if (lastTimeRef.current === null) lastTimeRef.current = time;
       const dt = Math.min(time - lastTimeRef.current, 100) / 1000; // seconds
       lastTimeRef.current = time;
 
       // ── Move tank ──
-      let nx = tankXRef.current + TANK_PCT_SPEED * dt * tankDirRef.current;
+      const speed = BASE_TANK_SPEED + SPEED_PER_KILL * tankHitsRef.current;
+      let nx = tankXRef.current + speed * dt * tankDirRef.current;
       let dir = tankDirRef.current;
       if (nx > 88) {
         nx = 88;
@@ -490,7 +497,16 @@ function PattayaLesson3PageContent() {
             };
 
             if (isHit) {
+              tankHitsRef.current += 1;
               setTankHits((v) => v + 1);
+              // Bring in a fresh (faster) tank at a new range after the explosion
+              window.setTimeout(() => {
+                tankDistRef.current =
+                  MIN_DIST + Math.random() * (MAX_DIST - MIN_DIST);
+                setTankDistDisplay(tankDistRef.current);
+                tankXRef.current = 10 + Math.random() * 75;
+                tankDirRef.current = Math.random() < 0.5 ? 1 : -1;
+              }, 700);
               const hid = hitIdRef.current++;
               setHitEffects((prev) => [
                 ...prev,
@@ -627,18 +643,12 @@ function PattayaLesson3PageContent() {
       setShells([...shellsRef.current]);
     }, flightMs);
 
-    if (shotsLeft - 1 <= 0) {
-      window.setTimeout(() => {
-        setPhase('done');
-        persistProgress(tankHits);
-      }, flightMs + 200);
-    }
   }
 
   function persistProgress(hits: number) {
     if (savedProgress) return;
     setSavedProgress(true);
-    const passed = shotsEarned >= 3;
+    const passed = hits >= TANKS_TO_WIN;
 
     if (totalWrong === 0 && totalCorrect > 0) {
       reportPerfectLesson();
@@ -653,48 +663,33 @@ function PattayaLesson3PageContent() {
     });
   }
 
-  if (phase === 'quiz') {
+  if (phase === 'battle') {
     const q = round[qIndex];
-    // Prevent hydration mismatch / undefined access during initial client render
-    if (!q) {
-      return (
-        <div className={styles.page}>
-          <div className={styles.container}>
-            <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
-            <div className={styles.panel}>
-              <p className={styles.prompt}>Loading quiz…</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className={styles.page}>
-        <div className={styles.container}>
-          <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
-          <Quiz
-            question={q}
-            selected={selected}
-            feedback={feedback}
-            shotsEarned={shotsEarned}
-            verbs={VERBS}
-            onAnswer={handleAnswer}
-            onSkipToShoot={skipToShoot}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  if (phase === 'shoot') {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
           <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
 
-          <div className={styles.statsRow}>
-            <span className={styles.scoreChip}>🎯 Shots: {shotsLeft}</span>
-            <span className={styles.scoreChip}>💥 Hits: {tankHits}</span>
+          <div className={styles.scoreBar}>
+            <span className={styles.scoreChip} title="Correct answers">
+              ✅ {totalCorrect}
+            </span>
+            <span className={styles.scoreChipBad} title="Wrong answers">
+              ❌ {totalWrong}
+            </span>
+            <span
+              className={`${styles.scoreChip} ${shotsLeft > 0 ? styles.shotsReady : ''}`}
+              title="Shots available"
+            >
+              🎯 {shotsLeft}
+            </span>
+            <span className={styles.scoreChip} title="Tanks destroyed">
+              💥 {Math.min(tankHits, TANKS_TO_WIN)}/{TANKS_TO_WIN}
+            </span>
+            <span className={styles.scoreChip} title="Streak">
+              🔥 {streak}/{STREAK_BONUS_EVERY}
+              {bonusFlash && ' +1🎯'}
+            </span>
           </div>
 
           <div
@@ -1328,8 +1323,26 @@ function PattayaLesson3PageContent() {
           </div>
 
           <p className={styles.arenaHint}>
-            Click to fire! Tank hits: {tankHits}
+            {shotsLeft > 0
+              ? 'Click the arena to fire!'
+              : 'Out of shots - answer correctly to reload!'}{' '}
+            Destroy {TANKS_TO_WIN} tanks to win.
           </p>
+
+          {q ? (
+            <Quiz
+              question={q}
+              selected={selected}
+              feedback={feedback}
+              shotsEarned={shotsEarned}
+              verbs={VERBS}
+              onAnswer={handleAnswer}
+            />
+          ) : (
+            <div className={styles.panel}>
+              <p className={styles.prompt}>Loading quiz…</p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -1355,7 +1368,7 @@ function PattayaLesson3PageContent() {
           <p className={styles.doneStat}>
             Tank hits: <strong>{tankHits}</strong>
           </p>
-          {shotsEarned >= 3 && (
+          {tankHits >= TANKS_TO_WIN && (
             <p className={styles.doneUnlock}>🔓 Lesson 4 unlocked!</p>
           )}
           <div className={styles.doneActions}>
@@ -1365,10 +1378,12 @@ function PattayaLesson3PageContent() {
             <button
               className={styles.doneRetry}
               onClick={() => {
-                setPhase('quiz');
+                setPhase('battle');
                 setRound(buildRound());
                 setQIndex(0);
-                setRoundCorrect(0);
+                setStreak(0);
+                tankHitsRef.current = 0;
+                tankXRef.current = 20;
                 setTotalCorrect(0);
                 setTotalWrong(0);
                 setRoundsDone(0);
