@@ -156,3 +156,5 @@ difficulty scales naturally
 adults won't feel like they're doing homework
 
 Honestly, this is the concept I'd prototype first. It combines the satisfaction of games like low Free with hidden language learning and is simple enough that a 10-year-old or a tired adult can enjoy it.
+
+Naredi verzijo za ucenje Tajscine iz anglescine
