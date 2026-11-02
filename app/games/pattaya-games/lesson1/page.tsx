@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   recordAnswer,
   resetStreak,
@@ -22,6 +22,8 @@ const MIN_CORRECT = 3; // correct answers needed to finish the level
 const START_MOVES = 0; // moves are earned only by answering correctly
 const MOVES_PER_CORRECT = 3;
 const STREAK_BONUS_EVERY = 3; // every Nth correct answer in a row gives +1 move
+const COMBO_WINDOW_MS = 4000; // time to make the next match and keep the combo
+const COMBO_MAX_BONUS = 2; // extra score multiplier gained from the combo
 
 function streakMultiplier(streak: number): number {
   if (streak >= 6) return 3;
@@ -143,6 +145,17 @@ function makeBoard() {
   ).board;
 }
 
+// Deterministic board for the first render so server and client HTML match;
+// the random board is swapped in after mount.
+function makeStaticBoard() {
+  return Array.from({ length: BOARD_SIZE }, (_, r) =>
+    Array.from(
+      { length: BOARD_SIZE },
+      (_, c) => CANDIES[(r + c * 2) % CANDIES.length],
+    ),
+  );
+}
+
 function cloneBoard(board: string[][]) {
   return board.map((row) => [...row]);
 }
@@ -225,7 +238,7 @@ function PattayaLesson1PageContent() {
   const [streak, setStreak] = useState(0);
   const [stars, setStars] = useState(0);
 
-  const [board, setBoard] = useState<string[][]>(() => makeBoard());
+  const [board, setBoard] = useState<string[][]>(() => makeStaticBoard());
   const [selectedTile, setSelectedTile] = useState<[number, number] | null>(
     null,
   );
@@ -237,6 +250,30 @@ function PattayaLesson1PageContent() {
   const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
   const [cascadingTiles, setCascadingTiles] = useState<Set<string>>(new Set());
   const [swappingTiles, setSwappingTiles] = useState<Set<string>>(new Set());
+  const [combo, setCombo] = useState(0);
+  const [comboKey, setComboKey] = useState(0);
+  const comboRef = useRef(0);
+  const comboTimerRef = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (comboTimerRef.current !== null)
+        window.clearTimeout(comboTimerRef.current);
+    },
+    [],
+  );
+
+  function startComboWindow(next: number) {
+    comboRef.current = next;
+    setCombo(next);
+    setComboKey((k) => k + 1);
+    if (comboTimerRef.current !== null)
+      window.clearTimeout(comboTimerRef.current);
+    comboTimerRef.current = window.setTimeout(() => {
+      comboRef.current = 0;
+      setCombo(0);
+    }, COMBO_WINDOW_MS);
+  }
 
   const multiplier = streakMultiplier(streak);
   const progressPercent = Math.min(
@@ -257,6 +294,7 @@ function PattayaLesson1PageContent() {
   useEffect(() => {
     resetStreak();
     pingLessonOpen('pattaya');
+    setBoard(makeBoard());
   }, []);
 
   // Finish the level once the score goal and the minimum correct answers are met
@@ -361,7 +399,10 @@ function PattayaLesson1PageContent() {
       const needsReshuffle = !hasAvailableMove(resolved.board);
       const boardAfterResolve = needsReshuffle ? makeBoard() : resolved.board;
       const chainBonus = Math.max(0, resolved.chains - 1) * 25;
-      const gained = resolved.cleared * 10 * multiplier + chainBonus;
+      const nextCombo = comboRef.current + 1;
+      const comboBonus = Math.min(COMBO_MAX_BONUS, nextCombo - 1);
+      const gained =
+        resolved.cleared * 10 * (multiplier + comboBonus) + chainBonus;
 
       setAnimatingTiles(found);
       setPlayActionText(`Matched ${found.size} candies!`);
@@ -383,8 +424,10 @@ function PattayaLesson1PageContent() {
 
       window.setTimeout(() => {
         setPlayPoints((v) => v + gained);
+        startComboWindow(nextCombo);
         const extras = [
           multiplier > 1 ? `x${multiplier} streak` : '',
+          comboBonus > 0 ? `+${comboBonus} combo` : '',
           resolved.chains > 1 ? `${resolved.chains}x chain!` : '',
           needsReshuffle ? 'board reshuffled' : '',
         ].filter(Boolean);
@@ -455,6 +498,24 @@ function PattayaLesson1PageContent() {
                 >
                   🔥 {streak} · x{multiplier}
                 </span>
+              </div>
+
+              <div
+                className={`${styles.comboWrap} ${combo > 0 ? styles.comboOn : ''}`}
+                title="Match again before the bar runs out to build a combo"
+              >
+                <span className={styles.comboLabel}>
+                  {combo > 0 ? `⚡ Combo x${combo}` : '⚡ Combo'}
+                </span>
+                <div className={styles.comboTrack}>
+                  {combo > 0 && (
+                    <div
+                      key={comboKey}
+                      className={styles.comboFill}
+                      style={{ animationDuration: `${COMBO_WINDOW_MS}ms` }}
+                    />
+                  )}
+                </div>
               </div>
 
               <div className={styles.playGrid}>

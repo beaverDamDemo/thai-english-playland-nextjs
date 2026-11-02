@@ -243,6 +243,54 @@
   aspect-ratio: 1;
 }
 
+.comboWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.comboOn {
+  opacity: 1;
+}
+
+.comboLabel {
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--pg-accent);
+}
+
+.comboTrack {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--pg-progress-track);
+  overflow: hidden;
+}
+
+.comboFill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #facc15, #f97316);
+  transform-origin: left center;
+  animation-name: comboDrain;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes comboDrain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
 .boardLocked {
   filter: grayscale(1) brightness(0.85);
   opacity: 0.75;
