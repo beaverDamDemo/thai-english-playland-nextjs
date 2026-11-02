@@ -19,8 +19,8 @@ type Phase = 'play' | 'done';
 const BOARD_SIZE = 6;
 const TARGET_SCORE = 500; // points needed to finish the level
 const MIN_CORRECT = 3; // correct answers needed to finish the level
-const START_MOVES = 10;
-const MOVES_PER_CORRECT = 2;
+const START_MOVES = 0; // moves are earned only by answering correctly
+const MOVES_PER_CORRECT = 3;
 const STREAK_BONUS_EVERY = 3; // every Nth correct answer in a row gives +1 move
 
 function streakMultiplier(streak: number): number {
@@ -232,7 +232,7 @@ function PattayaLesson1PageContent() {
   const [movesLeft, setMovesLeft] = useState(START_MOVES);
   const [playPoints, setPlayPoints] = useState(0);
   const [playActionText, setPlayActionText] = useState(
-    'Match 3+ candies to earn points!',
+    '🔒 Answer a question correctly to unlock moves!',
   );
   const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
   const [cascadingTiles, setCascadingTiles] = useState<Set<string>>(new Set());
@@ -460,7 +460,11 @@ function PattayaLesson1PageContent() {
               <div className={styles.playGrid}>
                 <article className={styles.card}>
                   <div className={styles.boardWrap}>
-                    <div className={styles.board}>
+                    <div
+                      className={`${styles.board} ${
+                        movesLeft === 0 ? styles.boardLocked : ''
+                      }`}
+                    >
                       {board.map((row, r) =>
                         row.map((tile, c) => {
                           const isSelected =
@@ -499,7 +503,7 @@ function PattayaLesson1PageContent() {
                     </div>
                     <p className={styles.swapHint}>
                       {movesLeft === 0
-                        ? 'Out of moves! Answer a question to get more.'
+                        ? '🔒 Board locked. Answer a question correctly to earn moves!'
                         : playActionText}
                     </p>
                   </div>

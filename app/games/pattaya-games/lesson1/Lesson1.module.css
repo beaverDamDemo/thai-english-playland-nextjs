@@ -230,6 +230,15 @@
   aspect-ratio: 1;
 }
 
+.boardLocked {
+  filter: grayscale(1) brightness(0.85);
+  opacity: 0.75;
+  cursor: not-allowed;
+  transition:
+    filter 0.3s ease,
+    opacity 0.3s ease;
+}
+
 .tile {
   border: 0;
   border-radius: 6px;
