@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { getActivityRecency } from './activityRecency';
 import styles from './allUsersProgress.module.css';
 
 type GameProgress = {
@@ -36,6 +37,9 @@ type UserProgress = {
 };
 
 const GAME_KEYS = ['maze', 'casino', 'pattaya', 'starter'] as const;
+const LEADERBOARD_AVATARS = [
+  '🐼', '🦊', '🐸', '🐨', '🐯', '🐰', '🐻', '🐵', '🐧', '🦁',
+];
 
 function sumStat(user: UserProgress, key: keyof GameProgress): number {
   return GAME_KEYS.reduce((total, game) => total + (user[game]?.[key] ?? 0), 0);
@@ -43,6 +47,7 @@ function sumStat(user: UserProgress, key: keyof GameProgress): number {
 
 export default function AllUsersProgressPage() {
   const [users, setUsers] = useState<UserProgress[]>([]);
+  const [activityAsOf, setActivityAsOf] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortColumn, setSortColumn] = useState<
@@ -78,6 +83,7 @@ export default function AllUsersProgressPage() {
       })
       .then((data) => {
         if (data.ok) {
+          setActivityAsOf(Date.now());
           setUsers(data.users);
         } else {
           throw new Error(data.error || 'Unknown error');
@@ -115,7 +121,9 @@ export default function AllUsersProgressPage() {
           </div>
         </section>
 
-        <div className={styles.tableContainer} aria-hidden="true">
+        <section className={styles.leaderboardSection} aria-hidden="true">
+          <span className={`${styles.skeleton} ${styles.skeletonSectionTitle}`} />
+          <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead className={styles.thead}>
               <tr>
@@ -142,7 +150,8 @@ export default function AllUsersProgressPage() {
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </section>
       </main>
     );
   }
@@ -302,7 +311,15 @@ export default function AllUsersProgressPage() {
               >
                 <span className={styles.leaderboardRank}>{medal}</span>
                 <span className={styles.leaderboardUsername}>
-                  {maskedUsername}
+                  <span aria-hidden="true">
+                    {LEADERBOARD_AVATARS[user.id % LEADERBOARD_AVATARS.length]}
+                  </span>
+                  <span className={styles.leaderboardName} title={maskedUsername}>
+                    {maskedUsername}
+                  </span>
+                  {isCurrentUser && (
+                    <span className={styles.currentUserLabel}>You</span>
+                  )}
                 </span>
                 <div className={styles.leaderboardStats}>
                   <span className={styles.leaderboardStat}>
@@ -345,12 +362,19 @@ export default function AllUsersProgressPage() {
         </div>
       </section>
 
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
+      <section className={styles.leaderboardSection}>
+        <h2 id="users-progress-title" className={styles.leaderboardTitle}>
+          📊 All Players Progress
+        </h2>
+        <div className={styles.tableContainer}>
+        <table className={styles.table} aria-labelledby="users-progress-title">
           <thead className={styles.thead}>
             <tr>
               <th className={`${styles.headerCell} ${styles.stickyCol}`}>
                 Username
+              </th>
+              <th className={styles.headerCell} data-game="starter">
+                🌱 Starter
               </th>
               <th className={styles.headerCell} data-game="maze">
                 🌀 Maze
@@ -360,9 +384,6 @@ export default function AllUsersProgressPage() {
               </th>
               <th className={styles.headerCell} data-game="pattaya">
                 🏖️ Pattaya
-              </th>
-              <th className={styles.headerCell} data-game="starter">
-                🌱 Starter
               </th>
               <th
                 className={`${styles.headerCell} ${styles.sortableHeader}`}
@@ -427,9 +448,10 @@ export default function AllUsersProgressPage() {
               const lastActiveDate = user.last_active
                 ? new Date(user.last_active)
                 : null;
-              const lastActiveDisplay = lastActiveDate
+              const activityRecency = getActivityRecency(lastActiveDate, activityAsOf);
+              const lastActiveDisplay = lastActiveDate && Number.isFinite(lastActiveDate.getTime())
                 ? `${String(lastActiveDate.getDate()).padStart(2, '0')}/${String(lastActiveDate.getMonth() + 1).padStart(2, '0')}/${lastActiveDate.getFullYear()}`
-                : 'Never';
+                : null;
               const maskedUsername =
                 user.username.slice(0, 2) +
                 '*'.repeat(Math.max(user.username.length - 2, 0));
@@ -444,6 +466,22 @@ export default function AllUsersProgressPage() {
                     className={`${styles.cell} ${styles.usernameCell} ${styles.stickyCol}`}
                   >
                     {maskedUsername}
+                    {isCurrentUser && (
+                      <span className={styles.currentUserLabel}>You</span>
+                    )}
+                  </td>
+                  <td className={styles.cell}>
+                    <div className={styles.gameStats}>
+                      <div className={styles.level}>
+                        L{user.starter.unlocked_lessons}
+                      </div>
+                      <div className={styles.correct}>
+                        ✅ {user.starter.correct_answers}
+                      </div>
+                      <div className={styles.wrong}>
+                        ❌ {user.starter.wrong_answers}
+                      </div>
+                    </div>
                   </td>
                   <td className={styles.cell}>
                     <div className={styles.gameStats}>
@@ -484,19 +522,6 @@ export default function AllUsersProgressPage() {
                       </div>
                     </div>
                   </td>
-                  <td className={styles.cell}>
-                    <div className={styles.gameStats}>
-                      <div className={styles.level}>
-                        L{user.starter.unlocked_lessons}
-                      </div>
-                      <div className={styles.correct}>
-                        ✅ {user.starter.correct_answers}
-                      </div>
-                      <div className={styles.wrong}>
-                        ❌ {user.starter.wrong_answers}
-                      </div>
-                    </div>
-                  </td>
                   <td className={`${styles.cell} ${styles.activityCell}`}>
                     <div className={styles.activityValue}>{totalAttempts}</div>
                     <div className={styles.activityLabel}>attempts</div>
@@ -531,7 +556,14 @@ export default function AllUsersProgressPage() {
                     <div className={styles.movesLabel}>moves</div>
                   </td>
                   <td className={`${styles.cell} ${styles.lastActiveCell}`}>
-                    {lastActiveDisplay}
+                    <span
+                      className={`${styles.activityRecency} ${styles[activityRecency.level]}`}
+                    >
+                      {activityRecency.label}
+                    </span>
+                    {lastActiveDisplay && (
+                      <div className={styles.lastActiveDate}>{lastActiveDisplay}</div>
+                    )}
                   </td>
                   <td className={`${styles.cell} ${styles.joinedDate}`}>
                     {joinedDate}
@@ -541,7 +573,8 @@ export default function AllUsersProgressPage() {
             })}
           </tbody>
         </table>
-      </div>
+        </div>
+      </section>
     </main>
   );
 }

@@ -70,47 +70,36 @@
 .skeletonLeaderboard {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
 }
 
 .skeletonLeaderboardItem {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1.5fr);
   align-items: center;
-  gap: 12px 16px;
-  min-height: 76px;
-  padding: 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  background: #f9f9f9;
-}
-
-[data-theme='dark'] .skeletonLeaderboardItem {
-  border-color: #3a3a4a;
-  background: #2a2a3a;
+  gap: 8px;
+  padding: 4px 0;
 }
 
 .skeletonRank {
-  width: 32px;
+  width: 28px;
   height: 24px;
 }
 
 .skeletonName {
-  width: 120px;
+  width: min(120px, 100%);
   height: 18px;
 }
 
 .skeletonLeaderboardStats {
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-  gap: 16px;
-  margin-left: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .skeletonStat {
-  width: 90px;
-  height: 38px;
+  width: 100%;
+  height: 32px;
 }
 
 .skeletonTableHeading {
@@ -129,16 +118,7 @@
 
 /* Scrolls sideways on narrow screens; the username column stays pinned */
 .tableContainer {
-  margin: 0 auto;
-  border-radius: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   overflow-x: auto;
-  background: white;
-}
-
-[data-theme='dark'] .tableContainer {
-  background: #1e1e2e;
-  border: 1px solid #3a3a4a;
 }
 
 .table {
@@ -147,26 +127,26 @@
 }
 
 .thead {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: white;
 }
 
 [data-theme='dark'] .thead {
-  background: linear-gradient(90deg, #4a4a6a 0%, #5a5a7a 100%);
+  background: #1e1e2e;
 }
 
 .headerCell {
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1rem;
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: white;
+  color: #6b7280;
   white-space: nowrap;
 }
 
 [data-theme='dark'] .headerCell {
-  color: #e0e0e0;
+  color: #9ca3af;
 }
 
 /* Game columns get a coloured underline from [data-game] in globals.css */
@@ -181,7 +161,11 @@
 }
 
 .sortableHeader:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  color: #4f46e5;
+}
+
+[data-theme='dark'] .sortableHeader:hover {
+  color: #a5b4fc;
 }
 
 .tbody {
@@ -197,62 +181,45 @@
   transition: background-color 0.2s;
 }
 
-.row:nth-child(even) {
-  background-color: #f9fafb;
-}
-
-.row:nth-child(odd) {
+.row {
   background-color: white;
 }
 
 .row:hover {
-  background-color: #f3f4f6;
+  background-color: #f9fafb;
 }
 
 [data-theme='dark'] .row {
   border-bottom-color: #3a3a4a;
 }
 
-[data-theme='dark'] .row:nth-child(even) {
-  background-color: #252535;
-}
-
-[data-theme='dark'] .row:nth-child(odd) {
+[data-theme='dark'] .row {
   background-color: #1e1e2e;
 }
 
 [data-theme='dark'] .row:hover {
-  background-color: #2a2a3a;
+  background-color: #252535;
 }
 
-/* Extra specificity beats the zebra and hover rules without !important */
-.row.currentUserRow:nth-child(n) {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.2) 0%,
-    rgba(118, 75, 162, 0.2) 100%
-  );
+.row.currentUserRow {
+  background: #eef2ff;
   font-weight: 600;
 }
 
-[data-theme='dark'] .row.currentUserRow:nth-child(n) {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.3) 0%,
-    rgba(118, 75, 162, 0.3) 100%
-  );
+[data-theme='dark'] .row.currentUserRow {
+  background: #30304b;
 }
 
-.row.currentUserRow:nth-child(n) .usernameCell {
-  border-left: 4px solid #667eea;
+.row.currentUserRow .usernameCell {
+  box-shadow: inset 3px 0 #667eea;
 }
 
-[data-theme='dark'] .row.currentUserRow:nth-child(n) .usernameCell {
-  border-left-color: #8a8aff;
+[data-theme='dark'] .row.currentUserRow .usernameCell {
+  box-shadow: inset 3px 0 #a5b4fc;
 }
 
 .cell {
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1rem;
   white-space: nowrap;
   font-size: 0.875rem;
 }
@@ -264,29 +231,32 @@
 }
 
 .headerCell.stickyCol {
-  background: #667eea;
+  background: white;
 }
 
 [data-theme='dark'] .headerCell.stickyCol {
-  background: #4a4a6a;
+  background: #1e1e2e;
 }
 
 .cell.stickyCol {
   background: inherit;
 }
 
-/* Solid colours so scrolled content doesn't show through the translucent highlight */
 .row.currentUserRow .cell.stickyCol {
-  background: #dfe3fb;
+  background: #eef2ff;
 }
 
 [data-theme='dark'] .row.currentUserRow .cell.stickyCol {
-  background: #2f3050;
+  background: #30304b;
 }
 
 .usernameCell {
   font-weight: 600;
   color: #1f2937;
+}
+
+.usernameCell .currentUserLabel {
+  margin-left: 8px;
 }
 
 [data-theme='dark'] .usernameCell {
@@ -350,6 +320,61 @@
 
 [data-theme='dark'] .lastActiveCell {
   color: #9ca3af;
+}
+
+.activityRecency {
+  display: inline-block;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.recent {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.week {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+.month {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.older,
+.unknown {
+  color: #4b5563;
+  background: #f3f4f6;
+}
+
+[data-theme='dark'] .recent {
+  color: #bbf7d0;
+  background: #14532d;
+}
+
+[data-theme='dark'] .week {
+  color: #bfdbfe;
+  background: #1e3a8a;
+}
+
+[data-theme='dark'] .month {
+  color: #fde68a;
+  background: #78350f;
+}
+
+[data-theme='dark'] .older,
+[data-theme='dark'] .unknown {
+  color: #e5e7eb;
+  background: #374151;
+}
+
+.lastActiveDate {
+  margin-top: 3px;
+  font-size: 0.75rem;
 }
 
 .activityCell {
@@ -457,24 +482,110 @@
   composes: leaderboard from '../_styles/statsShared.module.css';
 }
 
+.leaderboardSection .leaderboard {
+  gap: 4px;
+}
+
 .leaderboardItem {
   composes: leaderboardItem from '../_styles/statsShared.module.css';
+}
+
+.leaderboard .leaderboardItem {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.leaderboard .leaderboardItem,
+[data-theme='dark'] .leaderboard .leaderboardItem,
+.leaderboard .leaderboardItem:hover,
+[data-theme='dark'] .leaderboard .leaderboardItem:hover {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.leaderboard .leaderboardItem:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+[data-theme='dark'] .leaderboard .leaderboardItem:not(:last-child) {
+  border-bottom: 1px solid #3a3a4a;
+}
+
+.leaderboard .leaderboardItem.currentUserLeaderboardItem {
+  background: #eef2ff;
+  box-shadow: inset 3px 0 #667eea;
+}
+
+[data-theme='dark'] .leaderboard .leaderboardItem.currentUserLeaderboardItem {
+  background: #30304b;
+  box-shadow: inset 3px 0 #a5b4fc;
 }
 
 .leaderboardRank {
   composes: leaderboardRank from '../_styles/statsShared.module.css';
 }
 
+.leaderboard .leaderboardRank {
+  min-width: 0;
+  font-size: 1.15rem;
+}
+
 .leaderboardUsername {
   composes: leaderboardUsername from '../_styles/statsShared.module.css';
+}
+
+.leaderboard .leaderboardUsername {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.leaderboardName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.currentUserLabel {
+  flex-shrink: 0;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #4f46e5;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+[data-theme='dark'] .currentUserLabel {
+  background: #a5b4fc;
+  color: #1e1e2e;
 }
 
 .leaderboardStats {
   composes: leaderboardStats from '../_styles/statsShared.module.css';
 }
 
+.leaderboard .leaderboardStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  margin-left: 0;
+}
+
 .leaderboardStat {
   composes: leaderboardStat from '../_styles/statsShared.module.css';
+}
+
+.leaderboard .leaderboardStat {
+  min-width: 0;
+  gap: 0;
+  overflow-wrap: anywhere;
 }
 
 .leaderboardStatLabel {
@@ -485,23 +596,13 @@
   composes: leaderboardStatValue from '../_styles/statsShared.module.css';
 }
 
-main .currentUserLeaderboardItem.currentUserLeaderboardItem {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.3) 0%,
-    rgba(118, 75, 162, 0.3) 100%
-  );
-  border-color: #667eea;
+.currentUserLeaderboardItem .leaderboardUsername {
   font-weight: 700;
 }
 
-[data-theme='dark'] main .currentUserLeaderboardItem.currentUserLeaderboardItem {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.4) 0%,
-    rgba(118, 75, 162, 0.4) 100%
-  );
-  border-color: #8a8aff;
+.leaderboard .leaderboardBar {
+  height: 3px;
+  margin-top: 2px;
 }
 
 @media (max-width: 600px) {
@@ -515,16 +616,30 @@ main .currentUserLeaderboardItem.currentUserLeaderboardItem {
 
   .cell,
   .headerCell {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
   }
 
+  .leaderboard .leaderboardItem,
+  .skeletonLeaderboardItem {
+    grid-template-columns: 26px minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: 5px;
+  }
+
+  .leaderboard .leaderboardStats,
   .skeletonLeaderboardStats {
-    justify-content: flex-start;
-    width: 100%;
-    margin-left: 48px;
+    gap: 4px;
   }
 
-  .skeletonStat {
-    width: 64px;
+  .leaderboard .leaderboardUsername {
+    font-size: 0.85rem;
+    gap: 3px;
+  }
+
+  .leaderboard .leaderboardStatLabel {
+    font-size: 0.6rem;
+  }
+
+  .leaderboard .leaderboardStatValue {
+    font-size: 0.85rem;
   }
 }
