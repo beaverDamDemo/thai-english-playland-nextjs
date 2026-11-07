@@ -273,6 +273,10 @@ export default function AllUsersProgressPage() {
 
   const maxScore = Math.max(...leaderboard.map((u) => u.score), 1);
   const maxCorrect = Math.max(...leaderboard.map((u) => u.totalCorrect), 1);
+  const maxMoves = users.reduce(
+    (max, user) => Math.max(max, sumStat(user, 'total_moves_earned')),
+    0,
+  );
 
   return (
     <main className={styles.container}>
@@ -554,6 +558,19 @@ export default function AllUsersProgressPage() {
                   <td className={`${styles.cell} ${styles.movesCell}`}>
                     <div className={styles.movesValue}>{totalMoves}</div>
                     <div className={styles.movesLabel}>moves</div>
+                    <div
+                      className={styles.activityBarContainer}
+                      role="img"
+                      aria-label={`${totalMoves} moves compared with the highest total of ${maxMoves}`}
+                      title={`Compared with the highest total of ${maxMoves} moves`}
+                    >
+                      <div
+                        className={styles.activityBar}
+                        style={{
+                          width: `${maxMoves > 0 ? (totalMoves / maxMoves) * 100 : 0}%`,
+                        }}
+                      />
+                    </div>
                   </td>
                   <td className={`${styles.cell} ${styles.lastActiveCell}`}>
                     <span
