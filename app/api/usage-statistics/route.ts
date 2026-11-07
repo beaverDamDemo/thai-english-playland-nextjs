@@ -9,26 +9,52 @@ export async function GET() {
   `;
   const totalUsers = Number(totalUsersResult[0]?.count || 0);
 
-  // Get users created over time (daily for last 30 days)
+  // Get users created on each of the last 30 calendar days, including today.
   const dailyUsersResult = await db`
+    WITH days AS (
+      SELECT generate_series(
+        (CURRENT_DATE - 29)::timestamp,
+        CURRENT_DATE::timestamp,
+        INTERVAL '1 day'
+      )::date AS day
+    ),
+    registrations AS (
+      SELECT DATE(created_at) AS day, COUNT(*) AS count
+      FROM public.thai_english_playland_users
+      WHERE created_at >= CURRENT_DATE - 29
+        AND created_at < CURRENT_DATE + 1
+      GROUP BY DATE(created_at)
+    )
     SELECT
-      DATE(created_at) as date,
-      COUNT(*) as count
-    FROM public.thai_english_playland_users
-    WHERE created_at >= NOW() - INTERVAL '30 days'
-    GROUP BY DATE(created_at)
-    ORDER BY date ASC;
+      TO_CHAR(days.day, 'YYYY-MM-DD') AS date,
+      COALESCE(registrations.count, 0) AS count
+    FROM days
+    LEFT JOIN registrations ON registrations.day = days.day
+    ORDER BY days.day ASC;
   `;
 
-  // Get users created over time (weekly for last 12 weeks)
+  // Get users created in each of the last 12 calendar weeks, including this week.
   const weeklyUsersResult = await db`
+    WITH weeks AS (
+      SELECT generate_series(
+        DATE_TRUNC('week', CURRENT_DATE::timestamp) - INTERVAL '11 weeks',
+        DATE_TRUNC('week', CURRENT_DATE::timestamp),
+        INTERVAL '1 week'
+      )::date AS week_start
+    ),
+    registrations AS (
+      SELECT DATE_TRUNC('week', created_at)::date AS week_start, COUNT(*) AS count
+      FROM public.thai_english_playland_users
+      WHERE created_at >= DATE_TRUNC('week', CURRENT_DATE::timestamp) - INTERVAL '11 weeks'
+        AND created_at < DATE_TRUNC('week', CURRENT_DATE::timestamp) + INTERVAL '1 week'
+      GROUP BY DATE_TRUNC('week', created_at)::date
+    )
     SELECT
-      DATE_TRUNC('week', created_at) as week_start,
-      COUNT(*) as count
-    FROM public.thai_english_playland_users
-    WHERE created_at >= NOW() - INTERVAL '12 weeks'
-    GROUP BY DATE_TRUNC('week', created_at)
-    ORDER BY week_start ASC;
+      TO_CHAR(weeks.week_start, 'YYYY-MM-DD') AS week_start,
+      COALESCE(registrations.count, 0) AS count
+    FROM weeks
+    LEFT JOIN registrations ON registrations.week_start = weeks.week_start
+    ORDER BY weeks.week_start ASC;
   `;
 
   // Get users created over time (monthly for last 12 months)
@@ -179,12 +205,12 @@ export async function GET() {
     data: {
       totalUsers,
       dailyUsers: dailyUsersResult.map((row) => ({
-        date: row.date?.toISOString().split("T")[0] || "",
-        count: Number(row.count || 0),
+        date: row.date,
+        count: Number(row.count),
       })),
       weeklyUsers: weeklyUsersResult.map((row) => ({
-        weekStart: row.week_start?.toISOString().split("T")[0] || "",
-        count: Number(row.count || 0),
+        weekStart: row.week_start,
+        count: Number(row.count),
       })),
       monthlyUsers: monthlyUsersResult.map((row) => ({
         monthStart: row.month_start?.toISOString().split("T")[0] || "",

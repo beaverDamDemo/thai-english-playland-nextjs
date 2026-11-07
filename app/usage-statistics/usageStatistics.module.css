@@ -110,8 +110,7 @@
   height: 42px;
 }
 
-.skeletonChart,
-.skeletonHourlyChart {
+.skeletonChart {
   display: flex;
   align-items: flex-end;
   gap: 12px;
@@ -275,20 +274,16 @@
 }
 
 .skeletonHourlyChart {
-  height: 200px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #f9f9f9;
 }
 
-.skeletonHourBar {
-  flex: 1;
-  height: 45%;
-}
-
-.skeletonHourBar:nth-child(3n) {
-  height: 80%;
-}
-
-.skeletonHourBar:nth-child(3n + 1) {
-  height: 60%;
+.skeletonHourTile {
+  height: 72px;
 }
 
 .loading,
@@ -408,6 +403,16 @@
   border-color: #667eea;
 }
 
+.chartTitle {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: #374151;
+}
+
+[data-theme='dark'] .chartTitle {
+  color: #e0e0e0;
+}
+
 .chartContainer {
   padding: 20px;
   border-radius: 12px;
@@ -422,42 +427,66 @@
 
 .chart {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   min-width: 600px;
   height: 300px;
-  align-items: flex-end;
+  align-items: stretch;
+}
+
+.dailyGrowthChart {
+  min-width: 1200px;
 }
 
 .barContainer {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 18px;
+  flex: 1;
+  gap: 5px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.barTrack {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
-  min-width: 40px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-bottom: 1px solid #d1d5db;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(25% - 1px),
+    rgba(148, 163, 184, 0.16) calc(25% - 1px),
+    rgba(148, 163, 184, 0.16) 25%
+  );
+}
+
+[data-theme='dark'] .barTrack {
+  border-bottom-color: #4b5563;
 }
 
 .bar {
-  width: 100%;
-  min-width: 30px;
+  width: 70%;
   max-width: 60px;
+  flex-shrink: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 8px 8px 0 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 8px;
   transition: height 0.3s ease;
-  min-height: 4px;
 }
 
 .barValue {
+  margin-bottom: 3px;
   font-size: 0.75rem;
   font-weight: bold;
-  color: white;
+  color: #596b83;
+}
+
+[data-theme='dark'] .barValue {
+  color: #c4cce0;
 }
 
 .barLabel {
-  margin-top: 8px;
   font-size: 0.7rem;
   text-align: center;
   white-space: nowrap;
@@ -714,35 +743,44 @@
 }
 
 .leaderboard {
-  composes: leaderboard from '../_styles/statsShared.module.css';
+  composes: leaderboard from '../all-users-progress/allUsersProgress.module.css';
+  gap: 4px;
+}
+
+.leaderboardHeader {
+  composes: leaderboardHeader from '../all-users-progress/allUsersProgress.module.css';
+}
+
+.leaderboardHeaderStats {
+  composes: leaderboardHeaderStats from '../all-users-progress/allUsersProgress.module.css';
 }
 
 .leaderboardItem {
-  composes: leaderboardItem from '../_styles/statsShared.module.css';
+  composes: leaderboardItem from '../all-users-progress/allUsersProgress.module.css';
 }
 
 .leaderboardRank {
-  composes: leaderboardRank from '../_styles/statsShared.module.css';
+  composes: leaderboardRank from '../all-users-progress/allUsersProgress.module.css';
 }
 
 .leaderboardUsername {
-  composes: leaderboardUsername from '../_styles/statsShared.module.css';
+  composes: leaderboardUsername from '../all-users-progress/allUsersProgress.module.css';
+}
+
+.leaderboardName {
+  composes: leaderboardName from '../all-users-progress/allUsersProgress.module.css';
 }
 
 .leaderboardStats {
-  composes: leaderboardStats from '../_styles/statsShared.module.css';
+  composes: leaderboardStats from '../all-users-progress/allUsersProgress.module.css';
 }
 
 .leaderboardStat {
-  composes: leaderboardStat from '../_styles/statsShared.module.css';
-}
-
-.leaderboardStatLabel {
-  composes: leaderboardStatLabel from '../_styles/statsShared.module.css';
+  composes: leaderboardStat from '../all-users-progress/allUsersProgress.module.css';
 }
 
 .leaderboardStatValue {
-  composes: leaderboardStatValue from '../_styles/statsShared.module.css';
+  composes: leaderboardStatValue from '../all-users-progress/allUsersProgress.module.css';
 }
 
 .progressStatsGrid {
@@ -861,13 +899,8 @@
 }
 
 .hourlyActivityChart {
-  display: flex;
-  gap: 8px;
-  height: 200px;
-  align-items: flex-end;
   padding: 20px;
   border-radius: 12px;
-  overflow-x: auto;
   background: #f9f9f9;
 }
 
@@ -876,52 +909,130 @@
   border: 1px solid #3a3a4a;
 }
 
-.hourBarContainer {
+.hourlyDescription {
+  margin: -8px 0 16px;
+  color: #596b83;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+[data-theme='dark'] .hourlyDescription,
+[data-theme='dark'] .hourlyEmpty {
+  color: #c4cce0;
+}
+
+.hourlyLegend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+[data-theme='dark'] .hourlyLegend {
+  color: #d1d5db;
+}
+
+.hourlyLegendSwatches {
+  display: flex;
+  gap: 3px;
+}
+
+.hourlyLegendSwatches span {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.hourlyPeakLegend {
+  margin-left: auto;
+}
+
+.hourlyEmpty {
+  margin: 0 0 14px;
+  color: #596b83;
+  font-size: 0.875rem;
+}
+
+.hourlyGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.hourTile {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
-  min-width: 30px;
-}
-
-.hourBar {
-  width: 100%;
-  min-width: 20px;
-  max-width: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 4px 4px 0 0;
-  display: flex;
-  align-items: flex-start;
   justify-content: center;
-  padding-top: 4px;
-  transition: height 0.3s ease;
-  min-height: 4px;
-}
-
-.hourBarValue {
-  font-size: 0.65rem;
-  font-weight: bold;
-  color: white;
-}
-
-.hourLabel {
-  margin-top: 6px;
-  font-size: 0.65rem;
+  min-width: 0;
+  min-height: 72px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  color: #1e2850;
   text-align: center;
-  color: #666;
 }
 
-[data-theme='dark'] .hourLabel {
-  color: #9ca3af;
+.hourLevelZero {
+  background: #e8ebf2;
 }
 
-.peakHour {
-  font-weight: bold;
-  color: #667eea;
+.hourLevelLow {
+  background: #cfdafa;
 }
 
-[data-theme='dark'] .peakHour {
-  color: #8a8aff;
+.hourLevelMedium {
+  background: #9eafea;
+}
+
+.hourLevelHigh {
+  background: #596dc6;
+  color: #fff;
+}
+
+[data-theme='dark'] .hourLevelZero {
+  background: #424759;
+  color: #f3f4f6;
+}
+
+[data-theme='dark'] .hourLevelLow {
+  background: #53628f;
+  color: #fff;
+}
+
+[data-theme='dark'] .hourLevelMedium {
+  background: #7487c3;
+  color: #101935;
+}
+
+[data-theme='dark'] .hourLevelHigh {
+  background: #a7b5ee;
+  color: #101935;
+}
+
+.hourPeak {
+  box-shadow: inset 0 0 0 2px #fbbf24;
+}
+
+.hourTime {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.hourCount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.hourPeakLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 @media (max-width: 600px) {
@@ -935,6 +1046,20 @@
 
   .skeletonStat {
     width: 48px;
+    margin-left: 0;
+  }
+
+  .hourlyGrid,
+  .skeletonHourlyChart {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .hourlyActivityChart,
+  .skeletonHourlyChart {
+    padding: 12px;
+  }
+
+  .hourlyPeakLegend {
     margin-left: 0;
   }
 }

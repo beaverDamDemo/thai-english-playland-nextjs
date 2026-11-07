@@ -204,10 +204,10 @@ export default function UsageStatisticsPage() {
               <span className={`${styles.skeleton} ${styles.skeletonMedium}`} />
             </div>
             <div className={styles.skeletonHourlyChart}>
-              {Array.from({ length: 12 }, (_, index) => (
+              {Array.from({ length: 24 }, (_, index) => (
                 <span
                   key={index}
-                  className={`${styles.skeleton} ${styles.skeletonHourBar}`}
+                  className={`${styles.skeleton} ${styles.skeletonHourTile}`}
                 />
               ))}
             </div>
@@ -227,62 +227,25 @@ export default function UsageStatisticsPage() {
         : data.monthlyUsers;
   const maxCount = Math.max(...chartData.map((d) => d.count), 1);
 
-  const renderChart = () => {
-    if (timeframe === 'daily') {
-      return data.dailyUsers.map((item) => {
-        const height = (item.count / maxCount) * 100;
-        const label = new Date(item.date).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
-        return (
-          <div key={item.date} className={styles.barContainer}>
-            <div className={styles.bar} style={{ height: `${height}%` }}>
-              <span className={styles.barValue}>{item.count}</span>
-            </div>
-            <span className={styles.barLabel}>{label}</span>
-          </div>
-        );
-      });
-    } else if (timeframe === 'weekly') {
-      return data.weeklyUsers.map((item) => {
-        const height = (item.count / maxCount) * 100;
-        const label = `W${new Date(item.weekStart).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        })}`;
-        return (
-          <div key={item.weekStart} className={styles.barContainer}>
-            <div className={styles.bar} style={{ height: `${height}%` }}>
-              <span className={styles.barValue}>{item.count}</span>
-            </div>
-            <span className={styles.barLabel}>{label}</span>
-          </div>
-        );
-      });
-    } else {
-      return data.monthlyUsers.map((item) => {
-        const height = (item.count / maxCount) * 100;
-        const label = new Date(item.monthStart).toLocaleDateString('en-US', {
-          month: 'short',
-          year: '2-digit',
-        });
-        return (
-          <div key={item.monthStart} className={styles.barContainer}>
-            <div className={styles.bar} style={{ height: `${height}%` }}>
-              <span className={styles.barValue}>{item.count}</span>
-            </div>
-            <span className={styles.barLabel}>{label}</span>
-          </div>
-        );
-      });
-    }
-  };
+  const growthBars = chartData.map((item) => {
+    const date = 'date' in item ? item.date : 'weekStart' in item ? item.weekStart : item.monthStart;
+    const label = new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', {
+      timeZone: 'UTC',
+      month: 'short',
+      ...(timeframe === 'monthly' ? { year: '2-digit' } : { day: 'numeric' }),
+    });
+    return { date, label, count: item.count };
+  });
 
   const maxDailyLessonUsers = Math.max(
     ...data.activityOverTime.dailyLessonUsers.map((day) => day.count),
     1,
   );
+
+  const hourlyCounts = new Map(
+    data.activityOverTime.hourlyActivity.map(({ hour, activityCount }) => [hour, activityCount]),
+  );
+  const maxHourlyActivity = Math.max(...hourlyCounts.values(), 0);
 
   return (
     <main className={styles.container}>
@@ -323,8 +286,21 @@ export default function UsageStatisticsPage() {
             </button>
           </div>
 
-          <div className={styles.chartContainer}>
-            <div className={styles.chart}>{renderChart()}</div>
+          <h3 id="user-growth-chart-title" className={styles.chartTitle}>
+            New Users {timeframe === 'daily' ? 'per Day' : timeframe === 'weekly' ? 'per Week' : 'per Month'}
+          </h3>
+          <div className={styles.chartContainer} role="region" aria-labelledby="user-growth-chart-title" tabIndex={0}>
+            <div className={`${styles.chart} ${timeframe === 'daily' ? styles.dailyGrowthChart : ''}`}>
+              {growthBars.map((item) => (
+                <div key={item.date} className={styles.barContainer} role="img" aria-label={`${timeframe === 'weekly' ? 'Week of ' : ''}${item.date}: ${item.count} new users`}>
+                  <div className={styles.barTrack}>
+                    <span className={styles.barValue}>{item.count}</span>
+                    <div className={styles.bar} style={{ height: `${(item.count / maxCount) * 100}%` }} />
+                  </div>
+                  <span className={styles.barLabel}>{item.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -542,7 +518,16 @@ export default function UsageStatisticsPage() {
         <section className={styles.card}>
           <h2 className={styles.cardTitle}>Most Active Users</h2>
 
-          <div className={styles.leaderboard}>
+          <div className={styles.leaderboard} role="table" aria-label="Most active users ranked by attempts">
+            <div className={styles.leaderboardHeader} role="row">
+              <span role="columnheader" aria-label="Rank">#</span>
+              <span role="columnheader">Player</span>
+              <div className={styles.leaderboardHeaderStats} role="presentation">
+                <span role="columnheader">Attempts</span>
+                <span role="columnheader">Success</span>
+                <span role="columnheader">Moves</span>
+              </div>
+            </div>
             {data.mostActiveUsers.map((user, index) => {
               const successRate =
                 user.totalCorrect + user.totalWrong > 0
@@ -565,32 +550,23 @@ export default function UsageStatisticsPage() {
                 '*'.repeat(Math.max(user.username.length - 2, 0));
 
               return (
-                <div key={user.username} className={styles.leaderboardItem}>
-                  <span className={styles.leaderboardRank}>{medal}</span>
-                  <span className={styles.leaderboardUsername}>
-                    {maskedUsername}
+                <div key={user.username} className={styles.leaderboardItem} role="row">
+                  <span className={styles.leaderboardRank} role="cell" aria-label={`Rank ${index + 1}`}>{medal}</span>
+                  <span className={styles.leaderboardUsername} role="cell">
+                    <span className={styles.leaderboardName} title={maskedUsername}>{maskedUsername}</span>
                   </span>
-                  <div className={styles.leaderboardStats}>
-                    <span className={styles.leaderboardStat}>
-                      <span className={styles.leaderboardStatLabel}>
-                        Attempts:
-                      </span>
+                  <div className={styles.leaderboardStats} role="presentation">
+                    <span className={styles.leaderboardStat} role="cell">
                       <span className={styles.leaderboardStatValue}>
                         {user.totalAttempts}
                       </span>
                     </span>
-                    <span className={styles.leaderboardStat}>
-                      <span className={styles.leaderboardStatLabel}>
-                        Success:
-                      </span>
+                    <span className={styles.leaderboardStat} role="cell">
                       <span className={styles.leaderboardStatValue}>
                         {successRate}%
                       </span>
                     </span>
-                    <span className={styles.leaderboardStat}>
-                      <span className={styles.leaderboardStatLabel}>
-                        Moves:
-                      </span>
+                    <span className={styles.leaderboardStat} role="cell">
                       <span className={styles.leaderboardStatValue}>
                         {user.totalMoves}
                       </span>
@@ -692,38 +668,55 @@ export default function UsageStatisticsPage() {
             </div>
           </div>
 
-          <h3 className={styles.subTitle}>
+          <h3 id="hourly-activity-title" className={styles.subTitle}>
             Peak Activity Hours (Last 30 Days)
           </h3>
-          <div className={styles.hourlyActivityChart}>
-            {data.activityOverTime.hourlyActivity.map((hour) => {
-              const maxActivity = Math.max(
-                ...data.activityOverTime.hourlyActivity.map(
-                  (h) => h.activityCount,
-                ),
-                1,
-              );
-              const barHeight = (hour.activityCount / maxActivity) * 100;
-              const peakHour = hour.activityCount === maxActivity;
+          <p className={styles.hourlyDescription}>
+            Each game-mode progress record is counted once, at its most recent update.
+            Times use the database time zone; this is not a count of every gameplay event.
+          </p>
+          <div className={styles.hourlyActivityChart} aria-labelledby="hourly-activity-title" role="region">
+            <div className={styles.hourlyLegend}>
+              <span>Less activity</span>
+              <span className={styles.hourlyLegendSwatches} aria-hidden="true">
+                <span className={styles.hourLevelZero} />
+                <span className={styles.hourLevelLow} />
+                <span className={styles.hourLevelMedium} />
+                <span className={styles.hourLevelHigh} />
+              </span>
+              <span>More activity</span>
+              <span className={styles.hourlyPeakLegend}>Outlined = peak</span>
+            </div>
+            {maxHourlyActivity === 0 && (
+              <p className={styles.hourlyEmpty}>No progress updates in the last 30 days.</p>
+            )}
+            <div className={styles.hourlyGrid} role="list" aria-label="Progress records by hour">
+              {Array.from({ length: 24 }, (_, hour) => {
+                const count = hourlyCounts.get(hour) ?? 0;
+                const peakHour = count > 0 && count === maxHourlyActivity;
+                const level = count === 0
+                  ? styles.hourLevelZero
+                  : count / maxHourlyActivity <= 1 / 3
+                    ? styles.hourLevelLow
+                    : count / maxHourlyActivity <= 2 / 3
+                      ? styles.hourLevelMedium
+                      : styles.hourLevelHigh;
+                const hourLabel = `${String(hour).padStart(2, '0')}:00`;
 
-              return (
-                <div key={hour.hour} className={styles.hourBarContainer}>
+                return (
                   <div
-                    className={styles.hourBar}
-                    style={{ height: `${barHeight}%` }}
+                    key={hour}
+                    role="listitem"
+                    className={`${styles.hourTile} ${level} ${peakHour ? styles.hourPeak : ''}`}
+                    aria-label={`${hourLabel}: ${count} ${count === 1 ? 'progress record' : 'progress records'}${peakHour ? ', peak' : ''}`}
                   >
-                    <span className={styles.hourBarValue}>
-                      {hour.activityCount}
-                    </span>
+                    <span className={styles.hourTime}>{hourLabel}</span>
+                    <span className={styles.hourCount}>{count}</span>
+                    {peakHour && <span className={styles.hourPeakLabel}>Peak</span>}
                   </div>
-                  <span
-                    className={`${styles.hourLabel} ${peakHour ? styles.peakHour : ''}`}
-                  >
-                    {hour.hour}:00
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </section>
       </div>
