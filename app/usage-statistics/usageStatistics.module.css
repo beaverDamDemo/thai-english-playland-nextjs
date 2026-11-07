@@ -1,5 +1,9 @@
 /* Light styles are the default; dark overrides follow. Shared pieces live in _styles/statsShared.module.css */
 .container {
+  --page-header-background: rgba(17, 47, 105, 0.7);
+  --page-header-background-dark: #19304e;
+  --page-header-border-dark: #41618c;
+  min-height: 100vh;
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -7,31 +11,25 @@
     system-ui,
     -apple-system,
     sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:
+    radial-gradient(ellipse at 90% 4%, rgba(116, 185, 255, 0.4), transparent 38%),
+    radial-gradient(ellipse at 8% 35%, rgba(108, 92, 231, 0.3), transparent 42%),
+    linear-gradient(150deg, #1d5eaa 0%, #3152a9 55%, #463e98 100%);
 }
 
 [data-theme='dark'] .container {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background:
+    radial-gradient(ellipse at 90% 4%, rgba(71, 132, 197, 0.25), transparent 38%),
+    radial-gradient(ellipse at 8% 35%, rgba(108, 92, 231, 0.15), transparent 42%),
+    linear-gradient(150deg, #102740 0%, #172b50 55%, #252044 100%);
 }
 
 .header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 40px;
+  composes: pageHeader from '../_styles/statsShared.module.css';
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0;
-  color: white;
-}
-
-[data-theme='dark'] .title {
-  color: #e0e0e0;
+  composes: pageTitle from '../_styles/statsShared.module.css';
 }
 
 .backLink {
@@ -933,10 +931,6 @@
 
   .content {
     padding: 20px 14px;
-  }
-
-  .header {
-    margin-bottom: 24px;
   }
 
   .skeletonStat {

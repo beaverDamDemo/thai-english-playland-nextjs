@@ -286,12 +286,12 @@ export default function UsageStatisticsPage() {
 
   return (
     <main className={styles.container}>
-      <div className={styles.header}>
+      <header className={styles.header}>
         <Link href="/" className={styles.backLink}>
           Back to Home
         </Link>
         <h1 className={styles.title}>📈 Usage Statistics</h1>
-      </div>
+      </header>
 
       <div className={styles.content}>
         <section className={styles.card}>

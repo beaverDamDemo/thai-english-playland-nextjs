@@ -1,34 +1,31 @@
 /* Light styles are the default; dark overrides follow. Shared pieces live in _styles/statsShared.module.css */
 .container {
+  --page-header-background: rgba(4, 70, 65, 0.75);
+  --page-header-background-dark: #153f3d;
+  --page-header-border-dark: #39736b;
   min-height: 100vh;
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:
+    radial-gradient(ellipse at 90% 4%, rgba(0, 206, 201, 0.4), transparent 38%),
+    radial-gradient(ellipse at 8% 35%, rgba(93, 220, 166, 0.25), transparent 42%),
+    linear-gradient(150deg, #087b66 0%, #087d79 55%, #155a68 100%);
 }
 
 [data-theme='dark'] .container {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background:
+    radial-gradient(ellipse at 90% 4%, rgba(0, 206, 201, 0.18), transparent 38%),
+    radial-gradient(ellipse at 8% 35%, rgba(0, 184, 148, 0.14), transparent 42%),
+    linear-gradient(150deg, #102f2b 0%, #123637 55%, #142e3a 100%);
 }
 
 .header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 1rem;
+  composes: pageHeader from '../_styles/statsShared.module.css';
 }
 
 .title {
-  font-size: clamp(1.6rem, 6vw, 2.5rem);
-  font-weight: 700;
-  margin: 0;
-  color: white;
-}
-
-[data-theme='dark'] .title {
-  color: #e0e0e0;
+  composes: pageTitle from '../_styles/statsShared.module.css';
 }
 
 .backLink {

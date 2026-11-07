@@ -1,4 +1,41 @@
-/* Styles shared by the usage-statistics and all-users-progress pages */
+/* Styles shared by settings and statistics pages */
+
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 20px;
+  margin-bottom: 24px;
+  padding: 18px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  background: var(--page-header-background, rgba(25, 30, 75, 0.35));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme='dark'] .pageHeader {
+  background: var(--page-header-background-dark, #292a46);
+  border-color: var(--page-header-border-dark, #505278);
+}
+
+.pageTitle {
+  margin: 0;
+  color: white;
+  font-size: clamp(1.6rem, 5vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+[data-theme='dark'] .pageTitle {
+  color: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+  .pageHeader {
+    padding: 14px 16px;
+  }
+}
 
 .backLink {
   text-decoration: none;

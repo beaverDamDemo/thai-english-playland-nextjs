@@ -23,6 +23,14 @@ type SettingsResponse = {
   error?: string;
 };
 
+const RESET_ACTIONS_THAI = {
+  all: 'รีเซ็ตความคืบหน้าทั้งหมด',
+  starter: 'รีเซ็ตความคืบหน้าของโซนผู้เริ่มต้น',
+  maze: 'รีเซ็ตความคืบหน้าของเกมเขาวงกต',
+  casino: 'รีเซ็ตความคืบหน้าของเกมคาสิโน',
+  pattaya: 'รีเซ็ตความคืบหน้าของเกมพัทยา',
+} as const;
+
 export default function SettingsPage() {
   const [data, setData] = useState<SettingsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -207,12 +215,12 @@ export default function SettingsPage() {
 
   return (
     <main className={styles.container}>
-      <div className={styles.headerRow}>
+      <header className={styles.headerRow}>
         <Link href="/" className={styles.backLink}>
           Back to Home
         </Link>
         <h1 className={styles.title}>Settings</h1>
-      </div>
+      </header>
 
       {loading ? <p className={styles.note}>Loading...</p> : null}
       {error ? <p className={styles.error}>{error}</p> : null}
@@ -318,10 +326,24 @@ export default function SettingsPage() {
       {confirmAction && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <h3 className={styles.modalTitle}>Confirm Reset</h3>
+            <h3 className={styles.modalTitle}>
+              {confirmAction.type === 'deleteAccount'
+                ? 'Confirm Account Deletion'
+                : 'Confirm Reset'}
+              <span className={styles.modalTranslation} lang="th">
+                {confirmAction.type === 'deleteAccount'
+                  ? 'ยืนยันการลบบัญชี'
+                  : 'ยืนยันการรีเซ็ต'}
+              </span>
+            </h3>
             <p className={styles.modalMessage}>
               Are you sure you want to {confirmAction.label.toLowerCase()}? This
               action cannot be undone.
+              <span className={styles.modalTranslation} lang="th">
+                {confirmAction.type === 'deleteAccount'
+                  ? 'คุณแน่ใจหรือไม่ว่าต้องการลบบัญชี? การดำเนินการนี้ไม่สามารถย้อนกลับได้'
+                  : `คุณแน่ใจหรือไม่ว่าต้องการ${RESET_ACTIONS_THAI[confirmAction.type]}? การดำเนินการนี้ไม่สามารถย้อนกลับได้`}
+              </span>
             </p>
             <div className={styles.modalActions}>
               <button
@@ -329,12 +351,18 @@ export default function SettingsPage() {
                 className={styles.modalCancelButton}
               >
                 Cancel
+                <span className={styles.modalButtonTranslation} lang="th">
+                  ยกเลิก
+                </span>
               </button>
               <button
                 onClick={handleConfirmReset}
                 className={styles.modalConfirmButton}
               >
-                Confirm
+                {confirmAction.type === 'deleteAccount' ? 'Delete Account' : 'Confirm Reset'}
+                <span className={styles.modalButtonTranslation} lang="th">
+                  {confirmAction.type === 'deleteAccount' ? 'ลบบัญชี' : 'ยืนยันการรีเซ็ต'}
+                </span>
               </button>
             </div>
           </div>

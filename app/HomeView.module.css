@@ -500,10 +500,10 @@
 }
 
 .settingsLink {
-  background: linear-gradient(135deg, #74b9ff 0%, #6c5ce7 100%);
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
+  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.35);
 }
 
 .allUsersProgressLink {
@@ -514,10 +514,10 @@
 }
 
 .usageStatisticsLink {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  background: linear-gradient(135deg, #74b9ff 0%, #6c5ce7 100%);
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.35);
+  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
 }
 
 .usageStatisticsLink::before {
@@ -1456,7 +1456,7 @@
     box-shadow: 0 8px 20px rgba(167, 64, 64, 0.3);
   }
 
-  :global(:root:not([data-theme='light'])) .settingsLink {
+  :global(:root:not([data-theme='light'])) .usageStatisticsLink {
     background: linear-gradient(135deg, #5a8fc7 0%, #6b5ce7 100%);
     box-shadow: 0 8px 20px rgba(107, 92, 231, 0.3);
   }
@@ -1649,7 +1649,7 @@
   box-shadow: 0 8px 20px rgba(167, 64, 64, 0.3);
 }
 
-:global([data-theme='dark']) .settingsLink {
+:global([data-theme='dark']) .usageStatisticsLink {
   background: linear-gradient(135deg, #5a8fc7 0%, #6b5ce7 100%);
   box-shadow: 0 8px 20px rgba(107, 92, 231, 0.3);
 }

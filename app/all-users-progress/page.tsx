@@ -280,12 +280,12 @@ export default function AllUsersProgressPage() {
 
   return (
     <main className={styles.container}>
-      <div className={styles.header}>
+      <header className={styles.header}>
         <Link href="/" className={styles.backLink}>
           Back to Home
         </Link>
         <h1 className={styles.title}>🏆 All Users Progress</h1>
-      </div>
+      </header>
 
       <section className={styles.leaderboardSection}>
         <h2 className={styles.leaderboardTitle}>🥇 Top 10 Leaderboard</h2>
