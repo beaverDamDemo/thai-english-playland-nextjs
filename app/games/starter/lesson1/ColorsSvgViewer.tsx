@@ -8,7 +8,11 @@ import UnlockToast from '../_components/UnlockToast';
 import type Snap from 'snapsvg-cjs';
 import { useThaiQuestion } from '@/app/games/maze/_components/useThaiQuestion';
 import styles from './ColorsSvgViewer.module.css';
-import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
+import {
+  pingLessonOpen,
+  recordAnswer,
+  saveProgressDelta,
+} from '@/app/_lib/client/progress';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 
 type SnapStatic = typeof Snap;
@@ -23,51 +27,232 @@ type ColorQuestion = {
 };
 
 const ALL_QUESTIONS: ColorQuestion[] = [
-  { q: 'What color is the sky on a sunny day?',  options: ['blue', 'green', 'purple', 'red'],    answer: 0 },
-  { q: 'What color is grass?',                    options: ['blue', 'brown', 'green', 'red'],     answer: 2 },
-  { q: 'What color is a banana? 🍌',             options: ['blue', 'green', 'red', 'yellow'],    answer: 3 },
-  { q: 'What color is snow?',                     options: ['black', 'grey', 'white', 'yellow'],  answer: 2 },
-  { q: 'What color is a fire truck?',             options: ['blue', 'green', 'orange', 'red'],    answer: 3 },
-  { q: 'What color is coal?',                     options: ['black', 'blue', 'orange', 'white'],  answer: 0 },
-  { q: 'What color is a strawberry? 🍓',          options: ['blue', 'green', 'red', 'yellow'],    answer: 2 },
-  { q: 'What color is a grape? 🍇',               options: ['green', 'orange', 'pink', 'purple'], answer: 3 },
-  { q: 'What color are leaves in autumn?',        options: ['blue', 'orange', 'purple', 'white'], answer: 1 },
-  { q: 'What color is milk?',                     options: ['grey', 'pink', 'white', 'yellow'],   answer: 2 },
-  { q: 'What color is the sun?',                  options: ['blue', 'red', 'white', 'yellow'],    answer: 3 },
-  { q: 'What color is chocolate?',                options: ['blue', 'brown', 'green', 'yellow'],  answer: 1 },
-  { q: 'What color is a lemon? 🍋',               options: ['blue', 'purple', 'red', 'yellow'],   answer: 3 },
-  { q: 'What color are most tree trunks?',        options: ['blue', 'brown', 'pink', 'white'],    answer: 1 },
-  { q: 'What color is a carrot? 🥕',              options: ['green', 'orange', 'purple', 'red'],  answer: 1 },
-  { q: 'What color is an orange fruit? 🍊',       options: ['blue', 'green', 'orange', 'purple'], answer: 2 },
-  { q: 'What color is the ocean?',                options: ['blue', 'brown', 'red', 'yellow'],    answer: 0 },
-  { q: 'What color is a tomato? 🍅',              options: ['blue', 'orange', 'purple', 'red'],   answer: 3 },
-  { q: 'What color is a cucumber? 🥒',            options: ['brown', 'green', 'pink', 'yellow'],  answer: 1 },
-  { q: 'What color is a blueberry? 🫐',           options: ['blue', 'orange', 'purple', 'yellow'],answer: 0 },
-  { q: 'What color is a pumpkin? 🎃',             options: ['blue', 'green', 'orange', 'purple'], answer: 2 },
-  { q: 'What color is a cloud?',                  options: ['black', 'green', 'purple', 'white'], answer: 3 },
-  { q: 'What color is a zebra?',                  options: ['black and white', 'blue', 'red', 'yellow'], answer: 0 },
-  { q: 'What color is a school bus?',             options: ['brown', 'green', 'purple', 'yellow'],answer: 3 },
-  { q: 'What color is a watermelon on the outside? 🍉', options: ['blue', 'green', 'orange', 'pink'], answer: 1 },
-  { q: 'What color is a watermelon on the inside? 🍉', options: ['blue', 'brown', 'purple', 'red'], answer: 3 },
-  { q: 'What color is a polar bear?',             options: ['black', 'brown', 'orange', 'white'], answer: 3 },
-  { q: 'What color is a fox?',                    options: ['blue', 'orange', 'purple', 'yellow'],answer: 1 },
-  { q: 'What color is a potato? 🥔',              options: ['blue', 'brown', 'purple', 'red'],    answer: 1 },
-  { q: 'What color is a dolphin?',                options: ['green', 'grey', 'purple', 'yellow'], answer: 1 },
-  { q: 'What color is a sunflower?',              options: ['blue', 'pink', 'purple', 'yellow'],  answer: 3 },
-  { q: 'What color is a rose?',                   options: ['blue', 'brown', 'orange', 'red'],    answer: 3 },
-  { q: 'What color is a panda?',                  options: ['black and white', 'green', 'purple', 'yellow'], answer: 0 },
-  { q: 'What color is a peach? 🍑',               options: ['black', 'blue', 'pink', 'purple'],   answer: 2 },
-  { q: 'What color is a kiwi on the outside? 🥝', options: ['blue', 'brown', 'purple', 'yellow'], answer: 1 },
-  { q: 'What color is a kiwi on the inside? 🥝',  options: ['green', 'orange', 'purple', 'red'],  answer: 0 },
-  { q: 'What color is a lime? 🍋‍🟩',             options: ['blue', 'brown', 'green', 'purple'],  answer: 2 },
-  { q: 'What color is a flamingo?',               options: ['blue', 'pink', 'purple', 'yellow'],  answer: 1 },
-  { q: 'What color is a tiger?',                  options: ['blue', 'green', 'orange and black', 'purple'], answer: 2 },
-  { q: 'What color is a camel?',                  options: ['blue', 'brown', 'purple', 'red'],    answer: 1 },
-  { q: 'What color is a cherry? 🍒',              options: ['blue', 'purple', 'red', 'yellow'],   answer: 2 },
-  { q: 'What color is a plum?',                   options: ['blue', 'green', 'purple', 'yellow'], answer: 2, icon: '/assets/plum.svg' },
-  { q: 'What color is a mushroom?',               options: ['blue', 'brown', 'purple', 'red'],    answer: 1 },
-  { q: 'What color is a shark?',                  options: ['grey', 'pink', 'purple', 'yellow'],  answer: 0 },
-  { q: 'What color is a coconut on the outside? 🥥', options: ['blue', 'brown', 'green', 'purple'], answer: 1 },
+  {
+    q: 'What color is the sky on a sunny day?',
+    options: ['blue', 'green', 'purple', 'red'],
+    answer: 0,
+  },
+  {
+    q: 'What color is grass?',
+    options: ['blue', 'brown', 'green', 'red'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a banana? 🍌',
+    options: ['blue', 'green', 'red', 'yellow'],
+    answer: 3,
+  },
+  {
+    q: 'What color is snow?',
+    options: ['black', 'grey', 'white', 'yellow'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a fire truck?',
+    options: ['blue', 'green', 'orange', 'red'],
+    answer: 3,
+  },
+  {
+    q: 'What color is coal?',
+    options: ['black', 'blue', 'orange', 'white'],
+    answer: 0,
+  },
+  {
+    q: 'What color is a strawberry? 🍓',
+    options: ['blue', 'green', 'red', 'yellow'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a grape? 🍇',
+    options: ['green', 'orange', 'pink', 'purple'],
+    answer: 3,
+  },
+  {
+    q: 'What color are leaves in autumn?',
+    options: ['blue', 'orange', 'purple', 'white'],
+    answer: 1,
+  },
+  {
+    q: 'What color is milk?',
+    options: ['grey', 'pink', 'white', 'yellow'],
+    answer: 2,
+  },
+  {
+    q: 'What color is the sun?',
+    options: ['blue', 'red', 'white', 'yellow'],
+    answer: 3,
+  },
+  {
+    q: 'What color is chocolate?',
+    options: ['blue', 'brown', 'green', 'yellow'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a lemon? 🍋',
+    options: ['blue', 'purple', 'red', 'yellow'],
+    answer: 3,
+  },
+  {
+    q: 'What color are most tree trunks?',
+    options: ['blue', 'brown', 'pink', 'white'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a carrot? 🥕',
+    options: ['green', 'orange', 'purple', 'red'],
+    answer: 1,
+  },
+  {
+    q: 'What color is an orange fruit? 🍊',
+    options: ['blue', 'green', 'orange', 'purple'],
+    answer: 2,
+  },
+  {
+    q: 'What color is the ocean?',
+    options: ['blue', 'brown', 'red', 'yellow'],
+    answer: 0,
+  },
+  {
+    q: 'What color is a tomato? 🍅',
+    options: ['blue', 'orange', 'purple', 'red'],
+    answer: 3,
+  },
+  {
+    q: 'What color is a cucumber? 🥒',
+    options: ['brown', 'green', 'pink', 'yellow'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a blueberry? 🫐',
+    options: ['blue', 'orange', 'purple', 'yellow'],
+    answer: 0,
+  },
+  {
+    q: 'What color is a pumpkin? 🎃',
+    options: ['blue', 'green', 'orange', 'purple'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a cloud?',
+    options: ['black', 'green', 'purple', 'white'],
+    answer: 3,
+  },
+  {
+    q: 'What color is a zebra?',
+    options: ['black and white', 'blue', 'red', 'yellow'],
+    answer: 0,
+  },
+  {
+    q: 'What color is a school bus?',
+    options: ['brown', 'green', 'purple', 'yellow'],
+    answer: 3,
+  },
+  {
+    q: 'What color is a watermelon on the outside? 🍉',
+    options: ['blue', 'green', 'orange', 'pink'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a watermelon on the inside? 🍉',
+    options: ['blue', 'brown', 'purple', 'red'],
+    answer: 3,
+  },
+  {
+    q: 'What color is a polar bear?',
+    options: ['black', 'brown', 'orange', 'white'],
+    answer: 3,
+  },
+  {
+    q: 'What color is a fox?',
+    options: ['blue', 'orange', 'purple', 'yellow'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a potato? 🥔',
+    options: ['blue', 'brown', 'purple', 'red'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a dolphin?',
+    options: ['green', 'grey', 'purple', 'yellow'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a sunflower?',
+    options: ['blue', 'pink', 'purple', 'yellow'],
+    answer: 3,
+  },
+  {
+    q: 'What color is a rose?',
+    options: ['blue', 'brown', 'orange', 'red'],
+    answer: 3,
+  },
+  {
+    q: 'What color is a panda?',
+    options: ['black and white', 'green', 'purple', 'yellow'],
+    answer: 0,
+  },
+  {
+    q: 'What color is a peach? 🍑',
+    options: ['black', 'blue', 'pink', 'purple'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a kiwi on the outside? 🥝',
+    options: ['blue', 'brown', 'purple', 'yellow'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a kiwi on the inside? 🥝',
+    options: ['green', 'orange', 'purple', 'red'],
+    answer: 0,
+  },
+  {
+    q: 'What color is a lime? 🍋‍🟩',
+    options: ['blue', 'brown', 'green', 'purple'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a flamingo?',
+    options: ['blue', 'pink', 'purple', 'yellow'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a tiger?',
+    options: ['blue', 'green', 'orange and black', 'purple'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a camel?',
+    options: ['blue', 'brown', 'purple', 'red'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a cherry? 🍒',
+    options: ['blue', 'purple', 'red', 'yellow'],
+    answer: 2,
+  },
+  {
+    q: 'What color is a plum?',
+    options: ['blue', 'green', 'purple', 'yellow'],
+    answer: 2,
+    icon: '/assets/plum.svg',
+  },
+  {
+    q: 'What color is a mushroom?',
+    options: ['blue', 'brown', 'purple', 'red'],
+    answer: 1,
+  },
+  {
+    q: 'What color is a shark?',
+    options: ['grey', 'pink', 'purple', 'yellow'],
+    answer: 0,
+  },
+  {
+    q: 'What color is a coconut on the outside? 🥥',
+    options: ['blue', 'white', 'green', 'pink'],
+    answer: 2,
+  },
 ];
 
 function shuffle<T>(arr: T[]): T[] {
@@ -84,33 +269,39 @@ function shuffle<T>(arr: T[]): T[] {
  * Normalises fill to inline style so CSS transitions work reliably later.
  */
 function grayOutGroup(groupEl: SVGElement): void {
-  groupEl.querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline').forEach((el) => {
-    const style = el.getAttribute('style') ?? '';
-    const fillInStyle = style.match(/fill:\s*([^;}\s]+)/);
-    const fillAttr = el.getAttribute('fill');
-    const original = fillInStyle ? fillInStyle[1].trim() : fillAttr;
-    if (original) el.setAttribute('data-original-fill', original);
+  groupEl
+    .querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline')
+    .forEach((el) => {
+      const style = el.getAttribute('style') ?? '';
+      const fillInStyle = style.match(/fill:\s*([^;}\s]+)/);
+      const fillAttr = el.getAttribute('fill');
+      const original = fillInStyle ? fillInStyle[1].trim() : fillAttr;
+      if (original) el.setAttribute('data-original-fill', original);
 
-    let newStyle = style;
-    if (fillInStyle) {
-      newStyle = newStyle.replace(/fill:\s*[^;}\s]+/g, `fill:${GRAY}`);
-    } else if (fillAttr) {
-      // Move fill attribute into inline style so transitions can animate it
-      el.removeAttribute('fill');
-      newStyle = (newStyle ? newStyle + '; ' : '') + `fill:${GRAY}`;
-    }
-    el.setAttribute('style', newStyle);
-  });
+      let newStyle = style;
+      if (fillInStyle) {
+        newStyle = newStyle.replace(/fill:\s*[^;}\s]+/g, `fill:${GRAY}`);
+      } else if (fillAttr) {
+        // Move fill attribute into inline style so transitions can animate it
+        el.removeAttribute('fill');
+        newStyle = (newStyle ? newStyle + '; ' : '') + `fill:${GRAY}`;
+      }
+      el.setAttribute('style', newStyle);
+    });
 }
 
 function getGroupFills(groupEl: SVGElement): string[] {
   const fills = new Set<string>();
-  groupEl.querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline').forEach((el) => {
-    const style = el.getAttribute('style') ?? '';
-    const fillInStyle = style.match(/fill:\s*([^;}\s]+)/);
-    const fill = fillInStyle ? fillInStyle[1].trim() : el.getAttribute('fill');
-    if (fill) fills.add(fill);
-  });
+  groupEl
+    .querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline')
+    .forEach((el) => {
+      const style = el.getAttribute('style') ?? '';
+      const fillInStyle = style.match(/fill:\s*([^;}\s]+)/);
+      const fill = fillInStyle
+        ? fillInStyle[1].trim()
+        : el.getAttribute('fill');
+      if (fill) fills.add(fill);
+    });
   return [...fills];
 }
 
@@ -138,7 +329,9 @@ function getGroupIssues({
   if (
     dataGroupColor &&
     originalFills.length > 0 &&
-    !originalFills.some((fill) => fill.toLowerCase() === dataGroupColor.toLowerCase())
+    !originalFills.some(
+      (fill) => fill.toLowerCase() === dataGroupColor.toLowerCase(),
+    )
   ) {
     issues.push('data-group-color does not match a group fill');
   }
@@ -148,23 +341,28 @@ function getGroupIssues({
 
 /** Restore a group's original per-element colours with a CSS fill transition. */
 function revealGroup(groupEl: SVGElement): void {
-  groupEl.querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline').forEach((el) => {
-    const original = el.getAttribute('data-original-fill');
-    if (!original) return;
+  groupEl
+    .querySelectorAll<SVGElement>('path,rect,circle,ellipse,polygon,polyline')
+    .forEach((el) => {
+      const original = el.getAttribute('data-original-fill');
+      if (!original) return;
 
-    // Inject transition BEFORE changing fill so the browser can interpolate
-    const style = el.getAttribute('style') ?? '';
-    const withTransition = style.includes('transition:')
-      ? style
-      : (style ? style + '; ' : '') + 'transition: fill 0.8s ease';
-    el.setAttribute('style', withTransition);
+      // Inject transition BEFORE changing fill so the browser can interpolate
+      const style = el.getAttribute('style') ?? '';
+      const withTransition = style.includes('transition:')
+        ? style
+        : (style ? style + '; ' : '') + 'transition: fill 0.8s ease';
+      el.setAttribute('style', withTransition);
 
-    // Change fill in next frame to actually trigger the transition
-    requestAnimationFrame(() => {
-      const s = el.getAttribute('style') ?? '';
-      el.setAttribute('style', s.replace(/fill:\s*[^;}\s]+/g, `fill:${original}`));
+      // Change fill in next frame to actually trigger the transition
+      requestAnimationFrame(() => {
+        const s = el.getAttribute('style') ?? '';
+        el.setAttribute(
+          'style',
+          s.replace(/fill:\s*[^;}\s]+/g, `fill:${original}`),
+        );
+      });
     });
-  });
 }
 
 export default function ColorsSvgViewer() {
@@ -232,7 +430,9 @@ export default function ColorsSvgViewer() {
       });
     });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleAnswer = (optionIndex: number) => {
@@ -245,20 +445,26 @@ export default function ColorsSvgViewer() {
     setFeedback(isCorrect ? 'correct' : 'wrong');
 
     if (isCorrect && revealedCount < groupOrder.length && svgElRef.current) {
-      const groupEl = svgElRef.current.querySelector<SVGGElement>(`#${groupOrder[revealedCount]}`);
+      const groupEl = svgElRef.current.querySelector<SVGGElement>(
+        `#${groupOrder[revealedCount]}`,
+      );
       if (groupEl) revealGroup(groupEl);
       setRevealedCount((c) => c + 1);
     }
 
-    setTimeout(() => {
-      setFeedback(null);
-      setLocked(false);
-      setSelectedOption(null);
-      if (isCorrect) setQIndex((i) => i + 1);
-    }, isCorrect ? 1400 : 900);
+    setTimeout(
+      () => {
+        setFeedback(null);
+        setLocked(false);
+        setSelectedOption(null);
+        if (isCorrect) setQIndex((i) => i + 1);
+      },
+      isCorrect ? 1400 : 900,
+    );
   };
 
-  const allRevealed = groupOrder.length > 0 && revealedCount >= groupOrder.length;
+  const allRevealed =
+    groupOrder.length > 0 && revealedCount >= groupOrder.length;
   const q = questions[qIndex % questions.length];
   const thaiQuestion = useThaiQuestion(q.q);
 
@@ -277,12 +483,20 @@ export default function ColorsSvgViewer() {
     <div className={styles.page}>
       <header className={styles.header} data-game="starter">
         <Link href="/games/starter" className={styles.back}>
-          <Image src="/assets/tinified/back.png" alt="Back" width={34} height={34} />
+          <Image
+            src="/assets/tinified/back.png"
+            alt="Back"
+            width={34}
+            height={34}
+          />
         </Link>
         <h1 className={styles.title}>Colors</h1>
         <div className={styles.dots}>
           {groupOrder.map((id, i) => (
-            <span key={id} className={`${styles.dot} ${i < revealedCount ? styles.dotDone : ''}`} />
+            <span
+              key={id}
+              className={`${styles.dot} ${i < revealedCount ? styles.dotDone : ''}`}
+            />
           ))}
         </div>
         <MusicToggle />
@@ -297,7 +511,10 @@ export default function ColorsSvgViewer() {
           xmlns="http://www.w3.org/2000/svg"
         />
         {process.env.NODE_ENV !== 'production' && (
-          <aside className={styles.debugOverlay} aria-label="Lesson debug information">
+          <aside
+            className={styles.debugOverlay}
+            aria-label="Lesson debug information"
+          >
             <strong>Debug</strong>
             <span>Groups found: {groupsFoundCount}</span>
             <span>Revealable: {groupOrder.length}</span>
@@ -315,22 +532,42 @@ export default function ColorsSvgViewer() {
         ) : allRevealed ? (
           <div className={styles.complete}>
             <p>ðŸŽ‰ You revealed all the colors!</p>
-            <Link href="/games/starter" className={styles.doneBtn}>â† Back to Starter Zone</Link>
+            <Link href="/games/starter" className={styles.doneBtn}>
+              â† Back to Starter Zone
+            </Link>
           </div>
         ) : (
           <>
             <p className={styles.question}>
               {q.q}
-              {q.icon && <Image src={q.icon} alt="" aria-hidden="true" width={28} height={28} className={styles.questionIcon} />}
+              {q.icon && (
+                <Image
+                  src={q.icon}
+                  alt=""
+                  aria-hidden="true"
+                  width={28}
+                  height={28}
+                  className={styles.questionIcon}
+                />
+              )}
             </p>
-            {thaiQuestion && <p className={styles.questionThai}>{thaiQuestion}</p>}
+            {thaiQuestion && (
+              <p className={styles.questionThai}>{thaiQuestion}</p>
+            )}
             <div className={styles.options}>
               {q.options.map((opt, i) => {
                 let cls = styles.option;
-                if (feedback && i === q.answer) cls += ` ${styles.optionCorrect}`;
-                else if (selectedOption === i && feedback === 'wrong') cls += ` ${styles.optionWrong}`;
+                if (feedback && i === q.answer)
+                  cls += ` ${styles.optionCorrect}`;
+                else if (selectedOption === i && feedback === 'wrong')
+                  cls += ` ${styles.optionWrong}`;
                 return (
-                  <button key={i} onClick={() => handleAnswer(i)} disabled={locked} className={cls}>
+                  <button
+                    key={i}
+                    onClick={() => handleAnswer(i)}
+                    disabled={locked}
+                    className={cls}
+                  >
                     {opt}
                   </button>
                 );
