@@ -69,7 +69,7 @@ export default function CasinoScreenPage() {
 
   return (
     <div className={styles.mazePage}>
-      <header className={styles.pageHeader}>
+      <header className={styles.pageHeader} data-game="casino">
         <span className={styles.appTitle}>Casino Game Lessons</span>
         <Link href="/" className={styles.headerHomeLink}>
           <Image

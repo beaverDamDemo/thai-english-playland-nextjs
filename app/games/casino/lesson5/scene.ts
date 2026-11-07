@@ -100,11 +100,11 @@ export class MazeScene extends Phaser.Scene {
       },
     );
 
-    this.panel = this.add.rectangle(width / 2, 300, width - 28, 278, 0x153d39, 0.95);
-    this.panel.setStrokeStyle(3, 0xbbe7df, 0.65);
+    this.panel = this.add.rectangle(width / 2, 300, width - 28, 278, 0x4c2b13, 0.95);
+    this.panel.setStrokeStyle(3, 0xf4d58d, 0.65);
     this.panel.setRounded(16);
 
-    this.cashierDesk = this.add.rectangle(122, 260, 180, 58, 0x264653, 1);
+    this.cashierDesk = this.add.rectangle(122, 260, 180, 58, 0x9a5808, 1);
     this.cashierDesk.setStrokeStyle(2, 0xffffff, 0.55);
     this.cashierDesk.setRounded(10);
     this.add
@@ -115,7 +115,7 @@ export class MazeScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.playerDesk = this.add.rectangle(width - 122, 260, 180, 58, 0x1d3557, 1);
+    this.playerDesk = this.add.rectangle(width - 122, 260, 180, 58, 0x704014, 1);
     this.playerDesk.setStrokeStyle(2, 0xffffff, 0.55);
     this.playerDesk.setRounded(10);
     this.add
@@ -144,7 +144,7 @@ export class MazeScene extends Phaser.Scene {
     });
 
     this.actionButton = this.add
-      .rectangle(width / 2, height - 52, 240, 56, 0x1b5e20)
+      .rectangle(width / 2, height - 52, 240, 56, 0x9a5808)
       .setStrokeStyle(2, 0xffffff)
       .setInteractive({ useHandCursor: true });
 
@@ -193,15 +193,15 @@ export class MazeScene extends Phaser.Scene {
 
   private drawBackground(width: number, height: number) {
     const g = this.add.graphics();
-    g.fillStyle(0x0d2b2a, 1);
+    g.fillStyle(0x2f1a0d, 1);
     g.fillRect(0, 0, width, height);
 
-    g.fillStyle(0x1f5550, 0.34);
+    g.fillStyle(0x9a5808, 0.34);
     for (let x = 22; x < width; x += 52) {
       g.fillCircle(x, 96 + ((x / 52) % 2) * 12, 16);
     }
 
-    g.lineStyle(2, 0x2b7a72, 0.3);
+    g.lineStyle(2, 0xc77800, 0.3);
     for (let y = 148; y < height; y += 34) {
       g.strokeLineShape(new Phaser.Geom.Line(0, y, width, y));
     }
@@ -213,7 +213,7 @@ export class MazeScene extends Phaser.Scene {
 
     for (let index = 0; index < 4; index += 1) {
       const box = this.add
-        .rectangle(width / 2, startY + index * spacingY, width - 80, 44, 0x2a9d8f)
+        .rectangle(width / 2, startY + index * spacingY, width - 80, 44, 0x9a5808)
         .setStrokeStyle(2, 0xffffff, 0.7)
         .setRounded(10)
         .setInteractive({ useHandCursor: true });
@@ -273,7 +273,7 @@ export class MazeScene extends Phaser.Scene {
     this.answerButtons.forEach((button, index) => {
       button.value = options[index];
       button.label.setText(`${options[index]} baht`);
-      button.box.setFillStyle(0x2a9d8f);
+      button.box.setFillStyle(0x9a5808);
       button.box.setAlpha(1);
     });
   }
@@ -432,7 +432,7 @@ export class MazeScene extends Phaser.Scene {
       this.actionButton.setFillStyle(0x616161);
       this.actionButtonText.setText('CHECKING...');
     } else {
-      this.actionButton.setFillStyle(0x1b5e20);
+      this.actionButton.setFillStyle(0x9a5808);
       this.actionButtonText.setText('ANSWER ABOVE');
     }
   }

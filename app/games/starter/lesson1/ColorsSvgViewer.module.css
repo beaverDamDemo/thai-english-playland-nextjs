@@ -16,12 +16,12 @@
   align-items: center;
   gap: 0.75rem;
   padding: 10px var(--mobile-page-gutter, 16px);
-  background: var(--game-bg);
+  background: var(--game-header-bg);
   color: #fff;
 }
 
 :global(:root[data-theme='dark']) .header {
-  background: var(--game-bg-dark);
+  background: var(--game-header-bg-dark);
   color: #edf4ff;
   border-bottom: 1px solid rgba(120, 151, 233, 0.3);
 }

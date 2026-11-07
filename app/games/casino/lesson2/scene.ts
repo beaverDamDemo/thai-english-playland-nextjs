@@ -126,7 +126,7 @@ export class MazeScene extends Phaser.Scene {
     });
 
     this.spinButton = this.add
-      .rectangle(width / 2, height - 52, 220, 56, 0x1b5e20)
+      .rectangle(width / 2, height - 52, 220, 56, 0xb91c1c)
       .setStrokeStyle(2, 0xffffff)
       .setInteractive({ useHandCursor: true });
 
@@ -140,10 +140,10 @@ export class MazeScene extends Phaser.Scene {
 
     this.spinButton.on('pointerdown', () => this.handleSpinPress());
     this.spinButton.on('pointerover', () => {
-      this.spinButton.setFillStyle(this.won ? 0xe0a106 : 0x2e7d32);
+      this.spinButton.setFillStyle(this.won ? 0xe0a106 : 0x991b1b);
     });
     this.spinButton.on('pointerout', () => {
-      this.spinButton.setFillStyle(this.won ? 0xc88700 : 0x1b5e20);
+      this.spinButton.setFillStyle(this.won ? 0xc88700 : 0xb91c1c);
     });
 
     if (this.input.keyboard) {
@@ -567,7 +567,7 @@ export class MazeScene extends Phaser.Scene {
       this.spinButton.setFillStyle(0xc88700);
       this.spinButtonText.setText('FINISH LESSON');
     } else {
-      this.spinButton.setFillStyle(0x1b5e20);
+      this.spinButton.setFillStyle(0xb91c1c);
       this.spinButtonText.setText('SPIN ROULETTE');
     }
   }

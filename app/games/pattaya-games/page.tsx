@@ -71,7 +71,7 @@ export default function PattayaGamesScreenPage() {
 
   return (
     <div className={styles.mazePage}>
-      <header className={styles.pageHeader}>
+      <header className={styles.pageHeader} data-game="pattaya">
         <span className={styles.appTitle}>Pattaya Games Lessons</span>
         <Link href="/" className={styles.headerHomeLink}>
           <Image

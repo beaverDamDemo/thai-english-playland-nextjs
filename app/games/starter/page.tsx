@@ -58,7 +58,7 @@ export default function StarterLearnersZonePage() {
 
   return (
     <div className={styles.mazePage}>
-      <header className={styles.pageHeader}>
+      <header className={styles.pageHeader} data-game="starter">
         <span className={styles.appTitle}>Starter Learners Zone</span>
         <Link href="/" className={styles.headerHomeLink}>
           <Image
@@ -128,4 +128,3 @@ export default function StarterLearnersZonePage() {
     </div>
   );
 }
-

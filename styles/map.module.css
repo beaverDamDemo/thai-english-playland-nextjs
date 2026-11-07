@@ -25,12 +25,12 @@
   justify-content: center;
   gap: 4px;
   padding: 10px var(--mobile-page-gutter, 16px) 8px;
-  background: linear-gradient(135deg, #fff1b8 0%, #ffdce9 55%, #dff5ff 100%);
-  color: #1d2744;
+  background: var(--game-header-bg);
+  color: #fff;
   font-size: 17px;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(104, 122, 181, 0.18);
-  box-shadow: 0 6px 18px rgba(59, 72, 125, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
 .headerBadge {
@@ -412,7 +412,7 @@
 }
 
 :global(:root[data-theme="dark"]) .pageHeader {
-  background: linear-gradient(135deg, #1c2f4f 0%, #2a244f 55%, #17384d 100%);
+  background: var(--game-header-bg-dark);
   color: #eaf1ff;
   border-bottom-color: rgba(142, 165, 235, 0.28);
   box-shadow: 0 6px 18px rgba(3, 7, 18, 0.35);

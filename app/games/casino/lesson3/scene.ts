@@ -114,7 +114,7 @@ export class MazeScene extends Phaser.Scene {
     });
 
     this.spinButton = this.add
-      .rectangle(width / 2, height - 52, 220, 56, 0x6a1b9a)
+      .rectangle(width / 2, height - 52, 220, 56, 0x1d3557)
       .setStrokeStyle(2, 0xffffff)
       .setInteractive({ useHandCursor: true });
 
@@ -128,10 +128,10 @@ export class MazeScene extends Phaser.Scene {
 
     this.spinButton.on('pointerdown', () => this.handleSpinPress());
     this.spinButton.on('pointerover', () => {
-      this.spinButton.setFillStyle(this.won ? 0xf0a500 : 0x7b1fa2);
+      this.spinButton.setFillStyle(this.won ? 0xf0a500 : 0x31577e);
     });
     this.spinButton.on('pointerout', () => {
-      this.spinButton.setFillStyle(this.won ? 0xd18d00 : 0x6a1b9a);
+      this.spinButton.setFillStyle(this.won ? 0xd18d00 : 0x1d3557);
     });
 
     if (this.input.keyboard) {
@@ -158,30 +158,30 @@ export class MazeScene extends Phaser.Scene {
   private drawBackground(width: number, height: number) {
     const g = this.add.graphics();
 
-    g.fillStyle(0x140b23, 1);
+    g.fillStyle(0x0b1628, 1);
     g.fillRect(0, 0, width, height);
 
-    g.fillStyle(0x2d1344, 0.42);
+    g.fillStyle(0x1d3557, 0.42);
     for (let i = 0; i < 10; i += 1) {
       g.fillCircle(34 + i * 48, 92 + (i % 2 === 0 ? 0 : 14), 22);
     }
 
-    g.lineStyle(2, 0x4b1f73, 0.42);
+    g.lineStyle(2, 0x385b83, 0.42);
     for (let y = 148; y < height; y += 36) {
       g.strokeLineShape(new Phaser.Geom.Line(0, y, width, y));
     }
   }
 
   private createSlotMachine(centerX: number, centerY: number) {
-    const body = this.add.rectangle(centerX, centerY, 380, 250, 0x2b1840, 1);
-    body.setStrokeStyle(6, 0xf4d58d);
+    const body = this.add.rectangle(centerX, centerY, 380, 250, 0x1d3557, 1);
+    body.setStrokeStyle(6, 0xcbd5e1);
     body.setRounded(22);
 
-    this.machineGlow = this.add.rectangle(centerX, centerY, 388, 258, 0xffdf91, 0.08);
-    this.machineGlow.setStrokeStyle(2, 0xffe8b5, 0.35);
+    this.machineGlow = this.add.rectangle(centerX, centerY, 388, 258, 0xcbd5e1, 0.08);
+    this.machineGlow.setStrokeStyle(2, 0xe2e8f0, 0.35);
     this.machineGlow.setRounded(24);
 
-    this.add.rectangle(centerX, centerY - 86, 308, 34, 0x56306e, 1).setStrokeStyle(2, 0xffffff, 0.3);
+    this.add.rectangle(centerX, centerY - 86, 308, 34, 0x31577e, 1).setStrokeStyle(2, 0xffffff, 0.3);
     this.add.text(centerX, centerY - 86, 'LUCKY ENGLISH SLOTS', {
       fontSize: '18px',
       color: '#fff7d6',
@@ -194,8 +194,8 @@ export class MazeScene extends Phaser.Scene {
     const reelXs = [centerX - 98, centerX, centerX + 98];
     reelXs.forEach((x) => {
       const frame = this.add.container(x, centerY);
-      const frameBg = this.add.rectangle(0, 0, 86, 150, 0xf6f1ff, 1);
-      frameBg.setStrokeStyle(4, 0x8f7db0);
+      const frameBg = this.add.rectangle(0, 0, 86, 150, 0xf1f5f9, 1);
+      frameBg.setStrokeStyle(4, 0x94a3b8);
       frameBg.setRounded(14);
       frame.add(frameBg);
 
@@ -476,7 +476,7 @@ export class MazeScene extends Phaser.Scene {
       this.spinButton.setFillStyle(0xd18d00);
       this.spinButtonText.setText('FINISH LESSON');
     } else {
-      this.spinButton.setFillStyle(0x6a1b9a);
+      this.spinButton.setFillStyle(0x1d3557);
       this.spinButtonText.setText('SPIN SLOTS');
     }
   }

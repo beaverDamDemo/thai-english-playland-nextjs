@@ -292,13 +292,28 @@ body,
 }
 
 /* Per-game palette shared by the game header and footer. */
+[data-game] {
+  --game-header-bg: linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--game-bg) 80%, #101728),
+    var(--game-bg),
+    color-mix(in srgb, var(--game-bg) 82%, white)
+  );
+  --game-header-bg-dark: linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--game-bg-dark) 75%, #080c18),
+    var(--game-bg-dark),
+    color-mix(in srgb, var(--game-bg-dark) 70%, var(--game-bg))
+  );
+}
+
 [data-game='maze'] {
   --game-bg: #1b5e20;
   --game-bg-dark: #0f2e1a;
 }
 [data-game='casino'] {
-  --game-bg: #8b1a1a;
-  --game-bg-dark: #3a1010;
+  --game-bg: #98500e;
+  --game-bg-dark: #503418;
 }
 [data-game='pattaya'] {
   --game-bg: #0277bd;

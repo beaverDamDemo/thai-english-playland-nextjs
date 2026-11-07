@@ -101,7 +101,7 @@ export class MazeScene extends Phaser.Scene {
     });
 
     this.actionButton = this.add
-      .rectangle(width / 2, height - 38, 210, 52, 0x1b5e20)
+      .rectangle(width / 2, height - 38, 210, 52, 0x15803d)
       .setStrokeStyle(2, 0xffffff)
       .setInteractive({ useHandCursor: true });
 
@@ -115,10 +115,10 @@ export class MazeScene extends Phaser.Scene {
 
     this.actionButton.on('pointerdown', () => this.handleActionButton());
     this.actionButton.on('pointerover', () => {
-      this.actionButton.setFillStyle(this.won ? 0x1976d2 : 0x2e7d32);
+      this.actionButton.setFillStyle(this.won ? 0x1976d2 : 0x166534);
     });
     this.actionButton.on('pointerout', () => {
-      this.actionButton.setFillStyle(this.won ? 0x1565c0 : 0x1b5e20);
+      this.actionButton.setFillStyle(this.won ? 0x1565c0 : 0x15803d);
     });
 
     this.handText = this.add.text(16, 122, 'Best Hand: Not enough cards', {
@@ -402,7 +402,7 @@ export class MazeScene extends Phaser.Scene {
 
       const container = this.add.container(x, y);
       const bg = this.add
-        .rectangle(0, 0, cardWidth, cardHeight, highlight ? 0xfff8d6 : 0xffffff)
+        .rectangle(0, 0, cardWidth, cardHeight, highlight ? 0xfff8d6 : 0xfffdf3)
         .setOrigin(0)
         .setStrokeStyle(3, highlight ? 0xffca28 : 0x1b5e20);
       const rank = this.add.text(12, 10, `${card.rankLabel}${card.suit}`, {

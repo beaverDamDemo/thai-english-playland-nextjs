@@ -69,7 +69,7 @@ export default function MazeScreenPage() {
 
   return (
     <div className={styles.mazePage}>
-      <header className={styles.pageHeader}>
+      <header className={styles.pageHeader} data-game="maze">
         <span className={styles.appTitle}>Maze Game Lessons</span>
         <Link href="/" className={styles.headerHomeLink}>
           <Image

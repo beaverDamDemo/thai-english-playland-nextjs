@@ -4,7 +4,7 @@ import Quiz from './Quiz';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
 import type { FC } from 'react';
-import { lessonMapButtons } from '../lessonMapConfig';
+import { casinoLessonThemes, lessonMapButtons } from '../lessonMapConfig';
 
 const MazePageComponent = dynamic(
   () => import('../../maze/_components/MazePageComponent'),
@@ -24,10 +24,9 @@ const CasinoLesson2Page: FC = () => {
     };
   }, []);
 
-  const themeColor = '#E63946';
-  const themeColorDark = '#B71C1C';
+  const { color: themeColor, dark: themeColorDark } = casinoLessonThemes[2];
   const backgroundGradient =
-    'linear-gradient(135deg, #E63946 0%, #8E1A2D 100%)';
+    `linear-gradient(135deg, ${themeColor} 0%, ${themeColorDark} 100%)`;
 
   if (!Scene) return <div>Loading...</div>;
 

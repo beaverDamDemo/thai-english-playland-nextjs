@@ -173,7 +173,7 @@ export class MazeScene extends Phaser.Scene {
 
   private createSlotMachine(centerX: number, centerY: number) {
     const body = this.add.rectangle(centerX, centerY, 420, 250, 0x3D2460, 1);
-    body.setStrokeStyle(6, 0xE1BEE7);
+    body.setStrokeStyle(6, 0xf4d58d);
     body.setRounded(22);
 
     this.machineGlow = this.add.rectangle(centerX, centerY, 428, 258, 0xF3E5F5, 0.08);
@@ -218,7 +218,7 @@ export class MazeScene extends Phaser.Scene {
     const leverTrack = this.add.rectangle(centerX + 170, centerY - 24, 10, 118, 0x8e8e8e, 1);
     leverTrack.setStrokeStyle(2, 0xdadada);
     const leverBall = this.add.circle(centerX + 170, centerY + 42, 18, 0xAB47BC, 1);
-    leverBall.setStrokeStyle(3, 0xE1BEE7);
+    leverBall.setStrokeStyle(3, 0xf4d58d);
     this.tweens.add({
       targets: leverBall,
       y: centerY + 52,
