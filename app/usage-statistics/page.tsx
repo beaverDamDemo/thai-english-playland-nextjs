@@ -348,39 +348,84 @@ export default function UsageStatisticsPage() {
               role="group"
               aria-label="Daily unique users who opened at least one lesson"
             >
-              <div className={styles.dailyLessonChart} role="list">
-                {data.activityOverTime.dailyLessonUsers.map((item) => {
-                  const date = new Date(`${item.date}T00:00:00`);
-                  const dateLabel = date.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  });
-                  const barHeight =
-                    (item.count / maxDailyLessonUsers) * 100;
+              {(() => {
+                const items = data.activityOverTime.dailyLessonUsers;
+                const padL = 28;
+                const padR = 16;
+                const padT = 24;
+                const padB = 32;
+                const height = 250;
+                const width = Math.max(1080, items.length * 36);
+                const plotW = width - padL - padR;
+                const plotH = height - padT - padB;
+                const points = items.map((item, i) => ({
+                  item,
+                  x: padL + (items.length > 1 ? (i / (items.length - 1)) * plotW : plotW / 2),
+                  y: padT + plotH - (item.count / maxDailyLessonUsers) * plotH,
+                }));
+                const path = points.map((p) => `${p.x},${p.y}`).join(' ');
 
-                  return (
-                    <div
-                      key={item.date}
-                      className={styles.dailyLessonBarContainer}
-                      role="listitem"
-                      aria-label={`${dateLabel}: ${item.count} signed-in ${item.count === 1 ? 'user' : 'users'} opened a lesson`}
-                    >
-                      <span className={styles.dailyLessonBarValue}>
-                        {item.count}
-                      </span>
-                      <div className={styles.dailyLessonBarTrack}>
-                        <div
-                          className={styles.dailyLessonBar}
-                          style={{ height: `${barHeight}%` }}
-                        />
-                      </div>
-                      <span className={styles.dailyLessonDate}>
-                        {dateLabel}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                return (
+                  <svg
+                    width={width}
+                    height={height}
+                    viewBox={`0 0 ${width} ${height}`}
+                    role="list"
+                  >
+                    <line
+                      x1={padL}
+                      y1={padT + plotH}
+                      x2={width - padR}
+                      y2={padT + plotH}
+                      stroke="#9ca3af"
+                      strokeWidth="1"
+                    />
+                    <polyline
+                      points={path}
+                      fill="none"
+                      stroke="#667eea"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                    />
+                    {points.map(({ item, x, y }) => {
+                      const date = new Date(`${item.date}T00:00:00`);
+                      const dateLabel = date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                      });
+
+                      return (
+                        <g
+                          key={item.date}
+                          role="listitem"
+                          aria-label={`${dateLabel}: ${item.count} signed-in ${item.count === 1 ? 'user' : 'users'} opened a lesson`}
+                        >
+                          <circle cx={x} cy={y} r="4" fill="#667eea" />
+                          <text
+                            x={x}
+                            y={y - 9}
+                            textAnchor="middle"
+                            fontSize="11"
+                            fill="#888"
+                          >
+                            {item.count}
+                          </text>
+                          <text
+                            x={x}
+                            y={height - 10}
+                            textAnchor="middle"
+                            fontSize="10"
+                            fill="#888"
+                          >
+                            {dateLabel}
+                          </text>
+                        </g>
+                      );
+                    })}
+                  </svg>
+                );
+              })()}
             </div>
           ) : (
             <p className={styles.dailyLessonEmpty}>
@@ -396,6 +441,10 @@ export default function UsageStatisticsPage() {
             {data.gameModePopularity.map((mode) => {
               const maxAttempts = Math.max(
                 ...data.gameModePopularity.map((m) => m.totalAttempts),
+                1,
+              );
+              const maxUsers = Math.max(
+                ...data.gameModePopularity.map((m) => m.uniqueUsers),
                 1,
               );
               const barWidth = (mode.totalAttempts / maxAttempts) * 100;
@@ -429,6 +478,15 @@ export default function UsageStatisticsPage() {
                     <div
                       className={styles.progressFill}
                       style={{ width: `${barWidth}%` }}
+                    />
+                  </div>
+                  <div className={styles.progressBar} style={{ marginTop: 6 }}>
+                    <div
+                      className={styles.progressFill}
+                      style={{
+                        width: `${(mode.uniqueUsers / maxUsers) * 100}%`,
+                        opacity: 0.6,
+                      }}
                     />
                   </div>
                 </div>

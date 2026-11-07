@@ -44,8 +44,8 @@ export async function GET() {
 
   // Get game mode popularity (by quiz attempts)
   const gameModePopularityResult = await db`
-    WITH game_modes (game_mode) AS (
-      VALUES ('maze'), ('casino'), ('pattaya'), ('starter')
+    WITH game_modes (game_mode, sort_order) AS (
+      VALUES ('starter', 1), ('maze', 2), ('casino', 3), ('pattaya', 4)
     )
     SELECT
       m.game_mode,
@@ -53,8 +53,8 @@ export async function GET() {
       COUNT(DISTINCT p.user_id) as unique_users
     FROM game_modes m
     LEFT JOIN public.thai_english_playland_user_progress p ON p.game_mode = m.game_mode
-    GROUP BY m.game_mode
-    ORDER BY total_attempts DESC;
+    GROUP BY m.game_mode, m.sort_order
+    ORDER BY m.sort_order ASC;
   `;
 
   // Get distribution of users across game modes
@@ -95,8 +95,8 @@ export async function GET() {
 
   // Get progress statistics by game mode
   const progressStatsResult = await db`
-    WITH game_modes (game_mode, total_lessons) AS (
-      VALUES ('maze', 9), ('casino', 6), ('pattaya', 8), ('starter', 7)
+    WITH game_modes (game_mode, total_lessons, sort_order) AS (
+      VALUES ('starter', 7, 1), ('maze', 9, 2), ('casino', 6, 3), ('pattaya', 8, 4)
     )
     SELECT
       m.game_mode,
@@ -106,8 +106,8 @@ export async function GET() {
       COUNT(DISTINCT p.user_id) as total_users_in_mode
     FROM game_modes m
     LEFT JOIN public.thai_english_playland_user_progress p ON p.game_mode = m.game_mode
-    GROUP BY m.game_mode, m.total_lessons
-    ORDER BY m.game_mode;
+    GROUP BY m.game_mode, m.total_lessons, m.sort_order
+    ORDER BY m.sort_order;
   `;
 
   // Get quiz attempts over time (daily for last 30 days)
