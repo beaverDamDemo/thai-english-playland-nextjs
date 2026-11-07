@@ -109,19 +109,6 @@
   color: #fff;
 }
 
-.kicker {
-  align-self: center;
-  margin: 0 0 10px;
-  padding: 5px 14px;
-  border-radius: 999px;
-  background: #0e7490;
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: 900;
-  letter-spacing: 0.03em;
-  text-align: center;
-}
-
 .workshop {
   padding: 10px 14px 12px;
   border: 3px solid #fff;

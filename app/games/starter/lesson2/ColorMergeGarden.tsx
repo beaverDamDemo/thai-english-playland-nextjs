@@ -245,7 +245,7 @@ function ColorMergeGardenContent() {
     if (!levelComplete || !isLastLevel || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
 
-    void saveProgressDelta('starter', { unlocked_lessons: 3 });
+    void saveProgressDelta('starter', { unlocked_lessons: 3, completed: true });
   }, [isLastLevel, levelComplete]);
 
   useEffect(() => {

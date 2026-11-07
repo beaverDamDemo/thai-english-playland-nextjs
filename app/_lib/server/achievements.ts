@@ -180,6 +180,11 @@ export async function evaluateProgressAchievements(userId: number): Promise<stri
     getProgress(userId),
     getEarnedIds(userId),
   ]);
+  const completedRows = await db<{ count: number }[]>`
+    SELECT COUNT(*)::integer AS count
+    FROM public.thai_english_playland_lesson_progress
+    WHERE user_id = ${userId} AND completed_at IS NOT NULL;
+  `;
 
   const newlyEarned: string[] = [];
   const award = async (id: string) => {
@@ -188,12 +193,7 @@ export async function evaluateProgressAchievements(userId: number): Promise<stri
     newlyEarned.push(id);
   };
 
-  // Lesson milestones: sum of (unlocked_lessons - 1) across modes.
-  // unlocked_lessons starts at 1 (first lesson available), so completed = unlocked_lessons - 1.
-  const lessonsCompleted = progress.reduce(
-    (sum, p) => sum + Math.max(0, p.unlocked_lessons - 1),
-    0,
-  );
+  const lessonsCompleted = completedRows[0].count;
   if (lessonsCompleted >= 1) await award('lessons_1');
   if (lessonsCompleted >= 3) await award('lessons_3');
   if (lessonsCompleted >= 10) await award('lessons_10');

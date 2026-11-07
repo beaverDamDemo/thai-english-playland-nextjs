@@ -78,6 +78,7 @@
 }
 
 .appTitle {
+  margin: 0;
   font-weight: 800;
   letter-spacing: 0.01em;
   text-align: center;
@@ -179,15 +180,191 @@
   overflow: hidden;
 }
 
-/* Starter learners zone background */
-.starterMap {
-  background-image: url("/assets/tinified/starter-learners-zone.png");
+.curriculumViewport {
+  flex: 0 0 auto;
+  overflow: auto;
+  padding: 18px max(16px, calc((100% - 720px) / 2));
+}
+
+.curriculumZonePage {
+  height: auto;
+  min-height: 0;
+}
+
+.curriculumHeader {
+  min-height: 62px;
+  padding-inline: 80px;
+}
+
+.curriculumMap {
+  position: relative;
+  width: min(100%, 420px);
+  aspect-ratio: 3 / 4;
+  min-height: 640px;
+  margin: 0 auto 20px;
+  border: 8px solid rgba(255, 255, 255, 0.78);
+  border-radius: 26px;
+  background:
+    radial-gradient(ellipse at 22% 26%, rgba(255, 255, 255, 0.58), transparent 18%),
+    radial-gradient(ellipse at 78% 72%, rgba(255, 235, 160, 0.46), transparent 24%),
+    linear-gradient(160deg, #68c5dc 0%, #a9e3d5 48%, #b4d88b 100%);
+  box-shadow: 0 12px 30px rgba(29, 66, 83, 0.18);
+}
+
+.curriculumMap.starterMap,
+.curriculumMap.chiangMaiMap,
+.curriculumMap.goldenBahtMap,
+.curriculumMap.phuketMap,
+.curriculumMap.pattayaMap {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  /* subtle overlay to improve pin contrast */
-  background-color: rgba(15, 26, 51, 0.25);
-  background-blend-mode: overlay;
+}
+
+.curriculumMap.starterMap {
+  background-image: url("/assets/tinified/starter-learners-zone.png");
+}
+
+.curriculumMap.chiangMaiMap {
+  background-image: url("/assets/tinified/map-with-9-clickable-locations.png");
+}
+
+.curriculumMap.goldenBahtMap {
+  background-image: url("/assets/tinified/casino-map-with-5-clickable-locations.png");
+}
+
+.curriculumMap.phuketMap {
+  background-image: url("/assets/tinified/phuket-background-40.jpg");
+}
+
+.curriculumMap.pattayaMap {
+  background-image: url("/assets/tinified/pattaya%20Copilot_20260325_132439.png");
+}
+
+.curriculumLessonMarker {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: min(200px, 100%);
+  transform: translateY(-50%);
+}
+
+.curriculumMarkerRight {
+  left: clamp(0px, calc(var(--marker-left) - 22px), calc(100% - min(200px, 100%)));
+}
+
+.curriculumMarkerLeft {
+  left: clamp(0px, calc(var(--marker-left) - min(178px, 100%)), calc(100% - min(200px, 100%)));
+  flex-direction: row-reverse;
+}
+
+.curriculumMap .curriculumLocationPin {
+  position: relative;
+  top: auto;
+  left: auto;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+}
+
+.lessonCloud {
+  position: relative;
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  justify-items: center;
+  gap: 2px;
+  padding: 6px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 2px 8px rgba(20, 38, 58, 0.3);
+  color: #23344b;
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+
+.lessonCloud::before,
+.lessonCloud::after {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  content: '';
+}
+
+.lessonCloud::before {
+  top: -4px;
+  left: 10px;
+  width: 15px;
+  height: 15px;
+}
+
+.lessonCloud::after {
+  top: -5px;
+  right: 12px;
+  width: 19px;
+  height: 19px;
+}
+
+.lessonCloudTitle {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.lessonCloudActivity {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.lessonCloudStatus {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.lessonStatusDone {
+  color: #167447;
+}
+
+.lessonStatusChange {
+  color: #9a5700;
+}
+
+.lessonStatusBlank {
+  color: #a52e38;
+}
+
+.curriculumPlaceholderPage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  color: #24375f;
+  text-align: center;
+}
+
+.curriculumPlaceholderPage h1,
+.curriculumPlaceholderPage p {
+  margin: 0;
+}
+
+.curriculumPlaceholderPage a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: #145c70;
+  font-weight: 700;
 }
 
 .loaderOverlay {
@@ -367,6 +544,10 @@
 
   .appTitle {
     font-size: 15px;
+  }
+
+  .curriculumHeader {
+    padding-inline: 76px;
   }
 
   .mapViewport {

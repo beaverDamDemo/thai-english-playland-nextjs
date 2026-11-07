@@ -472,7 +472,7 @@ export default function ColorsSvgViewer() {
     if (!allRevealed || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
 
-    void saveProgressDelta('starter', { unlocked_lessons: 2 });
+    void saveProgressDelta('starter', { unlocked_lessons: 2, completed: true });
   }, [allRevealed]);
 
   useEffect(() => {

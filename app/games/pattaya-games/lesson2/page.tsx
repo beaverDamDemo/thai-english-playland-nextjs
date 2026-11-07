@@ -288,6 +288,7 @@ function PattayaLesson2PageContent() {
       quiz_attempts: learningCorrect + learningWrong,
       total_moves_earned: Math.max(1, Math.floor(points / 120)),
       unlocked_lessons: 3,
+      completed: true,
     });
   }
 
@@ -462,7 +463,7 @@ function PattayaLesson2PageContent() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
+        <MazeHeader score={0} title="Descriptive Vocabulary" backHref="/games/everyday-vocabulary" game="pattaya" />
 
         <section className={styles.panel}>
           <div className={styles.progress}>
@@ -603,7 +604,7 @@ function PattayaLesson2PageContent() {
               <p className={styles.help}>Total score: {totalSessionScore}</p>
               <p className={styles.unlockBanner}>🔓 Lesson 3 unlocked!</p>
               <div className={styles.footerButtons}>
-                <Link href="/games/pattaya-games" className={styles.footerLink}>
+                <Link href="/games/everyday-vocabulary" className={styles.footerLink}>
                   <Image
                     src="/assets/tinified/back.png"
                     alt="Return to Map"

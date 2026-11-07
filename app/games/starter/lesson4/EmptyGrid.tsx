@@ -778,7 +778,7 @@ function EmptyGridContent() {
     if (!lessonComplete || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
 
-    void saveProgressDelta('starter', { unlocked_lessons: 5 });
+    void saveProgressDelta('starter', { unlocked_lessons: 5, completed: true });
   }, [lessonComplete]);
 
   useEffect(() => {

@@ -18,9 +18,18 @@ type QuizComponent = ComponentType<{
 type Props = {
   lessonNumber: number;
   Quiz: QuizComponent;
+  lessonTitleOverride?: string;
+  returnHref?: string;
+  returnLabel?: string;
 };
 
-const MazeLessonPage: FC<Props> = ({ lessonNumber, Quiz }) => {
+const MazeLessonPage: FC<Props> = ({
+  lessonNumber,
+  Quiz,
+  lessonTitleOverride,
+  returnHref = '/games/maze',
+  returnLabel = 'Return to Map',
+}) => {
   const [Scene, setScene] = useState<unknown>(null);
 
   useEffect(() => {
@@ -39,9 +48,10 @@ const MazeLessonPage: FC<Props> = ({ lessonNumber, Quiz }) => {
   const {
     color: themeColor,
     colorDark: themeColorDark,
-    title: lessonTitle,
+    title: configuredLessonTitle,
     columns,
   } = lessonConfig;
+  const lessonTitle = lessonTitleOverride ?? configuredLessonTitle;
   const backgroundGradient = getBackgroundGradient(themeColor, themeColorDark);
 
   if (!Scene) return <div>Loading...</div>;
@@ -60,6 +70,9 @@ const MazeLessonPage: FC<Props> = ({ lessonNumber, Quiz }) => {
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}
       columns={columns}
+      backHref={returnHref}
+      returnHref={returnHref}
+      returnLabel={returnLabel}
     />
   );
 };

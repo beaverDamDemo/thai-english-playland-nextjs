@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/_lib/server/db";
+import { curriculumZones } from "@/app/games/curriculum";
 
 export async function GET() {
+  const lessonProgress = await db<{ lesson_id: string; started: number; completed: number }[]>`
+    SELECT lesson_id, COUNT(*)::integer AS started,
+      COUNT(*) FILTER (WHERE completed_at IS NOT NULL)::integer AS completed
+    FROM public.thai_english_playland_lesson_progress
+    GROUP BY lesson_id;
+  `;
   // Get total users count
   const totalUsersResult = await db`
     SELECT COUNT(*) as count
@@ -203,6 +210,17 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     data: {
+      zoneProgress: curriculumZones.map((zone) => {
+        const ids = new Set(zone.lessons.map((lesson) => lesson.id));
+        const rows = lessonProgress.filter((row) => ids.has(row.lesson_id));
+        return {
+          id: zone.id,
+          title: zone.title,
+          icon: zone.icon,
+          started: rows.reduce((sum, row) => sum + row.started, 0),
+          completed: rows.reduce((sum, row) => sum + row.completed, 0),
+        };
+      }),
       totalUsers,
       dailyUsers: dailyUsersResult.map((row) => ({
         date: row.date,

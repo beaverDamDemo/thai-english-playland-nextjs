@@ -1,6 +1,7 @@
 import styles from './GameFooter.module.css';
 
 export type FooterGame = 'maze' | 'casino' | 'pattaya' | 'starter';
+export type FooterTheme = FooterGame | 'pattaya-zone';
 
 export type FooterStat = { label: string; value: string | number };
 
@@ -8,7 +9,7 @@ export default function GameFooter({
   game,
   stats,
 }: {
-  game: FooterGame;
+  game: FooterTheme;
   stats: FooterStat[];
 }) {
   return (

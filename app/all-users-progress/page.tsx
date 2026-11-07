@@ -396,7 +396,7 @@ export default function AllUsersProgressPage() {
 
       <section className={styles.leaderboardSection}>
         <h2 id="users-progress-title" className={styles.leaderboardTitle}>
-          📊 All Players Progress
+          📊 All Players: Legacy Game Mode Progress
         </h2>
         <div className={styles.tableContainer}>
         <table className={styles.table} aria-labelledby="users-progress-title">

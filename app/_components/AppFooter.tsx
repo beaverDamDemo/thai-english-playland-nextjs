@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import pkg from '../../package.json';
+import { getCurriculumZone, zoneThemeGames } from '../games/curriculum';
 import styles from './AppFooter.module.css';
 
 const MONTHS = [
@@ -31,6 +32,10 @@ function formatBuildTime(iso: string | undefined): string | null {
 function gameFromPath(pathname: string | null): string | undefined {
   const match = pathname?.match(/^\/games\/([^/]+)/);
   if (!match) return undefined;
+  if (/^\/games\/[^/]+\/?$/.test(pathname ?? '')) {
+    const zone = getCurriculumZone(match[1]);
+    if (zone) return zoneThemeGames[zone.id];
+  }
   return match[1] === 'pattaya-games' ? 'pattaya' : match[1];
 }
 

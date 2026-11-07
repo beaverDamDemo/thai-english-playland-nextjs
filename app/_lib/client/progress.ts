@@ -1,5 +1,7 @@
 'use client';
 
+import { getLessonByHref } from '@/app/games/curriculum';
+
 export type ProgressGameMode = 'maze' | 'casino' | 'pattaya' | 'starter';
 
 export type ProgressDelta = {
@@ -8,6 +10,7 @@ export type ProgressDelta = {
   wrong_answers?: number;
   quiz_attempts?: number;
   total_moves_earned?: number;
+  completed?: boolean;
 };
 
 /** Adds increments to the user's stored progress (server applies them atomically). */
@@ -15,15 +18,18 @@ export async function saveProgressDelta(
   gameMode: ProgressGameMode,
   delta: ProgressDelta = {},
 ): Promise<void> {
+  const lesson = getLessonByHref(window.location.pathname);
   try {
     const res = await fetch('/api/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       keepalive: true,
-      body: JSON.stringify({ game_mode: gameMode, delta: true, ...delta }),
+      body: JSON.stringify({ game_mode: gameMode, lesson_id: lesson?.id, delta: true, ...delta }),
     });
     if (!res.ok && res.status !== 401) {
       console.error('Failed to save progress:', res.status);
+    } else if (res.ok) {
+      window.dispatchEvent(new Event('playland-progress-updated'));
     }
   } catch (err) {
     console.error('Error saving progress:', err);

@@ -10,6 +10,7 @@ import { lessonMapButtons as mazeLessonMapButtons } from './games/maze/lessonMap
 import { lessonMapButtons as casinoLessonMapButtons } from './games/casino/lessonMapConfig';
 import { lessonMapButtons as pattayaLessonMapButtons } from './games/pattaya-games/lessonMapConfig';
 import { lessonMapButtons as starterLessonMapButtons } from './games/starter/lessonMapConfig';
+import { curriculumZones, zoneThemeGames } from './games/curriculum';
 
 const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
 const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);
@@ -48,6 +49,8 @@ export default function HomePage() {
   const router = useRouter();
   const [starterUnlocked, setStarterUnlocked] = useState(0);
   const [starterStats, setStarterStats] = useState<ProgressStats>(EMPTY_STATS);
+  const [completedLessons, setCompletedLessons] = useState<string[] | null>(null);
+  const [progressError, setProgressError] = useState(false);
   const [mazeUnlocked, setMazeUnlocked] = useState(1);
   const [casinoUnlocked, setCasinoUnlocked] = useState(1);
   const [pattayaUnlocked, setPattayaUnlocked] = useState(1);
@@ -91,8 +94,13 @@ export default function HomePage() {
               total_moves_earned: number;
             }
           >;
+          lessons?: Array<{ lesson_id: string; completed_at: string | null }>;
         }) => {
-          if (!data.ok || !data.progress) return;
+          if (!data.ok || !data.progress || !Array.isArray(data.lessons)) {
+            setProgressError(true);
+            return;
+          }
+          setCompletedLessons(data.lessons.filter((lesson) => lesson.completed_at).map((lesson) => lesson.lesson_id));
           const starter = data.progress['starter'];
           const maze = data.progress['maze'];
           const casino = data.progress['casino'];
@@ -149,7 +157,10 @@ export default function HomePage() {
           }
         },
       )
-      .catch(() => null);
+      .catch((error) => {
+        console.error('Failed to load progress:', error);
+        setProgressError(true);
+      });
   }, []);
 
   useEffect(() => {
@@ -206,74 +217,97 @@ export default function HomePage() {
         )}
       </header>
 
-      <p className={styles.chooseGameText}>Choose a game to play</p>
+      <p className={styles.chooseGameText}>Choose a learning zone</p>
 
-      <section className={styles.hubGrid} aria-label="Game mode links">
+      <section className={styles.hubGrid} aria-label="Learning zones">
         <Link
           href="/games/starter"
+          data-game={zoneThemeGames.starter}
           className={`${styles.hubCard} ${styles.starterCard} ${styles.mazeCardWithMap}`}
         >
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>
-              <span className={styles.hubIcon}>🌱</span>Starter Learners Zone
+              <span className={styles.hubIcon}>🌱</span>Starter
             </span>
           </div>
           <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
-          href="/games/maze"
-          className={`${styles.hubCard} ${styles.mazeCard} ${styles.mazeCardWithMap}`}
+          href="/games/everyday-vocabulary"
+          data-game={zoneThemeGames['everyday-vocabulary']}
+          className={`${styles.hubCard} ${styles.everydayCard} ${styles.mazeCardWithMap}`}
         >
           <Image
             src="/assets/tinified/map-with-9-clickable-locations.png"
-            alt="Map with 9 clickable lesson locations"
+            alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
             className={styles.mazeCardMap}
-            priority
           />
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>
-              <span className={styles.hubIcon}>🌀</span>Maze Adventures
+              <span className={styles.hubIcon}>🐘</span>Chiang Mai
             </span>
           </div>
           <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
-          href="/games/casino"
-          className={`${styles.hubCard} ${styles.casinoCard} ${styles.mazeCardWithMap}`}
+          href="/games/basic-grammar"
+          data-game={zoneThemeGames['basic-grammar']}
+          className={`${styles.hubCard} ${styles.grammarCard} ${styles.mazeCardWithMap}`}
         >
           <Image
             src="/assets/tinified/casino-map-with-5-clickable-locations.png"
-            alt="Casino map with 5 clickable lesson locations"
+            alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
             className={styles.mazeCardMap}
           />
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>
-              <span className={styles.hubIcon}>🎰</span>Casino Games
+              <span className={styles.hubIcon}>🎰</span>The Golden Baht Casino
             </span>
           </div>
           <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
-          href="/games/pattaya-games"
-          className={`${styles.hubCard} ${styles.pattayaCard} ${styles.mazeCardWithMap}`}
+          href="/games/building-sentences"
+          data-game={zoneThemeGames['building-sentences']}
+          className={`${styles.hubCard} ${styles.sentencesCard} ${styles.mazeCardWithMap}`}
         >
           <Image
-            src="/assets/tinified/pattaya%20Copilot_20260325_132439.png"
-            alt="Pattaya map with clickable lesson locations"
+            src="/assets/tinified/phuket-background-40.jpg"
+            alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
             className={styles.mazeCardMap}
           />
           <div className={styles.mazeCardBody}>
             <span className={styles.hubTitle}>
-              <span className={styles.hubIcon}>🏖️</span>Pattaya Fun
+              <span className={styles.hubIcon}>🏝️</span>Phuket
+            </span>
+          </div>
+          <span className={styles.hubArrow}>→</span>
+        </Link>
+
+        <Link
+          href="/games/verbs-communication"
+          data-game={zoneThemeGames['verbs-communication']}
+          className={`${styles.hubCard} ${styles.verbsCard} ${styles.mazeCardWithMap}`}
+        >
+          <Image
+            src="/assets/tinified/pattaya%20Copilot_20260325_132439.png"
+            alt=""
+            fill
+            sizes="(max-width: 640px) 50vw, 33vw"
+            className={styles.mazeCardMap}
+          />
+          <div className={styles.mazeCardBody}>
+            <span className={styles.hubTitle}>
+              <span className={styles.hubIcon}>🌊</span>Pattaya
             </span>
           </div>
           <span className={styles.hubArrow}>→</span>
@@ -281,7 +315,25 @@ export default function HomePage() {
       </section>
 
       <section className={styles.progressCard} aria-label="Your progress">
-        <h2 className={styles.progressTitle}>Your Progress</h2>
+        <h2 className={styles.progressTitle}>Your Zone Progress</h2>
+        <div className={styles.progressDisplay}>
+          {curriculumZones.map((zone) => (
+            <article className={styles.progressBlock} key={zone.id}>
+              <h3 className={styles.progressBlockTitle}>{zone.icon} {zone.title}</h3>
+              <div className={styles.progressRow}>
+                <span className={styles.progressLabel}>Completed</span>
+                <strong className={styles.progressValue}>
+                  {progressError ? 'Unavailable' : completedLessons === null ? 'Loading' :
+                    `${zone.lessons.filter((lesson) => completedLessons.includes(lesson.id)).length}/${zone.lessons.length}`}
+                </strong>
+              </div>
+            </article>
+          ))}
+        </div>
+        <h2 className={styles.progressTitle}>Game Mode Stats</h2>
+        <p className={styles.progressNote}>
+          These totals are grouped by the original game modes, not by the curriculum zones.
+        </p>
         <div className={styles.progressDisplay}>
           <article className={styles.progressBlock}>
             <h3 className={styles.progressBlockTitle}>🌱 Starter</h3>

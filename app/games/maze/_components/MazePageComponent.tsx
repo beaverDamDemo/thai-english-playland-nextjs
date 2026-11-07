@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import * as Phaser from 'phaser';
 import MazeHeader from './MazeHeader';
-import GameFooter from '@/app/_components/GameFooter';
+import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import UnlockToast from '@/app/games/starter/_components/UnlockToast';
 import dynamic from 'next/dynamic';
 import type { FC, MouseEvent } from 'react';
@@ -40,6 +40,7 @@ const MazePageComponent: FC<MazePageProps> = ({
   MazeScene,
   Quiz,
   lessonNumber,
+  lessonTitle,
   themeColor,
   themeColorDark,
   backgroundGradient,
@@ -53,11 +54,6 @@ const MazePageComponent: FC<MazePageProps> = ({
   gameModeOverride,
 }) => {
   const [score, setScore] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [wrongAnswers, setWrongAnswers] = useState(0);
-  const [quizAttempts, setQuizAttempts] = useState(0);
-  const [totalMovesEarned, setTotalMovesEarned] = useState(0);
-  const [unlockedLessons, setUnlockedLessons] = useState(1);
   const [maxMoves, setMaxMoves] = useState(0);
   const [showQuizOverlay, setShowQuizOverlay] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -85,6 +81,7 @@ const MazePageComponent: FC<MazePageProps> = ({
     quizAttempts?: number;
     totalMovesEarned?: number;
     unlockedLessons?: number;
+    completed?: boolean;
   }) => {
     void saveProgressDelta(gameMode, {
       correct_answers: delta.correctAnswers,
@@ -92,6 +89,7 @@ const MazePageComponent: FC<MazePageProps> = ({
       quiz_attempts: delta.quizAttempts,
       total_moves_earned: delta.totalMovesEarned,
       unlocked_lessons: delta.unlockedLessons,
+      completed: delta.completed,
     });
   };
 
@@ -103,15 +101,6 @@ const MazePageComponent: FC<MazePageProps> = ({
     setMaxMoves(finalScore);
     setScore(finalScore);
     const wrongCount = Math.max(0, totalQuestions - finalScore);
-    const nextCorrect = correctAnswers + finalScore;
-    const nextWrong = wrongAnswers + wrongCount;
-    const nextAttempts = quizAttempts + totalQuestions;
-    const nextMovesEarned = totalMovesEarned + finalScore;
-
-    setCorrectAnswers(nextCorrect);
-    setWrongAnswers(nextWrong);
-    setQuizAttempts(nextAttempts);
-    setTotalMovesEarned(nextMovesEarned);
     saveStats({
       correctAnswers: finalScore,
       wrongAnswers: wrongCount,
@@ -143,48 +132,11 @@ const MazePageComponent: FC<MazePageProps> = ({
   };
 
   const handleWin = () => {
-    const nextUnlockedLessons = Math.min(
-      totalLessons,
-      Math.max(unlockedLessons, lessonNumber + 1),
-    );
-    setUnlockedLessons(nextUnlockedLessons);
-    saveStats({ unlockedLessons: nextUnlockedLessons });
+    const nextUnlockedLessons = Math.min(totalLessons, lessonNumber + 1);
+    saveStats({ unlockedLessons: nextUnlockedLessons, completed: true });
 
     setGameWon(true);
   };
-
-  useEffect(() => {
-    fetch('/api/progress')
-      .then((r) => r.json())
-      .then(
-        (data: {
-          ok?: boolean;
-          progress?: Record<
-            string,
-            {
-              unlocked_lessons: number;
-              correct_answers: number;
-              wrong_answers: number;
-              quiz_attempts: number;
-              total_moves_earned: number;
-            }
-          >;
-        }) => {
-          if (!data.ok || !data.progress) return;
-          const mode = gameMode;
-          const p = data.progress[mode];
-          if (!p) return;
-          setCorrectAnswers(p.correct_answers);
-          setWrongAnswers(p.wrong_answers);
-          setQuizAttempts(p.quiz_attempts);
-          setTotalMovesEarned(p.total_moves_earned);
-          setUnlockedLessons(
-            Math.min(totalLessons, Math.max(1, p.unlocked_lessons)),
-          );
-        },
-      )
-      .catch(() => null);
-  }, [gameMode, totalLessons]);
 
   // Calculate scale to fit content to screen
   useEffect(() => {
@@ -310,7 +262,7 @@ const MazePageComponent: FC<MazePageProps> = ({
             height: `${isMobilePortrait ? mobileHeight : desktopHeight}px`,
           }}
         >
-          <MazeHeader score={score} backHref={backHref} game={gameMode} />
+          <MazeHeader score={score} title={lessonTitle} scale={scale} backHref={backHref} game={gameMode} />
           <div
             style={{
               flex: 1,
@@ -390,16 +342,7 @@ const MazePageComponent: FC<MazePageProps> = ({
               </Link>
             </div>
           </div>
-          <GameFooter
-            game={gameMode}
-            stats={[
-              { label: 'Correct', value: correctAnswers },
-              { label: 'Wrong', value: wrongAnswers },
-              { label: 'Unlocked', value: `${unlockedLessons}/${totalLessons}` },
-              { label: 'Attempts', value: quizAttempts },
-              { label: 'Moves', value: totalMovesEarned },
-            ]}
-          />
+          <GameStatsFooter game={gameMode} totalLessons={totalLessons} sticky={false} />
         </div>
       </div>
     );
@@ -428,7 +371,7 @@ const MazePageComponent: FC<MazePageProps> = ({
           position: 'relative',
         }}
       >
-        <MazeHeader score={score} backHref={backHref} game={gameMode} />
+        <MazeHeader score={score} title={lessonTitle} scale={scale} backHref={backHref} game={gameMode} />
 
         <div style={{ flex: 1, position: 'relative' }}>
           <div
@@ -529,16 +472,7 @@ const MazePageComponent: FC<MazePageProps> = ({
             </div>
           )}
         </div>
-        <GameFooter
-          game={gameMode}
-          stats={[
-            { label: 'Correct', value: correctAnswers },
-            { label: 'Wrong', value: wrongAnswers },
-            { label: 'Unlocked', value: `${unlockedLessons}/${totalLessons}` },
-            { label: 'Attempts', value: quizAttempts },
-            { label: 'Moves', value: totalMovesEarned },
-          ]}
-        />
+        <GameStatsFooter game={gameMode} totalLessons={totalLessons} sticky={false} />
       </div>
     </div>
   );

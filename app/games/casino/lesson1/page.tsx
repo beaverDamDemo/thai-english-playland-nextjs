@@ -39,7 +39,7 @@ const CasinoLessonPage: FC = () => {
       MazeScene={Scene}
       Quiz={QuizWrapper}
       lessonNumber={1}
-      lessonTitle="Casino Lesson 1"
+      lessonTitle="Have / Has"
       themeColor={themeColor}
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}
@@ -47,9 +47,9 @@ const CasinoLessonPage: FC = () => {
       statsKey="englishCasinoStats"
       unlockedKey="englishCasinoUnlockedLessons"
       pendingUnlockKey="englishCasinoPendingUnlockLesson"
-      backHref="/games/casino"
-      returnHref="/games/casino"
-      returnLabel="Return to Casino"
+      backHref="/games/basic-grammar"
+      returnHref="/games/basic-grammar"
+      returnLabel="Return to The Golden Baht Casino"
     />
   );
 };

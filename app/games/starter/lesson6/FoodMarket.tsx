@@ -67,7 +67,7 @@ function FoodMarketContent() {
   useEffect(() => {
     if (!lessonComplete || hasSavedCompletionRef.current) return;
     hasSavedCompletionRef.current = true;
-    void saveProgressDelta('starter', { unlocked_lessons: 7 });
+    void saveProgressDelta('starter', { unlocked_lessons: 7, completed: true });
   }, [lessonComplete]);
 
   useEffect(() => {
@@ -116,7 +116,7 @@ function FoodMarketContent() {
   return (
     <main className={styles.page}>
       <header className={lessonHeaderStyles.header} data-game="starter">
-        <Link href="/games/starter" className={lessonHeaderStyles.back}>
+        <Link href="/games/everyday-vocabulary" className={lessonHeaderStyles.back}>
           <Image
             src="/assets/tinified/back.png"
             alt="Back"
@@ -259,7 +259,7 @@ function FoodMarketContent() {
               </button>
             ) : null}
             {lessonComplete ? (
-              <Link href="/games/starter" className={styles.nextButton}>
+              <Link href="/games/everyday-vocabulary" className={styles.nextButton}>
                 All done! · กลับไปหน้าบทเรียน
               </Link>
             ) : null}

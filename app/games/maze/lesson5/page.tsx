@@ -4,5 +4,12 @@ import Quiz from './Quiz';
 import MazeLessonPage from '../_components/MazeLessonPage';
 
 export default function Page() {
-  return <MazeLessonPage lessonNumber={5} Quiz={Quiz} />;
+  return (
+    <MazeLessonPage
+      lessonNumber={5}
+      Quiz={Quiz}
+      returnHref="/games/building-sentences"
+      returnLabel="Return to Phuket"
+    />
+  );
 }

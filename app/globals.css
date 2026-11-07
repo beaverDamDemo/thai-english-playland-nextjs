@@ -319,6 +319,10 @@ body,
   --game-bg: #0277bd;
   --game-bg-dark: #0b2a44;
 }
+[data-game='pattaya-zone'] {
+  --game-bg: #b21d91;
+  --game-bg-dark: #60154f;
+}
 [data-game='starter'] {
   --game-bg: #6a1b9a;
   --game-bg-dark: #2a1240;

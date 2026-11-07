@@ -39,7 +39,7 @@ const CasinoLesson2Page: FC = () => {
       MazeScene={Scene}
       Quiz={QuizWrapper}
       lessonNumber={2}
-      lessonTitle="Casino Lesson 2: Roulette English"
+      lessonTitle="There Is / There Are"
       themeColor={themeColor}
       themeColorDark={themeColorDark}
       backgroundGradient={backgroundGradient}
@@ -47,9 +47,9 @@ const CasinoLesson2Page: FC = () => {
       statsKey="englishCasinoStats"
       unlockedKey="englishCasinoUnlockedLessons"
       pendingUnlockKey="englishCasinoPendingUnlockLesson"
-      backHref="/games/casino"
-      returnHref="/games/casino"
-      returnLabel="Return to Casino"
+      backHref="/games/basic-grammar"
+      returnHref="/games/basic-grammar"
+      returnLabel="Return to The Golden Baht Casino"
     />
   );
 };

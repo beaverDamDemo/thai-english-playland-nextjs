@@ -258,10 +258,10 @@ export default function SettingsPage() {
             </p>
             <div className={styles.buttonGroup}>
               <button
-                onClick={() => handleResetGameMode('starter', 'Starter Learners Zone')}
+                onClick={() => handleResetGameMode('starter', 'Starter')}
                 className={styles.gameModeButton}
               >
-                🌱 Reset Starter Learners Zone
+                🌱 Reset Starter
               </button>
               <button
                 onClick={() => handleResetGameMode('maze', 'Maze')}

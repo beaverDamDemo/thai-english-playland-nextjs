@@ -660,6 +660,7 @@ function PattayaLesson1PageContent() {
       quiz_attempts: totalCorrect + totalWrong,
       total_moves_earned: hits,
       unlocked_lessons: passed ? 2 : undefined,
+      completed: passed,
     });
   }
 
@@ -668,7 +669,7 @@ function PattayaLesson1PageContent() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
+          <MazeHeader score={0} title="Irregular Verbs" backHref="/games/verbs-communication" game="pattaya" />
 
           <div className={styles.scoreBar}>
             <span className={styles.scoreChip} title="Correct answers">
@@ -1372,7 +1373,7 @@ function PattayaLesson1PageContent() {
             <p className={styles.doneUnlock}>🔓 Lesson 2 unlocked!</p>
           )}
           <div className={styles.doneActions}>
-            <Link href="/games/pattaya-games" className={styles.doneLink}>
+            <Link href="/games/verbs-communication" className={styles.doneLink}>
               ← Back to map
             </Link>
             <button

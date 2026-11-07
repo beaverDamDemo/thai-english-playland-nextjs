@@ -156,6 +156,14 @@ const questions: QuizQuestion[] = [
   },
 ];
 
+export const presentBeQuestions = questions.filter((question) =>
+  ['is', 'am', 'are'].includes(question.options[question.answer].toLowerCase()),
+);
+
+export const pastBeQuestions = questions.filter((question) =>
+  ['was', 'were'].includes(question.options[question.answer].toLowerCase()),
+);
+
 export default function Quiz({
   onComplete,
   primaryColor,

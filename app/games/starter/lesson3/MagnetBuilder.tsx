@@ -88,7 +88,7 @@ function MagnetBuilderContent() {
   useEffect(() => {
     if (!(stageDone && isLastStage) || savedRef.current) return;
     savedRef.current = true;
-    void saveProgressDelta('starter', { unlocked_lessons: 4 });
+    void saveProgressDelta('starter', { unlocked_lessons: 4, completed: true });
   }, [stageDone, isLastStage]);
 
   function chooseNumber(value: number): void {
@@ -180,10 +180,6 @@ function MagnetBuilderContent() {
             );
           })}
         </ol>
-        <p className={styles.kicker}>
-          {stage.title} · <span lang="th">{stage.titleTh}</span>
-        </p>
-
         <div className={styles.workshop}>
           <svg
             className={styles.canvas}

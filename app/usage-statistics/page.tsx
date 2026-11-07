@@ -6,6 +6,7 @@ import styles from './usageStatistics.module.css';
 
 type UserGrowthData = {
   totalUsers: number;
+  zoneProgress: Array<{ id: string; title: string; icon: string; started: number; completed: number }>;
   dailyUsers: Array<{ date: string; count: number }>;
   weeklyUsers: Array<{ weekStart: string; count: number }>;
   monthlyUsers: Array<{ monthStart: string; count: number }>;
@@ -57,7 +58,7 @@ function getGameModeDetails(gameMode: string): { emoji: string; name: string } {
   if (gameMode === 'maze') return { emoji: '🌀', name: 'Maze' };
   if (gameMode === 'casino') return { emoji: '🎰', name: 'Casino' };
   if (gameMode === 'pattaya') return { emoji: '🏖️', name: 'Pattaya' };
-  if (gameMode === 'starter') return { emoji: '🌱', name: 'Starter Learners Zone' };
+  if (gameMode === 'starter') return { emoji: '🌱', name: 'Starter' };
 
   return {
     emoji: '🎮',
@@ -579,7 +580,32 @@ export default function UsageStatisticsPage() {
         </section>
 
         <section className={styles.card}>
-          <h2 className={styles.cardTitle}>Progress Statistics</h2>
+          <h2 className={styles.cardTitle}>Curriculum Zone Progress</h2>
+          <p>Counts represent individual learner-lesson records.</p>
+          <div className={styles.progressStatsGrid}>
+            {data.zoneProgress.map((zone) => (
+              <div key={zone.id} className={styles.progressStatCard}>
+                <div className={styles.progressStatHeader}>
+                  <span className={styles.progressStatIcon}>{zone.icon}</span>
+                  <span className={styles.progressStatName}>{zone.title}</span>
+                </div>
+                <div className={styles.progressStatMetrics}>
+                  <div className={styles.progressMetric}>
+                    <span className={styles.progressMetricLabel}>Lessons Started</span>
+                    <span className={styles.progressMetricValue}>{zone.started}</span>
+                  </div>
+                  <div className={styles.progressMetric}>
+                    <span className={styles.progressMetricLabel}>Lessons Completed</span>
+                    <span className={styles.progressMetricValue}>{zone.completed}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.card}>
+          <h2 className={styles.cardTitle}>Legacy Game Mode Progress</h2>
 
           <div className={styles.progressStatsGrid}>
             {data.progressStats.map((stat) => {
@@ -621,7 +647,7 @@ export default function UsageStatisticsPage() {
                     </div>
                     <div className={styles.progressMetric}>
                       <span className={styles.progressMetricLabel}>
-                        Completed Users
+                        Users With All Legacy Lessons Unlocked
                       </span>
                       <span className={styles.progressMetricValue}>
                         {stat.completedUsers} / {stat.totalUsersInMode}
@@ -629,7 +655,7 @@ export default function UsageStatisticsPage() {
                     </div>
                     <div className={styles.progressMetric}>
                       <span className={styles.progressMetricLabel}>
-                        Completion Rate
+                        Legacy Unlock Rate
                       </span>
                       <span className={styles.progressMetricValue}>
                         {completionRate}%

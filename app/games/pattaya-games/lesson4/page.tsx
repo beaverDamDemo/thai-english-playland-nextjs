@@ -462,7 +462,7 @@ function PattayaLesson4PageContent() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={0} backHref="/games/pattaya-games" game="pattaya" />
+        <MazeHeader score={0} title="Verb Forms" backHref="/games/pattaya-games" game="pattaya" />
 
         <section className={styles.panel}>
           <div className={styles.progress}>

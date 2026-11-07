@@ -707,12 +707,24 @@
   padding: 6px 12px;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
+  border: 3px solid var(--game-bg);
   border-radius: 10px;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(2px);
   white-space: nowrap;
   z-index: 2;
   pointer-events: none;
+}
+
+:global(:root[data-theme='dark']) .mazeCardWithMap .hubTitle {
+  border-color: var(--game-bg-dark);
+}
+
+.grammarCard.mazeCardWithMap .hubTitle {
+  width: calc(100% - 24px);
+  font-size: clamp(0.75rem, 3.2vw, 1.3rem);
+  white-space: normal;
+  text-align: center;
 }
 
 /* Image fills the card as a cover background */
@@ -753,6 +765,28 @@
 
 .pattayaCard {
   background: linear-gradient(135deg, #dcedc1 0%, #aed9e0 100%);
+}
+
+.everydayCard {
+  background: linear-gradient(135deg, #f8c784 0%, #f7a7a7 100%);
+}
+
+.grammarCard {
+  background: linear-gradient(135deg, #a9d8f6 0%, #b8b2f3 100%);
+}
+
+.sentencesCard {
+  background: linear-gradient(135deg, #b6e5c4 0%, #80d5c6 100%);
+}
+
+.verbsCard {
+  background: linear-gradient(135deg, #f3b4cf 0%, #c4b5fd 100%);
+}
+
+.progressNote {
+  margin: 0;
+  color: #596b83;
+  font-size: 0.9rem;
 }
 
 /* Starter hub card: use the starter learners zone image as a background */
@@ -1415,6 +1449,22 @@
     background: linear-gradient(135deg, #2d4a52 0%, #1e3a42 100%);
   }
 
+  :global(:root:not([data-theme='light'])) .everydayCard {
+    background: linear-gradient(135deg, #654b30 0%, #60404b 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .grammarCard {
+    background: linear-gradient(135deg, #304a60 0%, #403d65 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .sentencesCard {
+    background: linear-gradient(135deg, #31523b 0%, #285149 100%);
+  }
+
+  :global(:root:not([data-theme='light'])) .verbsCard {
+    background: linear-gradient(135deg, #593d4c 0%, #413b60 100%);
+  }
+
   :global(:root:not([data-theme='light'])) .progressCard {
       background: rgba(30, 30, 50, 0.45);
       border-color: rgba(255, 255, 255, 0.08);
@@ -1606,6 +1656,22 @@
 
 :global([data-theme='dark']) .pattayaCard {
   background: linear-gradient(135deg, #2d4a52 0%, #1e3a42 100%);
+}
+
+:global([data-theme='dark']) .everydayCard {
+  background: linear-gradient(135deg, #654b30 0%, #60404b 100%);
+}
+
+:global([data-theme='dark']) .grammarCard {
+  background: linear-gradient(135deg, #304a60 0%, #403d65 100%);
+}
+
+:global([data-theme='dark']) .sentencesCard {
+  background: linear-gradient(135deg, #31523b 0%, #285149 100%);
+}
+
+:global([data-theme='dark']) .verbsCard {
+  background: linear-gradient(135deg, #593d4c 0%, #413b60 100%);
 }
 
 :global([data-theme='dark']) .progressCard {

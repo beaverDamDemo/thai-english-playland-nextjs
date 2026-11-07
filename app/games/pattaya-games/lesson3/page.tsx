@@ -563,6 +563,7 @@ function PattayaLesson3Content() {
         quiz_attempts: totalCorrect + totalWrong,
         total_moves_earned: score,
         unlocked_lessons: passed ? 4 : undefined,
+        completed: passed,
       });
     }, 0);
   }, [phase, savedProgress, score, totalCorrect, totalWrong]);
@@ -572,7 +573,7 @@ function PattayaLesson3Content() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
+          <MazeHeader score={score} title="Past-Tense Verbs" backHref="/games/verbs-communication" game="pattaya" />
           <div className={styles.endPanel}>
             <h2 className={styles.endTitle}>
               {passed ? 'Mission Accomplished!' : 'Mission Failed'}
@@ -590,7 +591,7 @@ function PattayaLesson3Content() {
                 Play again
               </button>
               <Link
-                href="/games/pattaya-games"
+                href="/games/verbs-communication"
                 className={`${styles.btn} ${styles.btnSecondary}`}
               >
                 Back to map
@@ -605,7 +606,7 @@ function PattayaLesson3Content() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <MazeHeader score={score} backHref="/games/pattaya-games" game="pattaya" />
+        <MazeHeader score={score} title="Past-Tense Verbs" backHref="/games/verbs-communication" game="pattaya" />
 
         <div className={styles.hud}>
           <span className={styles.chip}>
