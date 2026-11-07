@@ -628,19 +628,6 @@
   font-weight: 500;
 }
 
-.hubArrow {
-  margin-top: auto;
-  font-size: 1.5rem;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.3s ease;
-}
-
-.hubCard:hover .hubArrow {
-  opacity: 1;
-  transform: translateX(0);
-}
-
 .mazeCard {
   background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
 }
@@ -659,11 +646,6 @@
 .mazeCardWithMap .mazeCardBody {
   position: relative;
   z-index: 2;
-}
-
-/* Hide arrow on map cards (replaced by image hover effect) */
-.mazeCardWithMap .hubArrow {
-  display: none;
 }
 
 /* Disable the card-level lift/scale on hover for map cards */
@@ -802,18 +784,6 @@
 .starterCard .hubTitle {
   color: #fff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-}
-
-/* Ensure the hub arrow is visible on the starter card (overrides mazeCardWithMap rule) */
-.starterCard .hubArrow {
-  display: block;
-  opacity: 1;
-  transform: translateX(0);
-  position: absolute;
-  right: 18px;
-  bottom: 12px;
-  z-index: 3;
-  font-size: 1.5rem;
 }
 
 .playfulScreen {

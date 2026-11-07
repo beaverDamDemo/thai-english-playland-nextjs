@@ -139,9 +139,24 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
+  if (body.completed === true && (body.lesson_id === "color-mixing" || body.lesson_id === "animals")) {
+    return NextResponse.json(
+      { ok: false, error: "Reload the lesson to save completion with account progress." },
+      { status: 409 },
+    );
+  }
 
   try {
     await db.begin(async (sql) => {
+    const isReset = body.delta !== true &&
+      unlocked_lessons === 1 && correct_answers === 0 && wrong_answers === 0 &&
+      quiz_attempts === 0 && total_moves_earned === 0;
+    if (isReset && game_mode === "starter") {
+      await sql.unsafe(`
+        DELETE FROM public.thai_english_playland_lesson_state
+        WHERE user_id = $1 AND lesson_id = ANY($2::text[]);
+      `, [user.id, ["color-mixing", "animals"]]);
+    }
     if (body.delta === true) {
       // Counters are increments applied atomically, so clients never need to
       // read-then-write (which could overwrite newer data with stale totals).
@@ -203,13 +218,7 @@ export async function POST(request: Request) {
         updated_at        = NOW();
     `, [user.id, game_mode, unlocked_lessons ?? 1, correct_answers ?? 0,
       wrong_answers ?? 0, quiz_attempts ?? 0, total_moves_earned ?? 0]);
-    if (
-      unlocked_lessons === 1 &&
-      correct_answers === 0 &&
-      wrong_answers === 0 &&
-      quiz_attempts === 0 &&
-      total_moves_earned === 0
-    ) {
+    if (isReset) {
       const lessonIds = curriculumZones.flatMap((zone) =>
         zone.lessons.filter((lesson) => {
           const href = lesson.href;

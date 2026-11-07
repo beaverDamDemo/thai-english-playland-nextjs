@@ -1,0 +1,24 @@
+.notice {
+  margin: 1rem;
+  padding: 1rem;
+  border: 2px solid #6c4a99;
+  border-radius: 12px;
+  background: #fff;
+  color: #242135;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.notice button,
+.notice a {
+  display: inline-block;
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: #55347f;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}

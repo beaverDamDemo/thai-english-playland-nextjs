@@ -6,7 +6,9 @@ import UnlockToast from '../_components/UnlockToast';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
-import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer } from '@/app/_lib/client/progress';
+import { useLessonState } from '@/app/_lib/client/useLessonState';
+import { LessonStateLoading, LessonStateSaveError } from '../_components/LessonStateNotice';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './EmptyGrid.module.css';
 import { ANIMAL_LEVELS, EXIT_ROWS, ROUNDS_PER_LEVEL, type AnimalRound } from './animals';
@@ -25,7 +27,6 @@ type PipeTool = {
 const GRID_SIZE = 8;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const LEVEL_GRID_SIZES = [5, 6, 7, 7];
-const FINISHED_LEVELS_KEY = 'playland.starter.lesson4.finishedLevelFlags';
 // Building time before the water starts, and the time the water then has; more for two-animal levels.
 const FLOW_START_DELAY_SECONDS = 5;
 const FARM_BUILD_SECONDS = 10;
@@ -641,7 +642,7 @@ function PipeArtwork({
 }
 
 function EmptyGridContent() {
-  const hasSavedCompletionRef = useRef(false);
+  const { loaded, initialState, loadError, saveError, save, retry } = useLessonState('animals');
   // True right after a tool is picked, so the next click on a different pipe replaces it.
   const toolJustChosenRef = useRef(false);
   // Last rotation the user gave each pipe kind; new pipes of that kind start with it.
@@ -664,7 +665,8 @@ function EmptyGridContent() {
   const [finishedLevels, setFinishedLevels] = useState<boolean[]>(() =>
     ANIMAL_LEVELS.map(() => false),
   );
-  const progressLoadedRef = useRef(false);
+  const finishedLevelsRef = useRef<boolean[]>(ANIMAL_LEVELS.map(() => false));
+  const [progressLoaded, setProgressLoaded] = useState(false);
   const [pipes, setPipes] = useState<Array<PipePiece | null>>(() =>
     Array(CELL_COUNT).fill(null),
   );
@@ -751,35 +753,17 @@ function EmptyGridContent() {
     const timeoutId = window.setTimeout(() => {
       setWaterArrived(true);
       if (isLastRound) {
-        setFinishedLevels((value) =>
-          value.map((done, index) => done || index === levelIndex),
-        );
+        const next = finishedLevelsRef.current.map((done, index) => done || index === levelIndex);
+        finishedLevelsRef.current = next;
+        setFinishedLevels(next);
+        save({ finishedLevels: next });
       }
     }, targetStep * flowDurationSeconds * 1000);
     return () => {
       window.clearTimeout(timeoutId);
       setWaterArrived(false);
     };
-  }, [routeComplete, targetStep, flowDurationSeconds, isLastRound, levelIndex]);
-
-  useEffect(() => {
-    if (!progressLoadedRef.current) return;
-    try {
-      window.localStorage.setItem(
-        FINISHED_LEVELS_KEY,
-        JSON.stringify(finishedLevels),
-      );
-    } catch {
-      // Storage can be unavailable (private mode); progress just won't persist.
-    }
-  }, [finishedLevels]);
-
-  useEffect(() => {
-    if (!lessonComplete || hasSavedCompletionRef.current) return;
-    hasSavedCompletionRef.current = true;
-
-    void saveProgressDelta('starter', { unlocked_lessons: 5, completed: true });
-  }, [lessonComplete]);
+  }, [routeComplete, targetStep, flowDurationSeconds, isLastRound, levelIndex, save]);
 
   useEffect(() => {
     if (routeComplete) recordAnswer('starter', true);
@@ -856,25 +840,24 @@ function EmptyGridContent() {
 
   useEffect(() => {
     pingLessonOpen('starter');
-    // Saved progress and random layout are read after mount to avoid a hydration mismatch.
     const timeoutId = window.setTimeout(() => {
-      let saved: unknown = null;
-      try {
-        saved = JSON.parse(
-          window.localStorage.getItem(FINISHED_LEVELS_KEY) ?? 'null',
-        );
-      } catch {
-        saved = null;
-      }
-      progressLoadedRef.current = true;
-      if (Array.isArray(saved)) {
-        setFinishedLevels(ANIMAL_LEVELS.map((_, index) => saved[index] === true));
-      }
       setLayoutSeed(randomLayoutSeed());
       setAnimalOrder(shuffledIndices(ANIMAL_LEVELS[0].rounds.length));
     }, 0);
     return () => window.clearTimeout(timeoutId);
   }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const timeoutId = window.setTimeout(() => {
+      if (initialState) {
+        finishedLevelsRef.current = initialState.finishedLevels;
+        setFinishedLevels(initialState.finishedLevels);
+      }
+      setProgressLoaded(true);
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [loaded, initialState]);
 
   function startLevel(index: number): void {
     setLevelIndex(index);
@@ -969,6 +952,8 @@ function EmptyGridContent() {
     setTimeLeft(buildSeconds(levelIndex));
   }
 
+  if (!progressLoaded) return <LessonStateLoading error={loadError} />;
+
   return (
     <main
       className={`${styles.page} ${levelIndex === 0 ? styles.farmTheme : ''} ${levelIndex === 1 ? styles.petsTheme : ''} ${levelIndex === 2 ? styles.wildTheme : ''}`}
@@ -991,6 +976,7 @@ function EmptyGridContent() {
       {lessonComplete && <UnlockToast nextLesson={5} />}
 
       <section className={styles.workspace} aria-label="Animal pipe game">
+        {saveError && <LessonStateSaveError retry={retry} />}
         <div className={styles.gameLayout}>
           <div className={styles.boardArea}>
             <ol

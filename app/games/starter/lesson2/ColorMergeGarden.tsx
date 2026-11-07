@@ -5,65 +5,20 @@ import Image from 'next/image';
 import MusicToggle from '../../../_components/MusicToggle';
 import UnlockToast from '../_components/UnlockToast';
 import { getMusicEnabled } from '@/app/_lib/client/music';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './ColorMergeGarden.module.css';
 import lessonHeaderStyles from '../lesson1/ColorsSvgViewer.module.css';
-import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
+import { pingLessonOpen, recordAnswer } from '@/app/_lib/client/progress';
+import { useLessonState } from '@/app/_lib/client/useLessonState';
+import { LessonStateLoading, LessonStateSaveError } from '../_components/LessonStateNotice';
+import { activeColorsForLevel, MAX_GARDEN_LEVEL, type ColorName } from '../lessonState';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 
-type ColorName =
-  | 'red'
-  | 'blue'
-  | 'yellow'
-  | 'green'
-  | 'orange'
-  | 'purple'
-  | 'pink'
-  | 'brown'
-  | 'black'
-  | 'white'
-  | 'gray'
-  | 'cyan';
 type Tile =
   | { id: number; color: ColorName; representation: 'word'; word: string }
   | { id: number; color: ColorName; representation: 'swatch' };
 
-const COLORS: ColorName[] = [
-  'red',
-  'blue',
-  'yellow',
-  'green',
-  'orange',
-  'purple',
-  'pink',
-  'brown',
-  'black',
-  'white',
-  'gray',
-  'cyan',
-];
-const STORAGE_KEY = 'color-merge-garden-progress';
-const MAX_LEVEL = 4;
-// Red is only taught on level 1; later levels draw from this order instead.
-const LEVEL_ONE_COLORS: ColorName[] = ['red', 'blue', 'yellow', 'green'];
-const LATER_LEVEL_COLORS: ColorName[] = [
-  'blue',
-  'yellow',
-  'green',
-  'orange',
-  'purple',
-  'gray',
-  'pink',
-  'brown',
-  'black',
-  'white',
-  'cyan',
-];
-
-type SavedProgress = {
-  level: number;
-  matchedColors: ColorName[];
-};
+const MAX_LEVEL = MAX_GARDEN_LEVEL;
 
 type Message = { en: string; th: string };
 
@@ -75,50 +30,6 @@ const MSG_NEW_LEVEL: Message = {
   en: 'Match each color word with its solid color tile.',
   th: 'จับคู่คำศัพท์สีกับช่องสีที่ตรงกัน',
 };
-
-function activeColorsForLevel(level: number): ColorName[] {
-  if (level === 1) return LEVEL_ONE_COLORS;
-  return LATER_LEVEL_COLORS.slice(0, 4 + (level - 1) * 2);
-}
-
-function isColorName(value: unknown): value is ColorName {
-  return typeof value === 'string' && COLORS.some((color) => color === value);
-}
-
-function readSavedProgress(): SavedProgress | null {
-  try {
-    const storedValue: unknown = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) ?? 'null',
-    );
-    if (typeof storedValue !== 'object' || storedValue === null) return null;
-
-    const saved = storedValue as Record<string, unknown>;
-    const level = saved.level;
-    const matchedColors = saved.matchedColors;
-    if (
-      typeof level !== 'number' ||
-      !Number.isInteger(level) ||
-      level < 1 ||
-      level > MAX_LEVEL ||
-      !Array.isArray(matchedColors) ||
-      !matchedColors.every(isColorName)
-    ) {
-      return null;
-    }
-
-    const activeColors = activeColorsForLevel(level);
-    if (
-      matchedColors.some((color) => !activeColors.includes(color)) ||
-      new Set(matchedColors).size !== matchedColors.length
-    ) {
-      return null;
-    }
-
-    return { level, matchedColors };
-  } catch {
-    return null;
-  }
-}
 
 function playMatchSound(levelComplete: boolean): void {
   if (!getMusicEnabled() ||  typeof window === 'undefined') return;
@@ -188,7 +99,7 @@ function createBoard(level: number, deterministic = false): (Tile | null)[] {
 }
 
 function ColorMergeGardenContent() {
-  const hasSavedCompletionRef = useRef(false);
+  const { loaded, initialState, loadError, saveError, save, retry } = useLessonState('color-mixing');
   const [level, setLevel] = useState(1);
   const [board, setBoard] = useState<(Tile | null)[]>(() =>
     createBoard(1, true),
@@ -209,8 +120,9 @@ function ColorMergeGardenContent() {
   const selectedTile = board.find((tile) => tile?.id === selectedId);
 
   useEffect(() => {
+    if (!loaded) return;
     const timeoutId = window.setTimeout(() => {
-      const saved = readSavedProgress();
+      const saved = initialState;
       if (saved) {
         const isComplete =
           saved.matchedColors.length ===
@@ -225,28 +137,7 @@ function ColorMergeGardenContent() {
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, []);
-
-  useEffect(() => {
-    if (!progressLoaded) return;
-
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ level, matchedColors }),
-      );
-    } catch {
-      // Progress saving is best-effort when browser storage is unavailable.
-    }
-  }, [level, matchedColors, progressLoaded]);
-
-  useEffect(() => {
-    // Completing the last level finishes lesson 2 and unlocks lesson 3.
-    if (!levelComplete || !isLastLevel || hasSavedCompletionRef.current) return;
-    hasSavedCompletionRef.current = true;
-
-    void saveProgressDelta('starter', { unlocked_lessons: 3, completed: true });
-  }, [isLastLevel, levelComplete]);
+  }, [loaded, initialState]);
 
   useEffect(() => {
     pingLessonOpen('starter');
@@ -275,6 +166,7 @@ function ColorMergeGardenContent() {
       selectedTile.representation !== tile.representation
     ) {
       const nextMatchedColors = [...matchedColors, tile.color];
+      save({ level, matchedColors: nextMatchedColors });
       const isLevelComplete = nextMatchedColors.length === activeColors.length;
       recordAnswer('starter', true);
       setMatchedColors(nextMatchedColors);
@@ -298,6 +190,7 @@ function ColorMergeGardenContent() {
 
   function growGarden(): void {
     const nextLevel = level + 1;
+    save({ level: nextLevel, matchedColors: [] });
     setLevel(nextLevel);
     setBoard(createBoard(nextLevel));
     setSelectedId(null);
@@ -308,6 +201,7 @@ function ColorMergeGardenContent() {
   }
 
   function resetBoard(): void {
+    save({ level, matchedColors: [] });
     setBoard(createBoard(level));
     setSelectedId(null);
     setMatchedColors([]);
@@ -315,6 +209,8 @@ function ColorMergeGardenContent() {
     setMessage(null);
     setLevelComplete(false);
   }
+
+  if (!progressLoaded) return <LessonStateLoading error={loadError} />;
 
   return (
     <main className={styles.page} data-level={level}>
@@ -335,6 +231,7 @@ function ColorMergeGardenContent() {
       {levelComplete && isLastLevel && <UnlockToast nextLesson={3} />}
 
       <section className={styles.game} aria-labelledby="game-title">
+        {saveError && <LessonStateSaveError retry={retry} />}
         <div className={styles.heading}>
           <p className={styles.instructions}>
             Match each color word to its solid color tile. No penalty for a

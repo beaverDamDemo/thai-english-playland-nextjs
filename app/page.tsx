@@ -230,7 +230,6 @@ export default function HomePage() {
               <span className={styles.hubIcon}>🌱</span>Starter
             </span>
           </div>
-          <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
@@ -250,7 +249,6 @@ export default function HomePage() {
               <span className={styles.hubIcon}>🐘</span>Chiang Mai
             </span>
           </div>
-          <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
@@ -270,7 +268,6 @@ export default function HomePage() {
               <span className={styles.hubIcon}>🎰</span>The Golden Baht Casino
             </span>
           </div>
-          <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
@@ -290,7 +287,6 @@ export default function HomePage() {
               <span className={styles.hubIcon}>🏝️</span>Phuket
             </span>
           </div>
-          <span className={styles.hubArrow}>→</span>
         </Link>
 
         <Link
@@ -310,7 +306,6 @@ export default function HomePage() {
               <span className={styles.hubIcon}>🌊</span>Pattaya
             </span>
           </div>
-          <span className={styles.hubArrow}>→</span>
         </Link>
       </section>
 

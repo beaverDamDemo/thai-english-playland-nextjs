@@ -114,6 +114,20 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 15%, #ffd479 0 4px, transparent 5px),
+    radial-gradient(circle at 21% 28%, #f49cbb 0 3px, transparent 4px),
+    radial-gradient(circle at 82% 13%, #88cfff 0 5px, transparent 6px),
+    radial-gradient(circle at 92% 34%, #ffcf82 0 3px, transparent 4px),
+    radial-gradient(circle at 9% 66%, #85dccc 0 4px, transparent 5px),
+    radial-gradient(circle at 23% 86%, #f7a5d5 0 5px, transparent 6px),
+    radial-gradient(circle at 76% 84%, #a9a8ff 0 4px, transparent 5px),
+    radial-gradient(circle at 91% 70%, #8cdbc9 0 5px, transparent 6px),
+    radial-gradient(circle at 5% 43%, transparent 0 32px, rgba(124, 177, 255, 0.4) 33px 36px, transparent 37px 47px, rgba(124, 177, 255, 0.16) 48px 50px, transparent 51px),
+    radial-gradient(circle at 97% 58%, transparent 0 42px, rgba(245, 155, 206, 0.35) 43px 46px, transparent 47px 57px, rgba(245, 155, 206, 0.14) 58px 60px, transparent 61px),
+    radial-gradient(ellipse at 12% 92%, rgba(107, 100, 195, 0.35), transparent 32%),
+    radial-gradient(ellipse at 92% 9%, rgba(75, 137, 183, 0.3), transparent 32%),
+    radial-gradient(ellipse at center, rgba(75, 96, 155, 0.25), transparent 70%);
 }
 
 .svgCanvas {

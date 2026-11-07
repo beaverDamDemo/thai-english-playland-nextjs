@@ -123,6 +123,8 @@ export default function SettingsPage() {
               quiz_attempts: 0,
               total_moves_earned: 0,
             }),
+          }).then((response) => {
+            if (!response.ok) throw new Error(`Reset failed: ${response.status}`);
           }),
         ),
       )
@@ -133,7 +135,7 @@ export default function SettingsPage() {
         .catch(() => {
           showNotification(
             'error',
-            'Failed to reset progress. Please try again.',
+            'Some progress may not have been reset. Please try again.',
           );
           setConfirmAction(null);
         });
@@ -150,6 +152,9 @@ export default function SettingsPage() {
           total_moves_earned: 0,
         }),
       })
+        .then((response) => {
+          if (!response.ok) throw new Error(`Reset failed: ${response.status}`);
+        })
         .then(() => {
           showNotification(
             'success',
