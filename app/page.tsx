@@ -138,9 +138,9 @@ export default function HomePage() {
         <Link
           href="/games/starter"
           data-game={zoneThemeGames.starter}
-          className={`${styles.hubCard} ${styles.starterCard} ${styles.mazeCardWithMap}`}
+          className={`${styles.hubCard}           ${styles.starterCard} ${styles.zoneCard}`}
         >
-          <div className={styles.mazeCardBody}>
+                    <div className={styles.zoneCardBody}>
             <span className={styles.hubTitle}>
               <span className={styles.hubIcon}>🌱</span>Starter
             </span>
@@ -150,16 +150,16 @@ export default function HomePage() {
         <Link
           href="/games/everyday-vocabulary"
           data-game={zoneThemeGames['everyday-vocabulary']}
-          className={`${styles.hubCard} ${styles.everydayCard} ${styles.mazeCardWithMap}`}
+          className={`${styles.hubCard}           ${styles.everydayCard} ${styles.zoneCard}`}
         >
           <Image
             src="/assets/tinified/map-with-9-clickable-locations.png"
             alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
-            className={styles.mazeCardMap}
+                      className={styles.zoneCardMap}
           />
-          <div className={styles.mazeCardBody}>
+                    <div className={styles.zoneCardBody}>
             <span className={styles.hubTitle}>
               <span className={styles.hubIcon}>🐘</span>Chiang Mai
             </span>
@@ -169,16 +169,16 @@ export default function HomePage() {
         <Link
           href="/games/basic-grammar"
           data-game={zoneThemeGames['basic-grammar']}
-          className={`${styles.hubCard} ${styles.grammarCard} ${styles.mazeCardWithMap}`}
+          className={`${styles.hubCard}           ${styles.grammarCard} ${styles.zoneCard}`}
         >
           <Image
             src="/assets/tinified/casino-map-with-5-clickable-locations.png"
             alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
-            className={styles.mazeCardMap}
+                      className={styles.zoneCardMap}
           />
-          <div className={styles.mazeCardBody}>
+                    <div className={styles.zoneCardBody}>
             <span className={styles.hubTitle}>
               <span className={styles.hubIcon}>🎰</span>The Golden Baht Casino
             </span>
@@ -188,16 +188,16 @@ export default function HomePage() {
         <Link
           href="/games/building-sentences"
           data-game={zoneThemeGames['building-sentences']}
-          className={`${styles.hubCard} ${styles.sentencesCard} ${styles.mazeCardWithMap}`}
+          className={`${styles.hubCard}           ${styles.sentencesCard} ${styles.zoneCard}`}
         >
           <Image
             src="/assets/tinified/phuket-background-40.jpg"
             alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
-            className={styles.mazeCardMap}
+                      className={styles.zoneCardMap}
           />
-          <div className={styles.mazeCardBody}>
+                    <div className={styles.zoneCardBody}>
             <span className={styles.hubTitle}>
               <span className={styles.hubIcon}>🏝️</span>Phuket
             </span>
@@ -207,16 +207,16 @@ export default function HomePage() {
         <Link
           href="/games/verbs-communication"
           data-game={zoneThemeGames['verbs-communication']}
-          className={`${styles.hubCard} ${styles.verbsCard} ${styles.mazeCardWithMap}`}
+          className={`${styles.hubCard}           ${styles.verbsCard} ${styles.zoneCard}`}
         >
           <Image
             src="/assets/tinified/pattaya%20Copilot_20260325_132439.png"
             alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
-            className={styles.mazeCardMap}
+                      className={styles.zoneCardMap}
           />
-          <div className={styles.mazeCardBody}>
+                    <div className={styles.zoneCardBody}>
             <span className={styles.hubTitle}>
               <span className={styles.hubIcon}>🌊</span>Pattaya
             </span>

@@ -628,12 +628,8 @@
   font-weight: 500;
 }
 
-.mazeCard {
-  background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
-}
-
 /* Hub card variant: map image fills the entire card with overlaid text */
-.mazeCardWithMap {
+.zoneCard {
   position: relative;
   flex-direction: row;
   align-items: center;
@@ -642,46 +638,46 @@
   isolation: isolate;
 }
 
-.mazeCardWithMap .hubIcon,
-.mazeCardWithMap .mazeCardBody {
+.zoneCard .hubIcon,
+.zoneCard .zoneCardBody {
   position: relative;
   z-index: 2;
 }
 
 /* Disable the card-level lift/scale on hover for map cards */
-.mazeCardWithMap.hubCard:hover {
+.zoneCard.hubCard:hover {
   transform: none;
 }
 
 /* Image hover effect: grayscale by default, restore color brightness on hover */
-.mazeCardMap {
+.zoneCardMap {
   transition: filter 0.4s ease;
   filter: grayscale(0.25);
 }
 
-.mazeCardWithMap:hover .mazeCardMap {
+.zoneCard:hover .zoneCardMap {
   filter: grayscale(0) saturate(1.2) brightness(1.15);
 }
 
-.mazeCardWithMap:hover .hubTitle {
+.zoneCard:hover .hubTitle {
   background: rgba(0, 0, 0, 0.7);
 }
 
-.mazeCardWithMap .hubTitle {
+.zoneCard .hubTitle {
   transition: background 0.3s ease;
 }
 
-.mazeCardWithMap .hubIcon {
+.zoneCard .hubIcon {
   font-size: inherit;
   line-height: 1;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 }
 
-.mazeCardBody {
+.zoneCardBody {
   display: contents;
 }
 
-.mazeCardWithMap .hubTitle {
+.zoneCard .hubTitle {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -698,11 +694,11 @@
   pointer-events: none;
 }
 
-:global(:root[data-theme='dark']) .mazeCardWithMap .hubTitle {
+:global(:root[data-theme='dark']) .zoneCard .hubTitle {
   border-color: var(--game-bg-dark);
 }
 
-.grammarCard.mazeCardWithMap .hubTitle {
+.grammarCard.zoneCard .hubTitle {
   width: calc(100% - 24px);
   font-size: clamp(0.75rem, 3.2vw, 1.3rem);
   white-space: normal;
@@ -710,7 +706,7 @@
 }
 
 /* Image fills the card as a cover background */
-.mazeCardMap {
+.zoneCardMap {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -721,7 +717,7 @@
 }
 
 /* Subtle dark overlay so text stays readable on any image */
-.mazeCardWithMap::after {
+.zoneCard::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -736,7 +732,7 @@
 }
 
 @media (max-width: 600px) {
-  .mazeCardBody {
+  .zoneCardBody {
     gap: 10px;
   }
 }
@@ -1225,13 +1221,13 @@
     font-size: 0.85rem;
   }
 
-  .mazeCardWithMap {
+  .zoneCard {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
 
-  .mazeCardBody {
+  .zoneCardBody {
     justify-content: center;
   }
 
@@ -1405,10 +1401,6 @@
 
   :global(:root:not([data-theme='light'])) .hubText {
     color: #9fb5e7;
-  }
-
-  :global(:root:not([data-theme='light'])) .mazeCard {
-    background: linear-gradient(135deg, #2d5a47 0%, #1e3d30 100%);
   }
 
   :global(:root:not([data-theme='light'])) .casinoCard {
@@ -1612,12 +1604,8 @@
   color: #9fb5e7;
 }
 
-:global([data-theme='dark']) .mazeCardMap {
+:global([data-theme='dark']) .zoneCardMap {
   filter: grayscale(0.25) brightness(0.8);
-}
-
-:global([data-theme='dark']) .mazeCard {
-  background: linear-gradient(135deg, #2d5a47 0%, #1e3d30 100%);
 }
 
 :global([data-theme='dark']) .casinoCard {

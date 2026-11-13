@@ -12,7 +12,7 @@ export default function MazeHeader({
   score,
   title,
   scale = 1,
-  backHref = '/games/maze',
+  backHref = '/games/everyday-vocabulary',
   game = 'maze',
 }: {
   score: number;

@@ -27,7 +27,7 @@ const MazeLessonPage: FC<Props> = ({
   lessonNumber,
   Quiz,
   lessonTitleOverride,
-  returnHref = '/games/maze',
+  returnHref = '/games/everyday-vocabulary',
   returnLabel = 'Return to Map',
 }) => {
   const [Scene, setScene] = useState<unknown>(null);

@@ -48,8 +48,8 @@ const MazePageComponent: FC<MazePageProps> = ({
   showWinScreen = true,
   totalLessons = TOTAL_LESSONS,
   statsKey = 'englishMazeStats',
-  backHref = '/games/maze',
-  returnHref = '/games/maze',
+  backHref = '/games/everyday-vocabulary',
+  returnHref = '/games/everyday-vocabulary',
   returnLabel = 'Return to Map',
   gameModeOverride,
 }) => {
