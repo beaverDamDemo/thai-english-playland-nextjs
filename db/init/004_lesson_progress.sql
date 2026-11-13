@@ -16,19 +16,6 @@ CREATE TABLE IF NOT EXISTS public.thai_english_playland_lesson_progress (
     PRIMARY KEY (user_id, lesson_id)
 );
 
-DO $$
-BEGIN
-    INSERT INTO public.thai_english_playland_schema_changes (name)
-    VALUES ('004_lesson_progress_reset')
-    ON CONFLICT (name) DO NOTHING;
-
-    IF FOUND THEN
-        DELETE FROM public.thai_english_playland_lesson_progress;
-        DELETE FROM public.thai_english_playland_user_progress;
-        DELETE FROM public.thai_english_playland_user_achievements;
-        DELETE FROM public.thai_english_playland_user_streak_state;
-        DELETE FROM public.thai_english_playland_daily_lesson_activity;
-        UPDATE public.thai_english_playland_activity_tracking
-        SET started_at = CURRENT_DATE WHERE id = 1;
-    END IF;
-END $$;
+INSERT INTO public.thai_english_playland_schema_changes (name)
+VALUES ('004_lesson_progress_preserve')
+ON CONFLICT (name) DO NOTHING;
