@@ -55,8 +55,8 @@ type UserGrowthData = {
 };
 
 function getGameModeDetails(gameMode: string): { emoji: string; name: string } {
-  if (gameMode === 'maze') return { emoji: '🌀', name: 'Maze' };
-  if (gameMode === 'casino') return { emoji: '🎰', name: 'Casino' };
+  if (gameMode === 'maze') return { emoji: '🐘', name: 'Chiang Mai' };
+  if (gameMode === 'casino') return { emoji: '🎰', name: 'Golden Baht Casino' };
   if (gameMode === 'pattaya') return { emoji: '🏖️', name: 'Pattaya' };
   if (gameMode === 'starter') return { emoji: '🌱', name: 'Starter' };
 

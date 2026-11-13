@@ -70,7 +70,7 @@ export default function MazeScreenPage() {
   return (
     <div className={styles.mazePage}>
       <header className={styles.pageHeader} data-game="maze">
-        <span className={styles.appTitle}>Maze Game Lessons</span>
+        <span className={styles.appTitle}>Chiang Mai Lessons</span>
         <Link href="/" className={styles.headerHomeLink}>
           <Image
             src="/assets/tinified/back.png"

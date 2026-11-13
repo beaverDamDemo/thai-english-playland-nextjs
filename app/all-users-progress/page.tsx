@@ -54,8 +54,8 @@ const LEADERBOARD_COLUMNS: { key: LeaderboardSort; label: string }[] = [
 const TABLE_COLUMNS: { key: SortColumn; label: string; game?: boolean }[] = [
   { key: 'username', label: 'Username' },
   { key: 'starter', label: '🌱 Starter', game: true },
-  { key: 'maze', label: '🌀 Maze', game: true },
-  { key: 'casino', label: '🎰 Casino', game: true },
+  { key: 'maze', label: '🐘 Chiang Mai', game: true },
+  { key: 'casino', label: '🎰 Golden Baht Casino', game: true },
   { key: 'pattaya', label: '🏖️ Pattaya', game: true },
   { key: 'activity', label: 'Activity' },
   { key: 'successRate', label: 'Success Rate' },

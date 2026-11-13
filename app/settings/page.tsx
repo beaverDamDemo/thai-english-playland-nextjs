@@ -26,9 +26,9 @@ type SettingsResponse = {
 const RESET_ACTIONS_THAI = {
   all: 'รีเซ็ตความคืบหน้าทั้งหมด',
   starter: 'รีเซ็ตความคืบหน้าของโซนผู้เริ่มต้น',
-  maze: 'รีเซ็ตความคืบหน้าของเกมเขาวงกต',
-  casino: 'รีเซ็ตความคืบหน้าของเกมคาสิโน',
-  pattaya: 'รีเซ็ตความคืบหน้าของเกมพัทยา',
+  maze: 'รีเซ็ตความคืบหน้าของโซนเชียงใหม่',
+  casino: 'รีเซ็ตความคืบหน้าของโซนคาสิโน',
+  pattaya: 'รีเซ็ตความคืบหน้าของโซนพัทยา',
 } as const;
 
 export default function SettingsPage() {
@@ -257,9 +257,9 @@ export default function SettingsPage() {
           </section>
 
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Reset Specific Game Mode</h2>
+            <h2 className={styles.cardTitle}>Reset Specific Zone</h2>
             <p className={styles.note}>
-              Reset progress for individual game modes.
+              Reset progress for individual zones.
             </p>
             <div className={styles.buttonGroup}>
               <button
@@ -269,16 +269,16 @@ export default function SettingsPage() {
                 🌱 Reset Starter
               </button>
               <button
-                onClick={() => handleResetGameMode('maze', 'Maze')}
+                onClick={() => handleResetGameMode('maze', 'Chiang Mai')}
                 className={styles.gameModeButton}
               >
-                🌀 Reset Maze
+                🐘 Reset Chiang Mai
               </button>
               <button
-                onClick={() => handleResetGameMode('casino', 'Casino')}
+                onClick={() => handleResetGameMode('casino', 'Golden Baht Casino')}
                 className={styles.gameModeButton}
               >
-                🎰 Reset Casino
+                🎰 Reset Golden Baht Casino
               </button>
               <button
                 onClick={() => handleResetGameMode('pattaya', 'Pattaya')}

@@ -6,30 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './HomeView.module.css';
 import { useEffect, useState } from 'react';
-import { lessonMapButtons as mazeLessonMapButtons } from './games/maze/lessonMapConfig';
-import { lessonMapButtons as casinoLessonMapButtons } from './games/casino/lessonMapConfig';
-import { lessonMapButtons as pattayaLessonMapButtons } from './games/pattaya-games/lessonMapConfig';
-import { lessonMapButtons as starterLessonMapButtons } from './games/starter/lessonMapConfig';
 import { curriculumZones, zoneThemeGames } from './games/curriculum';
-
-const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
-const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);
-const PATTAYA_TOTAL_LESSONS = Math.max(1, pattayaLessonMapButtons.length);
-const STARTER_TOTAL_LESSONS = starterLessonMapButtons.length;
-
-type ProgressStats = {
-  correctAnswers: number;
-  wrongAnswers: number;
-  quizAttempts: number;
-  totalMovesEarned: number;
-};
-
-const EMPTY_STATS: ProgressStats = {
-  correctAnswers: 0,
-  wrongAnswers: 0,
-  quizAttempts: 0,
-  totalMovesEarned: 0,
-};
 
 type AchievementDef = {
   id: string;
@@ -47,16 +24,8 @@ type EarnedAchievement = {
 
 export default function HomePage() {
   const router = useRouter();
-  const [starterUnlocked, setStarterUnlocked] = useState(0);
-  const [starterStats, setStarterStats] = useState<ProgressStats>(EMPTY_STATS);
   const [completedLessons, setCompletedLessons] = useState<string[] | null>(null);
   const [progressError, setProgressError] = useState(false);
-  const [mazeUnlocked, setMazeUnlocked] = useState(1);
-  const [casinoUnlocked, setCasinoUnlocked] = useState(1);
-  const [pattayaUnlocked, setPattayaUnlocked] = useState(1);
-  const [mazeStats, setMazeStats] = useState<ProgressStats>(EMPTY_STATS);
-  const [casinoStats, setCasinoStats] = useState<ProgressStats>(EMPTY_STATS);
-  const [pattayaStats, setPattayaStats] = useState<ProgressStats>(EMPTY_STATS);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [achievementDefs, setAchievementDefs] = useState<AchievementDef[]>([]);
@@ -101,60 +70,6 @@ export default function HomePage() {
             return;
           }
           setCompletedLessons(data.lessons.filter((lesson) => lesson.completed_at).map((lesson) => lesson.lesson_id));
-          const starter = data.progress['starter'];
-          const maze = data.progress['maze'];
-          const casino = data.progress['casino'];
-          const pattaya = data.progress['pattaya'];
-          if (starter) {
-            setStarterUnlocked(
-              Math.min(STARTER_TOTAL_LESSONS, Math.max(0, starter.unlocked_lessons)),
-            );
-            setStarterStats({
-              correctAnswers: starter.correct_answers,
-              wrongAnswers: starter.wrong_answers,
-              quizAttempts: starter.quiz_attempts,
-              totalMovesEarned: starter.total_moves_earned,
-            });
-          }
-          if (maze) {
-            setMazeUnlocked(
-              Math.min(MAZE_TOTAL_LESSONS, Math.max(1, maze.unlocked_lessons)),
-            );
-            setMazeStats({
-              correctAnswers: maze.correct_answers,
-              wrongAnswers: maze.wrong_answers,
-              quizAttempts: maze.quiz_attempts,
-              totalMovesEarned: maze.total_moves_earned,
-            });
-          }
-          if (casino) {
-            setCasinoUnlocked(
-              Math.min(
-                CASINO_TOTAL_LESSONS,
-                Math.max(1, casino.unlocked_lessons),
-              ),
-            );
-            setCasinoStats({
-              correctAnswers: casino.correct_answers,
-              wrongAnswers: casino.wrong_answers,
-              quizAttempts: casino.quiz_attempts,
-              totalMovesEarned: casino.total_moves_earned,
-            });
-          }
-          if (pattaya) {
-            setPattayaUnlocked(
-              Math.min(
-                PATTAYA_TOTAL_LESSONS,
-                Math.max(1, pattaya.unlocked_lessons),
-              ),
-            );
-            setPattayaStats({
-              correctAnswers: pattaya.correct_answers,
-              wrongAnswers: pattaya.wrong_answers,
-              quizAttempts: pattaya.quiz_attempts,
-              totalMovesEarned: pattaya.total_moves_earned,
-            });
-          }
         },
       )
       .catch((error) => {
@@ -324,163 +239,6 @@ export default function HomePage() {
               </div>
             </article>
           ))}
-        </div>
-        <h2 className={styles.progressTitle}>Game Mode Stats</h2>
-        <p className={styles.progressNote}>
-          These totals are grouped by the original game modes, not by the curriculum zones.
-        </p>
-        <div className={styles.progressDisplay}>
-          <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>🌱 Starter</h3>
-            <div className={styles.progressRows}>
-              {STARTER_TOTAL_LESSONS === 0 ? (
-                <div className={styles.progressRow}>
-                  <span className={styles.progressLabel}>Coming soon</span>
-                </div>
-              ) : (
-                <>
-                  <div className={styles.progressRow}>
-                    <span className={styles.progressLabel}>Unlocked</span>
-                    <strong className={styles.progressValue}>
-                      {starterUnlocked}/{STARTER_TOTAL_LESSONS}
-                    </strong>
-                  </div>
-                  <div className={styles.progressRow}>
-                    <span className={styles.progressLabel}>✅ Correct</span>
-                    <strong className={styles.progressValue}>
-                      {starterStats.correctAnswers}
-                    </strong>
-                  </div>
-                  <div className={styles.progressRow}>
-                    <span className={styles.progressLabel}>❌ Wrong</span>
-                    <strong className={styles.progressValue}>
-                      {starterStats.wrongAnswers}
-                    </strong>
-                  </div>
-                  <div className={styles.progressRow}>
-                    <span className={styles.progressLabel}>🎯 Attempts</span>
-                    <strong className={styles.progressValue}>
-                      {starterStats.quizAttempts}
-                    </strong>
-                  </div>
-                  <div className={styles.progressRow}>
-                    <span className={styles.progressLabel}>👣 Moves</span>
-                    <strong className={styles.progressValue}>
-                      {starterStats.totalMovesEarned}
-                    </strong>
-                  </div>
-                </>
-              )}
-            </div>
-          </article>
-
-          <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>🌀 Maze</h3>
-            <div className={styles.progressRows}>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Unlocked</span>
-                <strong className={styles.progressValue}>
-                  {mazeUnlocked}/{MAZE_TOTAL_LESSONS}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>✅ Correct</span>
-                <strong className={styles.progressValue}>
-                  {mazeStats.correctAnswers}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>❌ Wrong</span>
-                <strong className={styles.progressValue}>
-                  {mazeStats.wrongAnswers}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>🎯 Attempts</span>
-                <strong className={styles.progressValue}>
-                  {mazeStats.quizAttempts}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>👣 Moves</span>
-                <strong className={styles.progressValue}>
-                  {mazeStats.totalMovesEarned}
-                </strong>
-              </div>
-            </div>
-          </article>
-
-          <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>🎰 Casino</h3>
-            <div className={styles.progressRows}>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Unlocked</span>
-                <strong className={styles.progressValue}>
-                  {casinoUnlocked}/{CASINO_TOTAL_LESSONS}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>✅ Correct</span>
-                <strong className={styles.progressValue}>
-                  {casinoStats.correctAnswers}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>❌ Wrong</span>
-                <strong className={styles.progressValue}>
-                  {casinoStats.wrongAnswers}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>� Attempts</span>
-                <strong className={styles.progressValue}>
-                  {casinoStats.quizAttempts}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>👣 Moves</span>
-                <strong className={styles.progressValue}>
-                  {casinoStats.totalMovesEarned}
-                </strong>
-              </div>
-            </div>
-          </article>
-
-          <article className={styles.progressBlock}>
-            <h3 className={styles.progressBlockTitle}>🏖️ Pattaya</h3>
-            <div className={styles.progressRows}>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>Unlocked</span>
-                <strong className={styles.progressValue}>
-                  {pattayaUnlocked}/{PATTAYA_TOTAL_LESSONS}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>✅ Correct</span>
-                <strong className={styles.progressValue}>
-                  {pattayaStats.correctAnswers}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>❌ Wrong</span>
-                <strong className={styles.progressValue}>
-                  {pattayaStats.wrongAnswers}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>🎯 Attempts</span>
-                <strong className={styles.progressValue}>
-                  {pattayaStats.quizAttempts}
-                </strong>
-              </div>
-              <div className={styles.progressRow}>
-                <span className={styles.progressLabel}>👣 Moves</span>
-                <strong className={styles.progressValue}>
-                  {pattayaStats.totalMovesEarned}
-                </strong>
-              </div>
-            </div>
-          </article>
         </div>
       </section>
 
