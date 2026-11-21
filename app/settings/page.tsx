@@ -7,10 +7,11 @@ import ThemeToggle from '../_components/ThemeToggle';
 import FontToggle from '../_components/FontToggle';
 import MusicToggle from '../_components/MusicToggle';
 import FontSizeToggle from '../_components/FontSizeToggle';
-import { lessonMapButtons as mazeLessonMapButtons } from '../games/maze/lessonMapConfig';
-import { lessonMapButtons as casinoLessonMapButtons } from '../games/casino/lessonMapConfig';
-import { lessonMapButtons as pattayaLessonMapButtons } from '../games/pattaya-games/lessonMapConfig';
-import { lessonMapButtons as starterLessonMapButtons } from '../games/starter/lessonMapConfig';
+import { lessonMapButtons as mazeLessonMapButtons } from '../_games/maze/lessonMapConfig';
+import { lessonMapButtons as casinoLessonMapButtons } from '../_games/casino/lessonMapConfig';
+import { lessonMapButtons as pattayaLessonMapButtons } from '../_games/pattaya-games/lessonMapConfig';
+import { lessonMapButtons as starterLessonMapButtons } from '../_games/starter/lessonMapConfig';
+import { curriculumZones, type CurriculumZoneId } from '../_games/curriculum';
 
 const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
 const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);
@@ -23,20 +24,21 @@ type SettingsResponse = {
   error?: string;
 };
 
-const RESET_ACTIONS_THAI = {
+const RESET_ACTIONS_THAI: Record<'all' | CurriculumZoneId, string> = {
   all: 'รีเซ็ตความคืบหน้าทั้งหมด',
   starter: 'รีเซ็ตความคืบหน้าของโซนผู้เริ่มต้น',
-  maze: 'รีเซ็ตความคืบหน้าของโซนเชียงใหม่',
-  casino: 'รีเซ็ตความคืบหน้าของโซนคาสิโน',
-  pattaya: 'รีเซ็ตความคืบหน้าของโซนพัทยา',
-} as const;
+  'everyday-vocabulary': 'รีเซ็ตความคืบหน้าของโซนเชียงใหม่',
+  'basic-grammar': 'รีเซ็ตความคืบหน้าของโซนคาสิโน',
+  'building-sentences': 'รีเซ็ตความคืบหน้าของโซนภูเก็ต',
+  'verbs-communication': 'รีเซ็ตความคืบหน้าของโซนพัทยา',
+};
 
 export default function SettingsPage() {
   const [data, setData] = useState<SettingsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<{
-    type: 'all' | 'maze' | 'casino' | 'pattaya' | 'starter' | 'deleteAccount';
+    type: 'all' | CurriculumZoneId | 'deleteAccount';
     label: string;
   } | null>(null);
   const [notification, setNotification] = useState<{
@@ -80,11 +82,8 @@ export default function SettingsPage() {
     setConfirmAction({ type: 'all', label: 'Reset All Progress' });
   };
 
-  const handleResetGameMode = (
-    mode: 'maze' | 'casino' | 'pattaya' | 'starter',
-    name: string,
-  ) => {
-    setConfirmAction({ type: mode, label: `Reset ${name}` });
+  const handleResetZone = (zone: CurriculumZoneId, name: string) => {
+    setConfirmAction({ type: zone, label: `Reset ${name}` });
   };
 
   const handleConfirmReset = () => {
@@ -108,49 +107,13 @@ export default function SettingsPage() {
           );
           setConfirmAction(null);
         });
-    } else if (confirmAction.type === 'all') {
-      const modes = ['maze', 'casino', 'pattaya', 'starter'];
-      Promise.all(
-        modes.map((mode) =>
-          fetch('/api/progress', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              game_mode: mode,
-              unlocked_lessons: 1,
-              correct_answers: 0,
-              wrong_answers: 0,
-              quiz_attempts: 0,
-              total_moves_earned: 0,
-            }),
-          }).then((response) => {
-            if (!response.ok) throw new Error(`Reset failed: ${response.status}`);
-          }),
-        ),
-      )
-        .then(() => {
-          showNotification('success', 'Progress reset successfully!');
-          setConfirmAction(null);
-        })
-        .catch(() => {
-          showNotification(
-            'error',
-            'Some progress may not have been reset. Please try again.',
-          );
-          setConfirmAction(null);
-        });
     } else {
-      fetch('/api/progress', {
+      // 'all' or one curriculum zone; the server knows which lessons belong to each zone.
+      const isAll = confirmAction.type === 'all';
+      fetch('/api/progress/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          game_mode: confirmAction.type,
-          unlocked_lessons: 1,
-          correct_answers: 0,
-          wrong_answers: 0,
-          quiz_attempts: 0,
-          total_moves_earned: 0,
-        }),
+        body: JSON.stringify({ zone: confirmAction.type }),
       })
         .then((response) => {
           if (!response.ok) throw new Error(`Reset failed: ${response.status}`);
@@ -158,7 +121,7 @@ export default function SettingsPage() {
         .then(() => {
           showNotification(
             'success',
-            `${confirmAction.label} progress reset successfully!`,
+            isAll ? 'Progress reset successfully!' : `${confirmAction.label} progress reset successfully!`,
           );
           setConfirmAction(null);
         })
@@ -262,30 +225,15 @@ export default function SettingsPage() {
               Reset progress for individual zones.
             </p>
             <div className={styles.buttonGroup}>
-              <button
-                onClick={() => handleResetGameMode('starter', 'Starter')}
-                className={styles.gameModeButton}
-              >
-                🌱 Reset Starter
-              </button>
-              <button
-                onClick={() => handleResetGameMode('maze', 'Chiang Mai')}
-                className={styles.gameModeButton}
-              >
-                🐘 Reset Chiang Mai
-              </button>
-              <button
-                onClick={() => handleResetGameMode('casino', 'Golden Baht Casino')}
-                className={styles.gameModeButton}
-              >
-                🎰 Reset Golden Baht Casino
-              </button>
-              <button
-                onClick={() => handleResetGameMode('pattaya', 'Pattaya')}
-                className={styles.gameModeButton}
-              >
-                🏖️ Reset Pattaya
-              </button>
+              {curriculumZones.map((zone) => (
+                <button
+                  key={zone.id}
+                  onClick={() => handleResetZone(zone.id, zone.title)}
+                  className={styles.gameModeButton}
+                >
+                  {zone.icon} Reset {zone.title}
+                </button>
+              ))}
             </div>
           </section>
 

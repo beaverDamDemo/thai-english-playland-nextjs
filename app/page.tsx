@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './HomeView.module.css';
 import { useEffect, useState } from 'react';
-import { curriculumZones, zoneThemeGames } from './games/curriculum';
+import { curriculumZones, zoneThemeGames } from './_games/curriculum';
 
 type AchievementDef = {
   id: string;
@@ -136,7 +136,7 @@ export default function HomePage() {
 
       <section className={styles.hubGrid} aria-label="Learning zones">
         <Link
-          href="/games/starter"
+          href="/zones/starter"
           data-game={zoneThemeGames.starter}
           className={`${styles.hubCard}           ${styles.starterCard} ${styles.zoneCard}`}
         >
@@ -148,7 +148,7 @@ export default function HomePage() {
         </Link>
 
         <Link
-          href="/games/everyday-vocabulary"
+          href="/zones/chiang-mai"
           data-game={zoneThemeGames['everyday-vocabulary']}
           className={`${styles.hubCard}           ${styles.everydayCard} ${styles.zoneCard}`}
         >
@@ -167,7 +167,7 @@ export default function HomePage() {
         </Link>
 
         <Link
-          href="/games/basic-grammar"
+          href="/zones/the-golden-baht-casino"
           data-game={zoneThemeGames['basic-grammar']}
           className={`${styles.hubCard}           ${styles.grammarCard} ${styles.zoneCard}`}
         >
@@ -186,7 +186,7 @@ export default function HomePage() {
         </Link>
 
         <Link
-          href="/games/building-sentences"
+          href="/zones/phuket"
           data-game={zoneThemeGames['building-sentences']}
           className={`${styles.hubCard}           ${styles.sentencesCard} ${styles.zoneCard}`}
         >
@@ -205,7 +205,7 @@ export default function HomePage() {
         </Link>
 
         <Link
-          href="/games/verbs-communication"
+          href="/zones/pattaya"
           data-game={zoneThemeGames['verbs-communication']}
           className={`${styles.hubCard}           ${styles.verbsCard} ${styles.zoneCard}`}
         >

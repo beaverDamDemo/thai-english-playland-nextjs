@@ -38,13 +38,6 @@ type UserGrowthData = {
     totalWrong: number;
     totalMoves: number;
   }>;
-  progressStats: Array<{
-    gameMode: string;
-    avgUnlockedLessons: number;
-    avgSuccessRate: number;
-    completedUsers: number;
-    totalUsersInMode: number;
-  }>;
   activityOverTime: {
     dailyLessonUsers: Array<{ date: string; count: number }>;
     lessonActivityTrackingStart: string | null;
@@ -64,18 +57,6 @@ const TIMEFRAMES: Array<{ id: Timeframe; label: string; unit: string; period: st
   { id: 'weekly', label: '12 weeks', unit: 'week', period: 'last 12 weeks' },
   { id: 'monthly', label: '12 months', unit: 'month', period: 'last 12 months' },
 ];
-
-function getGameModeDetails(gameMode: string): { emoji: string; name: string } {
-  if (gameMode === 'maze') return { emoji: '🐘', name: 'Chiang Mai' };
-  if (gameMode === 'casino') return { emoji: '🎰', name: 'Golden Baht Casino' };
-  if (gameMode === 'pattaya') return { emoji: '🏖️', name: 'Pattaya' };
-  if (gameMode === 'starter') return { emoji: '🌱', name: 'Starter' };
-
-  return {
-    emoji: '🎮',
-    name: gameMode.charAt(0).toUpperCase() + gameMode.slice(1),
-  };
-}
 
 function formatDate(date: string, options: Intl.DateTimeFormatOptions): string {
   return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', { timeZone: 'UTC', ...options });
@@ -479,51 +460,6 @@ export default function UsageStatisticsPage() {
           )}
         </section>
 
-        <section className={`${styles.card} ${styles.cardWide}`}>
-          <div className={styles.cardHeading}>
-            <h2 className={styles.cardTitle}>Legacy Game Mode Progress</h2>
-          </div>
-
-          <div className={styles.progressStatsGrid}>
-            {data.progressStats.map((stat) => {
-              const { emoji: gameEmoji, name: gameName } = getGameModeDetails(stat.gameMode);
-              const completionRate =
-                stat.totalUsersInMode > 0 ? ((stat.completedUsers / stat.totalUsersInMode) * 100).toFixed(1) : '0';
-
-              return (
-                <div key={stat.gameMode} className={styles.progressStatCard} data-game={stat.gameMode}>
-                  <div className={styles.progressStatHeader}>
-                    <span className={styles.progressStatIcon}>{gameEmoji}</span>
-                    <span className={styles.progressStatName}>{gameName}</span>
-                  </div>
-                  <div className={styles.progressStatMetrics}>
-                    <div className={styles.progressMetric}>
-                      <span className={styles.progressMetricLabel}>Avg Unlocked Lessons</span>
-                      <span className={styles.progressMetricValue}>{stat.avgUnlockedLessons.toFixed(1)}</span>
-                    </div>
-                    <div className={styles.progressMetric}>
-                      <span className={styles.progressMetricLabel}>Avg Success Rate</span>
-                      <span className={styles.progressMetricValue}>{stat.avgSuccessRate.toFixed(1)}%</span>
-                    </div>
-                    <div className={styles.progressMetric}>
-                      <span className={styles.progressMetricLabel}>All Lessons Unlocked</span>
-                      <span className={styles.progressMetricValue}>
-                        {stat.completedUsers} / {stat.totalUsersInMode}
-                      </span>
-                    </div>
-                    <div className={styles.progressMetric}>
-                      <span className={styles.progressMetricLabel}>Legacy Unlock Rate</span>
-                      <span className={styles.progressMetricValue}>{completionRate}%</span>
-                    </div>
-                  </div>
-                  <div className={styles.progressBar}>
-                    <div className={styles.progressFill} style={{ width: `${completionRate}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
       </div>
     </main>
   );

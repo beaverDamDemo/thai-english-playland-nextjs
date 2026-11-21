@@ -1,0 +1,15 @@
+'use client';
+
+import Quiz from './Quiz';
+import MazeLessonPage from '../_components/MazeLessonPage';
+
+export default function Page() {
+  return (
+    <MazeLessonPage
+      lessonNumber={1}
+      Quiz={Quiz}
+      returnHref="/zones/chiang-mai"
+      returnLabel="Return to Chiang Mai"
+    />
+  );
+}

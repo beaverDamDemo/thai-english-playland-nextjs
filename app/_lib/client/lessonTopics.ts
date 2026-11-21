@@ -1,4 +1,4 @@
-import { lessonConfigs as starterLessons } from '@/app/games/starter/lessonMapConfig';
+import { lessonConfigs as starterLessons } from '@/app/_games/starter/lessonMapConfig';
 
 export type LessonArea = 'maze' | 'casino' | 'pattaya' | 'starter';
 

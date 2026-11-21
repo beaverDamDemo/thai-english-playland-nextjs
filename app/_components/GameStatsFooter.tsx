@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { getLessonByHref } from '@/app/games/curriculum';
+import { getLessonByHref } from '@/app/_games/curriculum';
 import GameFooter, { type FooterGame } from './GameFooter';
 import styles from './GameFooter.module.css';
 

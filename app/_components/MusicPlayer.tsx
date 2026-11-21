@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { initMusic, setInLesson } from '../_lib/client/music';
 
-const LESSON_PATH = /^\/games\/[^/]+\/lesson\d+/;
+const LESSON_PATH = /^\/zones\/[^/]+\/lesson-\d+/;
 
 // Headless: restores the saved music preference and limits playback to lessons.
 export default function MusicPlayer() {

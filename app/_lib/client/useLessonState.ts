@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { isValidLessonState, type LessonStates, type StatefulLessonId } from '@/app/games/starter/lessonState';
+import { isValidLessonState, type LessonStates, type StatefulLessonId } from '@/app/_games/starter/lessonState';
 
 export function useLessonState<K extends StatefulLessonId>(lessonId: K) {
   const [loaded, setLoaded] = useState(false);

@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import pkg from '../../package.json';
-import { getCurriculumZone, zoneThemeGames } from '../games/curriculum';
+import { getZoneBySlug, zoneThemeGames } from '../_games/curriculum';
 import styles from './AppFooter.module.css';
 
 const MONTHS = [
@@ -29,14 +29,11 @@ function formatBuildTime(iso: string | undefined): string | null {
   return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}, ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())} UTC`;
 }
 
+// Zone pages and their lessons (/zones/<slug>/...) use the zone's colour theme.
 function gameFromPath(pathname: string | null): string | undefined {
-  const match = pathname?.match(/^\/games\/([^/]+)/);
-  if (!match) return undefined;
-  if (/^\/games\/[^/]+\/?$/.test(pathname ?? '')) {
-    const zone = getCurriculumZone(match[1]);
-    if (zone) return zoneThemeGames[zone.id];
-  }
-  return match[1] === 'pattaya-games' ? 'pattaya' : match[1];
+  const match = pathname?.match(/^\/zones\/([^/]+)/);
+  const zone = match ? getZoneBySlug(match[1]) : undefined;
+  return zone ? zoneThemeGames[zone.id] : undefined;
 }
 
 export default function AppFooter() {

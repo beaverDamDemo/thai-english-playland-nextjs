@@ -1,6 +1,6 @@
 'use client';
 
-import { getLessonByHref } from '@/app/games/curriculum';
+import { getLessonByHref } from '@/app/_games/curriculum';
 
 export type ProgressGameMode = 'maze' | 'casino' | 'pattaya' | 'starter';
 

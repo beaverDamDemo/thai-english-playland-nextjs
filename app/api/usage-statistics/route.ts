@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/_lib/server/db";
-import { curriculumZones, zoneThemeGames } from "@/app/games/curriculum";
+import { curriculumZones, zoneThemeGames } from "@/app/_games/curriculum";
 
 export async function GET() {
   // One row per learner per lesson; aggregated per curriculum zone below.
@@ -129,23 +129,6 @@ export async function GET() {
     LIMIT 10;
   `;
 
-  // Get progress statistics by game mode
-  const progressStatsResult = await db`
-    WITH game_modes (game_mode, total_lessons, sort_order) AS (
-      VALUES ('starter', 7, 1), ('maze', 9, 2), ('casino', 6, 3), ('pattaya', 8, 4)
-    )
-    SELECT
-      m.game_mode,
-      COALESCE(AVG(p.unlocked_lessons), 0) as avg_unlocked_lessons,
-      COALESCE(AVG(CASE WHEN p.quiz_attempts > 0 THEN (p.correct_answers::float / (p.correct_answers + p.wrong_answers)) * 100 ELSE 0 END), 0) as avg_success_rate,
-      COUNT(CASE WHEN p.unlocked_lessons >= m.total_lessons THEN 1 END) as completed_users,
-      COUNT(DISTINCT p.user_id) as total_users_in_mode
-    FROM game_modes m
-    LEFT JOIN public.thai_english_playland_user_progress p ON p.game_mode = m.game_mode
-    GROUP BY m.game_mode, m.total_lessons, m.sort_order
-    ORDER BY m.sort_order;
-  `;
-
   // Get quiz attempts over time (daily for last 30 days)
   const dailyActivityResult = await db`
     SELECT
@@ -269,13 +252,6 @@ export async function GET() {
         totalCorrect: Number(row.total_correct || 0),
         totalWrong: Number(row.total_wrong || 0),
         totalMoves: Number(row.total_moves || 0),
-      })),
-      progressStats: progressStatsResult.map((row) => ({
-        gameMode: row.game_mode,
-        avgUnlockedLessons: Number(row.avg_unlocked_lessons || 0),
-        avgSuccessRate: Number(row.avg_success_rate || 0),
-        completedUsers: Number(row.completed_users || 0),
-        totalUsersInMode: Number(row.total_users_in_mode || 0),
       })),
       activityOverTime: {
         dailyLessonUsers: dailyLessonUsersResult.map((row) => ({

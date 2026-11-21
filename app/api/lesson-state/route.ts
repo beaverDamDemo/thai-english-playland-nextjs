@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/app/_lib/server/db';
 import { getCurrentSessionUser } from '@/app/_lib/server/auth';
 import { evaluateProgressAchievements } from '@/app/_lib/server/achievements';
-import { isLessonStateComplete, isStatefulLessonId, isValidLessonState } from '@/app/games/starter/lessonState';
+import { isLessonStateComplete, isStatefulLessonId, isValidLessonState } from '@/app/_games/starter/lessonState';
 
 export async function GET(request: Request) {
   const user = await getCurrentSessionUser();

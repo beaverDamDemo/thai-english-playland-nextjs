@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/_lib/server/db";
 import { getCurrentSessionUser } from "@/app/_lib/server/auth";
 import { evaluateProgressAchievements } from "@/app/_lib/server/achievements";
-import { curriculumZones } from "@/app/games/curriculum";
+import { curriculumZones } from "@/app/_games/curriculum";
 
 export type GameMode = "maze" | "casino" | "pattaya" | "starter";
 
@@ -148,15 +148,7 @@ export async function POST(request: Request) {
 
   try {
     await db.begin(async (sql) => {
-    const isReset = body.delta !== true &&
-      unlocked_lessons === 1 && correct_answers === 0 && wrong_answers === 0 &&
-      quiz_attempts === 0 && total_moves_earned === 0;
-    if (isReset && game_mode === "starter") {
-      await sql.unsafe(`
-        DELETE FROM public.thai_english_playland_lesson_state
-        WHERE user_id = $1 AND lesson_id = ANY($2::text[]);
-      `, [user.id, ["color-mixing", "animals"]]);
-    }
+    // Zone and full resets live in /api/progress/reset.
     if (body.delta === true) {
       // Counters are increments applied atomically, so clients never need to
       // read-then-write (which could overwrite newer data with stale totals).
@@ -218,26 +210,6 @@ export async function POST(request: Request) {
         updated_at        = NOW();
     `, [user.id, game_mode, unlocked_lessons ?? 1, correct_answers ?? 0,
       wrong_answers ?? 0, quiz_attempts ?? 0, total_moves_earned ?? 0]);
-    if (isReset) {
-      const lessonIds = curriculumZones.flatMap((zone) =>
-        zone.lessons.filter((lesson) => {
-          const href = lesson.href;
-          if (!href) return false;
-          if (game_mode === "starter") return href.startsWith("/games/starter/");
-          if (game_mode === "casino") return href.startsWith("/games/casino/");
-          if (game_mode === "pattaya") return href.startsWith("/games/pattaya-games/");
-          return href.startsWith("/games/maze/") ||
-            href.startsWith("/games/basic-grammar/") ||
-            href.startsWith("/games/verbs-communication/");
-        }).map((lesson) => lesson.id),
-      );
-      if (lessonIds.length) {
-        await sql.unsafe(`
-          DELETE FROM public.thai_english_playland_lesson_progress
-          WHERE user_id = $1 AND lesson_id = ANY($2::text[]);
-        `, [user.id, lessonIds]);
-      }
-    }
     }
     if (body.delta === true) {
       await sql.unsafe(`
