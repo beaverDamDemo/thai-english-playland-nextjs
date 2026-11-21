@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import GameFooter from '@/app/_components/GameFooter';
-import { zoneThemeGames, type CurriculumZone } from '../curriculum';
+import { formatZoneCompletion, zoneThemeGames, type CurriculumZone } from '../curriculum';
 
 type LessonProgress = {
   lesson_id: string;
@@ -10,7 +10,7 @@ type LessonProgress = {
 };
 
 export default function ZoneProgressFooter({ zone }: { zone: CurriculumZone }) {
-  const [completed, setCompleted] = useState<number | null>(null);
+  const [completedIds, setCompletedIds] = useState<string[] | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -21,8 +21,7 @@ export default function ZoneProgressFooter({ zone }: { zone: CurriculumZone }) {
         if (!response.ok) throw new Error(`Progress request failed: ${response.status}`);
         const data: { ok: boolean; lessons?: LessonProgress[] } = await response.json();
         if (!data.ok || !Array.isArray(data.lessons)) throw new Error('Invalid progress response');
-        const ids = new Set(zone.lessons.map((lesson) => lesson.id));
-        setCompleted(data.lessons.filter((lesson) => ids.has(lesson.lesson_id) && lesson.completed_at).length);
+        setCompletedIds(data.lessons.filter((lesson) => lesson.completed_at).map((lesson) => lesson.lesson_id));
       } catch (err) {
         if (controller.signal.aborted) return;
         console.error('Failed to load zone progress:', err);
@@ -45,7 +44,8 @@ export default function ZoneProgressFooter({ zone }: { zone: CurriculumZone }) {
     <GameFooter
       game={zoneThemeGames[zone.id]}
       stats={[
-        { label: 'Completed', value: error ? 'Unavailable' : completed === null ? 'Loading' : `${completed}/${zone.lessons.length}` },
+        // Out of the playable lessons only: blank lessons can't be completed yet.
+        { label: 'Completed', value: error ? 'Unavailable' : completedIds === null ? 'Loading' : formatZoneCompletion(zone, completedIds) },
         { label: 'Lessons', value: zone.lessons.length },
         { label: 'Done', value: lessonCounts.done },
         { label: 'Change', value: lessonCounts.change },

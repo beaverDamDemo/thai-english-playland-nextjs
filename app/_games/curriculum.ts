@@ -174,6 +174,19 @@ export function getLessonByHref(href: string): CurriculumLesson | undefined {
   return curriculumZones.flatMap((zone) => zone.lessons).find((lesson) => lesson.href === href);
 }
 
+/** Lessons that have a game (blank "coming soon" lessons can't be played or completed). */
+export function getPlayableLessons(zone: CurriculumZone): CurriculumLesson[] {
+  return zone.lessons.filter((lesson) => lesson.href);
+}
+
+/** "2/4", or "4/4 🎉" when every playable lesson in the zone is completed. */
+export function formatZoneCompletion(zone: CurriculumZone, completedIds: Iterable<string>): string {
+  const done = new Set(completedIds);
+  const playable = getPlayableLessons(zone);
+  const completed = playable.filter((lesson) => done.has(lesson.id)).length;
+  return `${completed}/${playable.length}${playable.length > 0 && completed === playable.length ? ' 🎉' : ''}`;
+}
+
 export function getZoneHref(zone: CurriculumZone): string {
   return `/zones/${zone.slug}`;
 }

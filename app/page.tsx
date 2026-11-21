@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './HomeView.module.css';
 import { useEffect, useState } from 'react';
-import { curriculumZones, zoneThemeGames } from './_games/curriculum';
+import { curriculumZones, formatZoneCompletion, zoneThemeGames } from './_games/curriculum';
 import SiteHeader, { SiteHeaderAvatar } from './_components/SiteHeader';
 import SiteFooter, { SiteFooterButton } from './_components/SiteFooter';
 
@@ -225,7 +225,7 @@ export default function HomePage() {
                 <span className={styles.progressLabel}>Completed</span>
                 <strong className={styles.progressValue}>
                   {progressError ? 'Unavailable' : completedLessons === null ? 'Loading' :
-                    `${zone.lessons.filter((lesson) => completedLessons.includes(lesson.id)).length}/${zone.lessons.length}`}
+                    formatZoneCompletion(zone, completedLessons)}
                 </strong>
               </div>
             </article>
