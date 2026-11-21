@@ -1,10 +1,3 @@
-export type LessonMapButton = {
-  num: number;
-  color: string;
-  left: number;
-  top: number;
-};
-
 export type LessonConfig = {
   num: number;
   color: string;
@@ -27,10 +20,6 @@ export const lessonConfigs: LessonConfig[] = [
   { num: 8, color: '#3F51B5', colorDark: '#303F9F', title: 'Place Prepositions', tile: '/assets/maze/block.png', columns: 21, left: 84, top: 25 },
   { num: 9, color: '#795548', colorDark: '#5D4037', title: 'Present Simple', tile: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjM0IyNzI2IiBzdHJva2U9IiMxOTE5MTkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==', columns: 21, left: 38, top: 22 },
 ];
-
-export const lessonMapButtons: LessonMapButton[] = lessonConfigs.map(
-  ({ num, color, left, top }) => ({ num, color, left, top })
-);
 
 export function getLessonConfig(lessonNumber: number): LessonConfig | undefined {
   return lessonConfigs.find((config) => config.num === lessonNumber);

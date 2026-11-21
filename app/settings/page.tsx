@@ -8,16 +8,7 @@ import ThemeToggle from '../_components/ThemeToggle';
 import FontToggle from '../_components/FontToggle';
 import MusicToggle from '../_components/MusicToggle';
 import FontSizeToggle from '../_components/FontSizeToggle';
-import { lessonMapButtons as mazeLessonMapButtons } from '../_games/maze/lessonMapConfig';
-import { lessonMapButtons as casinoLessonMapButtons } from '../_games/casino/lessonMapConfig';
-import { lessonMapButtons as pattayaLessonMapButtons } from '../_games/pattaya-games/lessonMapConfig';
-import { lessonMapButtons as starterLessonMapButtons } from '../_games/starter/lessonMapConfig';
 import { curriculumZones, type CurriculumZoneId } from '../_games/curriculum';
-
-const MAZE_TOTAL_LESSONS = Math.max(1, mazeLessonMapButtons.length);
-const CASINO_TOTAL_LESSONS = Math.max(1, casinoLessonMapButtons.length);
-const PATTAYA_TOTAL_LESSONS = Math.max(1, pattayaLessonMapButtons.length);
-const STARTER_TOTAL_LESSONS = Math.max(1, starterLessonMapButtons.length);
 
 type SettingsResponse = {
   ok: boolean;
@@ -55,7 +46,6 @@ function SettingsSkeleton() {
           'progress',
           <>
             {block(styles.skeletonLineShort)}
-            {block(styles.skeletonButton)}
             {block(styles.skeletonButton)}
           </>,
         )}
@@ -213,39 +203,6 @@ export default function SettingsPage() {
     setConfirmAction({ type: 'deleteAccount', label: 'Delete Account' });
   };
 
-  const handleUnlockAllLessons = () => {
-    const updates = [
-      { game_mode: 'maze', unlocked_lessons: MAZE_TOTAL_LESSONS },
-      { game_mode: 'casino', unlocked_lessons: CASINO_TOTAL_LESSONS },
-      { game_mode: 'pattaya', unlocked_lessons: PATTAYA_TOTAL_LESSONS },
-      { game_mode: 'starter', unlocked_lessons: STARTER_TOTAL_LESSONS },
-    ];
-    Promise.all(
-      updates.map((u) =>
-        fetch('/api/progress', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...u,
-            correct_answers: 0,
-            wrong_answers: 0,
-            quiz_attempts: 0,
-            total_moves_earned: 0,
-          }),
-        }),
-      ),
-    )
-      .then(() => {
-        showNotification('success', 'All lessons unlocked successfully!');
-      })
-      .catch(() => {
-        showNotification(
-          'error',
-          'Failed to unlock lessons. Please try again.',
-        );
-      });
-  };
-
   return (
     <>
     <SiteHeader title="Settings" icon="⚙️" theme="settings" />
@@ -263,14 +220,8 @@ export default function SettingsPage() {
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>Progress Management</h2>
             <p className={styles.note}>
-              Unlock all lessons or reset all your game progress.
+              Reset all your game progress in every zone.
             </p>
-            <button
-              onClick={handleUnlockAllLessons}
-              className={styles.unlockButton}
-            >
-              Unlock All Lessons
-            </button>
             <button
               onClick={handleResetProgress}
               className={styles.resetButton}

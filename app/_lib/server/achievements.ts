@@ -1,4 +1,5 @@
 import { db } from '@/app/_lib/server/db';
+import { curriculumZones } from '@/app/_games/curriculum';
 
 export type AchievementCategory =
   | 'streak'
@@ -40,7 +41,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'correct_200', title: 'Brainiac', description: '200 correct answers total', icon: '🧠', category: 'totals', sortOrder: 42 },
 
   // Special (some deferred until per-answer events are integrated)
-  { id: 'explorer', title: 'Explorer', description: 'Try all 3 game modes', icon: '🧭', category: 'special', sortOrder: 50 },
+  { id: 'explorer', title: 'Explorer', description: `Play a lesson in all ${curriculumZones.length} zones`, icon: '🧭', category: 'special', sortOrder: 50 },
   { id: 'perfect_lesson', title: 'Flawless', description: 'Complete a lesson with no wrong answers', icon: '✨', category: 'special', sortOrder: 51 },
   { id: 'comeback', title: 'Comeback Kid', description: 'Answer correctly after 3 wrong in a row', icon: '🔄', category: 'special', sortOrder: 52 },
 ];
@@ -77,15 +78,6 @@ type ProgressRow = {
   total_moves_earned: number;
 };
 
-type StreakRow = {
-  user_id: number;
-  current_streak: number;
-  max_streak: number;
-  last_play_date: Date | null;
-  consecutive_days: number;
-  max_consecutive_days: number;
-};
-
 async function getProgress(userId: number): Promise<ProgressRow[]> {
   return await db<ProgressRow[]>`
     SELECT game_mode, unlocked_lessons, correct_answers, wrong_answers, quiz_attempts, total_moves_earned
@@ -111,54 +103,46 @@ async function awardAchievement(userId: number, achievementId: string): Promise<
   `;
 }
 
+/** A "play day" for the days-in-a-row achievements starts at midnight in this time zone. */
+const PLAY_DAY_TIME_ZONE = 'Asia/Bangkok';
+
 /**
  * Update consecutive-days tracking for today's activity.
  * Returns the new consecutive_days count.
  */
 async function updateConsecutiveDays(userId: number): Promise<number> {
-  const rows = await db<StreakRow[]>`
-    SELECT user_id, current_streak, max_streak, last_play_date, consecutive_days, max_consecutive_days
+  // All date maths happens in the database, in learners' local time (Thailand), so the
+  // result can't depend on the Node server's or the database's own time zone. (Mixing
+  // them used to count a "new day" on every request.)
+  const rows = await db<Array<{ consecutive_days: number; max_consecutive_days: number; days_since: number | null }>>`
+    SELECT consecutive_days, max_consecutive_days,
+      ((NOW() AT TIME ZONE ${PLAY_DAY_TIME_ZONE})::date - last_play_date) AS days_since
     FROM public.thai_english_playland_user_streak_state
     WHERE user_id = ${userId};
   `;
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   if (rows.length === 0) {
     // Two progress saves can arrive at once for a new player; the second one must not fail.
     await db`
       INSERT INTO public.thai_english_playland_user_streak_state
         (user_id, last_play_date, consecutive_days, max_consecutive_days)
-      VALUES (${userId}, ${today.toISOString()}, 1, 1)
+      VALUES (${userId}, (NOW() AT TIME ZONE ${PLAY_DAY_TIME_ZONE})::date, 1, 1)
       ON CONFLICT (user_id) DO NOTHING;
     `;
     return 1;
   }
 
   const row = rows[0];
-  const last = row.last_play_date ? new Date(row.last_play_date) : null;
-  if (last) last.setHours(0, 0, 0, 0);
-
-  let nextConsecutive = row.consecutive_days;
-  if (!last) {
-    nextConsecutive = 1;
-  } else {
-    const diffDays = Math.round((today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
-    if (diffDays === 0) {
-      // Already played today; keep the count
-      return row.consecutive_days;
-    } else if (diffDays === 1) {
-      nextConsecutive = row.consecutive_days + 1;
-    } else {
-      nextConsecutive = 1;
-    }
-  }
+  const daysSince = row.days_since === null ? null : Number(row.days_since);
+  // Already played today: keep the count.
+  if (daysSince === 0) return row.consecutive_days;
+  // Played yesterday: the run continues. Anything else (gap, or no date yet) starts again.
+  const nextConsecutive = daysSince === 1 ? row.consecutive_days + 1 : 1;
 
   const nextMax = Math.max(row.max_consecutive_days, nextConsecutive);
   await db`
     UPDATE public.thai_english_playland_user_streak_state
-    SET last_play_date = ${today.toISOString()},
+    SET last_play_date = (NOW() AT TIME ZONE ${PLAY_DAY_TIME_ZONE})::date,
         consecutive_days = ${nextConsecutive},
         max_consecutive_days = ${nextMax},
         updated_at = NOW()
@@ -183,6 +167,12 @@ export async function evaluateProgressAchievements(userId: number): Promise<stri
     FROM public.thai_english_playland_lesson_progress
     WHERE user_id = ${userId} AND completed_at IS NOT NULL;
   `;
+  // Every lesson the learner has opened (a lesson_progress row is created on first play).
+  const playedRows = await db<{ lesson_id: string }[]>`
+    SELECT lesson_id
+    FROM public.thai_english_playland_lesson_progress
+    WHERE user_id = ${userId};
+  `;
 
   const newlyEarned: string[] = [];
   const award = async (id: string) => {
@@ -202,13 +192,12 @@ export async function evaluateProgressAchievements(userId: number): Promise<stri
   if (totalCorrect >= 100) await award('correct_100');
   if (totalCorrect >= 200) await award('correct_200');
 
-  // Explorer: has attempted at least one quiz in all 3 modes
-  const modesPlayed = new Set(
-    progress.filter((p) => p.quiz_attempts > 0).map((p) => p.game_mode),
+  // Explorer: has played at least one lesson in every curriculum zone.
+  const played = new Set(playedRows.map((row) => row.lesson_id));
+  const playedEveryZone = curriculumZones.every((zone) =>
+    zone.lessons.some((lesson) => played.has(lesson.id)),
   );
-  if (modesPlayed.has('maze') && modesPlayed.has('casino') && modesPlayed.has('pattaya')) {
-    await award('explorer');
-  }
+  if (playedEveryZone) await award('explorer');
 
   // Consecutive days
   const consecutive = await updateConsecutiveDays(userId);

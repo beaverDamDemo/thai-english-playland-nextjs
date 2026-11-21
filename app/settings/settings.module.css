@@ -175,33 +175,6 @@
   color: #e0e0e0;
 }
 
-.unlockButton {
-  display: block;
-  width: 100%;
-  margin-top: 16px;
-  margin-bottom: 12px;
-  padding: 14px 28px;
-  background: linear-gradient(135deg, #ffd166 0%, #ffb347 100%);
-  color: #5a3d00;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 8px 20px rgba(255, 179, 71, 0.35);
-  font-size: 1rem;
-}
-
-.unlockButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 179, 71, 0.45);
-}
-
-.unlockButton::before {
-  content: "🔓";
-  margin-right: 8px;
-}
-
 .resetButton {
   display: block;
   width: 100%;
