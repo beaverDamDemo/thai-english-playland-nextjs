@@ -1,8 +1,5 @@
 /* Light styles are the default; dark overrides follow. Shared pieces live in _styles/statsShared.module.css */
 .container {
-  --page-header-background: rgba(17, 47, 105, 0.7);
-  --page-header-background-dark: #19304e;
-  --page-header-border-dark: #41618c;
   --panel: #ffffff;
   --panel-border: rgba(15, 23, 42, 0.06);
   --surface: #f6f7fb;
@@ -14,7 +11,7 @@
   --accent-strong: #4a5bd0;
   --accent-soft: #e6e9fb;
   --grid-line: rgba(148, 163, 184, 0.28);
-  min-height: 100vh;
+  min-height: calc(100dvh - 200px);
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 32px;
@@ -44,18 +41,6 @@
     radial-gradient(ellipse at 90% 4%, rgba(71, 132, 197, 0.25), transparent 38%),
     radial-gradient(ellipse at 8% 35%, rgba(108, 92, 231, 0.15), transparent 42%),
     linear-gradient(150deg, #102740 0%, #172b50 55%, #252044 100%);
-}
-
-.header {
-  composes: pageHeader from '../_styles/statsShared.module.css';
-}
-
-.title {
-  composes: pageTitle from '../_styles/statsShared.module.css';
-}
-
-.backLink {
-  composes: backLink from '../_styles/statsShared.module.css';
 }
 
 .skeleton {
@@ -735,16 +720,6 @@
 }
 
 /* ---------- Loading skeleton ---------- */
-
-.skeletonBackLink {
-  width: 150px;
-  height: 44px;
-}
-
-.skeletonPageTitle {
-  width: min(320px, 100%);
-  height: 40px;
-}
 
 .skeletonTitle {
   display: block;

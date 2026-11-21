@@ -1,9 +1,6 @@
 /* Light styles are the default; dark overrides follow. Shared pieces live in _styles/statsShared.module.css */
 .container {
-  --page-header-background: rgba(4, 70, 65, 0.75);
-  --page-header-background-dark: #153f3d;
-  --page-header-border-dark: #39736b;
-  min-height: 100vh;
+  min-height: calc(100dvh - 200px);
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -20,18 +17,6 @@
     linear-gradient(150deg, #102f2b 0%, #123637 55%, #142e3a 100%);
 }
 
-.header {
-  composes: pageHeader from '../_styles/statsShared.module.css';
-}
-
-.title {
-  composes: pageTitle from '../_styles/statsShared.module.css';
-}
-
-.backLink {
-  composes: backLink from '../_styles/statsShared.module.css';
-}
-
 .skeleton {
   composes: skeleton from '../_styles/statsShared.module.css';
 }
@@ -46,16 +31,6 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-.skeletonBackLink {
-  width: 150px;
-  height: 44px;
-}
-
-.skeletonPageTitle {
-  width: min(360px, 100%);
-  height: 48px;
 }
 
 .skeletonSectionTitle {

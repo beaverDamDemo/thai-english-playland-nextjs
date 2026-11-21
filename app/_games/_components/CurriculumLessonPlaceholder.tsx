@@ -6,15 +6,18 @@ export default function CurriculumLessonPlaceholder({
   zoneHref,
   lessonNumber,
   lessonTitle,
+  theme,
 }: {
   zoneTitle: string;
   zoneHref: string;
   lessonNumber: number;
   lessonTitle: string;
+  /** Zone colour theme ([data-game] value). */
+  theme?: string;
 }) {
   return (
     <main className={styles.mazePage}>
-      <header className={styles.pageHeader}>
+      <header className={styles.pageHeader} data-game={theme}>
         <h1 className={styles.appTitle}>Lesson {lessonNumber}: {lessonTitle}</h1>
       </header>
       <section className={styles.curriculumPlaceholderPage}>

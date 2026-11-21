@@ -1,8 +1,5 @@
 .container {
-  --page-header-background: rgba(102, 41, 5, 0.75);
-  --page-header-background-dark: #4b2a1c;
-  --page-header-border-dark: #88583c;
-  min-height: 100dvh;
+  min-height: calc(100dvh - 200px);
   padding: 40px 20px;
   display: grid;
   gap: 24px;
@@ -26,22 +23,6 @@
     radial-gradient(ellipse at 90% 4%, rgba(245, 124, 0, 0.22), transparent 38%),
     radial-gradient(ellipse at 8% 35%, rgba(255, 152, 0, 0.13), transparent 42%),
     linear-gradient(150deg, #352217 0%, #412719 55%, #332022 100%);
-}
-
-.headerRow {
-  composes: pageHeader from '../_styles/statsShared.module.css';
-}
-
-.container .headerRow {
-  margin-bottom: 0;
-}
-
-.title {
-  composes: pageTitle from '../_styles/statsShared.module.css';
-}
-
-.backLink {
-  composes: backLink from '../_styles/statsShared.module.css';
 }
 
 .note {

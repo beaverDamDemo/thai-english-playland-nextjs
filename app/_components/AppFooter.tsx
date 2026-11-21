@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import pkg from '../../package.json';
 import { getZoneBySlug, zoneThemeGames } from '../_games/curriculum';
 import styles from './AppFooter.module.css';
+import { getSitePage } from './siteChrome';
 
 const MONTHS = [
   'Jan',
@@ -29,11 +30,12 @@ function formatBuildTime(iso: string | undefined): string | null {
   return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}, ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())} UTC`;
 }
 
-// Zone pages and their lessons (/zones/<slug>/...) use the zone's colour theme.
+// Zone pages and their lessons (/zones/<slug>/...) use the zone's colour theme;
+// Settings / All Users Progress / Usage Statistics use their own page theme.
 function gameFromPath(pathname: string | null): string | undefined {
   const match = pathname?.match(/^\/zones\/([^/]+)/);
   const zone = match ? getZoneBySlug(match[1]) : undefined;
-  return zone ? zoneThemeGames[zone.id] : undefined;
+  return zone ? zoneThemeGames[zone.id] : getSitePage(pathname)?.theme;
 }
 
 export default function AppFooter() {
@@ -46,7 +48,7 @@ export default function AppFooter() {
       data-game={game}
     >
       <span className={styles.version}>
-        v{pkg.version}
+        <span aria-hidden="true">🎈</span>v{pkg.version}
         {buildTime ? ` · built ${buildTime}` : ''}
       </span>
     </footer>

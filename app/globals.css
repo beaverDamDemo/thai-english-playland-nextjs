@@ -327,3 +327,16 @@ body,
   --game-bg: #6a1b9a;
   --game-bg-dark: #2a1240;
 }
+/* Non-game pages: each matches its own page background. */
+[data-game='settings'] {
+  --game-bg: #c2570c;
+  --game-bg-dark: #4a2a17;
+}
+[data-game='leaderboard'] {
+  --game-bg: #0a8a72;
+  --game-bg-dark: #123a37;
+}
+[data-game='stats'] {
+  --game-bg: #3450b8;
+  --game-bg-dark: #1a2c55;
+}

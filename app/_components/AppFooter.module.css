@@ -1,26 +1,35 @@
+/* Small version strip under every page. On zone/lesson pages it continues the
+   game footer's colour so the two read as one piece. */
 .appFooter {
-  border-top: 1px solid color-mix(in srgb, var(--foreground) 18%, transparent);
-  background: color-mix(in srgb, var(--background) 88%, var(--secondary) 12%);
-  color: color-mix(in srgb, var(--foreground) 86%, transparent);
-  padding: 10px var(--mobile-page-gutter, 16px);
-  text-align: center;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  display: flex;
+  justify-content: center;
+  padding: 8px var(--mobile-page-gutter, 16px) calc(8px + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--background) 90%, var(--secondary) 10%);
+  font-family: var(--font-fredoka), 'Trebuchet MS', 'Comic Sans MS', sans-serif;
 }
 
-/* Per-game colors come from [data-game] in globals.css */
 .game {
-  background: var(--game-bg);
-  border-top-color: rgba(255, 255, 255, 0.22);
-  color: #fff;
+  background: color-mix(in srgb, var(--game-bg) 72%, #0b1020);
 }
 
 :global(:root[data-theme='dark']) .game {
-  background: var(--game-bg-dark);
-  border-top-color: rgba(120, 151, 233, 0.3);
+  background: color-mix(in srgb, var(--game-bg-dark) 70%, #000);
 }
 
 .version {
-  opacity: 0.9;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.game .version {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.88);
 }

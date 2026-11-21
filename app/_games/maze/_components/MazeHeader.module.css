@@ -1,21 +1,21 @@
-/* app/maze/_components/MazeHeader.module.css */
-/* Per-game colors come from [data-game] in globals.css */
+/* Look comes from PlayChrome.module.css; per-game colours from [data-game] in globals.css */
 .header {
+  composes: header from '../../../_components/PlayChrome.module.css';
   display: grid;
   grid-template-columns: var(--header-control-size) minmax(0, 1fr) var(--header-control-size);
   align-items: center;
   gap: 0.75rem;
-  padding: 10px var(--mobile-page-gutter, 16px);
-  background: var(--game-header-bg, #222);
-  color: #fff;
+  padding-top: 10px;
+  padding-right: var(--mobile-page-gutter, 16px);
+  padding-left: var(--mobile-page-gutter, 16px);
   font-size: 18px;
 }
 
 .title {
+  composes: title from '../../../_components/PlayChrome.module.css';
   margin: 0;
   min-width: 0;
-  font-size: clamp(1rem, 4.5vw, 1.35rem);
-  font-weight: 800;
+  font-size: clamp(1.05rem, 4.8vw, 1.5rem);
   line-height: 1.2;
   text-align: center;
   overflow-wrap: anywhere;
@@ -26,39 +26,20 @@
 }
 
 .backArrow {
+  composes: backButton from '../../../_components/PlayChrome.module.css';
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: var(--header-control-size);
   height: var(--header-control-size);
-  text-decoration: none;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  color: #fff;
-  font-weight: bold;
-  font-size: 32px;
-  line-height: 1;
   margin-right: auto;
-  transition: transform 0.2s ease;
-}
-
-.backArrow:hover {
-  transform: scale(1.1);
-  color: #ffcc00;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-decoration: none;
 }
 
 .homeLinkImg {
   width: auto;
   height: auto;
-}
-
-:global(:root[data-theme='dark']) .header {
-  background: var(--game-header-bg-dark, #0f1b33);
-  color: #edf4ff;
-  border-bottom: 1px solid rgba(120, 151, 233, 0.3);
-}
-
-:global(:root[data-theme='dark']) .backArrow:hover {
-  color: #ffd166;
 }

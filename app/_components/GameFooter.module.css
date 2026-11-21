@@ -1,17 +1,15 @@
-/* Per-game colors come from [data-game] in globals.css */
+/* Look comes from PlayChrome.module.css; per-game colours from [data-game] in globals.css */
 .footer {
+  composes: footer from './PlayChrome.module.css';
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
-  padding: 10px var(--mobile-page-gutter, 16px)
-    calc(10px + env(safe-area-inset-bottom, 0px));
-  background: var(--game-bg, #222);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
+  padding-right: var(--mobile-page-gutter, 16px);
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-left: var(--mobile-page-gutter, 16px);
 }
 
 .sticky {
@@ -22,17 +20,17 @@
 }
 
 .chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  white-space: nowrap;
+  composes: chip from './PlayChrome.module.css';
 }
 
-:global(:root[data-theme='dark']) .footer {
-  background: var(--game-bg-dark, #0f1b33);
-  border-top: 1px solid rgba(120, 151, 233, 0.3);
+.chipIcon {
+  composes: chipIcon from './PlayChrome.module.css';
+}
+
+.chipLabel {
+  composes: chipLabel from './PlayChrome.module.css';
+}
+
+.chipValue {
+  composes: chipValue from './PlayChrome.module.css';
 }

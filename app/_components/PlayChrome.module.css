@@ -1,0 +1,182 @@
+/*
+ * Shared "playful bar" look for every game header and footer.
+ * Colours come from [data-game] in globals.css (--game-bg, --game-header-bg, ...).
+ * Other modules pick these up with `composes: header from '.../PlayChrome.module.css'`.
+ */
+
+.bar {
+  --bar-edge: color-mix(in srgb, var(--game-bg, #5a6fe0) 60%, #0b1020);
+  --bar-ink: color-mix(in srgb, var(--game-bg, #5a6fe0) 78%, #0b1020);
+  position: relative;
+  color: #fff;
+  font-family: var(--font-fredoka), 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+  /* A light sprinkle of confetti dots over the zone gradient. */
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.2) 0 2.5px, transparent 3.5px) 0 0 / 46px 46px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.12) 0 4px, transparent 5px) 23px 23px / 92px 92px,
+    var(--game-header-bg, linear-gradient(115deg, #4a5bd0, #7d8cf0));
+}
+
+:global(:root[data-theme='dark']) .bar {
+  --bar-edge: color-mix(in srgb, var(--game-bg-dark, #1b2140) 55%, #000);
+  --bar-ink: #eaf1ff;
+  color: #f3f6ff;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.1) 0 2.5px, transparent 3.5px) 0 0 / 46px 46px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.06) 0 4px, transparent 5px) 23px 23px / 92px 92px,
+    var(--game-header-bg-dark, linear-gradient(115deg, #1b2140, #2a2f5a));
+}
+
+/* ---------- Header ---------- */
+
+.header {
+  composes: bar;
+  z-index: 5;
+  border-radius: 0 0 26px 26px;
+  box-shadow:
+    inset 0 -5px 0 var(--bar-edge),
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    0 8px 18px rgba(15, 23, 42, 0.22);
+  padding-bottom: 15px;
+}
+
+/* Sticker-style title: chunky rounded letters with a solid drop.
+   Any <h1> inside a header gets it too, so pages need no extra class. */
+.header :where(h1),
+.title {
+  font-family: var(--font-fredoka), 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+  text-shadow:
+    0 2px 0 var(--bar-edge),
+    0 4px 10px rgba(0, 0, 0, 0.22);
+}
+
+/* The cartoon BACK sign gets a soft shadow and a little wiggle on hover. */
+.backButton img {
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.18));
+  transition: transform 0.2s ease;
+}
+
+.backButton:hover img,
+.backButton:focus-visible img {
+  animation: chromeWiggle 0.5s ease-in-out;
+}
+
+.backButton:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+/* Music button inside a bar: a round white candy button. */
+.bar :global(.musicToggle) {
+  border: 3px solid #fff;
+  background: #fff;
+  color: var(--bar-ink);
+  box-shadow:
+    0 4px 0 var(--bar-edge),
+    0 6px 12px rgba(0, 0, 0, 0.18);
+}
+
+.bar :global(.musicToggle):hover {
+  transform: translateY(-2px) rotate(-6deg);
+}
+
+.bar :global(.musicToggle):active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--bar-edge);
+}
+
+:global(:root[data-theme='dark']) .bar :global(.musicToggle) {
+  border-color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  composes: bar;
+  border-radius: 26px 26px 0 0;
+  box-shadow:
+    inset 0 5px 0 rgba(255, 255, 255, 0.22),
+    0 -6px 16px rgba(15, 23, 42, 0.16);
+  padding-top: 14px;
+}
+
+/* Candy pill: white with a solid "pressed" edge underneath. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 4px 12px 4px 6px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--bar-ink);
+  box-shadow:
+    0 3px 0 var(--bar-edge),
+    0 5px 10px rgba(0, 0, 0, 0.14);
+  font-family: var(--font-fredoka), 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+  white-space: nowrap;
+}
+
+:global(:root[data-theme='dark']) .chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #f3f6ff;
+  box-shadow:
+    0 3px 0 var(--bar-edge),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.chipIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--game-bg, #5a6fe0) 14%, #fff);
+  font-size: 13px;
+  line-height: 1;
+}
+
+:global(:root[data-theme='dark']) .chipIcon {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.chipLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  opacity: 0.8;
+}
+
+.chipValue {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes chromeWiggle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-6deg) scale(1.08);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.08);
+  }
+  75% {
+    transform: rotate(-3deg) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backButton:hover img,
+  .backButton:focus-visible img {
+    animation: none;
+  }
+}

@@ -5,6 +5,20 @@ export type FooterTheme = FooterGame | 'pattaya-zone';
 
 export type FooterStat = { label: string; value: string | number };
 
+const STAT_ICONS: Record<string, string> = {
+  Correct: '✅',
+  Wrong: '❌',
+  Completed: '🏁',
+  Unlocked: '🔓',
+  Attempts: '🎯',
+  Moves: '👣',
+  Lessons: '📚',
+  Done: '🌟',
+  Change: '✏️',
+  Blank: '🫧',
+  Progress: '⏳',
+};
+
 export default function GameFooter({
   game,
   stats,
@@ -16,7 +30,11 @@ export default function GameFooter({
     <footer className={styles.footer} data-game={game}>
       {stats.map(({ label, value }) => (
         <span key={label} className={styles.chip}>
-          {label}: {value}
+          <span className={styles.chipIcon} aria-hidden="true">
+            {STAT_ICONS[label] ?? '⭐'}
+          </span>
+          <span className={styles.chipLabel}>{label}</span>
+          <span className={styles.chipValue}>{value}</span>
         </span>
       ))}
     </footer>

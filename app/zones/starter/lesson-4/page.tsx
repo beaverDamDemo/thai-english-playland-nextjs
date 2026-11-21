@@ -1,5 +1,5 @@
 import CurriculumLessonPlaceholder from '@/app/_games/_components/CurriculumLessonPlaceholder';
-import { getCurriculumZone, getZoneHref } from '@/app/_games/curriculum';
+import { getCurriculumZone, getZoneHref, zoneThemeGames } from '@/app/_games/curriculum';
 
 const zone = getCurriculumZone('starter')!;
 const lesson = zone.lessons.find((item) => item.number === 4)!;
@@ -11,6 +11,7 @@ export default function Page() {
       zoneHref={getZoneHref(zone)}
       lessonNumber={lesson.number}
       lessonTitle={lesson.title}
+      theme={zoneThemeGames[zone.id]}
     />
   );
 }

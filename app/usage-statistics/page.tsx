@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import SiteHeader from '../_components/SiteHeader';
+import SiteFooter from '../_components/SiteFooter';
 import styles from './usageStatistics.module.css';
 import CountBarChart, { type CountBarItem } from './CountBarChart';
 import HourlyLineChart from './HourlyLineChart';
@@ -73,14 +74,12 @@ function busiest<T extends { count: number }>(items: T[]): T | null {
 function LoadingSkeleton() {
   const block = (className: string) => <span className={`${styles.skeleton} ${className}`} />;
   return (
+    <>
+    <SiteHeader title="Usage Statistics" icon="📈" theme="stats" width={1400} />
     <main className={styles.container} aria-busy="true">
       <p className={styles.srOnly} role="status">
         Loading usage statistics
       </p>
-      <div className={styles.header} aria-hidden="true">
-        {block(styles.skeletonBackLink)}
-        {block(styles.skeletonPageTitle)}
-      </div>
       <div className={styles.content} aria-hidden="true">
         <section className={`${styles.card} ${styles.cardWide} ${styles.kpiRow}`}>
           {Array.from({ length: 4 }, (_, i) => (
@@ -127,6 +126,8 @@ function LoadingSkeleton() {
         </section>
       </div>
     </main>
+    <SiteFooter theme="stats" width={1400} />
+    </>
   );
 }
 
@@ -198,14 +199,9 @@ export default function UsageStatisticsPage() {
   const maxHourlyActivity = Math.max(0, ...hourlyCounts);
 
   return (
+    <>
+    <SiteHeader title="Usage Statistics" icon="📈" theme="stats" width={1400} />
     <main className={styles.container}>
-      <header className={styles.header}>
-        <Link href="/" className={styles.backLink}>
-          Back to Home
-        </Link>
-        <h1 className={styles.title}>📈 Usage Statistics</h1>
-      </header>
-
       <div className={styles.content}>
         <section className={`${styles.card} ${styles.cardWide} ${styles.kpiRow}`} aria-label="Summary">
           <div className={styles.kpiTile}>
@@ -462,5 +458,7 @@ export default function UsageStatisticsPage() {
 
       </div>
     </main>
+    <SiteFooter theme="stats" width={1400} />
+    </>
   );
 }

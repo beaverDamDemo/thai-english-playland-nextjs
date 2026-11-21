@@ -1,0 +1,155 @@
+/* Header/footer for non-game pages. Look comes from PlayChrome.module.css;
+   colours from [data-game] in globals.css. Bars span the full width while
+   their content lines up with the page column (--site-width). */
+
+.header {
+  composes: header from './PlayChrome.module.css';
+  padding-top: 12px;
+  padding-right: var(--mobile-page-gutter, 16px);
+  padding-left: var(--mobile-page-gutter, 16px);
+}
+
+.headerInner {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 12px;
+  max-width: var(--site-width, 1200px);
+  margin: 0 auto;
+}
+
+.back {
+  composes: backButton from './PlayChrome.module.css';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 52px;
+  text-decoration: none;
+}
+
+.back img {
+  width: 58px;
+  height: auto;
+}
+
+.title {
+  composes: title from './PlayChrome.module.css';
+  margin: 0;
+  font-size: clamp(1.35rem, 5vw, 2.1rem);
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Round candy badge with the page's emoji, mirroring the lessons' music button. */
+.badge {
+  justify-self: end;
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 4px 0 var(--bar-edge),
+    0 6px 12px rgba(0, 0, 0, 0.18);
+  font-size: 24px;
+  line-height: 1;
+  transform: rotate(-6deg);
+}
+
+:global(:root[data-theme='dark']) .badge {
+  border-color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  composes: footer from './PlayChrome.module.css';
+  padding-right: var(--mobile-page-gutter, 16px);
+  padding-bottom: 14px;
+  padding-left: var(--mobile-page-gutter, 16px);
+}
+
+.footerNav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: var(--site-width, 1200px);
+  margin: 0 auto;
+}
+
+.navLink {
+  composes: chip from './PlayChrome.module.css';
+  min-height: 36px;
+  padding: 5px 14px 5px 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.navLink:hover {
+  transform: translateY(-2px);
+}
+
+.navLink:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--bar-edge);
+}
+
+.navLink:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.navIcon {
+  composes: chipIcon from './PlayChrome.module.css';
+  width: 26px;
+  height: 26px;
+  font-size: 15px;
+}
+
+/* Current page: a "pressed in", lightly tinted pill. */
+.navLink[aria-current='page'] {
+  background: color-mix(in srgb, var(--game-bg) 16%, #fff);
+  box-shadow:
+    inset 0 2px 0 rgba(0, 0, 0, 0.08),
+    0 0 0 3px rgba(255, 255, 255, 0.7);
+  transform: translateY(2px);
+}
+
+:global(:root[data-theme='dark']) .navLink[aria-current='page'] {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+@media (max-width: 600px) {
+  .headerInner {
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+    gap: 8px;
+  }
+
+  .back {
+    width: 52px;
+  }
+
+  .back img {
+    width: 48px;
+  }
+
+  .badge {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .navLink {
+    font-size: 13px;
+  }
+}

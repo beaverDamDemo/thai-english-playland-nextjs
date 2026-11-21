@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import SiteHeader from '../_components/SiteHeader';
+import SiteFooter from '../_components/SiteFooter';
 import { getActivityRecency } from './activityRecency';
 import styles from './allUsersProgress.module.css';
 
@@ -117,14 +118,12 @@ export default function AllUsersProgressPage() {
 
   if (loading) {
     return (
+      <>
+      <SiteHeader title="All Users Progress" icon="🏆" theme="leaderboard" />
       <main className={styles.container} aria-busy="true">
         <p className={styles.srOnly} role="status">
           Loading all users progress
         </p>
-        <div className={styles.header} aria-hidden="true">
-          <span className={`${styles.skeleton} ${styles.skeletonBackLink}`} />
-          <span className={`${styles.skeleton} ${styles.skeletonPageTitle}`} />
-        </div>
 
         <section className={styles.leaderboardSection} aria-hidden="true">
           <span className={`${styles.skeleton} ${styles.skeletonSectionTitle}`} />
@@ -175,6 +174,8 @@ export default function AllUsersProgressPage() {
           </div>
         </section>
       </main>
+      <SiteFooter theme="leaderboard" />
+      </>
     );
   }
   if (error) return <div className={styles.error}>Error: {error}</div>;
@@ -286,13 +287,9 @@ export default function AllUsersProgressPage() {
   );
 
   return (
+    <>
+    <SiteHeader title="All Users Progress" icon="🏆" theme="leaderboard" />
     <main className={styles.container}>
-      <header className={styles.header}>
-        <Link href="/" className={styles.backLink}>
-          Back to Home
-        </Link>
-        <h1 className={styles.title}>🏆 All Users Progress</h1>
-      </header>
 
       <section className={styles.leaderboardSection}>
         <h2 id="leaderboard-title" className={styles.leaderboardTitle}>🥇 Top 10 Leaderboard</h2>
@@ -585,5 +582,7 @@ export default function AllUsersProgressPage() {
         </div>
       </section>
     </main>
+    <SiteFooter theme="leaderboard" />
+    </>
   );
 }

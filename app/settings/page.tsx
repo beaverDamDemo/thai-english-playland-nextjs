@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import styles from './settings.module.css';
+import SiteHeader from '../_components/SiteHeader';
+import SiteFooter from '../_components/SiteFooter';
 import ThemeToggle from '../_components/ThemeToggle';
 import FontToggle from '../_components/FontToggle';
 import MusicToggle from '../_components/MusicToggle';
@@ -182,14 +183,9 @@ export default function SettingsPage() {
   };
 
   return (
+    <>
+    <SiteHeader title="Settings" icon="⚙️" theme="settings" />
     <main className={styles.container}>
-      <header className={styles.headerRow}>
-        <Link href="/" className={styles.backLink}>
-          Back to Home
-        </Link>
-        <h1 className={styles.title}>Settings</h1>
-      </header>
-
       {loading ? <p className={styles.note}>Loading...</p> : null}
       {error ? <p className={styles.error}>{error}</p> : null}
 
@@ -332,5 +328,7 @@ export default function SettingsPage() {
         </div>
       )}
     </main>
+    <SiteFooter theme="settings" />
+    </>
   );
 }
