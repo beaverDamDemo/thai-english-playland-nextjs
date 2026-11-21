@@ -56,18 +56,18 @@ export class BaseMazeScene extends Phaser.Scene {
   preload() {
     this.load.spritesheet(
       'avatar',
-      'https://labs.phaser.io/assets/sprites/dude.png',
+      '/assets/maze/dude.png',
       {
         frameWidth: 32,
         frameHeight: 48,
       },
     );
-    this.load.image('goal', 'https://labs.phaser.io/assets/sprites/star.png');
-    this.load.image('wall', this.config.tile || 'https://labs.phaser.io/assets/sprites/block.png');
+    this.load.image('goal', '/assets/maze/star.png');
+    this.load.image('wall', this.config.tile || '/assets/maze/block.png');
     this.load.image('enemy', '/assets/tinified/little-menace.png');
     this.load.image(
       'bullet',
-      'https://labs.phaser.io/assets/sprites/bullet.png',
+      '/assets/maze/bullet.png',
     );
   }
 

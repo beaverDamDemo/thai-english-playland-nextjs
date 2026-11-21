@@ -61,6 +61,9 @@ export async function createSession(userId: number): Promise<string> {
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + SESSION_TTL_DAYS * 24 * 60 * 60 * 1000);
 
+  // Housekeeping: expired sessions are never valid again, so drop them on each new login.
+  await db`DELETE FROM public.thai_english_playland_user_sessions WHERE expires_at <= NOW();`;
+
   await db`
     INSERT INTO public.thai_english_playland_user_sessions (user_id, session_token, expires_at)
     VALUES (${userId}, ${token}, ${expiresAt.toISOString()});

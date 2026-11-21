@@ -156,7 +156,9 @@ export default function SettingsPage() {
       fetch('/api/auth/delete-account', {
         method: 'DELETE',
       })
-        .then(() => {
+        .then((response) => {
+          // fetch only rejects on network errors; a server error must not look like success.
+          if (!response.ok) throw new Error(`Delete failed: ${response.status}`);
           showNotification('success', 'Account deleted successfully!');
           setConfirmAction(null);
           setTimeout(() => {
