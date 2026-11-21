@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/_lib/server/db";
-import { curriculumZones } from "@/app/games/curriculum";
+import { curriculumZones, zoneThemeGames } from "@/app/games/curriculum";
 
 export async function GET() {
-  const lessonProgress = await db<{ lesson_id: string; started: number; completed: number }[]>`
-    SELECT lesson_id, COUNT(*)::integer AS started,
-      COUNT(*) FILTER (WHERE completed_at IS NOT NULL)::integer AS completed
-    FROM public.thai_english_playland_lesson_progress
-    GROUP BY lesson_id;
+  // One row per learner per lesson; aggregated per curriculum zone below.
+  const lessonProgress = await db<{
+    user_id: number;
+    lesson_id: string;
+    completed: boolean;
+    quiz_attempts: number;
+  }[]>`
+    SELECT user_id, lesson_id,
+      (completed_at IS NOT NULL) AS completed,
+      quiz_attempts::integer AS quiz_attempts
+    FROM public.thai_english_playland_lesson_progress;
   `;
   // Get total users count
   const totalUsersResult = await db`
@@ -64,30 +70,27 @@ export async function GET() {
     ORDER BY weeks.week_start ASC;
   `;
 
-  // Get users created over time (monthly for last 12 months)
+  // Get users created in each of the last 12 calendar months, including empty months.
   const monthlyUsersResult = await db`
-    SELECT
-      DATE_TRUNC('month', created_at) as month_start,
-      COUNT(*) as count
-    FROM public.thai_english_playland_users
-    WHERE created_at >= NOW() - INTERVAL '12 months'
-    GROUP BY DATE_TRUNC('month', created_at)
-    ORDER BY month_start ASC;
-  `;
-
-  // Get game mode popularity (by quiz attempts)
-  const gameModePopularityResult = await db`
-    WITH game_modes (game_mode, sort_order) AS (
-      VALUES ('starter', 1), ('maze', 2), ('casino', 3), ('pattaya', 4)
+    WITH months AS (
+      SELECT generate_series(
+        DATE_TRUNC('month', CURRENT_DATE::timestamp) - INTERVAL '11 months',
+        DATE_TRUNC('month', CURRENT_DATE::timestamp),
+        INTERVAL '1 month'
+      )::date AS month_start
+    ),
+    registrations AS (
+      SELECT DATE_TRUNC('month', created_at)::date AS month_start, COUNT(*) AS count
+      FROM public.thai_english_playland_users
+      WHERE created_at >= DATE_TRUNC('month', CURRENT_DATE::timestamp) - INTERVAL '11 months'
+      GROUP BY DATE_TRUNC('month', created_at)::date
     )
     SELECT
-      m.game_mode,
-      COALESCE(SUM(p.quiz_attempts), 0) as total_attempts,
-      COUNT(DISTINCT p.user_id) as unique_users
-    FROM game_modes m
-    LEFT JOIN public.thai_english_playland_user_progress p ON p.game_mode = m.game_mode
-    GROUP BY m.game_mode, m.sort_order
-    ORDER BY m.sort_order ASC;
+      TO_CHAR(months.month_start, 'YYYY-MM-DD') AS month_start,
+      COALESCE(registrations.count, 0) AS count
+    FROM months
+    LEFT JOIN registrations ON registrations.month_start = months.month_start
+    ORDER BY months.month_start ASC;
   `;
 
   // Get distribution of users across game modes
@@ -210,6 +213,7 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     data: {
+      // Every curriculum zone is listed, even when nobody has played it yet.
       zoneProgress: curriculumZones.map((zone) => {
         const ids = new Set(zone.lessons.map((lesson) => lesson.id));
         const rows = lessonProgress.filter((row) => ids.has(row.lesson_id));
@@ -217,8 +221,12 @@ export async function GET() {
           id: zone.id,
           title: zone.title,
           icon: zone.icon,
-          started: rows.reduce((sum, row) => sum + row.started, 0),
-          completed: rows.reduce((sum, row) => sum + row.completed, 0),
+          theme: zoneThemeGames[zone.id],
+          playableLessons: zone.lessons.filter((lesson) => lesson.href).length,
+          learners: new Set(rows.map((row) => row.user_id)).size,
+          quizAttempts: rows.reduce((sum, row) => sum + Number(row.quiz_attempts || 0), 0),
+          started: rows.length,
+          completed: rows.filter((row) => row.completed).length,
         };
       }),
       totalUsers,
@@ -231,13 +239,8 @@ export async function GET() {
         count: Number(row.count),
       })),
       monthlyUsers: monthlyUsersResult.map((row) => ({
-        monthStart: row.month_start?.toISOString().split("T")[0] || "",
+        monthStart: row.month_start,
         count: Number(row.count || 0),
-      })),
-      gameModePopularity: gameModePopularityResult.map((row) => ({
-        gameMode: row.game_mode,
-        totalAttempts: Number(row.total_attempts || 0),
-        uniqueUsers: Number(row.unique_users || 0),
       })),
       userDistribution: userDistributionResult.map((row) => ({
         gameMode: row.game_mode,
