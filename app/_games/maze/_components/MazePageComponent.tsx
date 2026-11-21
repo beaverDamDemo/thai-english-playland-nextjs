@@ -7,7 +7,7 @@ import MazeHeader from './MazeHeader';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import UnlockToast from '@/app/_games/starter/_components/UnlockToast';
 import dynamic from 'next/dynamic';
-import type { FC, MouseEvent } from 'react';
+import type { CSSProperties, FC, MouseEvent } from 'react';
 import {
   pingLessonOpen,
   saveProgressDelta,
@@ -60,6 +60,7 @@ const MazePageComponent: FC<MazePageProps> = ({
   const [gameWon, setGameWon] = useState(false);
   const [scale, setScale] = useState(1);
   const [isMobilePortrait, setIsMobilePortrait] = useState(false);
+  const [minBoxHeight, setMinBoxHeight] = useState(0);
   const gameRef = useRef<Phaser.Game | null>(null);
 
   const desktopWidth = 1200;
@@ -156,7 +157,10 @@ const MazePageComponent: FC<MazePageProps> = ({
       const newScale = isPortraitPhone
         ? scaleByWidth
         : Math.min(scaleByWidth, scaleByHeight);
-      setScale(Math.max(newScale, 0.5));
+      const finalScale = Math.max(newScale, 0.5);
+      setScale(finalScale);
+      // On phones, stretch the box to at least the screen height so the stats footer sits at the bottom.
+      setMinBoxHeight(isPortraitPhone ? Math.ceil(windowHeight / finalScale) : 0);
     };
 
     calculateScale();
@@ -236,32 +240,42 @@ const MazePageComponent: FC<MazePageProps> = ({
     }
   }, [maxMoves]);
 
+  // The game is laid out at a fixed size and scaled to fit the screen. The scaled box is
+  // wrapped in a "sizer" with its on-screen size, so it sits flush at the top on phones and
+  // the page only scrolls as far as there is content.
+  const boxWidth = isMobilePortrait ? mobileWidth : desktopWidth;
+  const boxHeight = isMobilePortrait ? Math.max(mobileHeight, minBoxHeight) : desktopHeight;
+  const screenStyle: CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: isMobilePortrait ? 'flex-start' : 'center',
+    width: '100%',
+    minHeight: '100dvh',
+    overflow: 'hidden',
+    background: backgroundGradient,
+  };
+  const sizerStyle: CSSProperties = {
+    width: `${boxWidth * scale}px`,
+    height: `${boxHeight * scale}px`,
+    flexShrink: 0,
+  };
+  const scaledBoxStyle: CSSProperties = {
+    transform: `scale(${scale})`,
+    transformOrigin: 'top left',
+    display: 'flex',
+    flexDirection: 'column',
+    width: `${boxWidth}px`,
+    height: `${boxHeight}px`,
+  };
+
   if (gameWon && showWinScreen) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100vw',
-          height: '100vh',
-          overflow: 'auto',
-          backgroundColor: '#f0f0f0',
-        }}
-      >
+      <div style={screenStyle}>
         {gameMode === 'starter' && lessonNumber < totalLessons && (
           <UnlockToast nextLesson={lessonNumber + 1} />
         )}
-        <div
-          style={{
-            transform: `scale(${scale})`,
-            transformOrigin: 'center center',
-            display: 'flex',
-            flexDirection: 'column',
-            width: `${isMobilePortrait ? mobileWidth : desktopWidth}px`,
-            height: `${isMobilePortrait ? mobileHeight : desktopHeight}px`,
-          }}
-        >
+        <div style={sizerStyle}>
+        <div style={scaledBoxStyle}>
           <MazeHeader score={score} title={lessonTitle} scale={scale} backHref={backHref} game={gameMode} />
           <div
             style={{
@@ -292,7 +306,7 @@ const MazePageComponent: FC<MazePageProps> = ({
                   margin: '0 0 20px 0',
                 }}
               >
-                ðŸŽ‰ Congratulations! ðŸŽ‰
+                🎉 Congratulations! 🎉
               </h1>
               <p style={{ fontSize: '20px', color: '#333', margin: '10px 0' }}>
                 {gameMode === 'casino'
@@ -344,33 +358,15 @@ const MazePageComponent: FC<MazePageProps> = ({
           </div>
           <GameStatsFooter game={gameMode} totalLessons={totalLessons} sticky={false} />
         </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: isMobilePortrait ? 'flex-start' : 'center',
-        width: '100vw',
-        height: '100vh',
-        overflow: 'auto',
-        backgroundColor: '#f0f0f0',
-      }}
-    >
-      <div
-        style={{
-          transform: `scale(${scale})`,
-          transformOrigin: 'center center',
-          display: 'flex',
-          flexDirection: 'column',
-          width: `${isMobilePortrait ? mobileWidth : desktopWidth}px`,
-          height: `${isMobilePortrait ? mobileHeight : desktopHeight}px`,
-          position: 'relative',
-        }}
-      >
+    <div style={screenStyle}>
+      <div style={sizerStyle}>
+      <div style={{ ...scaledBoxStyle, position: 'relative' }}>
         <MazeHeader score={score} title={lessonTitle} scale={scale} backHref={backHref} game={gameMode} />
 
         <div style={{ flex: 1, position: 'relative' }}>
@@ -473,6 +469,7 @@ const MazePageComponent: FC<MazePageProps> = ({
           )}
         </div>
         <GameStatsFooter game={gameMode} totalLessons={totalLessons} sticky={false} />
+      </div>
       </div>
     </div>
   );

@@ -528,12 +528,12 @@ export default function ColorsSvgViewer() {
 
       <section className={styles.quiz}>
         {groupOrder.length === 0 ? (
-          <p className={styles.hint}>Loadingâ€¦</p>
+          <p className={styles.hint}>Loading…</p>
         ) : allRevealed ? (
           <div className={styles.complete}>
-            <p>ðŸŽ‰ You revealed all the colors!</p>
+            <p>🎉 You revealed all the colors!</p>
             <Link href="/zones/starter" className={styles.doneBtn}>
-              â† Back to Starter Zone
+              ← Back to Starter Zone
             </Link>
           </div>
         ) : (

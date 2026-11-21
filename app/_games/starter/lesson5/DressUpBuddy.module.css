@@ -372,6 +372,11 @@
     padding-left: 10px;
   }
 
+  /* Smaller buddy on phones so the clothes tray is visible without scrolling. */
+  .buddy {
+    width: min(100%, calc(32svh * 200 / 360), 170px);
+  }
+
   .trayIcon {
     width: 44px;
     height: 44px;

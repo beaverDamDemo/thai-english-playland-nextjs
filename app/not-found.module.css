@@ -1,24 +1,23 @@
 .page {
-  align-items: center;
-  background-color: #111;
-  display: flex;
-  justify-content: center;
-  /* Leaves room for the site header + footer. */
-  min-height: calc(100dvh - 200px);
-  padding: 1rem;
+  composes: page from './error.module.css';
   text-align: center;
 }
 
+/* The illustration as a framed picture card on the soft background. */
 .imageArea {
   position: relative;
   --image-ratio: 16 / 9;
   aspect-ratio: var(--image-ratio);
-  height: min(calc(100dvh - 240px), calc(96vw / (var(--image-ratio))));
-  max-width: 96vw;
+  height: min(calc(100dvh - 260px), calc((100vw - 32px) / (var(--image-ratio))));
+  max-width: calc(100vw - 32px);
+  border: 4px solid #fff;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
   background-image: url("/assets/tinified/404-quality-40.jpg");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
+  overflow: hidden;
 }
 
 .primaryAction {

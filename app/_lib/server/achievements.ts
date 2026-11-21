@@ -126,10 +126,12 @@ async function updateConsecutiveDays(userId: number): Promise<number> {
   today.setHours(0, 0, 0, 0);
 
   if (rows.length === 0) {
+    // Two progress saves can arrive at once for a new player; the second one must not fail.
     await db`
       INSERT INTO public.thai_english_playland_user_streak_state
         (user_id, last_play_date, consecutive_days, max_consecutive_days)
-      VALUES (${userId}, ${today.toISOString()}, 1, 1);
+      VALUES (${userId}, ${today.toISOString()}, 1, 1)
+      ON CONFLICT (user_id) DO NOTHING;
     `;
     return 1;
   }

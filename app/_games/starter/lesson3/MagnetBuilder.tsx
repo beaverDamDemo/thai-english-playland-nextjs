@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { Children, useEffect, useRef, useState } from 'react';
 import MusicToggle from '../../../_components/MusicToggle';
 import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import { pingLessonOpen, recordAnswer, saveProgressDelta } from '@/app/_lib/client/progress';
@@ -189,7 +189,7 @@ function MagnetBuilderContent() {
           >
             <g className={styles.ghost}>
               {stage.pieces.map((shapes, index) => (
-                <g key={index}>{shapes}</g>
+                <g key={index}>{Children.toArray(shapes)}</g>
               ))}
             </g>
             {stage.pieces.slice(0, placed).map((shapes, index) => (
@@ -199,7 +199,7 @@ function MagnetBuilderContent() {
                   index === placed - 1 && !stageDone ? styles.snap : undefined
                 }
               >
-                {shapes}
+                {Children.toArray(shapes)}
               </g>
             ))}
           </svg>

@@ -580,6 +580,12 @@
     padding-inline: 76px;
   }
 
+  /* Lesson points are placed by % of map height; a taller map on phones spaces
+     them far enough apart that the lesson cards don't overlap. */
+  .curriculumMap {
+    min-height: 940px;
+  }
+
   .mapViewport {
     padding: 6px;
   }

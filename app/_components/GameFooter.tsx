@@ -29,7 +29,7 @@ export default function GameFooter({
   return (
     <footer className={styles.footer} data-game={game}>
       {stats.map(({ label, value }) => (
-        <span key={label} className={styles.chip}>
+        <span key={label} className={styles.chip} title={`${label}: ${value}`}>
           <span className={styles.chipIcon} aria-hidden="true">
             {STAT_ICONS[label] ?? '⭐'}
           </span>

@@ -10,7 +10,8 @@ type Props = {
 };
 
 const HEIGHT = 240;
-const PAD = { top: 16, right: 12, bottom: 28, left: 28 };
+// Top padding leaves room for the "Peak" label above the highest point.
+const PAD = { top: 28, right: 12, bottom: 28, left: 28 };
 
 function hourLabel(hour: number): string {
   return `${String(hour).padStart(2, '0')}:00`;
