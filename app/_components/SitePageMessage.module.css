@@ -42,6 +42,13 @@
   color: #a8b0c2;
 }
 
+.detail {
+  margin: 0;
+  color: #8a93a6;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .button {
   margin-top: 8px;
   padding: 10px 22px;

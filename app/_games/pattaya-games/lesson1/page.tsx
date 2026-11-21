@@ -257,7 +257,6 @@ function PattayaLesson1PageContent() {
   // Generate round client-side only to avoid hydration mismatch
   // (buildRound uses Math.random which would differ between server and client)
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRound(buildRound());
   }, []);
 

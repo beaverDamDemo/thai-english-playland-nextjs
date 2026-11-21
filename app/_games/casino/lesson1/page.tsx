@@ -2,7 +2,7 @@
 
 import Quiz from './Quiz';
 import dynamic from 'next/dynamic';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import { casinoLessonThemes, lessonMapButtons } from '../lessonMapConfig';
 

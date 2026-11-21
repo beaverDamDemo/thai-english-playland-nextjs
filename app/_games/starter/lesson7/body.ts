@@ -39,7 +39,6 @@ export const MAX_COUNT: Record<CountPart, number> = {
 };
 
 export const NUMBER_WORDS = ['no', 'one', 'two', 'three', 'four'];
-export const NUMBER_THAI = ['ไม่มี', 'หนึ่ง', 'สอง', 'สาม', 'สี่'];
 
 export function countToConfigKey(part: CountPart): keyof MonsterConfig {
   return `${part}s` as keyof MonsterConfig;

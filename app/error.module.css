@@ -1,0 +1,18 @@
+/* Background for app/error.tsx and app/global-error.tsx, between the site header and footer. */
+.page {
+  display: grid;
+  place-items: center;
+  min-height: calc(100dvh - 200px);
+  padding: 24px var(--mobile-page-gutter, 16px);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 183, 77, 0.35), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(77, 182, 255, 0.3), transparent 45%),
+    linear-gradient(160deg, #fff4e6 0%, #fdebf3 100%);
+}
+
+:global(:root[data-theme='dark']) .page {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 183, 77, 0.12), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(77, 182, 255, 0.12), transparent 45%),
+    linear-gradient(160deg, #161827 0%, #1d1626 100%);
+}

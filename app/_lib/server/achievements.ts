@@ -45,10 +45,6 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'comeback', title: 'Comeback Kid', description: 'Answer correctly after 3 wrong in a row', icon: '🔄', category: 'special', sortOrder: 52 },
 ];
 
-export const ACHIEVEMENT_MAP: Record<string, AchievementDef> = Object.fromEntries(
-  ACHIEVEMENTS.map((a) => [a.id, a]),
-);
-
 /**
  * Seed the definitions table (idempotent upsert).
  * Called lazily when the achievements API is hit.

@@ -8,11 +8,17 @@ export default function SitePageMessage({
   message,
   icon = '🙈',
   retry = true,
+  onRetry,
+  detail,
 }: {
   title: string;
   message: string;
   icon?: string;
   retry?: boolean;
+  /** What "Try again" does; defaults to reloading the page. */
+  onRetry?: () => void;
+  /** Small print under the message, e.g. an error code to quote. */
+  detail?: string;
 }) {
   return (
     <section className={styles.card} role="alert">
@@ -21,8 +27,13 @@ export default function SitePageMessage({
       </span>
       <h2 className={styles.title}>{title}</h2>
       <p className={styles.message}>{message}</p>
+      {detail ? <p className={styles.detail}>{detail}</p> : null}
       {retry ? (
-        <button type="button" className={styles.button} onClick={() => window.location.reload()}>
+        <button
+          type="button"
+          className={styles.button}
+          onClick={onRetry ?? (() => window.location.reload())}
+        >
           🔄 Try again
         </button>
       ) : null}

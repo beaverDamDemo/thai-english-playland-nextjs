@@ -62,10 +62,3 @@ export function resetStreak(): void {
 export function reportPerfectLesson(): void {
   void fireEvent({ type: 'perfect_lesson' });
 }
-
-export function getStreakSnapshot(): {
-  correctStreak: number;
-  wrongStreak: number;
-} {
-  return { correctStreak, wrongStreak };
-}

@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ComponentType, FC } from 'react';
 import { getLessonConfig, getBackgroundGradient } from '../lessonMapConfig';
 
