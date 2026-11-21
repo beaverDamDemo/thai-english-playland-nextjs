@@ -50,65 +50,12 @@
   margin: 0 auto;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.headerHomeLink {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #111827;
-  border-radius: 8px;
-  padding: 6px;
-  flex-shrink: 0;
-}
-
-.homeLinkImg {
-  width: 28px;
-  height: 28px;
-}
-
-.title {
-  margin: 0;
-  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-  letter-spacing: 0.03em;
-}
-
-.subtitle {
-  margin: 4px 0 0;
-  font-size: clamp(0.8rem, 2vw, 0.9rem);
-  opacity: 0.9;
-}
-
 .panel {
   background: var(--pg-panel);
   border: 3px solid rgba(17, 24, 39, 0.15);
   box-shadow: 0 14px 35px rgba(17, 24, 39, 0.2);
   border-radius: 12px;
   padding: 10px;
-}
-
-.statsRow {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.stat {
-  background: var(--pg-stat-bg);
-  border: 2px solid var(--pg-stat-border);
-  border-radius: 8px;
-  padding: 6px 4px;
-  text-align: center;
-  font-weight: 700;
-  font-size: clamp(0.7rem, 1.5vw, 0.85rem);
-  word-break: break-word;
 }
 
 .progress {
@@ -160,16 +107,7 @@
   line-height: 1.4;
 }
 
-.optionGrid {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
-}
-
-.optionButton,
-.primaryButton,
-.secondaryButton {
+.primaryButton {
   border: 0;
   border-radius: 8px;
   font-weight: 700;
@@ -180,20 +118,7 @@
     filter 150ms ease;
 }
 
-.optionButton {
-  background: #111827;
-  color: #fff;
-  padding: 10px;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.optionButton:hover,
-.primaryButton:hover,
-.secondaryButton:hover {
+.primaryButton:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
 }
@@ -203,25 +128,6 @@
   background: var(--pg-accent);
   color: #fff;
   padding: 10px 12px;
-}
-
-.secondaryButton {
-  margin-top: 10px;
-  background: var(--pg-accent-2);
-  color: #fff;
-  padding: 10px 12px;
-}
-
-.resultGood {
-  color: var(--pg-good);
-  font-weight: 800;
-  margin-top: 10px;
-}
-
-.resultBad {
-  color: var(--pg-bad);
-  font-weight: 800;
-  margin-top: 10px;
 }
 
 .boardWrap {
@@ -516,18 +422,6 @@
   text-align: center;
 }
 
-.resultGood {
-  color: var(--pg-good);
-  font-weight: 800;
-  margin-top: 8px;
-}
-
-.resultBad {
-  color: var(--pg-bad);
-  font-weight: 800;
-  margin-top: 8px;
-}
-
 .footerButtons {
   margin-top: 10px;
   display: flex;
@@ -556,22 +450,9 @@
   filter: brightness(1.05);
 }
 
-.footer {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 @media (max-width: 640px) {
   .page {
     padding: 6px;
-  }
-
-  .header {
-    gap: 4px;
-    margin-bottom: 8px;
   }
 
   .panel {
@@ -591,17 +472,6 @@
     padding: 6px;
   }
 
-  .statsRow {
-    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
-    gap: 4px;
-    margin-bottom: 6px;
-  }
-
-  .stat {
-    padding: 3px 2px;
-    font-size: 0.65rem;
-  }
-
   .prompt {
     font-size: 0.95rem;
     margin-bottom: 6px;
@@ -612,19 +482,7 @@
     margin-bottom: 4px;
   }
 
-  .optionGrid {
-    gap: 6px;
-    margin-top: 8px;
-  }
-
-  .optionButton {
-    padding: 8px;
-    font-size: 0.7rem;
-    min-height: 40px;
-  }
-
-  .primaryButton,
-  .secondaryButton {
+  .primaryButton {
     padding: 8px 10px;
     font-size: 0.7rem;
     margin-top: 6px;
@@ -696,26 +554,6 @@
     padding: 4px;
   }
 
-  .title {
-    font-size: 0.95rem;
-  }
-
-  .subtitle {
-    font-size: 0.65rem;
-    margin-top: 2px;
-  }
-
-  .statsRow {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3px;
-    margin-bottom: 4px;
-  }
-
-  .stat {
-    font-size: 0.6rem;
-    padding: 2px;
-  }
-
   .prompt {
     font-size: 0.85rem;
   }
@@ -724,25 +562,10 @@
     font-size: 0.65rem;
   }
 
-  .optionButton {
-    padding: 6px;
-    font-size: 0.65rem;
-    min-height: 36px;
-  }
-
-  .primaryButton,
-  .secondaryButton {
+  .primaryButton {
     padding: 6px 8px;
     font-size: 0.65rem;
     margin-top: 4px;
   }
 
-  .headerHomeLink {
-    padding: 4px;
-  }
-
-  .homeLinkImg {
-    width: 24px;
-    height: 24px;
-  }
 }

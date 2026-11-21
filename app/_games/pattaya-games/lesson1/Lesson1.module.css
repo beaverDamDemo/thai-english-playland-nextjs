@@ -10,43 +10,6 @@
   margin: 0 auto;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.title {
-  margin: 0;
-  font-size: clamp(1.1rem, 3vw, 1.6rem);
-  color: #a3d977;
-  letter-spacing: 0.04em;
-}
-
-.subtitle {
-  margin: 4px 0 0;
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-
-.headerHomeLink {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 8px;
-  padding: 8px 12px;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.backArrow {
-  font-size: 1.1rem;
-  color: #a3d977;
-}
-
 .scoreBar {
   display: flex;
   gap: 6px;

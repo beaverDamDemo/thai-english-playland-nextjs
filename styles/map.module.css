@@ -31,18 +31,6 @@
   flex-shrink: 0;
 }
 
-.headerBadge {
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(126, 144, 198, 0.35);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #5f628d;
-}
-
 .headerHomeLink {
   composes: backButton from '../app/_components/PlayChrome.module.css';
   position: absolute;
@@ -81,77 +69,6 @@
   margin: 0;
   font-size: clamp(1.15rem, 5vw, 1.6rem);
   text-align: center;
-}
-
-.mapFooter {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px var(--mobile-page-gutter, 16px)
-    calc(10px + env(safe-area-inset-bottom, 0px));
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(8px);
-  color: #24375f;
-  font-size: 11px;
-  font-weight: 700;
-  border-top: 1px solid rgba(104, 122, 181, 0.18);
-  flex-wrap: wrap;
-  box-shadow: 0 -6px 20px rgba(59, 72, 125, 0.08);
-}
-
-.footerStats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  flex: 1 1 260px;
-}
-
-.statChip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 5px 8px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #eef3ff 0%, #fff3e6 100%);
-  border: 1px solid rgba(136, 152, 214, 0.26);
-  white-space: nowrap;
-}
-
-.footerActions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  flex: 0 0 auto;
-  margin-left: auto;
-}
-
-.footerVersion {
-  font-size: 11px;
-  color: #68738f;
-}
-
-.resetButton {
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ff6a6a 0%, #d93f7a 100%);
-  color: #fff;
-  padding: 7px 12px;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 800;
-  box-shadow: 0 6px 14px rgba(217, 63, 122, 0.24);
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease;
-}
-
-.resetButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 9px 18px rgba(217, 63, 122, 0.3);
-  filter: brightness(0.98);
 }
 
 .mapViewport {
@@ -667,27 +584,6 @@
     padding: 6px;
   }
 
-  .mapFooter {
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .footerStats {
-    gap: 5px;
-  }
-
-  .statChip {
-    min-height: 24px;
-    padding: 4px 7px;
-    font-size: 10px;
-  }
-
-  .footerActions {
-    width: 100%;
-  }
-
-  .footerVersion {
-    margin-left: auto;
-  }
 }
 
 :global(:root[data-theme="dark"]) .mazePage {
@@ -703,23 +599,6 @@
       transparent 36%
     ),
     linear-gradient(180deg, #0f1a33 0%, #111a2b 100%);
-}
-
-:global(:root[data-theme="dark"]) .mapFooter {
-  background: rgba(16, 24, 44, 0.82);
-  color: #d7e3ff;
-  border-top-color: rgba(142, 165, 235, 0.24);
-  box-shadow: 0 -6px 20px rgba(3, 7, 18, 0.34);
-}
-
-:global(:root[data-theme="dark"]) .statChip {
-  background: linear-gradient(135deg, #24365f 0%, #1e4a57 100%);
-  border-color: rgba(133, 161, 235, 0.34);
-  color: #ecf3ff;
-}
-
-:global(:root[data-theme="dark"]) .footerVersion {
-  color: #a9bbe7;
 }
 
 :global(:root[data-theme="dark"]) .locationPin {

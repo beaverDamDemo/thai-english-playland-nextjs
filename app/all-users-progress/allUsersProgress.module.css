@@ -272,12 +272,6 @@
   color: #ef4444;
 }
 
-.totalCorrect {
-  font-weight: 700;
-  font-size: 1rem;
-  color: #10b981;
-}
-
 .joinedDate {
   color: #6b7280;
 }
@@ -417,15 +411,6 @@
   height: 100%;
   border-radius: 3px;
   transition: width 0.3s ease;
-}
-
-.loading,
-.loading {
-  color: white;
-}
-
-[data-theme='dark'] .loading {
-  color: #e0e0e0;
 }
 
 .leaderboardSection {

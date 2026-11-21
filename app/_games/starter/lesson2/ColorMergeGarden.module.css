@@ -694,14 +694,6 @@ a.mergeButton {
   font-weight: 700;
 }
 
-.learningNote {
-  margin: 14px 0 0;
-  color: #829083;
-  font-size: 0.74rem;
-  line-height: 1.4;
-  text-align: center;
-}
-
 @media (min-width: 600px) {
   .page {
     padding: 0 0 28px;

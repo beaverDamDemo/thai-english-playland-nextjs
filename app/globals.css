@@ -243,10 +243,6 @@ body,
   box-sizing: border-box;
 }
 
-.maze-wall {
-  background: var(--tertiary);
-}
-
 .player {
   background: var(--accent);
 }

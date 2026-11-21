@@ -87,17 +87,6 @@
   gap: 4px;
 }
 
-.leaderboardStatLabel {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #6b7280;
-}
-
-[data-theme='dark'] .leaderboardStatLabel {
-  color: #9ca3af;
-}
-
 .leaderboardStatValue {
   font-size: 1rem;
   font-weight: bold;

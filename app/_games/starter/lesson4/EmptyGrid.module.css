@@ -374,15 +374,6 @@
   text-align: center;
 }
 
-.panelTitle {
-  justify-self: center;
-  margin: 0;
-  color: #315c5b;
-  font-size: 0.86rem;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
 .toolGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 60px));

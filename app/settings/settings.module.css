@@ -451,23 +451,6 @@
   box-shadow: 0 6px 16px rgba(255, 107, 107, 0.5);
 }
 
-.tableWrap {
-  overflow: auto;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  text-align: left;
-  padding: 8px;
-  border-bottom: 1px solid #e5edff;
-  font-size: 0.92rem;
-}
-
 /* Notification (toast) */
 .notification {
   position: fixed;
