@@ -5,6 +5,10 @@
 // unmounts, and when the next lesson mounts it calls resetStreak()).
 let correctStreak = 0;
 let wrongStreak = 0;
+// Per-lesson-visit tally, used to detect a flawless finish.
+let lessonCorrect = 0;
+let lessonWrong = 0;
+let perfectReported = false;
 
 async function fireEvent(body: Record<string, unknown>): Promise<void> {
   try {
@@ -24,6 +28,8 @@ async function fireEvent(body: Record<string, unknown>): Promise<void> {
  * Fires comeback when a correct answer follows 3+ wrong in a row.
  */
 export function recordAnswer(correct: boolean): void {
+  if (correct) lessonCorrect += 1;
+  else lessonWrong += 1;
   if (correct) {
     const wasWrongStreak = wrongStreak;
     correctStreak += 1;
@@ -56,9 +62,19 @@ export function recordAnswer(correct: boolean): void {
 export function resetStreak(): void {
   correctStreak = 0;
   wrongStreak = 0;
+  lessonCorrect = 0;
+  lessonWrong = 0;
+  perfectReported = false;
 }
 
-/** Report a perfect lesson completion (no wrong answers). */
+/** Report a perfect lesson completion (no wrong answers). Sent at most once per lesson visit. */
 export function reportPerfectLesson(): void {
+  if (perfectReported) return;
+  perfectReported = true;
   void fireEvent({ type: 'perfect_lesson' });
+}
+
+/** Report Flawless if this lesson visit had answers and none were wrong. */
+export function reportPerfectIfFlawless(): void {
+  if (lessonCorrect > 0 && lessonWrong === 0) reportPerfectLesson();
 }
