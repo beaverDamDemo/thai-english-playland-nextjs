@@ -2,14 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import styles from './SiteChrome.module.css';
 import { SITE_PAGES, type SitePageTheme } from './siteChrome';
 
 const LINKS = [{ href: '/', label: 'Home', icon: '🏠' }, ...SITE_PAGES];
 
-/** Playful footer for non-game pages: candy-pill links between them. */
-export default function SiteFooter({ theme, width = 1200 }: { theme: SitePageTheme; width?: number }) {
+/** Playful footer for non-game pages: candy-pill links between them, plus optional extra buttons. */
+export default function SiteFooter({
+  theme,
+  width = 1200,
+  children,
+}: {
+  theme: SitePageTheme;
+  width?: number;
+  /** Extra pills after the links, e.g. <SiteFooterButton>. */
+  children?: ReactNode;
+}) {
   const pathname = usePathname();
 
   return (
@@ -32,7 +41,30 @@ export default function SiteFooter({ theme, width = 1200 }: { theme: SitePageThe
             {link.label}
           </Link>
         ))}
+        {children}
       </nav>
     </footer>
+  );
+}
+
+/** A footer pill that runs an action instead of navigating (e.g. Log Out). */
+export function SiteFooterButton({
+  icon,
+  children,
+  onClick,
+  disabled,
+}: {
+  icon: string;
+  children: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button type="button" className={styles.navLink} onClick={onClick} disabled={disabled}>
+      <span className={styles.navIcon} aria-hidden="true">
+        {icon}
+      </span>
+      {children}
+    </button>
   );
 }

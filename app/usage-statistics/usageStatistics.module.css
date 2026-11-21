@@ -12,9 +12,8 @@
   --accent-soft: #e6e9fb;
   --grid-line: rgba(148, 163, 184, 0.28);
   min-height: calc(100dvh - 200px);
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 40px 32px;
+  /* Background spans the full width; content stays within a 1400px column. */
+  padding: 40px max(32px, calc((100% - 1400px) / 2 + 32px));
   font-family:
     system-ui,
     -apple-system,
@@ -57,17 +56,6 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-.error {
-  text-align: center;
-  font-size: 1.125rem;
-  padding: 40px;
-  color: #fecaca;
-}
-
-[data-theme='dark'] .error {
-  color: #fca5a5;
 }
 
 /* ---------- Layout ---------- */
@@ -785,6 +773,34 @@
 .skeletonProgress {
   width: 100%;
   height: 8px;
+}
+
+.skeletonRows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 30%;
+  align-items: center;
+  gap: 12px;
+}
+
+.skeletonRank {
+  width: 24px;
+  height: 20px;
+}
+
+/* Placeholder for the hourly line chart (same height as the real chart). */
+.skeletonLineChart {
+  height: 240px;
+  margin-top: 20px;
+  border-radius: 12px;
+  background:
+    linear-gradient(to top, var(--surface-border) 1px, transparent 1px) 0 100% / 100% 25%,
+    var(--surface);
 }
 
 .skeletonIcon {

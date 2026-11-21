@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import SiteHeader from '../_components/SiteHeader';
 import SiteFooter from '../_components/SiteFooter';
+import SitePageMessage from '../_components/SitePageMessage';
 import { getActivityRecency } from './activityRecency';
 import styles from './allUsersProgress.module.css';
 
@@ -178,7 +179,17 @@ export default function AllUsersProgressPage() {
       </>
     );
   }
-  if (error) return <div className={styles.error}>Error: {error}</div>;
+  if (error) {
+    return (
+      <>
+        <SiteHeader title="All Users Progress" icon="🏆" theme="leaderboard" />
+        <main className={styles.container}>
+          <SitePageMessage title="Could not load progress" message={error} />
+        </main>
+        <SiteFooter theme="leaderboard" />
+      </>
+    );
+  }
 
   // Handle sort click
   const handleSort = (column: SortColumn) => {

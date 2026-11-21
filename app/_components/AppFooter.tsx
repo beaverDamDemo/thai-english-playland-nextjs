@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import pkg from '../../package.json';
 import { getZoneBySlug, zoneThemeGames } from '../_games/curriculum';
 import styles from './AppFooter.module.css';
-import { getSitePage } from './siteChrome';
+import { getSiteTheme } from './siteChrome';
 
 const MONTHS = [
   'Jan',
@@ -35,7 +35,7 @@ function formatBuildTime(iso: string | undefined): string | null {
 function gameFromPath(pathname: string | null): string | undefined {
   const match = pathname?.match(/^\/zones\/([^/]+)/);
   const zone = match ? getZoneBySlug(match[1]) : undefined;
-  return zone ? zoneThemeGames[zone.id] : getSitePage(pathname)?.theme;
+  return zone ? zoneThemeGames[zone.id] : getSiteTheme(pathname);
 }
 
 export default function AppFooter() {

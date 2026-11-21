@@ -1,6 +1,6 @@
 // Non-game pages that use SiteHeader / SiteFooter, with their colour theme
 // ([data-game] value in globals.css). AppFooter reads this too.
-export type SitePageTheme = 'settings' | 'leaderboard' | 'stats';
+export type SitePageTheme = 'home' | 'settings' | 'leaderboard' | 'stats';
 
 export const SITE_PAGES: Array<{ href: string; label: string; icon: string; theme: SitePageTheme }> = [
   { href: '/settings', label: 'Settings', icon: '⚙️', theme: 'settings' },
@@ -10,4 +10,9 @@ export const SITE_PAGES: Array<{ href: string; label: string; icon: string; them
 
 export function getSitePage(pathname: string | null) {
   return SITE_PAGES.find((page) => pathname === page.href || pathname?.startsWith(`${page.href}/`));
+}
+
+/** Theme for the version strip (AppFooter) on non-game pages. */
+export function getSiteTheme(pathname: string | null): SitePageTheme | undefined {
+  return pathname === '/' ? 'home' : getSitePage(pathname)?.theme;
 }

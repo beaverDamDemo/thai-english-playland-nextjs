@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import styles from './settings.module.css';
 import SiteHeader from '../_components/SiteHeader';
 import SiteFooter from '../_components/SiteFooter';
@@ -33,6 +33,68 @@ const RESET_ACTIONS_THAI: Record<'all' | CurriculumZoneId, string> = {
   'building-sentences': 'รีเซ็ตความคืบหน้าของโซนภูเก็ต',
   'verbs-communication': 'รีเซ็ตความคืบหน้าของโซนพัทยา',
 };
+
+/** Placeholder cards with the same layout as the loaded page, so nothing jumps. */
+function SettingsSkeleton() {
+  const block = (className: string) => <span className={`${styles.skeleton} ${className}`} />;
+  const card = (key: string, body: ReactNode) => (
+    <section key={key} className={styles.card}>
+      {block(styles.skeletonTitle)}
+      {body}
+    </section>
+  );
+
+  return (
+    <>
+      <p className={styles.srOnly} role="status">
+        Loading settings
+      </p>
+      <div className={styles.skeletonGroup} aria-hidden="true">
+        {card('overview', block(styles.skeletonLine))}
+        {card(
+          'progress',
+          <>
+            {block(styles.skeletonLineShort)}
+            {block(styles.skeletonButton)}
+            {block(styles.skeletonButton)}
+          </>,
+        )}
+        {card(
+          'zones',
+          <>
+            {block(styles.skeletonLineShort)}
+            <div className={styles.buttonGroup}>
+              {Array.from({ length: 5 }, (_, i) => (
+                <span key={i} className={`${styles.skeleton} ${styles.skeletonButton}`} />
+              ))}
+            </div>
+          </>,
+        )}
+        {card(
+          'preferences',
+          <>
+            {block(styles.skeletonLineShort)}
+            <div className={styles.preferencesGroup}>
+              {Array.from({ length: 4 }, (_, i) => (
+                <div key={i} className={styles.preferenceItem}>
+                  {block(styles.skeletonLabel)}
+                  {block(styles.skeletonToggle)}
+                </div>
+              ))}
+            </div>
+          </>,
+        )}
+        {card(
+          'account',
+          <>
+            {block(styles.skeletonLine)}
+            {block(styles.skeletonButton)}
+          </>,
+        )}
+      </div>
+    </>
+  );
+}
 
 export default function SettingsPage() {
   const [data, setData] = useState<SettingsResponse | null>(null);
@@ -185,8 +247,8 @@ export default function SettingsPage() {
   return (
     <>
     <SiteHeader title="Settings" icon="⚙️" theme="settings" />
-    <main className={styles.container}>
-      {loading ? <p className={styles.note}>Loading...</p> : null}
+    <main className={styles.container} aria-busy={loading}>
+      {loading ? <SettingsSkeleton /> : null}
       {error ? <p className={styles.error}>{error}</p> : null}
 
       {data ? (
@@ -321,7 +383,7 @@ export default function SettingsPage() {
       {notification && (
         <div
           className={`${styles.notification} ${
-            notification.type === 'success' ? styles.success : styles.error
+            notification.type === 'success' ? styles.notificationSuccess : styles.notificationError
           }`}
         >
           {notification.type === 'success' ? '✓' : '✕'} {notification.message}

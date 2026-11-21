@@ -33,6 +33,11 @@
   height: auto;
 }
 
+.titleGroup {
+  min-width: 0;
+  text-align: center;
+}
+
 .title {
   composes: title from './PlayChrome.module.css';
   margin: 0;
@@ -40,6 +45,37 @@
   line-height: 1.15;
   text-align: center;
   overflow-wrap: anywhere;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-fredoka), 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+  font-size: clamp(0.9rem, 3.4vw, 1.05rem);
+  font-weight: 500;
+  text-shadow: 0 1px 0 var(--bar-edge);
+}
+
+/* Round avatar for the header's left slot (home page). */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--game-bg) 18%, #fff);
+  box-shadow:
+    0 4px 0 var(--bar-edge),
+    0 6px 12px rgba(0, 0, 0, 0.18);
+  font-size: 28px;
+  line-height: 1;
+  transform: rotate(5deg);
+}
+
+:global(:root[data-theme='dark']) .avatar {
+  border-color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 /* Round candy badge with the page's emoji, mirroring the lessons' music button. */
@@ -87,9 +123,11 @@
   composes: chip from './PlayChrome.module.css';
   min-height: 36px;
   padding: 5px 14px 5px 6px;
+  border: 0;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
@@ -97,6 +135,12 @@
 
 .navLink:hover {
   transform: translateY(-2px);
+}
+
+.navLink:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
 }
 
 .navLink:active {

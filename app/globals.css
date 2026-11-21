@@ -328,6 +328,10 @@ body,
   --game-bg-dark: #2a1240;
 }
 /* Non-game pages: each matches its own page background. */
+[data-game='home'] {
+  --game-bg: #e2546f;
+  --game-bg-dark: #5a2030;
+}
 [data-game='settings'] {
   --game-bg: #c2570c;
   --game-bg-dark: #4a2a17;

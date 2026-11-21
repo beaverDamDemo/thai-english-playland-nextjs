@@ -1,9 +1,8 @@
 /* Light styles are the default; dark overrides follow. Shared pieces live in _styles/statsShared.module.css */
 .container {
   min-height: calc(100dvh - 200px);
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  /* Background spans the full width; content stays within a 1200px column. */
+  padding: 2rem max(2rem, calc((100% - 1200px) / 2 + 2rem));
   background:
     radial-gradient(ellipse at 90% 4%, rgba(0, 206, 201, 0.4), transparent 38%),
     radial-gradient(ellipse at 8% 35%, rgba(93, 220, 166, 0.25), transparent 42%),
@@ -421,26 +420,12 @@
 }
 
 .loading,
-.error {
-  padding: 2rem;
-  text-align: center;
-  font-size: 1.25rem;
-}
-
 .loading {
   color: white;
 }
 
 [data-theme='dark'] .loading {
   color: #e0e0e0;
-}
-
-.error {
-  color: #fecaca;
-}
-
-[data-theme='dark'] .error {
-  color: #fca5a5;
 }
 
 .leaderboardSection {

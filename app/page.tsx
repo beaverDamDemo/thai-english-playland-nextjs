@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import styles from './HomeView.module.css';
 import { useEffect, useState } from 'react';
 import { curriculumZones, zoneThemeGames } from './_games/curriculum';
+import SiteHeader, { SiteHeaderAvatar } from './_components/SiteHeader';
+import SiteFooter, { SiteFooterButton } from './_components/SiteFooter';
 
 type AchievementDef = {
   id: string;
@@ -107,30 +109,19 @@ export default function HomePage() {
   };
 
   return (
+    <>
+    <SiteHeader
+      title="Thai English Playland"
+      subtitle={username ? `Welcome back, ${username}!` : undefined}
+      icon="🎪"
+      theme="home"
+      leading={<SiteHeaderAvatar emoji="🧒" />}
+    />
     <main className={styles.playfulHome}>
       <div className={styles.shapeOne} aria-hidden="true" />
       <div className={styles.shapeTwo} aria-hidden="true" />
       <div className={styles.shapeThree} aria-hidden="true" />
       <div className={styles.shapeFour} aria-hidden="true" />
-
-      <header className={`${styles.header} ${styles.centeredHeader}`}>
-        {username ? (
-          <div className={styles.greetingSection}>
-            <div className={styles.avatarWrapper}>
-              <div className={styles.avatar}>🧒</div>
-            </div>
-            <div className={styles.welcomeText}>
-              <p className={styles.helloText}>Welcome back,</p>
-              <h1 className={styles.userName}>{username}!</h1>
-            </div>
-          </div>
-        ) : (
-          <div className={styles.titleWrapper}>
-            <span className={styles.titleEmoji}>🎪</span>
-            <h1 className={styles.title}>Thai English Playland</h1>
-          </div>
-        )}
-      </header>
 
       <p className={styles.chooseGameText}>Choose a learning zone</p>
 
@@ -299,32 +290,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section
-        className={styles.bottomPageActions}
-        aria-label="Progress actions"
-      >
-        <div className={styles.progressActions}>
-          <Link href="/settings" className={styles.settingsLink}>
-            Settings
-          </Link>
-          <Link
-            href="/all-users-progress"
-            className={styles.allUsersProgressLink}
-          >
-            All Users Progress
-          </Link>
-          <Link href="/usage-statistics" className={styles.usageStatisticsLink}>
-            📈 Usage Statistics
-          </Link>
-          <button
-            className={styles.logoutButton}
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? 'Logging out...' : 'Log Out'}
-          </button>
-        </div>
-      </section>
     </main>
+    <SiteFooter theme="home">
+      <SiteFooterButton icon="👋" onClick={handleLogout} disabled={isLoggingOut}>
+        {isLoggingOut ? 'Logging out…' : 'Log Out'}
+      </SiteFooterButton>
+    </SiteFooter>
+    </>
   );
 }

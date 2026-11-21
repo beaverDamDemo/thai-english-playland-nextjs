@@ -1,10 +1,11 @@
 .playfulHome {
   position: relative;
   isolation: isolate;
-  min-height: 100dvh;
+  /* Leaves room for the site header + footer. */
+  min-height: calc(100dvh - 200px);
   padding: 20px;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
   gap: 20px;
   overflow: hidden;
   background:
@@ -183,94 +184,6 @@
   animation: floatB 5.5s ease-in-out infinite reverse;
 }
 
-.header {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 10px 0;
-}
-
-.centeredHeader {
-  justify-content: center;
-}
-
-.greetingSection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 10px;
-}
-
-.avatarWrapper {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 50%, #6c5ce7 100%);
-  padding: 4px;
-  box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3);
-  animation: bounceIn 0.6s ease-out;
-}
-
-.avatar {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3.5rem;
-}
-
-.welcomeText {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.helloText {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #636e72;
-  margin: 0;
-}
-
-.userName {
-  font-size: clamp(1.8rem, 6vw, 2.5rem);
-  font-weight: 900;
-  color: #6c5ce7;
-  margin: 0;
-  text-shadow: 2px 2px 0 rgba(108, 92, 231, 0.2);
-}
-
-.titleWrapper {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.titleEmoji {
-  font-size: 3.5rem;
-  line-height: 1;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-}
-
-.title {
-  margin: 0;
-  font-size: clamp(1.8rem, 6vw, 2.8rem);
-  font-weight: 900;
-  line-height: 1.1;
-  background: linear-gradient(135deg, #6c5ce7 0%, #fd79a8 50%, #ff6b6b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none;
-}
-
 .userGreeting {
   margin: 8px 0 0;
   font-size: 1rem;
@@ -445,115 +358,6 @@
   line-height: 1;
   font-weight: 700;
   white-space: nowrap;
-}
-
-.bottomPageActions {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
-}
-
-.progressActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-}
-
-.progressUnlockButton,
-.progressResetButton,
-.logoutButton,
-.settingsLink,
-.allUsersProgressLink,
-.usageStatisticsLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border: none;
-  border-radius: 16px;
-  padding: 0 20px;
-  min-height: 48px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  line-height: 1;
-  font-weight: 800;
-  transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s ease;
-}
-
-.progressUnlockButton {
-  background: linear-gradient(135deg, #ffd166 0%, #ffb347 100%);
-  color: #5a3d00;
-  box-shadow: 0 8px 20px rgba(255, 179, 71, 0.35);
-}
-
-.progressResetButton {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.35);
-}
-
-.settingsLink {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  color: #fff;
-  text-decoration: none;
-  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.35);
-}
-
-.allUsersProgressLink {
-  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-  color: #fff;
-  text-decoration: none;
-  box-shadow: 0 8px 20px rgba(0, 206, 201, 0.35);
-}
-
-.usageStatisticsLink {
-  background: linear-gradient(135deg, #74b9ff 0%, #6c5ce7 100%);
-  color: #fff;
-  text-decoration: none;
-  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
-}
-
-.usageStatisticsLink::before {
-  content: none;
-}
-
-.logoutButton {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(238, 90, 90, 0.32);
-}
-
-.progressUnlockButton:hover,
-.progressResetButton:hover,
-.settingsLink:hover,
-.logoutButton:hover,
-.allUsersProgressLink:hover,
-.usageStatisticsLink:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
-}
-
-.progressUnlockButton::before {
-  content: '🔓';
-}
-.progressResetButton::before {
-  content: '🔄';
-}
-.settingsLink::before {
-  content: '⚙️';
-}
-.allUsersProgressLink::before {
-  content: '📊';
-}
-.logoutButton::before {
-  content: '👋';
 }
 
 .hubCard {
@@ -1156,43 +960,12 @@
     font-size: 11px;
   }
 
-  .progressUnlockButton,
-  .progressResetButton,
-  .logoutButton {
-    min-height: 30px;
-    padding: 0 13px;
-  }
 }
 
 @media (max-width: 640px) {
   .playfulHome {
     padding: var(--mobile-page-gutter, 16px);
     gap: 16px;
-  }
-
-  .avatarWrapper {
-    width: 80px;
-    height: 80px;
-  }
-
-  .avatar {
-    font-size: 2.5rem;
-  }
-
-  .helloText {
-    font-size: 1rem;
-  }
-
-  .userName {
-    font-size: 1.5rem;
-  }
-
-  .titleEmoji {
-    font-size: 2.5rem;
-  }
-
-  .title {
-    font-size: 1.6rem;
   }
 
   .hubGrid {
@@ -1263,20 +1036,6 @@
     padding: 4px 0;
   }
 
-  .progressActions {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .progressUnlockButton,
-  .progressResetButton,
-  .logoutButton,
-  .settingsLink,
-  .allUsersProgressLink,
-  .usageStatisticsLink {
-    width: 100%;
-    min-height: 52px;
-  }
 }
 
 /* Dark Theme Styles */
@@ -1337,31 +1096,6 @@
       rgba(255, 234, 167, 0.25) 0%,
       rgba(250, 177, 160, 0.2) 100%
     );
-  }
-
-  :global(:root:not([data-theme='light'])) .helloText {
-    color: #9fb5e7;
-  }
-
-  :global(:root:not([data-theme='light'])) .userName {
-    color: #a29bfe;
-    text-shadow: 2px 2px 0 rgba(162, 155, 254, 0.3);
-  }
-
-  :global(:root:not([data-theme='light'])) .avatarWrapper {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 50%, #a29bfe 100%);
-    box-shadow: 0 8px 24px rgba(162, 155, 254, 0.3);
-  }
-
-  :global(:root:not([data-theme='light'])) .avatar {
-    background: linear-gradient(135deg, #1e1e3f 0%, #2d2d5a 100%);
-  }
-
-  :global(:root:not([data-theme='light'])) .title {
-    background: linear-gradient(135deg, #a29bfe 0%, #fd79a8 50%, #ff6b6b 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   :global(:root:not([data-theme='light'])) .userGreeting {
@@ -1457,26 +1191,6 @@
     color: #aab6ca;
   }
 
-  :global(:root:not([data-theme='light'])) .progressUnlockButton {
-    background: linear-gradient(135deg, #d4a853 0%, #b8860b 100%);
-    color: #1a1a2e;
-    box-shadow: 0 8px 20px rgba(184, 134, 11, 0.3);
-  }
-
-  :global(:root:not([data-theme='light'])) .progressResetButton {
-    background: linear-gradient(135deg, #c75450 0%, #a84040 100%);
-    box-shadow: 0 8px 20px rgba(167, 64, 64, 0.3);
-  }
-
-  :global(:root:not([data-theme='light'])) .usageStatisticsLink {
-    background: linear-gradient(135deg, #5a8fc7 0%, #6b5ce7 100%);
-    box-shadow: 0 8px 20px rgba(107, 92, 231, 0.3);
-  }
-
-  :global(:root:not([data-theme='light'])) .logoutButton {
-    background: linear-gradient(135deg, #c75450 0%, #a84040 100%);
-    box-shadow: 0 8px 20px rgba(168, 64, 64, 0.32);
-  }
 }
 
 /* Explicit dark theme data attribute */
@@ -1538,31 +1252,6 @@
     rgba(255, 234, 167, 0.25) 0%,
     rgba(250, 177, 160, 0.2) 100%
   );
-}
-
-:global([data-theme='dark']) .helloText {
-  color: #9fb5e7;
-}
-
-:global([data-theme='dark']) .userName {
-  color: #a29bfe;
-  text-shadow: 2px 2px 0 rgba(162, 155, 254, 0.3);
-}
-
-:global([data-theme='dark']) .avatarWrapper {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 50%, #a29bfe 100%);
-  box-shadow: 0 8px 24px rgba(162, 155, 254, 0.3);
-}
-
-:global([data-theme='dark']) .avatar {
-  background: linear-gradient(135deg, #1e1e3f 0%, #2d2d5a 100%);
-}
-
-:global([data-theme='dark']) .title {
-  background: linear-gradient(135deg, #a29bfe 0%, #fd79a8 50%, #ff6b6b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 :global([data-theme='dark']) .userGreeting {
@@ -1660,27 +1349,6 @@
 
 :global([data-theme='dark']) .progressValue {
   color: #aab6ca;
-}
-
-:global([data-theme='dark']) .progressUnlockButton {
-  background: linear-gradient(135deg, #d4a853 0%, #b8860b 100%);
-  color: #1a1a2e;
-  box-shadow: 0 8px 20px rgba(184, 134, 11, 0.3);
-}
-
-:global([data-theme='dark']) .progressResetButton {
-  background: linear-gradient(135deg, #c75450 0%, #a84040 100%);
-  box-shadow: 0 8px 20px rgba(167, 64, 64, 0.3);
-}
-
-:global([data-theme='dark']) .usageStatisticsLink {
-  background: linear-gradient(135deg, #5a8fc7 0%, #6b5ce7 100%);
-  box-shadow: 0 8px 20px rgba(107, 92, 231, 0.3);
-}
-
-:global([data-theme='dark']) .logoutButton {
-  background: linear-gradient(135deg, #c75450 0%, #a84040 100%);
-  box-shadow: 0 8px 20px rgba(168, 64, 64, 0.32);
 }
 
 /* Achievements section */

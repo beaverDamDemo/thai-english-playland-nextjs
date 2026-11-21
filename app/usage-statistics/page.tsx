@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import SiteHeader from '../_components/SiteHeader';
 import SiteFooter from '../_components/SiteFooter';
+import SitePageMessage from '../_components/SitePageMessage';
 import styles from './usageStatistics.module.css';
 import CountBarChart, { type CountBarItem } from './CountBarChart';
 import HourlyLineChart from './HourlyLineChart';
@@ -124,6 +125,30 @@ function LoadingSkeleton() {
             ))}
           </div>
         </section>
+        <section className={styles.card}>
+          {block(styles.skeletonTitle)}
+          <div className={styles.skeletonRows}>
+            {Array.from({ length: 5 }, (_, i) => (
+              <div key={i} className={styles.skeletonRow}>
+                {block(styles.skeletonRank)}
+                {block(styles.skeletonMedium)}
+                {block(styles.skeletonShort)}
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className={styles.card}>
+          {block(styles.skeletonTitle)}
+          <div className={styles.retentionCard}>
+            {Array.from({ length: 2 }, (_, i) => (
+              <div key={i} className={styles.retentionMetric}>
+                {block(styles.skeletonShort)}
+                {block(styles.skeletonNumber)}
+              </div>
+            ))}
+          </div>
+          <div className={styles.skeletonLineChart} />
+        </section>
       </div>
     </main>
     <SiteFooter theme="stats" width={1400} />
@@ -155,8 +180,21 @@ export default function UsageStatisticsPage() {
   }, []);
 
   if (loading) return <LoadingSkeleton />;
-  if (error) return <div className={styles.error}>Error: {error}</div>;
-  if (!data) return <div className={styles.error}>No data available</div>;
+  if (error || !data) {
+    return (
+      <>
+        <SiteHeader title="Usage Statistics" icon="📈" theme="stats" width={1400} />
+        <main className={styles.container}>
+          <SitePageMessage
+            title={error ? 'Could not load the statistics' : 'No statistics yet'}
+            message={error ?? 'There is no usage data to show yet.'}
+            retry={Boolean(error)}
+          />
+        </main>
+        <SiteFooter theme="stats" width={1400} />
+      </>
+    );
+  }
 
   const activeTimeframe = TIMEFRAMES.find((t) => t.id === timeframe) ?? TIMEFRAMES[0];
 
