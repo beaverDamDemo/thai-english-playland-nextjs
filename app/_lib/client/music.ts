@@ -2,6 +2,11 @@
 export const MUSIC_TRACKS = [
   '/assets/audio/pixel-learning-1.mp3',
   '/assets/audio/pixel-learning-2.mp3',
+  '/assets/audio/learning-adventure-1.mp3',
+  '/assets/audio/learning-adventure-2.mp3',
+  '/assets/audio/arcade-groove.mp3',
+  '/assets/audio/ballad-above-the-heavens.mp3',
+  '/assets/audio/rounded-square-motif.mp3',
 ];
 
 const MUSIC_KEY = 'playland-music';
