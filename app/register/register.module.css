@@ -1,167 +1,264 @@
-/* Playful colorful theme for kids. Dark theme is driven by [data-theme='dark'] (set before first paint in layout.tsx). */
+/* Sign up / log in: same playful "candy" style as the rest of the app (rounded Fredoka type,
+   chunky pressed-in shadows, confetti dots). Mode colours: green = sign up, purple = log in.
+   Dark theme follows [data-theme='dark'] (set before first paint in layout.tsx). */
 
 .container {
-  min-height: 100dvh;
+  --accent: #10b981;
+  --accent-deep: #047857;
+  --accent-soft: #d1fae5;
+  --ink: #1f2a44;
+  --ink-muted: #5b6478;
+  --card: #ffffff;
+  --field: #f5f7fb;
+  --field-border: #e1e6ef;
+  --round-font: var(--font-fredoka), 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+  min-height: calc(100dvh - 40px);
   display: grid;
   place-items: center;
-  padding: 16px;
-  background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 50%, #fd79a8 100%);
-  position: relative;
-  overflow: hidden;
+  padding: 28px 16px 36px;
+  font-family: var(--round-font);
+  color: var(--ink);
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 3px, transparent 4px) 0 0 / 52px 52px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 5px, transparent 6px) 26px 26px / 104px 104px,
+    radial-gradient(ellipse at 15% 10%, #fff3c4 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 90%, #ffd1e8 0%, transparent 50%),
+    linear-gradient(160deg, #a5e4ff 0%, #c7d8ff 45%, #f3d2ff 100%);
 }
 
-/* Decorative bubbles */
-.container::before {
-  content: '';
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  top: -50px;
-  right: -50px;
+.container[data-mode='login'] {
+  --accent: #7c3aed;
+  --accent-deep: #5b21b6;
+  --accent-soft: #ede9fe;
 }
 
-.container::after {
-  content: '';
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  bottom: -30px;
-  left: -30px;
-}
-
-.card {
+.inner {
   width: min(440px, 100%);
-  background: #ffffff;
-  border-radius: 32px;
-  padding: 32px 28px;
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.15),
-    0 8px 20px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 1;
 }
 
-/* Mode indicator banner */
-.modeBanner {
+/* ---------- Logo ---------- */
+
+.logo {
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.bubbles {
   display: flex;
-  align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 20px;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  font-weight: 800;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  margin-bottom: 10px;
 }
 
-.modeBanner.register {
-  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-  color: white;
+.bubble {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 0 rgba(31, 42, 68, 0.12), 0 6px 14px rgba(31, 42, 68, 0.12);
+  font-size: 22px;
+  animation: bubbleBob 2.6s ease-in-out infinite;
 }
 
-.modeBanner.login {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-  color: white;
-}
-
-.stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.thai {
-  font-size: 0.95em;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-.modeIcon {
-  font-size: 1.4rem;
+@keyframes bubbleBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 .title {
   margin: 0;
-  font-size: clamp(1.6rem, 5vw, 2rem);
-  font-weight: 900;
-  text-align: center;
-  color: #2d3436;
-  line-height: 1.2;
+  font-size: clamp(2rem, 8vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #fff;
+  letter-spacing: 0.01em;
+  text-shadow:
+    0 3px 0 #4f46e5,
+    0 6px 14px rgba(49, 46, 129, 0.35);
 }
 
-.titleEmoji {
+.titleThai {
   display: block;
-  font-size: 3rem;
-  margin-bottom: 8px;
+  margin-top: 6px;
+  font-size: 0.5em;
+  font-weight: 600;
+  color: #3730a3;
+  text-shadow: none;
 }
 
-.subtitle {
-  margin: 12px 0 0;
-  color: #636e72;
+/* ---------- Card ---------- */
+
+.card {
+  padding: 18px 22px 24px;
+  border: 3px solid #fff;
+  border-radius: 28px;
+  background: var(--card);
+  box-shadow:
+    0 8px 0 rgba(31, 42, 68, 0.1),
+    0 18px 40px rgba(31, 42, 68, 0.18);
+}
+
+/* Sign up / Log in tabs */
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 18px;
+  background: var(--field);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 1.02rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.tab:hover:not(.tabActive) {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.tabActive {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--accent-deep);
+  transform: translateY(-2px);
+}
+
+.tab[data-tab='login'].tabActive {
+  background: #7c3aed;
+  box-shadow: 0 4px 0 #5b21b6;
+}
+
+.tab[data-tab='register'].tabActive {
+  background: #10b981;
+  box-shadow: 0 4px 0 #047857;
+}
+
+.tabText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  text-align: left;
+}
+
+.tabThai {
+  font-size: 0.72rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.heading {
+  margin: 18px 0 4px;
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.3;
   text-align: center;
-  font-size: 1rem;
+}
+
+.thai {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-muted);
+  font-size: 0.86em;
   font-weight: 500;
 }
 
+/* ---------- Form ---------- */
+
 .form {
-  margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  margin-top: 16px;
 }
 
-.inputGroup {
+.field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
 .label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #2d3436;
-  padding-left: 4px;
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: baseline;
+  gap: 8px;
+  padding-left: 4px;
+  font-size: 0.98rem;
+  font-weight: 600;
 }
 
-.labelEmoji {
-  font-size: 1.1rem;
+.labelThai {
+  color: var(--ink-muted);
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.inputIcon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  font-size: 1.15rem;
+  pointer-events: none;
 }
 
 .input {
   width: 100%;
-  min-height: 52px;
-  padding: 12px 18px;
+  min-height: 54px;
+  padding: 12px 16px 12px 46px;
+  border: 3px solid var(--field-border);
   border-radius: 16px;
-  border: 3px solid #dfe6e9;
-  font-size: 1rem;
-  background: #f8f9fa;
-  color: #2d3436;
-  transition: all 0.2s ease;
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.05rem;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.input::placeholder {
+  color: #9aa3b5;
 }
 
 .input:focus {
   outline: none;
-  border-color: #74b9ff;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.2);
+  border-color: var(--accent);
+  background: var(--card);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
-.passwordWrap {
-  position: relative;
-}
-
-.passwordWrap .input {
+.inputWithToggle {
   padding-right: 56px;
 }
 
@@ -170,192 +267,165 @@
   top: 50%;
   right: 8px;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border: none;
+  width: 42px;
+  height: 42px;
+  border: 0;
   border-radius: 12px;
   background: transparent;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   cursor: pointer;
 }
 
 .togglePassword:hover {
-  background: rgba(116, 185, 255, 0.15);
+  background: var(--accent-soft);
+}
+
+.hint {
+  margin: 0;
+  padding-left: 6px;
+  color: var(--ink-muted);
+  font-size: 0.82rem;
 }
 
 .error {
-  margin: 0;
-  padding: 12px 16px;
-  background: #ff7675;
-  color: white;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-align: center;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.submit {
-  min-height: 56px;
-  border: none;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 2px solid #fecaca;
   border-radius: 16px;
-  font-size: 1.1rem;
-  font-weight: 800;
+  background: #fff1f2;
+  color: #9f1239;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.error > span:first-child {
+  font-size: 1.5rem;
+}
+
+.errorText .thai {
+  color: #be123c;
+}
+
+/* Chunky candy button in the mode colour */
+.submit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 60px;
+  margin-top: 6px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--accent);
+  box-shadow:
+    0 6px 0 var(--accent-deep),
+    0 10px 20px color-mix(in srgb, var(--accent) 35%, transparent);
+  color: #fff;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
-.submit.register {
-  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-  color: white;
-  box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3);
-}
-
-.submit.register:hover:not(:disabled) {
+.submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(0, 184, 148, 0.4);
+  box-shadow:
+    0 8px 0 var(--accent-deep),
+    0 14px 24px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
-.submit.login {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-  color: white;
-  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
-}
-
-.submit.login:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(108, 92, 231, 0.4);
+.submit:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--accent-deep);
 }
 
 .submit:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-  transform: none !important;
+  cursor: wait;
+  opacity: 0.7;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 8px 0;
-  color: #b2bec3;
-  font-size: 0.85rem;
-  font-weight: 600;
+.submitThai {
+  font-size: 0.78rem;
+  font-weight: 500;
+  opacity: 0.92;
 }
 
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 2px;
-  background: #dfe6e9;
-  border-radius: 1px;
-}
-
-.switchMode {
-  width: 100%;
-  min-height: 48px;
-  border: 3px dashed #b2bec3;
-  border-radius: 16px;
-  background: transparent;
-  color: #636e72;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.switchMode:hover {
-  border-color: #74b9ff;
-  color: #0984e3;
-  background: rgba(116, 185, 255, 0.1);
-}
-
+.tab:focus-visible,
 .submit:focus-visible,
-.switchMode:focus-visible,
 .togglePassword:focus-visible {
-  outline: 4px solid #0984e3;
+  outline: 4px solid color-mix(in srgb, var(--accent) 55%, white);
   outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    animation: none;
+  }
 }
 
 @media (max-width: 380px) {
   .card {
-    padding: 24px 18px;
+    padding: 14px 14px 20px;
     border-radius: 24px;
+  }
+
+  .tab {
+    font-size: 0.95rem;
   }
 }
 
-/* Dark theme */
-:global([data-theme='dark']) .container {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-}
+/* ---------- Dark theme ---------- */
 
-:global([data-theme='dark']) .container::before,
-:global([data-theme='dark']) .container::after {
-  background: rgba(255, 255, 255, 0.05);
+:global([data-theme='dark']) .container {
+  --ink: #eef2ff;
+  --ink-muted: #a8b3cf;
+  --card: #1e2036;
+  --field: #262a45;
+  --field-border: #363b5e;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.08) 0 3px, transparent 4px) 0 0 / 52px 52px,
+    radial-gradient(ellipse at 15% 10%, rgba(99, 102, 241, 0.35) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 90%, rgba(236, 72, 153, 0.25) 0%, transparent 50%),
+    linear-gradient(160deg, #101a3a 0%, #1a1640 55%, #261333 100%);
 }
 
 :global([data-theme='dark']) .card {
-  background: rgba(30, 30, 50, 0.95);
+  border-color: rgba(255, 255, 255, 0.12);
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.4),
-    0 8px 20px rgba(0, 0, 0, 0.3);
+    0 8px 0 rgba(0, 0, 0, 0.35),
+    0 18px 40px rgba(0, 0, 0, 0.45);
 }
 
-:global([data-theme='dark']) .title {
-  color: #e8f0ff;
+:global([data-theme='dark']) .bubble {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
 }
 
-:global([data-theme='dark']) .subtitle {
-  color: #9fb5e7;
-}
-
-:global([data-theme='dark']) .label {
-  color: #c1d0ef;
-}
-
-:global([data-theme='dark']) .input {
-  background: rgba(20, 25, 40, 0.8);
-  border-color: rgba(123, 151, 218, 0.3);
-  color: #e8f0ff;
-}
-
-:global([data-theme='dark']) .input:focus {
-  border-color: #74b9ff;
-  background: rgba(25, 30, 50, 0.9);
-  box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.15);
+:global([data-theme='dark']) .titleThai {
+  color: #c7d2fe;
 }
 
 :global([data-theme='dark']) .input::placeholder {
-  color: #8393b8;
+  color: #7d87a8;
 }
 
-:global([data-theme='dark']) .divider {
-  color: #8393b8;
+:global([data-theme='dark']) .tab:hover:not(.tabActive) {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-:global([data-theme='dark']) .divider::before,
-:global([data-theme='dark']) .divider::after {
-  background: rgba(123, 151, 218, 0.2);
+:global([data-theme='dark']) .error {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(127, 29, 29, 0.35);
+  color: #fecdd3;
 }
 
-:global([data-theme='dark']) .switchMode {
-  border-color: rgba(123, 151, 218, 0.3);
-  color: #9fb5e7;
-}
-
-:global([data-theme='dark']) .switchMode:hover {
-  border-color: #74b9ff;
-  color: #74b9ff;
-  background: rgba(116, 185, 255, 0.1);
-}
-
-:global([data-theme='dark']) .togglePassword:hover {
-  background: rgba(116, 185, 255, 0.15);
+:global([data-theme='dark']) .errorText .thai {
+  color: #fda4af;
 }

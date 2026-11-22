@@ -5,6 +5,10 @@ import SiteHeader from '../_components/SiteHeader';
 import SiteFooter from '../_components/SiteFooter';
 import { curriculumZones, getLessonHref, type CurriculumLesson, type CurriculumZone } from '../_games/curriculum';
 import { LESSON_CONTENT, type LessonContent, type TopicType } from '../_games/lessonContent';
+import { THAI_TRANSLATIONS } from '../_games/thaiTranslations';
+
+/** Thai shown under a question: its own `thai` field, else the hard-coded translation. */
+const thaiFor = (q: { question: string; thai?: string }) => q.thai ?? THAI_TRANSLATIONS[q.question];
 import styles from './lessonContent.module.css';
 
 type LessonStats = { learners: number; completed: number; correct: number; wrong: number; attempts: number };
@@ -106,6 +110,8 @@ export default function LessonContentPage() {
       if (unit === 'questions' && count < FEW_QUESTIONS) list.push({ kind: 'Few questions', text: `${where}: only ${count} questions`, lessonId: lesson.id });
       if (unit === 'words' && count < FEW_WORDS) list.push({ kind: 'Few words', text: `${where}: only ${count} words`, lessonId: lesson.id });
       problems.forEach((p) => list.push({ kind: 'Data mistake', text: `${where} — ${p}`, lessonId: lesson.id }));
+      const noThai = content?.questions?.filter((item) => !thaiFor(item)).length ?? 0;
+      if (noThai) list.push({ kind: 'No Thai', text: `${where}: ${noThai} question${noThai === 1 ? '' : 's'} without a Thai translation (uses the API)`, lessonId: lesson.id });
       const accuracy = accuracyOf(stats?.[lesson.id]);
       if (accuracy !== null && accuracy < LOW_ACCURACY) list.push({ kind: 'Hard for learners', text: `${where}: ${accuracy}% correct`, lessonId: lesson.id });
     });
@@ -348,7 +354,11 @@ function LessonRow({
                     </span>
                   ))}
                 </span>
-                {item.thai ? <span className={styles.thai}>{item.thai}</span> : null}
+                {thaiFor(item) ? (
+                  <span className={styles.thai} lang="th">
+                    {thaiFor(item)}
+                  </span>
+                ) : null}
               </li>
             ))}
           </ol>

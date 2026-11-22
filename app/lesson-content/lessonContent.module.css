@@ -177,6 +177,7 @@
 }
 
 .issue[data-kind='Needs change'] .issueKind,
+.issue[data-kind='No Thai'] .issueKind,
 .issue[data-kind='Few questions'] .issueKind,
 .issue[data-kind='Few words'] .issueKind,
 .issue[data-kind='Duplicate'] .issueKind {

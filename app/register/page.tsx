@@ -12,54 +12,46 @@ type Bilingual = { en: string; th: string };
 const MODE_CONFIG: Record<
   Mode,
   {
-    bannerText: Bilingual;
-    bannerIcon: string;
-    titleEmoji: string;
-    subtitle: Bilingual;
+    tab: Bilingual;
+    tabIcon: string;
+    heading: Bilingual;
     buttonText: Bilingual;
-    switchText: Bilingual;
-    switchAction: Bilingual;
-    passwordPlaceholder: Bilingual;
+    passwordPlaceholder: string;
   }
 > = {
   register: {
-    bannerText: { en: 'New Player', th: 'ผู้เล่นใหม่' },
-    bannerIcon: '🌟',
-    titleEmoji: '🎮',
-    subtitle: {
+    tab: { en: 'Sign up', th: 'สมัครสมาชิก' },
+    tabIcon: '🌟',
+    heading: {
       en: 'Create your account and start the adventure!',
       th: 'สร้างบัญชีของคุณและเริ่มการผจญภัย!',
     },
-    buttonText: { en: 'Create Account', th: 'สร้างบัญชี' },
-    switchText: { en: 'Already have an account?', th: 'มีบัญชีอยู่แล้วใช่ไหม?' },
-    switchAction: { en: 'Log in here!', th: 'เข้าสู่ระบบที่นี่!' },
-    passwordPlaceholder: { en: 'Create a password', th: 'สร้างรหัสผ่าน' },
+    buttonText: { en: 'Create account', th: 'สร้างบัญชี' },
+    passwordPlaceholder: 'Create a password',
   },
   login: {
-    bannerText: { en: 'Welcome Back', th: 'ยินดีต้อนรับกลับ' },
-    bannerIcon: '🚀',
-    titleEmoji: '🏠',
-    subtitle: {
-      en: 'Ready to continue your journey?',
-      th: 'พร้อมที่จะเดินทางต่อหรือยัง?',
+    tab: { en: 'Log in', th: 'เข้าสู่ระบบ' },
+    tabIcon: '🚀',
+    heading: {
+      en: 'Welcome back! Ready to keep playing?',
+      th: 'ยินดีต้อนรับกลับ! พร้อมเล่นต่อหรือยัง?',
     },
-    buttonText: { en: 'Log In', th: 'เข้าสู่ระบบ' },
-    switchText: { en: "Don't have an account?", th: 'ยังไม่มีบัญชีใช่ไหม?' },
-    switchAction: { en: 'Join the fun!', th: 'มาสนุกด้วยกัน!' },
-    passwordPlaceholder: { en: 'Enter your password', th: 'ใส่รหัสผ่านของคุณ' },
+    buttonText: { en: 'Log in', th: 'เข้าสู่ระบบ' },
+    passwordPlaceholder: 'Your password',
   },
 };
 
 const TEXT = {
   title: { en: 'Thai English Playland', th: 'ไทยอิงลิชเพลย์แลนด์' },
   username: { en: 'Username', th: 'ชื่อผู้ใช้' },
-  usernamePlaceholder: { en: 'Enter your name', th: 'ใส่ชื่อของคุณ' },
   password: { en: 'Password', th: 'รหัสผ่าน' },
+  passwordHint: { en: 'At least 8 characters', th: 'อย่างน้อย 8 ตัวอักษร' },
   showPassword: { en: 'Show password', th: 'แสดงรหัสผ่าน' },
   hidePassword: { en: 'Hide password', th: 'ซ่อนรหัสผ่าน' },
-  wait: { en: 'Please wait...', th: 'กรุณารอสักครู่...' },
-  or: { en: 'or', th: 'หรือ' },
+  wait: { en: 'Please wait…', th: 'กรุณารอสักครู่…' },
 };
+
+const ZONE_BUBBLES = ['🌱', '🐘', '🎰', '🏝️', '🌊'];
 
 const ERROR_TRANSLATIONS: Record<string, string> = {
   'Request failed.': 'คำขอล้มเหลว',
@@ -76,17 +68,6 @@ const ERROR_TRANSLATIONS: Record<string, string> = {
 
 function pair(text: Bilingual): string {
   return `${text.en} / ${text.th}`;
-}
-
-function Both({ text }: { text: Bilingual }) {
-  return (
-    <>
-      <span>{text.en}</span>
-      <span className={styles.thai} lang="th">
-        {text.th}
-      </span>
-    </>
-  );
 }
 
 function RegisterPageInner() {
@@ -135,130 +116,152 @@ function RegisterPageInner() {
     }
   }
 
-  function toggleMode() {
-    setMode(mode === 'register' ? 'login' : 'register');
+  function switchMode(next: Mode) {
+    if (next === mode) return;
+    setMode(next);
     setError(null);
   }
 
   return (
-    <main className={styles.container}>
-      <section className={styles.card}>
-        {/* Mode Indicator Banner */}
-        <div className={`${styles.modeBanner} ${styles[mode]}`}>
-          <span className={styles.modeIcon}>{config.bannerIcon}</span>
-          <span className={styles.stack}>
-            <Both text={config.bannerText} />
-          </span>
-        </div>
-
-        {/* Title with Emoji */}
-        <h1 className={styles.title}>
-          <span className={styles.titleEmoji}>{config.titleEmoji}</span>
-          <Both text={TEXT.title} />
-        </h1>
-        <p className={`${styles.subtitle} ${styles.stack}`}>
-          <Both text={config.subtitle} />
-        </p>
-
-        <form className={styles.form} onSubmit={onSubmit}>
-          {/* Username Field */}
-          <div className={styles.inputGroup}>
-            <label className={styles.label} htmlFor="username">
-              <span className={styles.labelEmoji}>👤</span>
-              {pair(TEXT.username)}
-            </label>
-            <input
-              id="username"
-              className={styles.input}
-              autoComplete="username"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              placeholder={pair(TEXT.usernamePlaceholder)}
-              required
-            />
-          </div>
-
-          {/* Password Field */}
-          <div className={styles.inputGroup}>
-            <label className={styles.label} htmlFor="password">
-              <span className={styles.labelEmoji}>🔐</span>
-              {pair(TEXT.password)}
-            </label>
-            <div className={styles.passwordWrap}>
-              <input
-                id="password"
-                className={styles.input}
-                type={showPassword ? 'text' : 'password'}
-                autoComplete={
-                  mode === 'register' ? 'new-password' : 'current-password'
-                }
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder={pair(config.passwordPlaceholder)}
-                required
-              />
-              <button
-                type="button"
-                className={styles.togglePassword}
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={pair(
-                  showPassword ? TEXT.hidePassword : TEXT.showPassword,
-                )}
-                aria-pressed={showPassword}
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
-          </div>
-
-          {/* Error Message */}
-          {error ? (
-            <p className={styles.error}>
-              <span>⚠️</span>
-              <span className={styles.stack}>
-                <span>{error}</span>
-                {ERROR_TRANSLATIONS[error] ? (
-                  <span className={styles.thai} lang="th">
-                    {ERROR_TRANSLATIONS[error]}
-                  </span>
-                ) : null}
+    <main className={styles.container} data-mode={mode}>
+      <div className={styles.inner}>
+        <header className={styles.logo}>
+          <div className={styles.bubbles} aria-hidden="true">
+            {ZONE_BUBBLES.map((emoji, index) => (
+              <span key={emoji} className={styles.bubble} style={{ animationDelay: `${index * 0.18}s` }}>
+                {emoji}
               </span>
-            </p>
-          ) : null}
-
-          {/* Submit Button */}
-          <button
-            className={`${styles.submit} ${styles[mode]}`}
-            type="submit"
-            disabled={loading}
-          >
-            <span className={styles.stack}>
-              <Both text={loading ? TEXT.wait : config.buttonText} />
+            ))}
+          </div>
+          <h1 className={styles.title}>
+            {TEXT.title.en}
+            <span className={styles.titleThai} lang="th">
+              {TEXT.title.th}
             </span>
-          </button>
-        </form>
+          </h1>
+        </header>
 
-        {/* Divider */}
-        <div className={styles.divider}>
-          <span>{pair(TEXT.or)}</span>
-        </div>
+        <section className={styles.card} aria-labelledby="auth-heading">
+          <div className={styles.tabs} role="tablist" aria-label={pair({ en: 'Sign up or log in', th: 'สมัครหรือเข้าสู่ระบบ' })}>
+            {(['register', 'login'] as const).map((tabMode) => (
+              <button
+                key={tabMode}
+                type="button"
+                role="tab"
+                aria-selected={mode === tabMode}
+                className={`${styles.tab} ${mode === tabMode ? styles.tabActive : ''}`}
+                data-tab={tabMode}
+                onClick={() => switchMode(tabMode)}
+              >
+                <span aria-hidden="true">{MODE_CONFIG[tabMode].tabIcon}</span>
+                <span className={styles.tabText}>
+                  {MODE_CONFIG[tabMode].tab.en}
+                  <span className={styles.tabThai} lang="th">
+                    {MODE_CONFIG[tabMode].tab.th}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
 
-        {/* Mode Switch Button */}
-        <button
-          className={styles.switchMode}
-          type="button"
-          onClick={toggleMode}
-        >
-          <span className={styles.stack}>
-            <span>
-              {config.switchText.en} <strong>{config.switchAction.en}</strong>
-            </span>
+          <p id="auth-heading" className={styles.heading}>
+            {config.heading.en}
             <span className={styles.thai} lang="th">
-              {config.switchText.th} <strong>{config.switchAction.th}</strong>
+              {config.heading.th}
             </span>
-          </span>
-        </button>
-      </section>
+          </p>
+
+          <form className={styles.form} onSubmit={onSubmit}>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="username">
+                {TEXT.username.en}
+                <span className={styles.labelThai} lang="th">
+                  {TEXT.username.th}
+                </span>
+              </label>
+              <div className={styles.inputWrap}>
+                <span className={styles.inputIcon} aria-hidden="true">
+                  👤
+                </span>
+                <input
+                  id="username"
+                  className={styles.input}
+                  autoComplete="username"
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="password">
+                {TEXT.password.en}
+                <span className={styles.labelThai} lang="th">
+                  {TEXT.password.th}
+                </span>
+              </label>
+              <div className={styles.inputWrap}>
+                <span className={styles.inputIcon} aria-hidden="true">
+                  🔐
+                </span>
+                <input
+                  id="password"
+                  className={`${styles.input} ${styles.inputWithToggle}`}
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete={
+                    mode === 'register' ? 'new-password' : 'current-password'
+                  }
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder={config.passwordPlaceholder}
+                  aria-describedby={mode === 'register' ? 'password-hint' : undefined}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.togglePassword}
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={pair(
+                    showPassword ? TEXT.hidePassword : TEXT.showPassword,
+                  )}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+              {mode === 'register' ? (
+                <p id="password-hint" className={styles.hint}>
+                  {TEXT.passwordHint.en} ·{' '}
+                  <span lang="th">{TEXT.passwordHint.th}</span>
+                </p>
+              ) : null}
+            </div>
+
+            {error ? (
+              <p className={styles.error} role="alert">
+                <span aria-hidden="true">🙈</span>
+                <span className={styles.errorText}>
+                  <span>{error}</span>
+                  {ERROR_TRANSLATIONS[error] ? (
+                    <span className={styles.thai} lang="th">
+                      {ERROR_TRANSLATIONS[error]}
+                    </span>
+                  ) : null}
+                </span>
+              </p>
+            ) : null}
+
+            <button className={styles.submit} type="submit" disabled={loading}>
+              {loading ? TEXT.wait.en : config.buttonText.en}
+              <span className={styles.submitThai} lang="th">
+                {loading ? TEXT.wait.th : config.buttonText.th}
+              </span>
+            </button>
+          </form>
+        </section>
+      </div>
     </main>
   );
 }
