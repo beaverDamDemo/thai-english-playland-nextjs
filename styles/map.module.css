@@ -405,6 +405,46 @@
   color: white;
 }
 
+/* Lesson the learner has finished: warm gold fill + a medal sticker on the corner. */
+.locationPin.pinFinished {
+  background: radial-gradient(circle at 35% 30%, #fffbe6 0%, #ffe08a 100%);
+  box-shadow: 0 0 0 3px rgba(255, 200, 40, 0.55), 0 4px 10px rgba(180, 120, 0, 0.35);
+}
+
+.pinMedal {
+  position: absolute;
+  top: -11px;
+  right: -13px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 3px solid #f5a300;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(150, 90, 0, 0.45);
+  font-size: 15px;
+  line-height: 1;
+  pointer-events: none;
+  animation: pinMedalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes pinMedalPop {
+  0% {
+    transform: scale(0) rotate(-30deg);
+  }
+  100% {
+    transform: scale(1) rotate(12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pinMedal {
+    animation: none;
+    transform: rotate(12deg);
+  }
+}
+
 @media (max-width: 640px) {
   .pageHeader {
     padding: 8px 10px 13px;

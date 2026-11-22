@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import ZoneProgressFooter from './ZoneProgressFooter';
+import { LessonPinLink, ZoneCompletionProvider } from './ZoneCompletion';
 import { getLessonHref, zoneThemeGames, type CurriculumZone, type CurriculumZoneId } from '../curriculum';
 import styles from '../../../styles/map.module.css';
 
@@ -36,6 +37,7 @@ export default function CurriculumZonePage({
   zone: CurriculumZone;
 }) {
   return (
+    <ZoneCompletionProvider>
     <main className={`${styles.mazePage} ${styles.curriculumZonePage}`}>
       <header
         className={`${styles.pageHeader} ${styles.curriculumHeader}`}
@@ -79,19 +81,18 @@ export default function CurriculumZonePage({
                   } as React.CSSProperties
                 }
               >
-                <Link
+                <LessonPinLink
                   href={href}
-                  className={`${styles.locationPin} ${styles.curriculumLocationPin}`}
-                  aria-label={`Lesson ${lesson.number}: ${lesson.title}. ${lesson.activity}: ${lesson.description} Status: ${statusLabel.toLowerCase()}.`}
+                  lessonId={lesson.id}
+                  number={lesson.number}
+                  label={`Lesson ${lesson.number}: ${lesson.title}. ${lesson.activity}: ${lesson.description} Status: ${statusLabel.toLowerCase()}.`}
                   style={
                     {
                       borderColor: point.color,
                       '--location-border': point.color,
                     } as React.CSSProperties
                   }
-                >
-                  {lesson.number}
-                </Link>
+                />
                 <span
                   className={`${styles.lessonCloud} ${lessonStatusClasses[lesson.status]}`}
                   aria-hidden="true"
@@ -123,5 +124,6 @@ export default function CurriculumZonePage({
 
       <ZoneProgressFooter zone={zone} />
     </main>
+    </ZoneCompletionProvider>
   );
 }

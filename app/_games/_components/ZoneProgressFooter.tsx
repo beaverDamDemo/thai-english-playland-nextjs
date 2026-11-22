@@ -1,36 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import GameFooter from '@/app/_components/GameFooter';
 import { formatZoneCompletion, zoneThemeGames, type CurriculumZone } from '../curriculum';
-
-type LessonProgress = {
-  lesson_id: string;
-  completed_at: string | null;
-};
+import { useZoneCompletion } from './ZoneCompletion';
 
 export default function ZoneProgressFooter({ zone }: { zone: CurriculumZone }) {
-  const [completedIds, setCompletedIds] = useState<string[] | null>(null);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    async function load() {
-      try {
-        const response = await fetch('/api/progress', { signal: controller.signal });
-        if (!response.ok) throw new Error(`Progress request failed: ${response.status}`);
-        const data: { ok: boolean; lessons?: LessonProgress[] } = await response.json();
-        if (!data.ok || !Array.isArray(data.lessons)) throw new Error('Invalid progress response');
-        setCompletedIds(data.lessons.filter((lesson) => lesson.completed_at).map((lesson) => lesson.lesson_id));
-      } catch (err) {
-        if (controller.signal.aborted) return;
-        console.error('Failed to load zone progress:', err);
-        setError(true);
-      }
-    }
-    void load();
-    return () => controller.abort();
-  }, [zone.lessons]);
+  // Shares the progress already loaded for the zone's lesson pins (one request per page).
+  const { completedIds, error } = useZoneCompletion();
 
   const lessonCounts = zone.lessons.reduce(
     (counts, lesson) => {
