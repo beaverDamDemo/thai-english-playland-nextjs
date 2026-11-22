@@ -182,7 +182,7 @@ export default function HomePage() {
           className={`${styles.hubCard}           ${styles.sentencesCard} ${styles.zoneCard}`}
         >
           <Image
-            src="/assets/tinified/phuket-background-40.jpg"
+            src="/assets/tinified/Phuket%20Thailand%20Travel%20Map-30.jpg"
             alt=""
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
