@@ -28,6 +28,7 @@ export default function ErrorPage({
           message="This page tripped over. Try again, or go back Home and pick another game."
           detail={error.digest ? `Error code: ${error.digest}` : undefined}
           onRetry={retry}
+          theme="home"
         />
       </main>
       <SiteFooter theme="home" />

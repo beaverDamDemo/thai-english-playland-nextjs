@@ -10,6 +10,7 @@ export default function SitePageMessage({
   retry = true,
   onRetry,
   detail,
+  theme,
 }: {
   title: string;
   message: string;
@@ -19,9 +20,11 @@ export default function SitePageMessage({
   onRetry?: () => void;
   /** Small print under the message, e.g. an error code to quote. */
   detail?: string;
+  /** Page colour theme ([data-game] value) for the button, e.g. 'home' or 'stats'. */
+  theme?: string;
 }) {
   return (
-    <section className={styles.card} role="alert">
+    <section className={styles.card} role="alert" data-game={theme}>
       <span className={styles.icon} aria-hidden="true">
         {icon}
       </span>

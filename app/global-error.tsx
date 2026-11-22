@@ -44,6 +44,7 @@ export default function GlobalError({
             message="The playground tripped over. Try again, or go back Home in a moment."
             detail={error.digest ? `Error code: ${error.digest}` : undefined}
             onRetry={retry}
+            theme="home"
           />
         </main>
         <SiteFooter theme="home" />

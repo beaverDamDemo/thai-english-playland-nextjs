@@ -31,11 +31,15 @@ function formatBuildTime(iso: string | undefined): string | null {
 }
 
 // Zone pages and their lessons (/zones/<slug>/...) use the zone's colour theme;
-// Settings / All Users Progress / Usage Statistics use their own page theme.
+// Home, Settings, stats pages and Lesson Content use their own page theme.
+// Any other address is the 404 page, which uses the coral "home" theme like its header.
+// The sign-up / log-in page keeps the plain strip (it has its own background).
 function gameFromPath(pathname: string | null): string | undefined {
   const match = pathname?.match(/^\/zones\/([^/]+)/);
   const zone = match ? getZoneBySlug(match[1]) : undefined;
-  return zone ? zoneThemeGames[zone.id] : getSiteTheme(pathname);
+  if (zone) return zoneThemeGames[zone.id];
+  if (pathname === '/register') return undefined;
+  return getSiteTheme(pathname) ?? 'home';
 }
 
 export default function AppFooter() {

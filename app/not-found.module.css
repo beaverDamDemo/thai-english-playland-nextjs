@@ -6,6 +6,7 @@
 /* The illustration as a framed picture card on the soft background. */
 .imageArea {
   position: relative;
+  container-type: inline-size;
   --image-ratio: 16 / 9;
   aspect-ratio: var(--image-ratio);
   height: min(calc(100dvh - 260px), calc((100vw - 32px) / (var(--image-ratio))));
@@ -20,49 +21,52 @@
   overflow: hidden;
 }
 
+/* "Return Home" painted onto the wooden sign in the picture. Sized in container units (cqw)
+   so it scales with the picture, not the screen. */
 .primaryAction {
   position: absolute;
+  top: 69.4%;
+  left: 21%;
+  color: #4a2a10;
+  font-family: var(--font-fredoka), 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+  font-size: 3.9cqw;
   font-weight: 700;
   text-decoration: none;
-  top: 61.5%;
-  left: 13%;
-  color: #141058;
-  font-size: 5.5vw;
-  transform: translateY(0);
-  top: 69%;
-  left: 21%;
-  color: #141058;
-  font-size: 3.7vw;
-  transform: translateY(0);
+  text-shadow: 0 1px 0 rgba(255, 240, 210, 0.7);
+  transform: rotate(-1deg);
+  animation: signGlow 1.8s ease-in-out infinite;
 }
 
 .primaryAction:hover,
 .primaryAction:focus-visible {
-  color: #3a35a2;
-}
-.primaryAction {
-  position: absolute;
-  font-weight: 700;
-  text-decoration: none;
-  top: 69.4%;
-  left: 21%;
-  color: #141058;
-  font-size: 3.7vw;
-  transform: translateY(0) rotate(-1deg);
-  animation: pulseGlow 1.8s infinite;
+  color: #8a4b12;
 }
 
-@keyframes pulseGlow {
+.primaryAction:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+@keyframes signGlow {
   0%,
   100% {
-    text-shadow: 0 0 0 rgba(58, 53, 162, 0);
+    text-shadow: 0 1px 0 rgba(255, 240, 210, 0.7);
   }
   50% {
     text-shadow:
-      0 0 8px rgba(58, 53, 162, 0.7),
-      0 0 16px rgba(58, 53, 162, 0.4);
+      0 1px 0 rgba(255, 240, 210, 0.7),
+      0 0 10px rgba(255, 196, 80, 0.9),
+      0 0 18px rgba(255, 170, 40, 0.5);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction {
+    animation: none;
+  }
+}
+
 @media (max-width: 480px) {
   .page {
     padding: 1rem;

@@ -189,6 +189,7 @@ export default function UsageStatisticsPage() {
             title={error ? 'Could not load the statistics' : 'No statistics yet'}
             message={error ?? 'There is no usage data to show yet.'}
             retry={Boolean(error)}
+            theme="stats"
           />
         </main>
         <SiteFooter theme="stats" width={1400} />

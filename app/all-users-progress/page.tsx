@@ -184,7 +184,7 @@ export default function AllUsersProgressPage() {
       <>
         <SiteHeader title="All Users Progress" icon="🏆" theme="leaderboard" />
         <main className={styles.container}>
-          <SitePageMessage title="Could not load progress" message={error} />
+          <SitePageMessage title="Could not load progress" message={error} theme="leaderboard" />
         </main>
         <SiteFooter theme="leaderboard" />
       </>
