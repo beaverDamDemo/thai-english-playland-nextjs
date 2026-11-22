@@ -12,83 +12,10 @@ import GameStatsFooter from '@/app/_components/GameStatsFooter';
 import styles from './Lesson1.module.css';
 import MazeHeader from '../../maze/_components/MazeHeader';
 import Quiz, { type VerbEntry, type QuizQuestion } from './Quiz';
+import { VERBS } from './verbs';
 
 const ROUND_SIZE = 4;
 
-const VERBS: VerbEntry[] = [
-  {
-    base: 'Bring',
-    past: 'Brought',
-    participle: 'Brought',
-    distractors: ['Brang', 'Bringed', 'Brung', 'Broughten'],
-  },
-  {
-    base: 'Buy',
-    past: 'Bought',
-    participle: 'Bought',
-    distractors: ['Buyed', 'Buied', 'Boughten', 'Bayed'],
-  },
-  {
-    base: 'Come',
-    past: 'Came',
-    participle: 'Come',
-    distractors: ['Comed', 'Camed', 'Comen', 'Cumen'],
-  },
-  {
-    base: 'Drink',
-    past: 'Drank',
-    participle: 'Drunk',
-    distractors: ['Drinked', 'Dranken', 'Drinken', 'Dronk'],
-  },
-  {
-    base: 'Give',
-    past: 'Gave',
-    participle: 'Given',
-    distractors: ['Gived', 'Gaven', 'Givven', 'Gaved'],
-  },
-  {
-    base: 'Go',
-    past: 'Went',
-    participle: 'Gone',
-    distractors: ['Goed', 'Wented', 'Goned', 'Wenten'],
-  },
-  {
-    base: 'Make',
-    past: 'Made',
-    participle: 'Made',
-    distractors: ['Maked', 'Maden', 'Mayed', 'Mode'],
-  },
-  {
-    base: 'Run',
-    past: 'Ran',
-    participle: 'Run',
-    distractors: ['Runned', 'Rann', 'Ren', 'Runed'],
-  },
-  {
-    base: 'Say',
-    past: 'Said',
-    participle: 'Said',
-    distractors: ['Sayed', 'Sayd', 'Saided', 'Sed'],
-  },
-  {
-    base: 'Sleep',
-    past: 'Slept',
-    participle: 'Slept',
-    distractors: ['Sleeped', 'Slepted', 'Slep', 'Sleepen'],
-  },
-  {
-    base: 'Take',
-    past: 'Took',
-    participle: 'Taken',
-    distractors: ['Taked', 'Tooken', 'Tooked', 'Taen'],
-  },
-  {
-    base: 'Think',
-    past: 'Thought',
-    participle: 'Thought',
-    distractors: ['Thinked', 'Thunk', 'Thoughten', 'Thinken'],
-  },
-];
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];

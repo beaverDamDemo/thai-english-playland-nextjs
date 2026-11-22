@@ -3,7 +3,7 @@
 
 import MazeQuiz, { type QuizQuestion } from '../_components/MazeQuiz';
 
-const questions: QuizQuestion[] = [
+export const questions: QuizQuestion[] = [
   {
     q: '_______ is my brother and he plays guitar.',
     options: ['he', 'she', 'his', 'her'],

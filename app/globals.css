@@ -340,3 +340,7 @@ body,
   --game-bg: #3450b8;
   --game-bg-dark: #1a2c55;
 }
+[data-game='content'] {
+  --game-bg: #5b3fc4;
+  --game-bg-dark: #2b1f5c;
+}

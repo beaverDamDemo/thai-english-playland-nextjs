@@ -10,7 +10,7 @@ import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
 import styles from '../../maze/_components/QuizButtons.module.css';
 import type { Question } from '../types';
 
-const questions: Question[] = [
+export const questions: Question[] = [
   // singular near -> "This" (index 0)
   {
     q: '_______ is my book (near me).',

@@ -2,7 +2,7 @@
 
 import MazeQuiz, { type QuizQuestion } from '../_components/MazeQuiz';
 
-const questions: QuizQuestion[] = [
+export const questions: QuizQuestion[] = [
   // Keep some hour 7 questions (reduced from 18 to 4)
   {
     q: '7 AM is _______ in 24h format.',

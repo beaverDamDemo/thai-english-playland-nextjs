@@ -4,7 +4,7 @@ import MazeQuiz, {
   type QuizQuestion,
 } from '@/app/_games/maze/_components/MazeQuiz';
 
-const questions: QuizQuestion[] = [
+export const questions: QuizQuestion[] = [
   {
     q: 'I think it _______ rain later.',
     options: ['will', 'was', 'is', 'does'],

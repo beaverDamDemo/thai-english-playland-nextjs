@@ -2,7 +2,7 @@
 
 import MazeQuiz, { type QuizQuestion } from '../_components/MazeQuiz';
 
-const questions: QuizQuestion[] = [
+export const questions: QuizQuestion[] = [
   {
     q: 'Choose the correct sentence.',
     options: [

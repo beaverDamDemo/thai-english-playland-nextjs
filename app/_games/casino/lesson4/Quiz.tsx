@@ -10,7 +10,7 @@ import { useThaiQuestion } from '../../maze/_components/useThaiQuestion';
 import styles from '../../maze/_components/QuizButtons.module.css';
 import type { Question } from '../types';
 
-const questions: Question[] = [
+export const questions: Question[] = [
   {
     q: 'I saw ___ cat in the garden.',
     options: ['—', 'a', 'an', 'the'],
